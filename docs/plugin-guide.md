@@ -1,0 +1,69 @@
+# Plugin Guide
+
+이 문서는 Claude Agent Template을 다른 프로젝트에 설치하고 관리하는 방법을 설명한다.
+
+## 빠른 설치
+
+```bash
+bash /path/to/claude-agent-template/.claude/plugins/install.sh /path/to/my-project
+```
+
+기존 파일이 있으면 건너뛴다. 덮어쓰려면 `--force` 플래그를 추가한다.
+
+## 설치 내용
+
+install.sh는 `manifest.json`에 등록된 파일을 대상 프로젝트에 복사한다.
+
+- L1 Memory: `CLAUDE.md`, `AGENTS.md`, `STATE.md`
+- L2 Skills: `.claude/commands/` (8개 slash command)
+- L3 Hooks: `.claude/hooks/` (3개 가드레일 스크립트) + `settings.local.json`
+- L4 Subagents: `.claude/agents/` (3개 프롬프트 템플릿)
+- Supporting: `agents/` (4개 역할 지침)
+
+설치 후 대상 프로젝트에 `.claude/.plugin-version` 파일이 생성되어 설치된 버전을 기록한다.
+
+## 플래그
+
+- `--force`: 기존 파일을 덮어쓴다.
+- `--dry-run`: 실제 복사 없이 어떤 파일이 설치될지 미리보기한다.
+
+## 업데이트
+
+1. 템플릿 저장소에서 최신 버전을 pull한다.
+2. install.sh를 `--force`로 다시 실행한다.
+
+```bash
+cd /path/to/claude-agent-template && git pull
+bash .claude/plugins/install.sh --force /path/to/my-project
+```
+
+주의: `--force`는 대상 프로젝트에서 커스텀한 파일도 덮어쓴다. 커스텀 내용을 보존하려면 먼저 `--dry-run`으로 변경 범위를 확인한다.
+
+## 커스텀
+
+설치된 파일은 복사본이므로 대상 프로젝트에서 자유롭게 수정할 수 있다.
+
+- `AGENTS.md`: 프로젝트별 Golden Rules, Context Map 수정
+- `.claude/commands/`: 커맨드 추가/수정/삭제
+- `.claude/hooks/`: 가드레일 스크립트 추가/수정
+- `.claude/agents/`: 서브에이전트 템플릿 추가/수정
+- `agents/`: 역할별 체크리스트 프로젝트에 맞게 조정
+
+## 템플릿 유지 관리
+
+버전을 올릴 때:
+
+1. `.claude/plugins/VERSION` 파일의 버전 번호를 수정한다.
+2. `.claude/plugins/manifest.json`의 `version` 필드를 같은 값으로 맞춘다.
+3. 새 파일을 추가했으면 `manifest.json`의 해당 layer에 등록한다.
+4. 커밋한다.
+
+## 버전 확인
+
+```bash
+# 템플릿 버전
+cat /path/to/claude-agent-template/.claude/plugins/VERSION
+
+# 설치된 버전
+cat /path/to/my-project/.claude/.plugin-version
+```
