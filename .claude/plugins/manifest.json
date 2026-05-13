@@ -51,8 +51,10 @@
       "description": "Agent 도구 호출용 프롬프트 템플릿",
       "files": [
         { "path": ".claude/agents/explorer.md", "description": "Investigation/exploration agent" },
-        { "path": ".claude/agents/reviewer.md", "description": "Review/inspection agent" },
-        { "path": ".claude/agents/planner.md", "description": "Design/planning agent" }
+        { "path": ".claude/agents/code-reviewer.md", "description": "Code review against repo conventions" },
+        { "path": ".claude/agents/planner.md", "description": "Design/planning agent" },
+        { "path": ".claude/agents/test-runner.md", "description": "Test execution and failure analysis" },
+        { "path": ".claude/agents/feature-dev.md", "description": "End-to-end feature implementation" }
       ]
     }
   },

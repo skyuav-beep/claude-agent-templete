@@ -103,13 +103,21 @@ Claude Code는 `Agent` 도구를 통해 독립적인 서브 에이전트를 실�
   - 트리거: 기존 구조 파악, 중복 확인, 근거 수집, 영향 범위 조사
   - 병렬 가능: 독립된 두 영역을 동시에 탐색할 때
 
-- 리뷰 작업 -> `.claude/agents/reviewer.md` (general-purpose 타입)
-  - 트리거: 구현 완료 후 리스크 점검, PR 리뷰, 회귀 확인
+- 코드 리뷰 작업 -> `.claude/agents/code-reviewer.md` (general-purpose 타입)
+  - 트리거: 구현 완료 후 리스크 점검, PR 리뷰, 회귀 확인, repo conventions 검토
   - 순차 필요: 구현이 끝난 뒤에만 의미 있음
 
 - 설계/계획 작업 -> `.claude/agents/planner.md` (Plan 타입)
   - 트리거: 큰 기능 추가 전, 구조 변경 전, 복합 요청 분해 시
   - 순차 필요: 조사 결과가 있어야 정확한 계획 가능
+
+- 테스트 실행 작업 -> `.claude/agents/test-runner.md` (general-purpose 타입)
+  - 트리거: 구현 완료 후 테스트 실행, 테스트 실패 분석, 회귀 테스트
+  - 병렬 가능: 코드 리뷰와 동시에 실행 가능
+
+- 기능 구현 작업 -> `.claude/agents/feature-dev.md` (general-purpose 타입)
+  - 트리거: 설계 완료 후 end-to-end 기능 구현 위임
+  - 순차 필요: planner 결과가 있어야 정확한 구현 가능
 
 ### 직접 처리 (서브 에이전트 불필요)
 

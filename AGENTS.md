@@ -159,7 +159,7 @@
 - **[Skills Layer](./.claude/skills/)** - 자연어 트리거 기반 자동 활성화 SKILL.md 8종. `start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`. 우선순위와 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
 - **[Slash Commands](./.claude/commands/)** - skills와 동일 이름의 명시적 slash command 8종. `/start`, `/intake`, `/request`, `/feature`, `/bugfix`, `/refactor`, `/review`, `/business-logic`. 사용자가 직접 호출할 때만 동작.
 - **[Hooks Layer](./.claude/hooks/)** - 파괴적 명령 차단, 비밀 파일 쓰기 차단, STATE.md 갱신 리마인더. 설정은 `.claude/settings.local.json`.
-- **[서브에이전트 템플릿](./.claude/agents/)** - Agent 도구 호출 시 역할별 프롬프트 템플릿 (explorer, reviewer, planner). 디스패치 기준은 `docs/subagent-guide.md`.
+- **[서브에이전트 템플릿](./.claude/agents/)** - Agent 도구 호출 시 역할별 프롬프트 템플릿 (explorer, code-reviewer, planner, test-runner, feature-dev). 디스패치 기준은 `docs/subagent-guide.md`.
 - **[Plugins Layer](./.claude/plugins/)** - manifest.json, VERSION, install.sh. 다른 프로젝트에 설치 시 `docs/plugin-guide.md` 참조.
 - **[Plugin 가이드](./docs/plugin-guide.md)** - 설치, 업데이트, 커스텀, 버전 관리 방법.
 

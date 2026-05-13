@@ -1,6 +1,7 @@
-# Reviewer 서브에이전트
+# Code Reviewer 서브에이전트
 
-구현 완료 후 리스크 점검을 위임받는 서브에이전트다.
+구현 완료 후 코드 리스크 점검을 위임받는 서브에이전트다.
+repo conventions 준수 여부를 검토한다.
 상세 리뷰 규칙은 `agents/reviewer-agent.md`를 따른다.
 
 ## 역할

@@ -32,6 +32,13 @@
 
 ## 이번 세션에서 완료한 작업
 
+- Layer 4 서브에이전트를 이미지 비전 기준 5종 체제로 확장했다. (2026-05-13)
+  - `test-runner.md` 신규: 테스트 실행/실패 분석 위임 (general-purpose 타입)
+  - `feature-dev.md` 신규: end-to-end 기능 구현 위임 (general-purpose 타입)
+  - `reviewer.md` → `code-reviewer.md` 이름 변경: 역할 명확화 (repo conventions 검토)
+  - 참조 문서 갱신: `CLAUDE.md`, `AGENTS.md`, `manifest.json`, `docs/subagent-guide.md`
+  - 최종 구성: explorer, code-reviewer, planner, test-runner, feature-dev (5종)
+
 - Skills Layer를 `.claude/commands/`(slash command)에서 `.claude/skills/<name>/SKILL.md`(자연어 자동 활성화) 구조로 전환했다. (2026-05-13)
   - 8개 skill 디렉터리에 SKILL.md 작성: `start`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `intake`.
   - 각 SKILL.md의 description 필드에 한국어+영문 트리거 키워드 병기.
@@ -152,7 +159,7 @@
 - Slash Commands (명시적 호출): `.claude/commands/start.md`, `.claude/commands/intake.md`, `.claude/commands/request.md`, `.claude/commands/feature.md`, `.claude/commands/bugfix.md`, `.claude/commands/refactor.md`, `.claude/commands/review.md`, `.claude/commands/business-logic.md`
 - 가드레일 hooks: `.claude/hooks/block-destructive.sh`, `.claude/hooks/block-secret-files.sh`, `.claude/hooks/state-reminder.sh`
 - hooks 설정: `.claude/settings.local.json`
-- 서브에이전트 템플릿: `.claude/agents/explorer.md`, `.claude/agents/reviewer.md`, `.claude/agents/planner.md`
+- 서브에이전트 템플릿: `.claude/agents/explorer.md`, `.claude/agents/code-reviewer.md`, `.claude/agents/planner.md`, `.claude/agents/test-runner.md`, `.claude/agents/feature-dev.md`
 - 플러그인: `.claude/plugins/manifest.json`, `.claude/plugins/VERSION`, `.claude/plugins/install.sh`
 - 플러그인 가이드: `docs/plugin-guide.md`
 - 요청 템플릿: `templates/feature-request.md`, `templates/bugfix-request.md`, `templates/review-request.md`, `templates/refactor-request.md`, `templates/business-logic-request.md`

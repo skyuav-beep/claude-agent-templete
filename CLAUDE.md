@@ -129,8 +129,10 @@ Agent 도구를 호출할 때 해당 템플릿을 읽어 프롬프트에 포함�
 디스패치 기준은 `docs/subagent-guide.md`를 참조한다.
 
 - 조사/탐색: `.claude/agents/explorer.md` (Explore 타입)
-- 리뷰/점검: `.claude/agents/reviewer.md` (general-purpose 타입)
+- 코드 리뷰: `.claude/agents/code-reviewer.md` (general-purpose 타입)
 - 설계/계획: `.claude/agents/planner.md` (Plan 타입)
+- 테스트 실행: `.claude/agents/test-runner.md` (general-purpose 타입)
+- 기능 구현: `.claude/agents/feature-dev.md` (general-purpose 타입)
 
 ## Plugins Layer (배포)
 
