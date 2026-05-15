@@ -90,7 +90,7 @@ Codex 분석(2026-05-14)과 본 에이전트 재검증으로 확인된 루트/�
 - [x] `docs/subagent-guide.md`의 디스패치 기준에 `design-reviewer` 추가 — `code-reviewer`와 병렬 가능 명시.
 - [x] DESIGN.md의 `[src:1]` 인용이 가리키는 외부 URL(`api.anthropic.com/v1/design/...`)에 대한 의존성 정책 명시 — DESIGN.md 상단에 boxed note 추가(self-contained 운영 가능 명시), `docs/design-guidelines.md`의 1차 소스 규칙에 외부 URL 재방문 조건 4종과 만료 시 보존 정책(`[src:N (archived)]`) 추가.
 - [x] DESIGN.md의 frontmatter(`name: 원티드`, `slug: wanted`, `category: etc`, `last_updated`)가 다른 프로젝트에 install될 때의 정책 결정 — **옵션 B 결정**(그대로 복사 + 첫 단계 재작성 의무화). 이유: `.example` 분리는 다른 템플릿(STATE.md/AGENTS.md)의 "복사 후 수정" 패턴과 어긋남. `templates/startup-checklist.md` 섹션 3에 Q6(디자인 시스템 선택 A/B/C) + Q7(frontmatter 재작성) + Q8(STATE.md 기록) 추가, `docs/design-guidelines.md`의 메타 운영 섹션에 install 정책 명시.
-- [ ] `.claude/hooks/`에 디자인 토큰 외 값 사용 정적 경고 hook 도입 검토 — CSS/SCSS/Tailwind/JSX inline style 변경 시 (1) hex 직접 사용(`#xxxxxx`)이 `colors_and_type.css` 외 파일에서 등장, (2) 비-4의 배수 px(6/10/14/18/22)이 등장하면 경고. 차단이 아닌 경고로 운영해 false-positive에서 작업이 막히지 않게 한다. (정적 검출의 한계로 우선순위는 낮음.)
+- [x] `.claude/hooks/`에 디자인 토큰 외 값 사용 정적 경고 hook 도입 검토 — `.claude/hooks/warn-design-tokens.sh` opt-in 스크립트 작성(hex/비-4 px 검출, 항상 exit 0), `settings.local.json`에는 기본 미등록 결정. CLAUDE.md Hooks Layer 섹션 + manifest.json + design-guidelines.md에 활성화 방법 명시. 통합 동작 검증(hex+10px 입력 → 경고 출력 + exit 0 / md 파일 → 통과).
 - [ ] `templates/qa-intake.md`에 "디자인 토큰 외 값 사용 시 PR에서 경고 표시 여부" 항목 추가 — CI/CD 워크플로우 정책 수집 단계에 통합.
 - [ ] DESIGN.md 갱신 시 STATE.md `이번 세션에서 완료한 작업`에 토큰/컴포넌트 변경 이력을 남기는 운영 규칙을 `docs/design-guidelines.md`와 `AGENTS.md` 문서화 원칙 섹션에 명시.
 - [ ] 위 통합 완료 후 `STATE.md`의 `이번 세션에서 완료한 작업` + `현재 기준 파일` 섹션에 `DESIGN.md`, `docs/design-guidelines.md`, `.claude/skills/design/SKILL.md`, `.claude/agents/design-reviewer.md`를 추가한다.

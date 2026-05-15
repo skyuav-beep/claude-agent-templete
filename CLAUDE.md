@@ -122,6 +122,7 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 - `block-destructive.sh` — `rm -rf`, `git reset --hard`, `git push --force`, `git clean -f` 등 파괴적 명령 차단
 - `block-secret-files.sh` — `.env`, `*.pem`, `*.key`, `credentials.json` 등 비밀 파일 쓰기 차단
 - `state-reminder.sh` — `git commit` 시 STATE.md 미갱신 경고 (차단하지 않음)
+- `warn-design-tokens.sh` — opt-in: hex 색/비-4의 배수 px 사용 경고 (기본 미등록, 활성화 방법은 `docs/design-guidelines.md` 참조)
 
 hook을 추가하거나 수정할 때는 `.claude/hooks/`에 스크립트를 작성하고 `settings.local.json`에 등록한다.
 

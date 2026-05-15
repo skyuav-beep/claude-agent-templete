@@ -73,6 +73,22 @@
 - `DESIGN.md`를 갱신했으면 `last_updated` 필드를 같은 커밋에서 함께 수정한다.
 - `DESIGN.md`와 product 코드(CSS 변수·Tailwind config·Theme 정의)가 어긋나면, `DESIGN.md`를 정본으로 본다. 코드 쪽을 카탈로그에 맞춘다.
 
+## 토큰 외 값 정적 경고 hook (opt-in)
+
+`.claude/hooks/warn-design-tokens.sh`는 PreToolUse Write/Edit hook으로 등록 가능한 opt-in 가드레일이다.
+
+- 검출 대상: (1) hex 색상 직접 사용(`colors_and_type.css` 외 파일에서), (2) 비-4의 배수 px 값(6/10/14/18/22).
+- 적용 파일: `*.css`, `*.scss`, `*.less`, `*.tsx`, `*.jsx`, `*.ts`, `*.js`, `*.vue`, `*.svelte`. 그 외는 즉시 통과.
+- 운영 정책: 경고만 출력하고 차단하지 않는다(항상 `exit 0`). false-positive 우려와 정적 검출의 한계로 인해 `settings.local.json`에는 기본 등록하지 않는다.
+- 활성화 방법: 디자인 토큰 강제가 필요한 프로젝트에서 `settings.local.json`의 `hooks.PreToolUse`에 다음 항목을 추가한다.
+
+```json
+{
+  "matcher": "Write|Edit|MultiEdit",
+  "hooks": [{ "type": "command", "command": "bash .claude/hooks/warn-design-tokens.sh" }]
+}
+```
+
 ## 자동 활성화 흐름
 
 디자인 키워드가 사용자 메시지에 등장하면 `.claude/skills/design/SKILL.md`가 자동 활성화되어 `DESIGN.md`를 강제 로드한다. `feature`/`refactor`/`bugfix` 진행 중 UI 영향이 발견되면 design skill이 추가로 활성화되어 일관성 항목을 보강한다.

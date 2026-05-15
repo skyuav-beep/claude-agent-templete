@@ -45,7 +45,8 @@
       "files": [
         { "path": ".claude/hooks/block-destructive.sh", "description": "Block rm -rf, git reset --hard, etc." },
         { "path": ".claude/hooks/block-secret-files.sh", "description": "Block writing to .env, *.pem, *.key" },
-        { "path": ".claude/hooks/state-reminder.sh", "description": "Warn if STATE.md not updated on commit" }
+        { "path": ".claude/hooks/state-reminder.sh", "description": "Warn if STATE.md not updated on commit" },
+        { "path": ".claude/hooks/warn-design-tokens.sh", "description": "Opt-in: warn on hex/non-4px usage in CSS/JSX (not registered by default)" }
       ],
       "settings": ".claude/settings.local.json"
     },
