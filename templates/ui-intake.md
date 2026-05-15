@@ -37,6 +37,16 @@
 ## 콘텐츠 원칙
 
 - 버튼 문구, 에러 문구, 빈 상태 문구 톤을 적는다.
+- 카피 톤 기본값: `DESIGN.md`의 친근한 존댓말(`-요`/`-어요`/`-아요`) + 버튼 동사형(예: `지원하기`, `저장하기`). 다르게 가져갈 항목만 적는다.
+
+## 토큰 정책 (색·spacing·radius·typography)
+
+- 기본값: `DESIGN.md`의 토큰 호출 형식(`{colors.bg-brand}`, `{spacing.space-16}`, `{rounded.radius-8}`, `{typography.body1}`)을 그대로 사용한다.
+- 색상 톤: 기본값 사용. 변경할 영역만 명시 (예: `bg-accent`만 프로젝트 컬러로 override).
+- spacing: 4의 배수만 사용 (DESIGN.md Don't 정책). 비-4의 배수(6/10/14/18/22)가 필요하면 사유와 함께 적는다.
+- radius: 기본값 `{rounded.radius-8}`. 카드/버튼/입력 단위로 다르면 명시.
+- typography: 기본값 `{typography.body1}` 등. 헤딩/본문/버튼별로 다르게 잡을 항목만 적는다.
+- 다크 모드: 별도 alias 정책이 필요하면 적는다 (없으면 DESIGN.md `## Dark Alias` 그대로 사용).
 
 ## 작성 예시
 
@@ -72,4 +82,9 @@
 - 버튼: 동사 시작, 짧게 ("저장", "취소 요청").
 - 에러: 사실 + 다음 액션 ("저장 실패. 잠시 후 다시 시도해주세요.").
 - 빈 상태: 안내 + 다음 액션 버튼 1개.
+- 카피 톤: DESIGN.md 기본값(친근한 존댓말 + 버튼 동사형) 그대로 사용.
+
+## 토큰 정책
+- 색·spacing·radius·typography 모두 DESIGN.md 기본값 사용.
+- override: `bg-accent`만 프로젝트 브랜드 컬러로 교체 (별도 PR에서 토큰 정의 후 호출).
 ```
