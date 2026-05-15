@@ -777,6 +777,143 @@
       text-decoration: none; font-weight: 500;
     }
     .toc a:hover { background: var(--bg-brand-subtle); color: var(--fg-brand); }
+
+    /* ============================================================
+       시안별 시그너처 specimen — [data-design] 속성으로 가시성 제어
+       기본: 모두 .signature 자식들이 보임. 각 시안 활성 시 해당 시안 전용
+       시그너처가 강조 chip으로 표시되어 시안 차별화를 즉시 확인.
+       ============================================================ */
+    .signature-meta {
+      display: inline-block; padding: 2px 8px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+      border-radius: var(--radius-full);
+      background: var(--bg-brand-subtle); color: var(--fg-brand);
+      margin-bottom: var(--space-12);
+    }
+
+    /* kbd (linear-like 시그너처) */
+    .kbd {
+      display: inline-flex; align-items: center; gap: 2px;
+      height: 20px; padding: 0 6px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-4);
+      color: var(--fg-secondary);
+      font-family: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
+      font-size: 11px; font-weight: 500;
+    }
+    .kbd-row { display: inline-flex; align-items: center; gap: var(--space-8); }
+    .kbd-row .desc { font-size: 13px; color: var(--fg-default); }
+
+    /* amount input (toss-like 시그너처) */
+    .amount-input {
+      display: flex; align-items: baseline; gap: var(--space-8);
+      padding: var(--space-16) var(--space-20);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: 12px;
+    }
+    .amount-input .amount {
+      font-size: 32px; font-weight: 700; line-height: 1;
+      color: var(--fg-strong);
+      letter-spacing: -0.020em;
+      font-variant-numeric: tabular-nums;
+      flex: 1; text-align: right;
+      background: transparent; border: 0; outline: none;
+      font-family: inherit;
+    }
+    .amount-input .currency { font-size: 16px; font-weight: 600; color: var(--fg-secondary); }
+
+    /* M3 button radius-full (material-3 시그너처) */
+    .button.m3-pill { border-radius: var(--radius-full); padding: 0 24px; height: 40px; font-weight: 500; letter-spacing: 0.10em; }
+
+    /* 채도 0 강조 (minimal-mono 시그너처) */
+    .mono-emphasis {
+      display: flex; flex-direction: column; gap: var(--space-4);
+    }
+    .mono-emphasis .h1 { font-size: 32px; font-weight: 700; color: var(--fg-strong); letter-spacing: -0.020em; }
+    .mono-emphasis .h2 { font-size: 22px; font-weight: 700; color: var(--fg-strong); letter-spacing: -0.015em; }
+    .mono-emphasis .h3 { font-size: 16px; font-weight: 600; color: var(--fg-default); }
+    .mono-emphasis .h4 { font-size: 14px; font-weight: 500; color: var(--fg-secondary); }
+    .mono-emphasis .underline { border-bottom: 2px solid var(--fg-strong); padding-bottom: 2px; }
+
+    /* gradient accent (linear-like 시그너처) */
+    .gradient-accent {
+      display: inline-block; padding: var(--space-8) var(--space-16);
+      background: linear-gradient(135deg, oklch(0.620 0.180 268) 0%, oklch(0.700 0.170 200) 100%);
+      color: white; font-size: 14px; font-weight: 600;
+      border-radius: var(--radius-8);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, oklch(0.620 0.180 268) 0%, oklch(0.700 0.170 200) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: 28px; font-weight: 700; letter-spacing: -0.020em;
+    }
+
+    /* 채용보상금 시그너처 (wanted) */
+    .reward-card {
+      padding: var(--space-20);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-12);
+      max-width: 280px;
+    }
+    .reward-card .company { font-size: 13px; color: var(--fg-secondary); }
+    .reward-card .role { font-size: 16px; font-weight: 700; color: var(--fg-strong); margin-top: 4px; }
+    .reward-card .reward {
+      margin-top: var(--space-12); display: flex; align-items: baseline; gap: 4px;
+      color: var(--fg-brand); font-size: 14px; font-weight: 700;
+    }
+    .reward-card .reward-amount { font-size: 18px; font-weight: 700; color: var(--fg-brand); }
+
+    /* hero gradient (toss-like 시그너처) */
+    .hero-banner {
+      padding: var(--space-32);
+      background: linear-gradient(135deg, oklch(0.620 0.180 245) 0%, oklch(0.680 0.160 268) 100%);
+      color: white; border-radius: var(--radius-12);
+      display: flex; flex-direction: column; gap: var(--space-12);
+    }
+    .hero-banner .title { font-size: 24px; font-weight: 700; letter-spacing: -0.018em; }
+    .hero-banner .sub { font-size: 14px; opacity: 0.85; }
+    .hero-banner .cta {
+      align-self: start; padding: 8px 16px;
+      background: white; color: oklch(0.540 0.180 245);
+      border-radius: var(--radius-12);
+      font-size: 14px; font-weight: 700;
+    }
+
+    /* M3 elevated card (material-3 시그너처) */
+    .m3-elevated-card {
+      padding: var(--space-24);
+      background: var(--bg-surface);
+      border-radius: var(--radius-12);
+      box-shadow: var(--shadow-2);
+      max-width: 280px;
+    }
+    .m3-elevated-card .label { font-size: 11px; font-weight: 500; letter-spacing: 0.05em; color: var(--fg-secondary); text-transform: none; }
+    .m3-elevated-card .title { font-size: 22px; font-weight: 400; color: var(--fg-strong); margin-top: 4px; }
+
+    /* 시안별 specimen 가시성 — 활성 시안만 표시 */
+    .signature-only { display: none; }
+    :root[data-design="wanted"] .signature-only.wanted,
+    :root[data-design="minimal-mono"] .signature-only.minimal-mono,
+    :root[data-design="toss-like"] .signature-only.toss-like,
+    :root[data-design="material-3"] .signature-only.material-3,
+    :root[data-design="linear-like"] .signature-only.linear-like {
+      display: block;
+    }
+    .signature-only.inline {
+      display: none;
+    }
+    :root[data-design="wanted"] .signature-only.inline.wanted,
+    :root[data-design="minimal-mono"] .signature-only.inline.minimal-mono,
+    :root[data-design="toss-like"] .signature-only.inline.toss-like,
+    :root[data-design="material-3"] .signature-only.inline.material-3,
+    :root[data-design="linear-like"] .signature-only.inline.linear-like {
+      display: inline-flex;
+    }
   </style>
 </head>
 <body>
@@ -807,6 +944,7 @@
 <!-- TOC -->
 <div class="toc">
   <a href="#tokens">토큰 색</a>
+  <a href="#signature">시안 시그너처</a>
   <a href="#login">login-layout</a>
   <a href="#sidebar">sidebar-nav</a>
   <a href="#topbar">top-bar</a>
@@ -849,6 +987,121 @@
       <div style="color:var(--fg-warning)">fg-warning</div>
       <div style="color:var(--fg-danger)">fg-danger</div>
     </div>
+  </div>
+</section>
+
+<!-- ===================== Signature (시안별 차별화) ===================== -->
+<section class="section" id="signature">
+  <div class="section-head">
+    <h2>시안 시그너처</h2>
+    <p>활성 시안 dropdown을 변경하면 해당 시안의 시그너처 컴포넌트가 표시된다.</p>
+  </div>
+
+  <!-- wanted: 잡카드 채용보상금 -->
+  <div class="specimen signature-only wanted">
+    <div class="specimen-label">WANTED 시그너처 — 채용보상금 잡카드</div>
+    <div class="signature-meta">잡카드 우측 하단 fg-brand 강조</div>
+    <div class="reward-card">
+      <div class="company">테크컴퍼니</div>
+      <div class="role">시니어 프론트엔드 엔지니어</div>
+      <div class="reward">
+        <span>채용보상금</span>
+        <span class="reward-amount">200만원</span>
+      </div>
+    </div>
+    <p style="margin-top:var(--space-12);font-size:13px;color:var(--fg-secondary)">
+      잡카드 우측 하단에 항상 노출되는 wanted 시그너처. fg-brand 색으로 다른 잡 사이트와 구분.
+    </p>
+  </div>
+
+  <!-- minimal-mono: 채도 0 위계 -->
+  <div class="specimen signature-only minimal-mono">
+    <div class="specimen-label">MINIMAL-MONO 시그너처 — 색 없는 타이포 위계</div>
+    <div class="signature-meta">색 없이 size + weight + underline 으로만 위계</div>
+    <div class="mono-emphasis">
+      <div class="h1">매출 ₩48,200,000</div>
+      <div class="h2">오늘 주문 1,284건</div>
+      <div class="h3">전월 대비 12.4% 증가</div>
+      <div class="h4 underline">상세 보기</div>
+    </div>
+    <p style="margin-top:var(--space-12);font-size:13px;color:var(--fg-secondary)">
+      brand color가 채도 0 — 위계는 size/weight/underline 조합으로만 만든다. 다른 시안의 fg-brand 색 강조와 직교.
+    </p>
+  </div>
+
+  <!-- toss-like: hero gradient + amount input -->
+  <div class="specimen signature-only toss-like">
+    <div class="specimen-label">TOSS-LIKE 시그너처 — hero gradient + amount input</div>
+    <div class="signature-meta">policy.gradient_locations: ["hero"] 한정</div>
+    <div class="hero-banner">
+      <div class="title">간편하게 송금해 보세요</div>
+      <div class="sub">계좌번호 없이 전화번호로 보낼 수 있어요</div>
+      <button class="cta">시작하기</button>
+    </div>
+
+    <div class="signature-meta" style="margin-top:var(--space-24)">amount input — tabular-nums + 32/700 + 큰 라운드</div>
+    <div class="amount-input">
+      <input class="amount" value="1,250,000" />
+      <span class="currency">원</span>
+    </div>
+    <p style="margin-top:var(--space-12);font-size:13px;color:var(--fg-secondary)">
+      금액 입력 전용 variant. tabular-nums로 자릿수 시각 정렬, 우측 정렬 + 통화 단위 suffix.
+    </p>
+  </div>
+
+  <!-- material-3: button radius-full + elevated card -->
+  <div class="specimen signature-only material-3">
+    <div class="specimen-label">MATERIAL-3 시그너처 — fully rounded button + elevated card</div>
+    <div class="signature-meta">M3 button은 radius-full + positive letter-spacing</div>
+    <div style="display:flex;gap:var(--space-12);align-items:center;flex-wrap:wrap">
+      <button class="button m3-pill" style="background:var(--bg-brand);color:var(--fg-on-brand)">Save</button>
+      <button class="button m3-pill" style="background:var(--bg-brand-subtle);color:var(--fg-brand)">Tonal</button>
+      <button class="button m3-pill" style="background:var(--bg-surface);color:var(--fg-brand);box-shadow:var(--shadow-1)">Elevated</button>
+      <button class="button m3-pill" style="background:transparent;color:var(--fg-brand);border:1px solid var(--border-default)">Outlined</button>
+      <button class="button m3-pill" style="background:transparent;color:var(--fg-brand)">Text</button>
+    </div>
+    <p style="margin-top:var(--space-12);font-size:13px;color:var(--fg-secondary)">
+      M3 5종 button variant — filled / tonal / elevated / outlined / text. 모두 radius-full + positive letter-spacing(0.10em).
+    </p>
+
+    <div class="signature-meta" style="margin-top:var(--space-24)">elevated card — shadow-2 적극</div>
+    <div class="m3-elevated-card">
+      <div class="label">TOTAL REVENUE</div>
+      <div class="title">₩48,200,000</div>
+    </div>
+  </div>
+
+  <!-- linear-like: kbd + gradient accent -->
+  <div class="specimen signature-only linear-like">
+    <div class="specimen-label">LINEAR-LIKE 시그너처 — kbd 단축키 + gradient accent</div>
+    <div class="signature-meta">kbd 컴포넌트 — productivity 시그너처</div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-12)">
+      <div class="kbd-row">
+        <span class="kbd">⌘</span><span class="kbd">K</span>
+        <span class="desc">Open command palette</span>
+      </div>
+      <div class="kbd-row">
+        <span class="kbd">⌘</span><span class="kbd">⇧</span><span class="kbd">P</span>
+        <span class="desc">Switch project</span>
+      </div>
+      <div class="kbd-row">
+        <span class="kbd">G</span><span style="color:var(--fg-tertiary)">then</span><span class="kbd">I</span>
+        <span class="desc">Go to inbox</span>
+      </div>
+      <div class="kbd-row">
+        <span class="kbd">Esc</span>
+        <span class="desc">Close</span>
+      </div>
+    </div>
+
+    <div class="signature-meta" style="margin-top:var(--space-24)">gradient accent — CTA hover, 강조 텍스트</div>
+    <div style="display:flex;gap:var(--space-16);align-items:center;flex-wrap:wrap">
+      <span class="gradient-accent">Create issue</span>
+      <span class="gradient-text">$48.2K MRR</span>
+    </div>
+    <p style="margin-top:var(--space-12);font-size:13px;color:var(--fg-secondary)">
+      brand는 gradient pair(violet→teal). accent는 CTA·강조 텍스트·selection에 적극 사용. 다른 시안의 단색 brand와 직교.
+    </p>
   </div>
 </section>
 
