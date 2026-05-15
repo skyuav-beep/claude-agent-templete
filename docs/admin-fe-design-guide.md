@@ -4,13 +4,20 @@ admin/dashboard 표면을 만들 때 `DESIGN.md`의 토큰·컴포넌트를 어�
 
 ## 1차 원칙 (admin에도 동일 적용)
 
-- 평면 표면 + 1px `{colors.border-subtle}` 헤어라인 + 단일 강조색(`{colors.bg-brand}`). 카드 그림자 금지.
+본 섹션은 모든 시안에 공통 적용되는 시안 무관 원칙이다. 시안별 정책(카드 그림자 허용 여부, gradient 위치, 카피 톤)은 활성 시안의 frontmatter `policy:` 블록과 `## Do's and Don'ts` 섹션을 따른다.
+
+**시안 무관 (alias 계약 기반)**
 - 색상은 시맨틱 alias 우선(`bg-*`, `fg-*`, `border-*`), atomic ramp는 새 alias 정의 시에만.
-- spacing/radius는 `{spacing.*}` / `{rounded.*}` 사다리만 사용. 6/10/14/18/22 도입 금지.
-- 텍스트 위계는 alpha multiplier로 표현. 별도 gray hex 금지.
-- 카피는 친근한 존댓말(`-요`/`-어요`/`-아요`). 버튼은 동사형 단문(`저장하기`, `삭제하기`).
-- 이모지를 product UI에 inline 사용 금지. 화살표 등은 모두 monochrome SVG.
-- gradient를 chrome(top bar, sidebar, CTA, 카드)에 사용 금지.
+- spacing/radius는 `{spacing.*}` / `{rounded.*}` 사다리만 사용. 6/10/14/18/22 도입 금지(시안의 `policy.non_4_spacing`이 false인 한).
+- 텍스트 위계는 alpha multiplier(`fg-strong/default/secondary/tertiary/disabled`)로 표현. 별도 gray hex 금지.
+- 이모지를 product UI에 inline 사용 금지. 화살표 등은 모두 monochrome SVG `currentColor` 상속.
+- 1px 헤어라인 보더(`{colors.border-subtle}`)가 카드 구조의 기본. 그림자 사용 여부는 시안 정책.
+
+**시안 정책에 따라 분기**
+- 카드 그림자: `policy.shadow_on_cards` (true: toss-like/material-3, false: wanted/minimal-mono/linear-like)
+- gradient 위치: `policy.gradient_locations` 배열에 명시된 위치 외 사용 금지
+- 카피 톤: `policy.copy_tone` (ko-friendly: `-요`/`-어요`/`-아요` + 동사형 / ko-formal: `-습니다` / en-sentence: sentence case)
+- 단일 강조색: `{colors.bg-brand}` 1개만 primary CTA에 (시안의 brand 정의 따름 — solid hue 또는 gradient pair)
 
 ## 화면 골격
 
@@ -54,7 +61,7 @@ admin의 표준 골격은 3개 영역으로 구성된다.
 ```
 
 - 카드 너비 400(min), padding `{spacing.space-32}`, radius `{rounded.radius-12}`.
-- 에러 inline: 입력 하단에 `{component.alert}` inline. 카피는 `이메일 또는 비밀번호가 일치하지 않아요`.
+- 에러 inline: 입력 하단에 `{component.alert}` inline. 카피 예 (ko-friendly): `이메일 또는 비밀번호가 일치하지 않아요`. (en-sentence: `Email or password is incorrect`)
 - 다중 환경(운영/스테이징/개발) 운영 시 우측 상단에 `{component.chip}` 변형으로 환경 표시.
 - 다크 모드 대응: 카드 `{colors.bg-surface}` alias가 light/dark 자동 분기.
 
@@ -104,7 +111,7 @@ top-bar (page-title: "주문 목록")
 - filter row 컴포넌트: `{component.chip}` 또는 dropdown-style `{component.button-secondary}` + `{component.search}`. row 내부 gap `{spacing.space-8}`, row 자체 padding `{spacing.space-16}` 0.
 - table은 `### data-table` 명세 그대로. status 셀은 `{component.badge}` 시맨틱 색.
 - 행 클릭으로 상세 진입 시 cursor:pointer + hover bg `{colors.bg-subtle}`. 액션 셀 `{component.button-tertiary}` sm은 `event.stopPropagation()` 분리.
-- 빈 상태: `{component.empty-state}`를 테이블 container 내부에 padding 80 0으로 둠. 카피 예: `조회된 주문이 없어요. 필터를 조정해 보세요`.
+- 빈 상태: `{component.empty-state}`를 테이블 container 내부에 padding 80 0으로 둠. 카피 예 (ko-friendly): `조회된 주문이 없어요. 필터를 조정해 보세요` / (en-sentence): `No orders found. Try adjusting filters.`
 - 페이지네이션 컨트롤은 우측 정렬, ghost/tertiary 버튼 sm.
 
 ## 상세 페이지 패턴
@@ -140,19 +147,30 @@ top-bar (page-title: "주문 #1023", breadcrumb: 주문 / #1023)
 
 ## 알림 / 토스트 / 모달
 
-- 작업 결과: `{component.toast}` 4–6초 자동 dismiss. 위치는 우측 하단(`{spacing.space-24}` offset). 카피 예: `저장되었어요`, `삭제할 수 없어요. 진행 중인 작업이 있어요`.
+- 작업 결과: `{component.toast}` 4–6초 자동 dismiss. 위치는 우측 하단(`{spacing.space-24}` offset). 카피 예 (ko-friendly): `저장되었어요`, `삭제할 수 없어요. 진행 중인 작업이 있어요` / (en-sentence): `Saved`, `Cannot delete: an operation is in progress`.
 - 인라인 경고: `{component.alert}` 페이지 상단 또는 섹션 헤드. 색은 semantic alias.
 - 확인 다이얼로그: `{component.modal}`(SSOT에서 dropdown/popover와 함께 grouped). 위험 액션은 본문에 결과를 명시한 후 `{component.button-danger}` 확정.
 
 ## 카피 톤 체크리스트
 
-admin이라도 product 카피 톤은 동일하게 유지한다.
+admin 표면도 product 카피 톤은 활성 시안의 `policy.copy_tone`을 따른다. 본 가이드는 ko-friendly / ko-formal / en-sentence 3종을 비교 표로 제공한다.
 
-- O: `저장되었어요`, `삭제할 수 없어요`, `정산을 다시 계산해 보세요`
-- O 버튼: `저장하기`, `취소`, `내보내기`, `다시 시도`
-- X: `저장되었습니다` (격식체), `저장 완료!` (이모지/느낌표), `여기를 눌러주세요` (챗봇 톤), `Save` (영문 단독 Title Case)
-- 표 헤더는 ALL-CAPS 금지. 한국어 명사 단문 또는 sentence case 영문.
+### copy_tone 별 패턴
+
+| copy_tone | OK 본문 | OK 버튼 | X 금지 |
+|---|---|---|---|
+| **ko-friendly** (wanted, minimal-mono, toss-like) | `저장되었어요`, `삭제할 수 없어요`, `정산을 다시 계산해 보세요` | `저장하기`, `취소`, `내보내기`, `다시 시도` | `저장되었습니다` (격식체), `저장 완료!` (이모지/느낌표), `여기를 눌러주세요` (챗봇 톤), `Save` (영문 Title Case) |
+| **ko-formal** | `저장되었습니다`, `삭제할 수 없습니다` | `저장`, `취소`, `내보내기` | `저장되었어요` (친근체), `Save All Items` (Title Case), 챗봇 톤 |
+| **en-sentence** (material-3, linear-like) | `Saved`, `Cannot delete: an operation is in progress` | `Save`, `Cancel`, `Export`, `Try again` | `SAVE` (ALL-CAPS), `Save All Items` (Title Case), `Please click here` (챗봇 톤), 격식 영문 |
+
+### 모든 copy_tone 공통
+
+- 표 헤더는 ALL-CAPS 금지. 한국어 명사 단문 또는 영문 sentence case.
 - 마침표는 본문 산문에만. UI 라벨/리스트/버튼 라벨 끝에는 찍지 않는다.
+- 이모지를 product UI inline 사용 금지(상태 표시도 monochrome SVG로 대체).
+- 마케팅 과장 어휘(`혁신적`, `차세대`, `최고의`, `Innovative`, `Best in class`) 사용 금지.
+
+활성 시안의 정확한 카피 톤은 `designs/<active-slug>.md` 의 `## Brand & Style` 섹션 Voice 단락과 `## Do's and Don'ts` 의 카피 항목을 정본으로 본다.
 
 ## 데이터 밀도 결정
 
