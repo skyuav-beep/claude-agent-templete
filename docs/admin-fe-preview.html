@@ -43,6 +43,70 @@
       --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.10);
     }
 
+    /* ----- toss-like (light) ----- */
+    :root[data-design="toss-like"][data-theme="light"] {
+      --bg-canvas:        oklch(0.985 0.002 245);
+      --bg-surface:       oklch(1 0 0);
+      --bg-subtle:        oklch(0.975 0.005 245);
+      --bg-muted:         oklch(0.955 0.008 245);
+      --bg-elevated:      oklch(1 0 0);
+      --bg-inverse:       oklch(0.180 0.020 245);
+      --bg-brand:         oklch(0.620 0.180 245);
+      --bg-brand-subtle:  oklch(0.955 0.020 245);
+      --bg-danger-subtle: oklch(0.962 0.020 22);
+      --bg-success-subtle:oklch(0.965 0.045 152);
+      --bg-warning-subtle:oklch(0.968 0.030 81);
+      --fg-strong:    oklch(0.180 0.020 245);
+      --fg-default:   oklch(0.220 0.018 245 / 0.92);
+      --fg-secondary: oklch(0.280 0.015 245 / 0.62);
+      --fg-tertiary:  oklch(0.280 0.015 245 / 0.44);
+      --fg-disabled:  oklch(0.280 0.015 245 / 0.28);
+      --fg-on-brand:  oklch(1 0 0);
+      --fg-brand:     oklch(0.540 0.180 245);
+      --fg-success:   oklch(0.520 0.180 144);
+      --fg-warning:   oklch(0.580 0.140 56);
+      --fg-danger:    oklch(0.540 0.200 27);
+      --border-subtle:  oklch(0.520 0.020 245 / 0.10);
+      --border-default: oklch(0.520 0.020 245 / 0.22);
+      --border-strong:  oklch(0.520 0.020 245 / 0.34);
+      --border-brand:   oklch(0.620 0.180 245);
+      --shadow-1:   0 1px 3px oklch(0 0 0 / 0.06);
+      --shadow-2:   0 4px 12px oklch(0 0 0 / 0.08);
+      --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.12);
+    }
+
+    /* ----- toss-like (dark) ----- */
+    :root[data-design="toss-like"][data-theme="dark"] {
+      --bg-canvas:        oklch(0.145 0.020 245);
+      --bg-surface:       oklch(0.180 0.025 245);
+      --bg-subtle:        oklch(0.125 0.020 245);
+      --bg-muted:         oklch(0.215 0.025 245);
+      --bg-elevated:      oklch(0.250 0.025 245);
+      --bg-inverse:       oklch(1 0 0);
+      --bg-brand:         oklch(0.620 0.180 245);
+      --bg-brand-subtle:  oklch(0.180 0.085 245);
+      --bg-danger-subtle: oklch(0.298 0.10 22 / 0.34);
+      --bg-success-subtle:oklch(0.298 0.10 144 / 0.30);
+      --bg-warning-subtle:oklch(0.298 0.10 56 / 0.34);
+      --fg-strong:    oklch(1 0 0);
+      --fg-default:   oklch(1 0 0 / 0.92);
+      --fg-secondary: oklch(1 0 0 / 0.62);
+      --fg-tertiary:  oklch(1 0 0 / 0.44);
+      --fg-disabled:  oklch(1 0 0 / 0.28);
+      --fg-on-brand:  oklch(1 0 0);
+      --fg-brand:     oklch(0.730 0.155 245);
+      --fg-success:   oklch(0.740 0.165 144);
+      --fg-warning:   oklch(0.770 0.150 64);
+      --fg-danger:    oklch(0.720 0.215 27);
+      --border-subtle:  oklch(1 0 0 / 0.10);
+      --border-default: oklch(1 0 0 / 0.22);
+      --border-strong:  oklch(1 0 0 / 0.34);
+      --border-brand:   oklch(0.730 0.155 245);
+      --shadow-1:   0 1px 3px oklch(0 0 0 / 0.24);
+      --shadow-2:   0 4px 12px oklch(0 0 0 / 0.36);
+      --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.50);
+    }
+
     /* ----- minimal-mono (light) ----- */
     :root[data-design="minimal-mono"][data-theme="light"] {
       --bg-canvas:        oklch(1 0 0);
@@ -1056,6 +1120,16 @@
       policy: {
         shadow_on_cards: false,
         gradient_locations: [],
+        copy_tone: 'ko-friendly',
+        dark_mode: 'supported',
+        non_4_spacing: false,
+      },
+    },
+    'toss-like': {
+      label: 'toss-like',
+      policy: {
+        shadow_on_cards: true,
+        gradient_locations: ['hero'],
         copy_tone: 'ko-friendly',
         dark_mode: 'supported',
         non_4_spacing: false,
