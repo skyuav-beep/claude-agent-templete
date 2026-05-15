@@ -71,7 +71,8 @@
       { "path": "designs/_template.md", "description": "Skeleton for new catalog authoring" },
       { "path": "designs/wanted.md", "description": "Wanted catalog (default active)" },
       { "path": "designs/minimal-mono.md", "description": "Minimal mono starter — 흑백 단색, gradient 전면 금지, 도구/admin UI 기본 시안" },
-      { "path": "designs/toss-like.md", "description": "Toss-like fintech — 단일 강조 파랑, 큰 라운드, 카드 그림자 허용, hero gradient" }
+      { "path": "designs/toss-like.md", "description": "Toss-like fintech — 단일 강조 파랑, 큰 라운드, 카드 그림자 허용, hero gradient" },
+      { "path": "designs/material-3.md", "description": "Material 3 — tonal palette, button radius-full, elevation 5단, en-sentence" }
     ],
     "selector": ".claude/plugins/select-design.sh"
   },
