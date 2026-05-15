@@ -50,6 +50,16 @@ Q2. 참고하고 싶은 서비스나 디자인이 있다면?
 Q3. 가장 중요한 사용자 흐름 1~3개는?
 Q4. 반드시 고려해야 할 화면 상태는? (예: loading, empty, error, disabled)
 Q5. 접근성 대응 수준은? (예: 키보드 탐색, 스크린 리더, 색상 대비 기준)
+
+# 디자인 시스템 선택 (DESIGN.md frontmatter 재작성 필수)
+Q6. 사용할 디자인 시스템은?
+    A. 템플릿 기본 DESIGN.md(원티드 카탈로그)를 그대로 사용한다.
+    B. 본 프로젝트 전용 디자인 시스템을 새로 채운다 (DESIGN.md를 비우고 토큰/컴포넌트 신규 작성).
+    C. 기본 카탈로그를 fork 하여 일부 토큰만 override 한다.
+Q7. (B/C 선택 시) DESIGN.md frontmatter(`name`, `slug`, `category`, `last_updated`)를
+    본 프로젝트 정보로 재작성한다.
+    예: name: <프로젝트명>, slug: <영문 slug>, category: <카테고리>, last_updated: <오늘 날짜>
+Q8. 위 결정과 frontmatter 변경을 STATE.md `이번 세션에서 완료한 작업`에 기록한다.
 ```
 
 ---

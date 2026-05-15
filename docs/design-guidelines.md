@@ -69,6 +69,7 @@
 ## 메타 운영
 
 - `DESIGN.md`의 frontmatter(`name`, `slug`, `category`, `last_updated`)는 카탈로그 메타다. 다른 프로젝트로 복제할 때는 해당 프로젝트의 디자인 시스템 정보로 갱신한다.
+- **install 정책(결정: 옵션 B — 그대로 복사 + 첫 단계 재작성)**: `install.sh`는 `DESIGN.md`를 원본 그대로 복사한다. 별도 `DESIGN.md.example` 파일로 분리하지 않는다(다른 템플릿과 일관). 신규 프로젝트는 `templates/startup-checklist.md` 섹션 3 Q6~Q8에서 디자인 시스템 선택과 frontmatter 재작성을 의무로 진행한다.
 - `DESIGN.md`를 갱신했으면 `last_updated` 필드를 같은 커밋에서 함께 수정한다.
 - `DESIGN.md`와 product 코드(CSS 변수·Tailwind config·Theme 정의)가 어긋나면, `DESIGN.md`를 정본으로 본다. 코드 쪽을 카탈로그에 맞춘다.
 

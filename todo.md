@@ -89,7 +89,7 @@ Codex 분석(2026-05-14)과 본 에이전트 재검증으로 확인된 루트/�
 - [x] `.claude/agents/design-reviewer.md` 신규 서브에이전트 템플릿 작성 — Do/Don't 위반 자동 검출, 시그너처 패턴 누락, 다크 alias 누락. 출력 형식 및 도구 제한 명시.
 - [x] `docs/subagent-guide.md`의 디스패치 기준에 `design-reviewer` 추가 — `code-reviewer`와 병렬 가능 명시.
 - [x] DESIGN.md의 `[src:1]` 인용이 가리키는 외부 URL(`api.anthropic.com/v1/design/...`)에 대한 의존성 정책 명시 — DESIGN.md 상단에 boxed note 추가(self-contained 운영 가능 명시), `docs/design-guidelines.md`의 1차 소스 규칙에 외부 URL 재방문 조건 4종과 만료 시 보존 정책(`[src:N (archived)]`) 추가.
-- [ ] DESIGN.md의 frontmatter(`name: 원티드`, `slug: wanted`, `category: etc`, `last_updated`)가 다른 프로젝트에 install될 때의 정책 결정 — 옵션 A: DESIGN.md를 템플릿 예시(`DESIGN.md.example`)로 분리하고 install 대상에서 제외, 옵션 B: 그대로 복사하되 신규 프로젝트의 첫 단계에서 frontmatter 재작성 의무화. `templates/startup-checklist.md`에 디자인 시스템 선택 섹션 추가 여부도 함께 결정.
+- [x] DESIGN.md의 frontmatter(`name: 원티드`, `slug: wanted`, `category: etc`, `last_updated`)가 다른 프로젝트에 install될 때의 정책 결정 — **옵션 B 결정**(그대로 복사 + 첫 단계 재작성 의무화). 이유: `.example` 분리는 다른 템플릿(STATE.md/AGENTS.md)의 "복사 후 수정" 패턴과 어긋남. `templates/startup-checklist.md` 섹션 3에 Q6(디자인 시스템 선택 A/B/C) + Q7(frontmatter 재작성) + Q8(STATE.md 기록) 추가, `docs/design-guidelines.md`의 메타 운영 섹션에 install 정책 명시.
 - [ ] `.claude/hooks/`에 디자인 토큰 외 값 사용 정적 경고 hook 도입 검토 — CSS/SCSS/Tailwind/JSX inline style 변경 시 (1) hex 직접 사용(`#xxxxxx`)이 `colors_and_type.css` 외 파일에서 등장, (2) 비-4의 배수 px(6/10/14/18/22)이 등장하면 경고. 차단이 아닌 경고로 운영해 false-positive에서 작업이 막히지 않게 한다. (정적 검출의 한계로 우선순위는 낮음.)
 - [ ] `templates/qa-intake.md`에 "디자인 토큰 외 값 사용 시 PR에서 경고 표시 여부" 항목 추가 — CI/CD 워크플로우 정책 수집 단계에 통합.
 - [ ] DESIGN.md 갱신 시 STATE.md `이번 세션에서 완료한 작업`에 토큰/컴포넌트 변경 이력을 남기는 운영 규칙을 `docs/design-guidelines.md`와 `AGENTS.md` 문서화 원칙 섹션에 명시.
