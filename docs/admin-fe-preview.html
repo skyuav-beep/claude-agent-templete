@@ -6,10 +6,13 @@
   <title>Admin FE 디자인 프리뷰 — DESIGN.md 토큰 기반</title>
   <style>
     /* ============================================================
-       DESIGN.md 토큰 직접 매핑 (oklch 그대로)
-       light/dark는 [data-theme] 으로 분기
+       시안별 CSS 변수 블록 (designs/<slug>.md의 ## CSS Variables 와 동일)
+       data-design + data-theme 두 속성 cascade
+       시안 추가 시: 해당 시안의 두 블록을 아래에 그대로 inline 한다.
        ============================================================ */
-    :root[data-theme="light"] {
+
+    /* ----- wanted (light) ----- */
+    :root[data-design="wanted"][data-theme="light"] {
       --bg-canvas:        oklch(1 0 0);
       --bg-surface:       oklch(1 0 0);
       --bg-subtle:        oklch(0.972 0.002 286);
@@ -21,7 +24,6 @@
       --bg-danger-subtle: oklch(0.951 0.018 18);
       --bg-success-subtle:oklch(0.968 0.052 154);
       --bg-warning-subtle:oklch(0.967 0.030 81);
-
       --fg-strong:    oklch(0.148 0.004 277);
       --fg-default:   oklch(0.259 0.010 273 / 0.88);
       --fg-secondary: oklch(0.298 0.010 273 / 0.61);
@@ -29,16 +31,20 @@
       --fg-disabled:  oklch(0.298 0.010 273 / 0.28);
       --fg-on-brand:  oklch(1 0 0);
       --fg-brand:     oklch(0.563 0.232 257);
-      --fg-danger:    oklch(0.546 0.220 27);
       --fg-success:   oklch(0.673 0.211 144);
       --fg-warning:   oklch(0.625 0.148 56);
-
+      --fg-danger:    oklch(0.546 0.220 27);
       --border-subtle:  oklch(0.521 0.018 273 / 0.08);
       --border-default: oklch(0.521 0.018 273 / 0.22);
       --border-strong:  oklch(0.521 0.018 273 / 0.35);
       --border-brand:   oklch(0.563 0.232 257);
+      --shadow-1:   0 1px 2px oklch(0 0 0 / 0.04);
+      --shadow-2:   0 4px 8px oklch(0 0 0 / 0.06);
+      --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.10);
     }
-    :root[data-theme="dark"] {
+
+    /* ----- wanted (dark) ----- */
+    :root[data-design="wanted"][data-theme="dark"] {
       --bg-canvas:        oklch(0.148 0.004 277);
       --bg-surface:       oklch(0.166 0.005 271);
       --bg-subtle:        oklch(0.135 0.002 286);
@@ -50,7 +56,6 @@
       --bg-danger-subtle: oklch(0.298 0.10 22 / 0.32);
       --bg-success-subtle:oklch(0.298 0.10 144 / 0.28);
       --bg-warning-subtle:oklch(0.298 0.10 56 / 0.32);
-
       --fg-strong:    oklch(1 0 0);
       --fg-default:   oklch(1 0 0 / 0.88);
       --fg-secondary: oklch(1 0 0 / 0.61);
@@ -58,17 +63,19 @@
       --fg-disabled:  oklch(1 0 0 / 0.28);
       --fg-on-brand:  oklch(1 0 0);
       --fg-brand:     oklch(0.715 0.155 255);
-      --fg-danger:    oklch(0.715 0.220 27);
       --fg-success:   oklch(0.760 0.180 144);
       --fg-warning:   oklch(0.778 0.158 64);
-
+      --fg-danger:    oklch(0.715 0.220 27);
       --border-subtle:  oklch(1 0 0 / 0.08);
       --border-default: oklch(1 0 0 / 0.22);
       --border-strong:  oklch(1 0 0 / 0.35);
       --border-brand:   oklch(0.715 0.155 255);
+      --shadow-1:   0 1px 2px oklch(0 0 0 / 0.20);
+      --shadow-2:   0 4px 8px oklch(0 0 0 / 0.32);
+      --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.48);
     }
 
-    /* spacing/radius/typography 토큰 (테마 무관) */
+    /* spacing/radius/typography 토큰 (시안·테마 무관, 모든 시안 공통) */
     :root {
       --space-4: 4px;  --space-8: 8px;   --space-12: 12px; --space-16: 16px;
       --space-20: 20px;--space-24: 24px; --space-32: 32px; --space-40: 40px;
@@ -106,6 +113,16 @@
     }
     .preview-bar .source { font-size: 12px; color: var(--fg-secondary); }
     .preview-bar .right { margin-left: auto; display: flex; gap: var(--space-8); align-items: center; }
+    .design-select {
+      padding: 6px 28px 6px 10px; font-size: 12px; font-weight: 500;
+      background: var(--bg-muted); color: var(--fg-strong);
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-8);
+      font-family: inherit; cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca0aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
     .theme-toggle {
       display: inline-flex; padding: 2px;
       background: var(--bg-muted); border-radius: var(--radius-8);
@@ -119,6 +136,29 @@
     .theme-toggle button[aria-pressed="true"] {
       background: var(--bg-surface); color: var(--fg-strong);
     }
+
+    /* policy chip strip */
+    .policy-strip {
+      display: flex; flex-wrap: wrap; gap: var(--space-8);
+      padding: var(--space-12) var(--space-24);
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      align-items: center;
+    }
+    .policy-strip-label {
+      font-size: 11px; font-weight: 600; color: var(--fg-tertiary); letter-spacing: 0.04em;
+    }
+    .policy-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 2px 10px; height: 24px;
+      border-radius: var(--radius-full);
+      background: var(--bg-muted); color: var(--fg-default);
+      font-size: 11px; font-weight: 500;
+      border: 1px solid var(--border-subtle);
+    }
+    .policy-pill.on { background: var(--bg-success-subtle); color: var(--fg-success); border-color: transparent; }
+    .policy-pill.off { background: var(--bg-danger-subtle); color: var(--fg-danger); border-color: transparent; }
+    .policy-pill.info { background: var(--bg-brand-subtle); color: var(--fg-brand); border-color: transparent; }
 
     .container {
       max-width: 1280px; margin: 0 auto;
@@ -488,13 +528,22 @@
 <!-- ===== preview chrome ===== -->
 <div class="preview-bar">
   <h1>Admin FE 디자인 프리뷰</h1>
-  <span class="source">DESIGN.md 토큰 기반 · 단일 파일 · CDN 없음</span>
+  <span class="source">designs/ 라이브러리 기반 · 단일 파일 · CDN 없음</span>
   <div class="right">
+    <select class="design-select" id="design-select" aria-label="디자인 시안">
+      <option value="wanted">wanted</option>
+    </select>
     <div class="theme-toggle" role="tablist" aria-label="테마">
       <button id="btn-light" aria-pressed="true">라이트</button>
       <button id="btn-dark" aria-pressed="false">다크</button>
     </div>
   </div>
+</div>
+
+<!-- ===== policy strip ===== -->
+<div class="policy-strip" id="policy-strip">
+  <span class="policy-strip-label">POLICY</span>
+  <!-- JS가 활성 시안 frontmatter policy 블록을 chip으로 렌더링 -->
 </div>
 
 <div class="container">
@@ -921,22 +970,91 @@
 </div>
 
 <script>
-  /* theme toggle */
+  /* ============================================================
+     시안 카탈로그 — 시안 추가 시 이 객체에 한 항목 추가.
+     CSS 변수 정의는 <style> 안의 :root[data-design="<slug>"]
+     블록에 별도로 inline 한다.
+     policy: 활성 시안의 frontmatter policy 블록과 동기 유지.
+     ============================================================ */
+  const DESIGNS = {
+    wanted: {
+      label: 'wanted',
+      policy: {
+        shadow_on_cards: false,
+        gradient_locations: ['symbol', 'avatar', 'thumbnail', 'hero'],
+        copy_tone: 'ko-friendly',
+        dark_mode: 'supported',
+        non_4_spacing: false,
+      },
+    },
+  };
+
+  /* state + persistence */
   const root = document.documentElement;
   const btnLight = document.getElementById('btn-light');
   const btnDark = document.getElementById('btn-dark');
-  const KEY = 'admin-fe-preview-theme';
+  const selectDesign = document.getElementById('design-select');
+  const policyStrip = document.getElementById('policy-strip');
+  const KEY_THEME = 'admin-fe-preview-theme';
+  const KEY_DESIGN = 'admin-fe-preview-design';
+
+  /* dropdown populate */
+  function populateDesigns() {
+    selectDesign.innerHTML = '';
+    Object.entries(DESIGNS).forEach(([slug, def]) => {
+      const opt = document.createElement('option');
+      opt.value = slug;
+      opt.textContent = def.label;
+      selectDesign.appendChild(opt);
+    });
+  }
+
+  /* policy chip strip */
+  function renderPolicy(slug) {
+    const def = DESIGNS[slug];
+    if (!def) return;
+    const p = def.policy;
+    const chips = [];
+    chips.push(`<span class="policy-pill ${p.shadow_on_cards ? 'on' : 'off'}">카드 그림자: ${p.shadow_on_cards ? '허용' : '금지'}</span>`);
+    if (p.gradient_locations.length === 0) {
+      chips.push(`<span class="policy-pill off">gradient: 전면 금지</span>`);
+    } else {
+      chips.push(`<span class="policy-pill info">gradient: ${p.gradient_locations.join(' · ')}</span>`);
+    }
+    chips.push(`<span class="policy-pill info">copy tone: ${p.copy_tone}</span>`);
+    chips.push(`<span class="policy-pill ${p.dark_mode === 'supported' ? 'on' : 'off'}">dark: ${p.dark_mode}</span>`);
+    chips.push(`<span class="policy-pill ${p.non_4_spacing ? 'off' : 'on'}">non-4 spacing: ${p.non_4_spacing ? '허용' : '금지'}</span>`);
+    policyStrip.innerHTML = '<span class="policy-strip-label">POLICY</span>' + chips.join('');
+  }
+
   function setTheme(t) {
     root.setAttribute('data-theme', t);
     btnLight.setAttribute('aria-pressed', t === 'light');
     btnDark.setAttribute('aria-pressed', t === 'dark');
-    try { localStorage.setItem(KEY, t); } catch (e) {}
+    try { localStorage.setItem(KEY_THEME, t); } catch (e) {}
   }
-  let saved = 'light';
-  try { saved = localStorage.getItem(KEY) || 'light'; } catch (e) {}
-  setTheme(saved);
+  function setDesign(slug) {
+    if (!DESIGNS[slug]) slug = 'wanted';
+    root.setAttribute('data-design', slug);
+    selectDesign.value = slug;
+    renderPolicy(slug);
+    try { localStorage.setItem(KEY_DESIGN, slug); } catch (e) {}
+  }
+
+  populateDesigns();
+
+  let savedTheme = 'light';
+  let savedDesign = 'wanted';
+  try {
+    savedTheme = localStorage.getItem(KEY_THEME) || 'light';
+    savedDesign = localStorage.getItem(KEY_DESIGN) || 'wanted';
+  } catch (e) {}
+  setDesign(savedDesign);
+  setTheme(savedTheme);
+
   btnLight.addEventListener('click', () => setTheme('light'));
   btnDark.addEventListener('click', () => setTheme('dark'));
+  selectDesign.addEventListener('change', e => setDesign(e.target.value));
 
   /* sidebar collapse demo */
   const demo = document.getElementById('demo-sidebar');
