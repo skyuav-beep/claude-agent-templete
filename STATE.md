@@ -32,6 +32,18 @@
 
 ## 이번 세션에서 완료한 작업
 
+- v2-1: admin-fe-preview.html 일반화 + 시안별 CSS Variables 섹션 도입. (2026-05-15)
+  - `designs/_alias-contract.md`에 `## 10 CSS Variables 표기 규칙` 섹션 신설. alias→CSS 변수 명명 규칙, `data-design`+`data-theme` 2축 cascade 셀렉터, md fenced css 블록 형식, preview 정합 검증 정책.
+  - `designs/wanted.md` 와 `designs/_template.md`에 `## CSS Variables` 섹션 추가. wanted.md frontmatter에 `policy:` 블록 5종(shadow_on_cards/gradient_locations/copy_tone/dark_mode/non_4_spacing) 명시.
+  - `docs/admin-fe-preview.html` 리팩터:
+    - 기존 `:root[data-theme]` 하드코딩 블록을 `:root[data-design="wanted"][data-theme="light|dark"]` 분기로 교체.
+    - 상단 preview-bar에 시안 dropdown(`<select id="design-select">`) 추가. localStorage `admin-fe-preview-design` 키로 선택 유지.
+    - preview-bar 아래 `policy-strip` 신설. 활성 시안의 frontmatter policy 5종을 chip으로 자동 렌더링(success/danger/info variant).
+    - JS `DESIGNS` 객체에서 dropdown 자동 populate, 시안 변경 시 `data-design` 속성 + policy strip 동기 갱신.
+    - JS 구문 `node --check` 통과. HTML 50KB.
+  - `docs/admin-fe-design-guide.md`에 preview 시각 확인 섹션 + 시안 추가 절차(3단계) 명시.
+  - `docs/design-guidelines.md`에 preview 시각 검증 섹션 추가.
+
 - 디자인 시안 라이브러리 도입(`designs/` 폴더 + select-design.sh + install.sh --design 플래그). (2026-05-15)
   - 신규: `designs/README.md`, `designs/_alias-contract.md`(alias 32종 + 컴포넌트 7종 + policy 5종 계약), `designs/_template.md`(빈 골격), `designs/wanted.md`(기존 DESIGN.md 이전).
   - 신규 스크립트: `.claude/plugins/select-design.sh` — `--list`/`--current`/`<slug>` 모드. DESIGN.md가 라이브러리와 다른 직접 편집 상태면 `DESIGN.md.bak` 자동 백업 후 덮어쓰기.

@@ -166,6 +166,22 @@ admin이라도 product 카피 톤은 동일하게 유지한다.
 - semantic signal 배경 alias(`bg-success-subtle`, `bg-warning-subtle`, `bg-danger-subtle`)와 fg alias(`fg-success`, `fg-warning`, `fg-danger`, `fg-brand`)는 `DESIGN.md ## Known Gaps`의 합성 규칙을 따른다(blue-400 brightened for fg-brand, semantic hue @ ↑ lightness for fg-*).
 - 사이드바·top-bar 경계 라인 alpha를 dark에서 한 단계 강하게 조정해도 좋다(`{colors.border-default}`로 승격).
 
+## preview 시각 확인
+
+`docs/admin-fe-preview.html`을 브라우저에서 열면 admin 5종 컴포넌트 + 화면 조립 패턴 + 토큰 swatch를 한 페이지에서 확인할 수 있다.
+
+- 상단 셀렉터에서 **시안(designs/<slug>)**과 **테마(light/dark)** 를 독립적으로 토글한다 — `data-design` + `data-theme` 두 속성이 cascade로 적용된다.
+- 셀렉터 아래 POLICY strip은 활성 시안의 frontmatter `policy:` 블록을 chip으로 시각화한다(카드 그림자/gradient 허용/카피 톤/dark 지원/non-4 spacing 5종).
+- 선택 상태는 localStorage에 저장되어 새로고침 후에도 유지된다.
+
+### 시안 추가 후 preview 등록
+
+라이브러리에 새 시안(`designs/<slug>.md`)을 추가했다면 다음 2가지를 preview HTML에 반영한다.
+
+1. 시안 md의 `## CSS Variables` 섹션 두 블록(`:root[data-design="<slug>"][data-theme="light/dark"] { ... }`)을 `admin-fe-preview.html` `<style>` 블록 안의 시안 변수 영역에 inline 한다.
+2. `<script>` 안의 `DESIGNS` 객체에 한 항목 추가(label + policy frontmatter 복사).
+3. 셀렉터 dropdown은 `DESIGNS` 객체에서 자동 생성되므로 별도 수정 불필요.
+
 ## design skill 자동 연계
 
 admin FE 작업 키워드(테이블, 사이드바, 로그인, 카드, 폼, 토스트)는 `.claude/skills/design/SKILL.md`를 자동 활성화해 `DESIGN.md`를 강제 로드한다. 본 가이드는 그 연장선으로 호출된다. 새로운 admin 컴포넌트가 필요하면 `docs/design-guidelines.md ## 새 컴포넌트 추가 절차`를 따른다.

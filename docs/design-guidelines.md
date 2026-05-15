@@ -110,6 +110,17 @@
 }
 ```
 
+## preview 시각 검증
+
+라이브러리 시안의 토큰·컴포넌트가 의도대로 렌더링되는지 `docs/admin-fe-preview.html`에서 확인한다.
+
+- 신규 시안 추가 시 `admin-fe-preview.html`의 `<style>` 블록에 시안의 `## CSS Variables` 두 블록(`:root[data-design][data-theme]`)을 inline 하고, `<script>` 의 `DESIGNS` 객체에 한 항목 추가한다.
+- preview 상단 dropdown으로 시안 토글 후 다음을 시각 검수한다.
+  - 색 swatch 9종(background) + 텍스트 위계 9종(foreground) — 알 수 없는 색/누락 없음
+  - admin 5종 컴포넌트가 헤어라인/그림자/gradient 정책 차이를 정확히 반영
+  - frontmatter `policy:` 블록과 POLICY strip의 chip이 일치
+- 위반 시 시안 md의 `## CSS Variables`와 `## Do's and Don'ts`를 우선 갱신한다.
+
 ## 자동 활성화 흐름
 
 디자인 키워드가 사용자 메시지에 등장하면 `.claude/skills/design/SKILL.md`가 자동 활성화되어 `DESIGN.md`를 강제 로드한다. `feature`/`refactor`/`bugfix` 진행 중 UI 영향이 발견되면 design skill이 추가로 활성화되어 일관성 항목을 보강한다.
