@@ -9,7 +9,8 @@
       "files": [
         { "path": "CLAUDE.md", "description": "Claude Code CLI operation settings" },
         { "path": "AGENTS.md", "description": "Common agent operation rules" },
-        { "path": "STATE.md", "description": "Current state and handoff record" }
+        { "path": "STATE.md", "description": "Current state and handoff record" },
+        { "path": "DESIGN.md", "description": "Design system catalog — 1st source for UI/style work (tokens, components, Do/Don't, dark alias)" }
       ]
     },
     "L2_skills": {
@@ -22,7 +23,8 @@
         { "path": ".claude/skills/bugfix/SKILL.md", "description": "Bug fix request form" },
         { "path": ".claude/skills/refactor/SKILL.md", "description": "Refactor request form" },
         { "path": ".claude/skills/review/SKILL.md", "description": "Code review request form" },
-        { "path": ".claude/skills/business-logic/SKILL.md", "description": "Business logic change request" }
+        { "path": ".claude/skills/business-logic/SKILL.md", "description": "Business logic change request" },
+        { "path": ".claude/skills/design/SKILL.md", "description": "Design system enforcement — auto-loads DESIGN.md on UI keywords" }
       ]
     },
     "L2_commands": {
@@ -54,7 +56,8 @@
         { "path": ".claude/agents/code-reviewer.md", "description": "Code review against repo conventions" },
         { "path": ".claude/agents/planner.md", "description": "Design/planning agent" },
         { "path": ".claude/agents/test-runner.md", "description": "Test execution and failure analysis" },
-        { "path": ".claude/agents/feature-dev.md", "description": "End-to-end feature implementation" }
+        { "path": ".claude/agents/feature-dev.md", "description": "End-to-end feature implementation" },
+        { "path": ".claude/agents/design-reviewer.md", "description": "Design consistency review against DESIGN.md tokens and Do/Don't" }
       ]
     }
   },
@@ -93,6 +96,10 @@
       "docs/codex-reading-order.md",
       "docs/subagent-guide.md",
       "docs/development-process.md",
+      "docs/development-process.html",
+      "docs/intake.html",
+      "docs/global-claude-md-template.md",
+      "docs/design-guidelines.md",
       "docs/plugin-guide.md"
     ]
   }

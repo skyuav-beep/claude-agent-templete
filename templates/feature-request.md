@@ -25,6 +25,16 @@
 
 - 어떤 조건이면 완료로 볼지 적는다.
 
+## 디자인 토큰 참조 (UI 변경 시)
+
+- 사용할 컴포넌트: `DESIGN.md ## Components`에서 해당하는 항목 (예: `button-primary md`, `job-card`, `chip brand variant`)
+- 사용할 토큰: alias 또는 atomic (예: `{colors.bg-brand}`, `{spacing.space-16}`, `{rounded.radius-8}`)
+- variant/state: 기본/hover/focus/active/disabled/error 중 필요한 것
+- 다크 모드 대응 필요 여부: yes / no / 둘 다
+- `DESIGN.md`에 정의되지 않은 새 컴포넌트가 필요하면 그 사실을 적고, 추가 시 카탈로그 갱신 의무를 인지한다.
+
+UI 변경이 없으면 이 섹션은 생략한다.
+
 ## 작성 예시
 
 ```

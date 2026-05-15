@@ -27,6 +27,7 @@ main agent가 분류한 작업 유형에 맞춰 조사 범위를 다르게 잡�
 - 진입점(라우트, 메뉴, CLI, API) 등록 패턴
 - 인접 기능에서 재사용 가능한 컴포넌트, 훅, 유틸
 - 권한/토글/i18n 키 등록 위치
+- UI 영향이 있으면 `DESIGN.md`에 사용할 컴포넌트(button, card, chip, toast 등)와 토큰(alias, atomic)이 이미 정의되어 있는지
 
 ### Bugfix 조사
 
@@ -41,6 +42,7 @@ main agent가 분류한 작업 유형에 맞춰 조사 범위를 다르게 잡�
 - 유지해야 할 공개 API/인터페이스/계약
 - 기존 테스트 커버리지와 누락된 동작
 - 리팩터링 범위를 넘지 않게 할 의존성 경계
+- UI 리팩터링이면 `DESIGN.md`의 시맨틱 alias로 대체 가능한 atomic 호출이나 임의 hex/px 잔재 여부
 
 ### Business Logic 조사
 

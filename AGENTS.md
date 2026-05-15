@@ -116,7 +116,7 @@
 
 ## Context Map (Action-Based Routing)
 
-- Constraint 1: 표(Table) 형식은 사용하지 않는다.
+- Constraint 1: 본 Context Map 섹션 내부에서는 표(Table) 형식 대신 아래 Format의 불릿 라인을 사용한다. (이 제약은 Context Map 한정이며, `agents/main-agent.md`, `docs/development-process.md` 등 다른 문서의 표 사용을 금지하지 않는다.)
 - Constraint 2: 이모지는 사용하지 않는다.
 - Format: `- **[트리거/작업 영역](상대 경로)** - 한 줄 설명`
 - 프로젝트가 커지면 작업 영역별 하위 `AGENTS.md` 또는 역할 문서를 만들고 이 섹션에 라우팅 규칙을 추가한다.
@@ -124,7 +124,8 @@
 - **[공통 운영 규칙](./AGENTS.md)** - 저장소 전체에 적용되는 공통 원칙, 작업 방식, 문서 규칙 확인 시.
 - **[현재 상태 및 인계](./STATE.md)** - 최근 변경 사항, 다음 작업, 현재 저장소 목적을 확인할 때.
 - **[템플릿 사용 안내](./README.md)** - 이 저장소를 새 프로젝트에 어떻게 복제하고 커스텀할지 확인할 때.
-- **[에이전트 헌법](./CLAUDE.md)** - Core Philosophy, Golden Rules, 커뮤니케이션, Architecture Rules, Naming, Test, Repo Map, Claude Code 레이어 설정.
+- **[에이전트 헌법](./CLAUDE.md)** - Core Philosophy, Golden Rules, 커뮤니케이션, Architecture Rules, Naming, Test, Repo Map, Design System, Claude Code 레이어 설정.
+- **[디자인 시스템 카탈로그](./DESIGN.md)** - UI/스타일/컴포넌트 작업 시 토큰, 컴포넌트, Do/Don't, 다크 alias의 1차 소스.
 - **[총괄 진행 규칙](./agents/main-agent.md)** - 요청 해석, 범위 통제, 우선순위 판단이 필요할 때.
 - **[구현 작업](./agents/executor-agent.md)** - 문서 작성, 코드 수정, 설정 변경 같은 실제 산출물 작업 시.
 - **[조사 작업](./agents/researcher-agent.md)** - 기존 구조 조사, 중복 확인, 근거 수집이 필요할 때.
@@ -156,12 +157,13 @@
 - **[개발 프로세스 문서](./docs/development-process.md)** - 문서형 개발 프로세스 초안을 확인할 때.
 - **[개발 프로세스 시각화](./docs/development-process.html)** - 브라우저에서 시각 가이드, 단계별 체크리스트, STATE 미니 대시보드 확인 시.
 - **[Intake 폼 UI](./docs/intake.html)** - 브라우저에서 Startup QnA 위저드 또는 요청 템플릿(feature/bugfix/refactor/review/business-logic) 입력 후 Markdown으로 내보낼 때.
-- **[Skills Layer](./.claude/skills/)** - 자연어 트리거 기반 자동 활성화 SKILL.md 8종. `start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`. 우선순위와 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
+- **[Skills Layer](./.claude/skills/)** - 자연어 트리거 기반 자동 활성화 SKILL.md 9종. `start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`. 우선순위와 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
 - **[Slash Commands](./.claude/commands/)** - skills와 동일 이름의 명시적 slash command 8종. `/start`, `/intake`, `/request`, `/feature`, `/bugfix`, `/refactor`, `/review`, `/business-logic`. 사용자가 직접 호출할 때만 동작.
 - **[Hooks Layer](./.claude/hooks/)** - 파괴적 명령 차단, 비밀 파일 쓰기 차단, STATE.md 갱신 리마인더. 설정은 `.claude/settings.local.json`.
-- **[서브에이전트 템플릿](./.claude/agents/)** - Agent 도구 호출 시 역할별 프롬프트 템플릿 (explorer, code-reviewer, planner, test-runner, feature-dev). 디스패치 기준은 `docs/subagent-guide.md`.
+- **[서브에이전트 템플릿](./.claude/agents/)** - Agent 도구 호출 시 역할별 프롬프트 템플릿 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer). 디스패치 기준은 `docs/subagent-guide.md`.
 - **[Plugins Layer](./.claude/plugins/)** - manifest.json, VERSION, install.sh. 다른 프로젝트에 설치 시 `docs/plugin-guide.md` 참조.
 - **[Plugin 가이드](./docs/plugin-guide.md)** - 설치, 업데이트, 커스텀, 버전 관리 방법.
+- **[디자인 운영 가이드](./docs/design-guidelines.md)** - `DESIGN.md` 토큰 호출 규칙, alias/atomic 선택, 컴포넌트 추가 절차, dark alias 합성 표기.
 
 ## 사용자 확인이 필요한 상황
 

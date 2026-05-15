@@ -15,10 +15,13 @@ bash /path/to/claude-agent-template/.claude/plugins/install.sh /path/to/my-proje
 install.sh는 `manifest.json`에 등록된 파일을 대상 프로젝트에 복사한다.
 
 - L1 Memory: `CLAUDE.md`, `AGENTS.md`, `STATE.md`
-- L2 Skills: `.claude/commands/` (8개 slash command)
+- L2 Skills: `.claude/skills/` (8개 `SKILL.md` — 자연어 키워드로 자동 활성화)
+- L2 Commands: `.claude/commands/` (8개 slash command — 사용자가 직접 호출)
 - L3 Hooks: `.claude/hooks/` (3개 가드레일 스크립트) + `settings.local.json`
-- L4 Subagents: `.claude/agents/` (3개 프롬프트 템플릿)
-- Supporting: `agents/` (4개 역할 지침)
+- L4 Subagents: `.claude/agents/` (5개 프롬프트 템플릿 — explorer, code-reviewer, planner, test-runner, feature-dev)
+- Supporting: `agents/` (4개 역할 지침), `templates/` (요청 5종 + intake 13종), `docs/` (가이드/플레이북)
+
+L2의 skills와 commands는 병존한다. skills는 자연어 키워드 매칭으로 자동 활성화되고, commands는 사용자가 슬래시 입력으로 명시 호출한다.
 
 설치 후 대상 프로젝트에 `.claude/.plugin-version` 파일이 생성되어 설치된 버전을 기록한다.
 

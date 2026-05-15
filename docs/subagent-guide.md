@@ -119,6 +119,11 @@ Claude Code는 `Agent` 도구를 통해 독립적인 서브 에이전트를 실�
   - 트리거: 설계 완료 후 end-to-end 기능 구현 위임
   - 순차 필요: planner 결과가 있어야 정확한 구현 가능
 
+- 디자인 일관성 리뷰 -> `.claude/agents/design-reviewer.md` (general-purpose 타입)
+  - 트리거: UI 산출물 검토, `DESIGN.md` 토큰 호출 준수 검증, Do/Don't 위반 검출, 다크 모드 alias 누락 점검
+  - 병렬 가능: `code-reviewer`와 직교(코드 품질과 디자인 일관성은 별도 축)이므로 동시에 실행 가능
+  - 순차 필요: UI 산출물이 만들어진 뒤에 의미 있음
+
 ### 직접 처리 (서브 에이전트 불필요)
 
 - 단순하고 범위가 명확한 작업
