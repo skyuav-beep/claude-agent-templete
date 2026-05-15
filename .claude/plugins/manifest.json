@@ -102,6 +102,7 @@
       "docs/global-claude-md-template.md",
       "docs/design-guidelines.md",
       "docs/admin-fe-design-guide.md",
+      "docs/admin-fe-preview.html",
       "docs/plugin-guide.md"
     ]
   }
