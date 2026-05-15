@@ -64,7 +64,8 @@
 - `CLAUDE.md` — 에이전트 헌법 (항상 로드됨)
 - `AGENTS.md` — 운영 프로세스, Context Map 라우팅, 작업 절차
 - `STATE.md` — 현재 상태, 세션 인계 정보
-- `DESIGN.md` — 디자인 시스템 카탈로그. UI/스타일 작업의 1차 소스 (토큰, 컴포넌트, Do/Don't, 다크 alias)
+- `DESIGN.md` — 디자인 시스템 카탈로그(active). UI/스타일 작업의 1차 소스 (토큰, 컴포넌트, Do/Don't, 다크 alias). `designs/`에서 선택된 시안의 활성 사본
+- `designs/` — 디자인 시안 라이브러리. 시안 선택은 `bash .claude/plugins/select-design.sh <slug>`
 - `agents/` — 역할별 에이전트 행동 규칙 (main, executor, researcher, reviewer)
 - `templates/` — 작업 요청 5종 + intake 양식 13종
 - `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타 가이드: `docs/design-guidelines.md`, admin FE 가이드: `docs/admin-fe-design-guide.md`)
@@ -84,6 +85,8 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 - product 카피는 친근한 존댓말(`-요`/`-어요`/`-아요`)을 표준으로 한다. 버튼 라벨은 동사형(`지원하기`, `저장하기`)을 표준으로 한다.
 - 디자인 키워드(UI, 디자인, 토큰, 색상, 버튼, 컴포넌트, 스타일, spacing, radius, dark mode 등)가 등장하면 `.claude/skills/design/SKILL.md`가 자동 활성화되어 `DESIGN.md`를 강제 로드한다.
 - admin/dashboard 표면(로그인, 사이드바, top bar, KPI 카드, data table) 작업은 `docs/admin-fe-design-guide.md`를 함께 참조한다. DESIGN.md `## Components` 섹션 끝에 admin 5종(synthesized) 명세가 있다.
+- 시각 확인 프리뷰는 `docs/admin-fe-preview.html` (단일 파일, 라이트/다크 토글).
+- 디자인 시안은 `designs/` 라이브러리에 보관되며 root `DESIGN.md`는 그 활성 사본이다. 라이브러리 운영(스위치/추가/계약)은 `designs/README.md`, `designs/_alias-contract.md`, `docs/design-guidelines.md` 참조.
 - `DESIGN.md` 자체를 갱신할 때는 토큰/컴포넌트 추가·변경 이력을 `STATE.md`에 남긴다.
 
 ## Skills Layer (자동 활성화 워크플로우)

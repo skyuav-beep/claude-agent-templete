@@ -74,10 +74,23 @@
   3. 신규 컴포넌트가 추가된 경우 `STATE.md` `현재 기준 파일` 섹션은 `DESIGN.md` 단일 항목 그대로 유지(컴포넌트별로 나누지 않는다).
 - 위 규칙은 `AGENTS.md ## 문서화 원칙`에도 동일하게 명시되어 있다. 두 문서가 어긋나면 design-guidelines.md를 정본으로 본다.
 
+## 라이브러리 (designs/) 사용 흐름
+
+- `designs/` 폴더는 사용 가능한 디자인 시안 라이브러리다. root `DESIGN.md`는 라이브러리에서 선택된 시안의 활성 사본이다.
+- 라이브러리 목록 확인: `bash .claude/plugins/select-design.sh --list`
+- 시안 활성화(스위치): `bash .claude/plugins/select-design.sh <slug>` — `designs/<slug>.md` → `DESIGN.md` 복사 + `.claude/.active-design` 갱신.
+- install 시 기본 시안 지정: `bash .claude/plugins/install.sh --design <slug> /target` (기본값 `wanted`).
+- 신규 시안 작성: `cp designs/_template.md designs/<slug>.md` 후 frontmatter + 본문 채움. `designs/_alias-contract.md`의 alias 32종 + 컴포넌트 7종 시그너처는 반드시 정의.
+- DESIGN.md를 직접 편집한 상태에서 select-design.sh를 실행하면 자동으로 `DESIGN.md.bak`을 만든 뒤 덮어쓴다.
+
 ## 메타 운영
 
 - `DESIGN.md`의 frontmatter(`name`, `slug`, `category`, `last_updated`)는 카탈로그 메타다. 다른 프로젝트로 복제할 때는 해당 프로젝트의 디자인 시스템 정보로 갱신한다.
-- **install 정책(결정: 옵션 B — 그대로 복사 + 첫 단계 재작성)**: `install.sh`는 `DESIGN.md`를 원본 그대로 복사한다. 별도 `DESIGN.md.example` 파일로 분리하지 않는다(다른 템플릿과 일관). 신규 프로젝트는 `templates/startup-checklist.md` 섹션 3 Q6~Q8에서 디자인 시스템 선택과 frontmatter 재작성을 의무로 진행한다.
+- **install 정책(라이브러리 도입 후 갱신)**: `install.sh --design <slug>`로 라이브러리에서 시안을 골라 활성화한다. 옵션:
+  - (a) 라이브러리 시안 그대로 사용 (기본): `--design wanted` 등 기존 시안 슬러그.
+  - (b) 라이브러리에서 fork: `cp designs/wanted.md designs/<custom>.md` 후 편집, `select-design.sh <custom>`.
+  - (c) 활성 DESIGN.md 직접 편집: `select-design.sh` 미사용, root만 수정. 다음 select-design.sh 실행 시 백업됨.
+- 신규 프로젝트는 `templates/startup-checklist.md` 섹션 3 Q6~Q8에서 라이브러리 선택과 frontmatter 재작성을 진행한다.
 - `DESIGN.md`를 갱신했으면 `last_updated` 필드를 같은 커밋에서 함께 수정한다.
 - `DESIGN.md`와 product 코드(CSS 변수·Tailwind config·Theme 정의)가 어긋나면, `DESIGN.md`를 정본으로 본다. 코드 쪽을 카탈로그에 맞춘다.
 

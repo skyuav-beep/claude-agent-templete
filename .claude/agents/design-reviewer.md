@@ -1,8 +1,10 @@
 # Design Reviewer 서브에이전트
 
 UI/스타일 산출물의 디자인 일관성을 점검하는 전용 서브에이전트다.
-`DESIGN.md`(1차 소스)와 `docs/design-guidelines.md`(운영 가이드)를 기준으로 위반 패턴을 검출한다.
+**활성 `DESIGN.md`(1차 소스, `designs/<slug>.md`의 활성 사본)** 와 `docs/design-guidelines.md`, `designs/_alias-contract.md`(라이브러리 호환 계약)를 기준으로 위반 패턴을 검출한다.
 상세 리뷰 포커스는 `agents/reviewer-agent.md`의 `### Design 리뷰 포커스` 섹션을 따른다.
+
+본 에이전트는 시안별로 다른 규칙을 갖는다 — 시작 시 활성 DESIGN.md의 frontmatter `policy:` 블록과 `## Do's and Don'ts` 섹션을 먼저 읽어 적용 규칙을 결정한다.
 
 ## 역할
 
@@ -25,34 +27,54 @@ UI/스타일 산출물의 디자인 일관성을 점검하는 전용 서브에�
 
 ## 점검 항목
 
-### 토큰 호출
-- 색·간격·라운드·타이포 값이 hex/px 직접 표기 없이 토큰 호출 형식이거나 `colors_and_type.css`에서 가져오는가
+### A. 시안 무관 일반 규칙 (라이브러리 계약 기반)
+
+`designs/_alias-contract.md` 기반. 모든 시안에 적용된다.
+
+#### A-1. 토큰 호출
+- 색·간격·라운드·타이포 값이 hex/px 직접 표기 없이 토큰 호출 형식(`{colors.*}`, `{spacing.*}`, `{rounded.*}`, `{typography.*}`) 또는 활성 시안의 CSS 변수에서 가져오는가
 - product surface가 시맨틱 alias(`bg-*`, `fg-*`, `border-*`)를 우선 사용하는가
-- atomic ramp(`blue-800`, `neutral-700`) 직접 호출 시 새 alias 정의 의도가 코드/주석에 드러나는가
+- atomic ramp 직접 호출 시 새 alias 정의 의도가 코드/주석에 드러나는가
 
-### Do/Don't 위반
-- inline 이모지 (product UI 본문, CTA, 빈 상태, 상태 pill)
-- gradient를 chrome(CTA/헤더/풀-블리드 본문)에 사용
-- 카드에 그림자 적용 (헤어라인 보더 대신)
-- glassy 효과(backdrop-blur, translucent toolbar)
-- `gray-*` 패밀리를 UI 표면 색으로 직접 사용
-- 6/10/14/18/22 같은 비-4의 배수 spacing·radius
-- 2px 장식용 보더, 컬러 left-rail accent, color-shifted variant rim
-- ALL-CAPS / Title Case In Buttons
-- UI 라벨/리스트 아이템 끝 마침표
-- spring·bounce·parallax·page slide 모션
-- 아이콘 내부 gradient·컬러
-- 격식체(`-습니다`, `-십시오`) 또는 챗봇 톤(`~해보세요!`, `여기를 눌러주세요`)
+#### A-2. ladder 위반
+- spacing이 4의 배수가 아닌 값(6/10/14/18/22 등)을 사용하는가 — DESIGN.md `policy: non_4_spacing` 가 false면 차단
+- radius가 ladder(`radius-2/4/8/12/16/full`) 외 값을 사용하는가
 
-### 시그너처 패턴 누락
-- 채용보상금이 `{colors.fg-brand}` 색으로 잡카드 우측 하단에 표시되는가 (해당 도메인 시)
-- 카피가 `-요`/`-어요`/`-아요` 종결과 동사형 버튼 라벨을 지키는가
-- 카드가 1px `{colors.border-subtle}` 헤어라인으로 구조를 만드는가
-- 포커스 링이 visible 상태로 유지되는가 (2px `{colors.blue-800}` + 2px offset)
+#### A-3. alias 계약 위반
+- 활성 DESIGN.md가 `_alias-contract.md`의 alias 32종 중 누락한 것이 있는가
+- 필수 컴포넌트 7종(button-*, input, badge, chip, avatar, icon-button, icon) 시그너처가 정의돼 있는가
 
-### 다크 모드
+#### A-4. 다크 모드 (DESIGN.md `policy: dark_mode == supported` 인 경우)
 - light에서 호출한 alias의 dark 대응이 누락되지 않았는가
 - SSOT가 dark에서 surface하지 않은 alias를 새로 추가했다면 synthesized 표기와 합성 근거가 남아있는가
+
+#### A-5. 텍스트 위계
+- alpha multiplier 시스템(`fg-strong/default/secondary/tertiary/disabled`)을 우회해 별도 회색 hex로 위계를 만들지 않는가
+
+### B. 시안별 정책 규칙 (활성 DESIGN.md에서 추출)
+
+활성 DESIGN.md의 frontmatter `policy:` 블록과 `## Do's and Don'ts` 섹션을 시작 시 로드해 시안별로 적용. 본 섹션은 Wanted 시안 기준 예시지만, 다른 시안 활성 시 그 시안의 정책으로 자동 교체된다.
+
+#### B-1. policy.shadow_on_cards
+- false면: 카드에 그림자 적용 시 위반 (헤어라인 보더로 대체).
+- true면: 그림자 사용 허용 (단, 시안의 elevation 정의 따라야 함).
+
+#### B-2. policy.gradient_locations
+- 시안이 명시한 위치 외에 gradient 사용 시 위반.
+- Wanted 예: 심볼/아바타/잡카드 thumb/마케팅 hero 4곳만 허용. CTA·헤더·풀-블리드 본문 사용은 차단.
+
+#### B-3. policy.copy_tone
+- ko-friendly: `-요`/`-어요`/`-아요` 종결, 동사형 버튼 라벨, 격식체(`-습니다`/`-십시오`) 차단.
+- ko-formal: `-습니다`/`-십시오` 표준, 친근체 차단.
+- en-sentence: sentence case, ALL-CAPS·Title Case In Buttons 차단.
+
+#### B-4. 활성 시안의 ## Do's and Don'ts 일괄 적용
+- 시안의 Do 목록을 권장값으로, Don't 목록을 차단/경고 항목으로 매핑.
+- Wanted 예: gray-* 패밀리 표면 사용 차단, 2px 장식 보더 차단, 텍스처/글래시 효과 차단, 잡카드 채용보상금 시그너처 누락 검출.
+- 다른 시안 활성 시 해당 시안의 Don't 목록을 그대로 사용.
+
+#### B-5. 컴포넌트 로컬값
+- 활성 시안이 정의한 컴포넌트별 로컬값(예: button sm radius 6, input padding 14)을 임의로 변경하지 않는가
 
 ## 출력 형식
 

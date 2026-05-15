@@ -126,7 +126,8 @@
 - **[현재 상태 및 인계](./STATE.md)** - 최근 변경 사항, 다음 작업, 현재 저장소 목적을 확인할 때.
 - **[템플릿 사용 안내](./README.md)** - 이 저장소를 새 프로젝트에 어떻게 복제하고 커스텀할지 확인할 때.
 - **[에이전트 헌법](./CLAUDE.md)** - Core Philosophy, Golden Rules, 커뮤니케이션, Architecture Rules, Naming, Test, Repo Map, Design System, Claude Code 레이어 설정.
-- **[디자인 시스템 카탈로그](./DESIGN.md)** - UI/스타일/컴포넌트 작업 시 토큰, 컴포넌트, Do/Don't, 다크 alias의 1차 소스.
+- **[디자인 시스템 카탈로그 (active)](./DESIGN.md)** - UI/스타일/컴포넌트 작업 시 토큰, 컴포넌트, Do/Don't, 다크 alias의 1차 소스. `designs/`에서 선택된 시안의 활성 사본.
+- **[디자인 시안 라이브러리](./designs/)** - 사용 가능한 시안 카탈로그 모음. 시안 스위치는 `bash .claude/plugins/select-design.sh <slug>`. 시안 작성 계약은 `designs/_alias-contract.md`.
 - **[총괄 진행 규칙](./agents/main-agent.md)** - 요청 해석, 범위 통제, 우선순위 판단이 필요할 때.
 - **[구현 작업](./agents/executor-agent.md)** - 문서 작성, 코드 수정, 설정 변경 같은 실제 산출물 작업 시.
 - **[조사 작업](./agents/researcher-agent.md)** - 기존 구조 조사, 중복 확인, 근거 수집이 필요할 때.

@@ -2,12 +2,15 @@
 
 ## 사용 디자인 시스템
 
-- 본 템플릿은 `DESIGN.md`(원티드 카탈로그)를 기본 디자인 시스템으로 가정한다.
+- 활성 디자인 시안은 root `DESIGN.md`이며, 라이브러리 `designs/`에서 선택해 활성화한다.
+- 라이브러리 목록: `bash .claude/plugins/select-design.sh --list`
 - 다음 중 하나를 선택해 명시한다.
-  - (a) `DESIGN.md`를 그대로 사용한다 (기본).
-  - (b) `DESIGN.md`를 fork하여 프로젝트 전용 카탈로그를 둔다 (예: `DESIGN.md`를 직접 수정해 토큰/컴포넌트 추가/삭제).
-  - (c) `DESIGN.md`의 일부 토큰만 override한다 (override 대상 토큰을 아래에 나열: 색·spacing·radius·typography 등).
-- override 또는 fork 시 변경 이력은 `STATE.md` `이번 세션에서 완료한 작업`에 남긴다.
+  - (a) 라이브러리 기본 시안 사용 (슬러그 명시: 예 `wanted`).
+  - (b) 라이브러리 시안을 fork 해 프로젝트 전용 슬러그로 편집 (예: `cp designs/wanted.md designs/<slug>.md` 후 활성화).
+  - (c) `_template.md`에서 새 시안을 처음부터 작성 (alias 계약 준수).
+  - (d) 활성 DESIGN.md에서 일부 토큰만 override (override 대상 토큰을 아래에 나열).
+- 선택 결과 + override 내역은 `STATE.md` `이번 세션에서 완료한 작업`에 남긴다.
+- 라이브러리 운영 규칙은 `docs/design-guidelines.md`와 `designs/_alias-contract.md` 참조.
 
 ## 제품 톤과 느낌
 
@@ -52,7 +55,7 @@
 
 ```
 ## 사용 디자인 시스템
-- (a) DESIGN.md 그대로 사용. 신규 토큰/컴포넌트 추가는 본 프로젝트에서 발생 시 DESIGN.md 갱신 절차에 따른다.
+- (a) 라이브러리 시안 `wanted` 활성화. 신규 토큰/컴포넌트 추가는 본 프로젝트에서 발생 시 designs/wanted.md 갱신 절차(또는 fork)에 따른다.
 
 ## 제품 톤과 느낌
 - 신뢰감 있고 정돈된 느낌. 정보 밀도 높음.

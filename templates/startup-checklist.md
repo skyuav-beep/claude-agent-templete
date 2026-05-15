@@ -51,15 +51,26 @@ Q3. 가장 중요한 사용자 흐름 1~3개는?
 Q4. 반드시 고려해야 할 화면 상태는? (예: loading, empty, error, disabled)
 Q5. 접근성 대응 수준은? (예: 키보드 탐색, 스크린 리더, 색상 대비 기준)
 
-# 디자인 시스템 선택 (DESIGN.md frontmatter 재작성 필수)
-Q6. 사용할 디자인 시스템은?
-    A. 템플릿 기본 DESIGN.md(원티드 카탈로그)를 그대로 사용한다.
-    B. 본 프로젝트 전용 디자인 시스템을 새로 채운다 (DESIGN.md를 비우고 토큰/컴포넌트 신규 작성).
-    C. 기본 카탈로그를 fork 하여 일부 토큰만 override 한다.
-Q7. (B/C 선택 시) DESIGN.md frontmatter(`name`, `slug`, `category`, `last_updated`)를
-    본 프로젝트 정보로 재작성한다.
-    예: name: <프로젝트명>, slug: <영문 slug>, category: <카테고리>, last_updated: <오늘 날짜>
+# 디자인 시스템 선택 (designs/ 라이브러리 기반)
+Q6. 사용할 디자인 시안 슬러그는?
+    먼저 라이브러리 목록 확인:
+        bash .claude/plugins/select-design.sh --list
+    옵션:
+    A. 라이브러리 기본 시안 사용 (예: wanted) — `select-design.sh wanted`
+    B. 라이브러리 시안을 fork 해 프로젝트 전용으로 편집
+        cp designs/wanted.md designs/<custom-slug>.md
+        # frontmatter name/slug/category/last_updated 갱신
+        # 본문 토큰/컴포넌트 수정
+        bash .claude/plugins/select-design.sh <custom-slug>
+    C. 빈 골격에서 새로 작성
+        cp designs/_template.md designs/<custom-slug>.md
+        # _alias-contract.md 의 alias 32종 + 컴포넌트 7종 시그너처를 모두 채움
+        bash .claude/plugins/select-design.sh <custom-slug>
+Q7. 활성화 검증
+    cat .claude/.active-design          # 슬러그가 기록됐는지 확인
+    head -20 DESIGN.md                  # frontmatter가 선택한 시안과 일치하는지 확인
 Q8. 위 결정과 frontmatter 변경을 STATE.md `이번 세션에서 완료한 작업`에 기록한다.
+    예: "designs/library에서 toss-like 시안을 fork → designs/myadmin.md로 활성화. 카드 그림자 정책만 허용으로 override."
 ```
 
 ---
