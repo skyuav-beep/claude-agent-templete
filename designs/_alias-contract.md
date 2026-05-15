@@ -132,3 +132,49 @@ radius-2, radius-4, radius-8, radius-12, radius-16, radius-full
 - preview HTML이 깨짐 (CSS 변수 매핑 실패)
 - design-reviewer가 위반 검출 불가
 - skill 자동 활성화는 작동하지만 산출물 품질 보장 안 됨
+
+## 10. CSS Variables 표기 규칙
+
+`docs/admin-fe-preview.html`이 시안을 즉시 시각화하기 위해, 모든 시안은 `## CSS Variables` 섹션을 둔다.
+
+### 10-1. 명명 규칙
+
+alias/ladder 이름을 그대로 `--` 접두로 변환한다. 변환 규칙은 모든 시안에 동일하게 적용된다.
+
+| 종류 | alias | CSS 변수 |
+|---|---|---|
+| 색 | `bg-canvas`, `fg-strong`, `border-subtle` | `--bg-canvas`, `--fg-strong`, `--border-subtle` |
+| 간격 | `space-4`, `space-16`, `space-128` | `--space-4`, `--space-16`, `--space-128` |
+| 라운드 | `radius-2`, `radius-8`, `radius-full` | `--radius-2`, `--radius-8`, `--radius-full` |
+| 타이포 size | `body1`, `title2`, `display1` | `--font-size-body1`, `--font-weight-body1`, `--line-height-body1`, `--letter-spacing-body1` (alias 1종당 4 변수) |
+| elevation | `shadow-1`, `shadow-pop` | `--shadow-1`, `--shadow-pop` |
+
+### 10-2. 시안별 분기 셀렉터
+
+`docs/admin-fe-preview.html`은 다음 두 속성 cascade로 시안과 테마를 분기한다.
+
+```css
+:root[data-design="<slug>"][data-theme="light"] { /* light 변수 */ }
+:root[data-design="<slug>"][data-theme="dark"]  { /* dark 변수 */ }
+```
+
+`<slug>`는 frontmatter `slug` 필드와 동일. 모든 시안은 light는 반드시, dark는 `policy.dark_mode == supported`인 경우만 정의.
+
+### 10-3. md 내 코드 블록 형식
+
+각 시안 md의 `## CSS Variables` 섹션은 위 두 블록을 fenced ```css 블록으로 ship한다. preview HTML 또는 다운스트림 프로젝트가 동일 블록을 그대로 복사해 사용한다.
+
+```css
+:root[data-design="wanted"][data-theme="light"] {
+  --bg-canvas: oklch(1 0 0);
+  --bg-surface: oklch(1 0 0);
+  /* ... alias 32종 + spacing 14종 + radius 6종 + typography 72종 + elevation */
+}
+:root[data-design="wanted"][data-theme="dark"] {
+  /* ... */
+}
+```
+
+### 10-4. preview 정합 검증
+
+`docs/admin-fe-preview.html` 상단 시안 셀렉터에서 슬러그를 바꿔도 모든 컴포넌트가 동일 alias로 렌더링되도록 한다. 변수 누락 시 컴포넌트가 깨진 상태로 표시되어 검수 단계에서 검출된다.

@@ -13,6 +13,12 @@ sources:
 related_services: []
 lang: ko
 logo: /logos/wanted.png
+policy:
+  shadow_on_cards: false
+  gradient_locations: ["symbol", "avatar", "thumbnail", "hero"]
+  copy_tone: "ko-friendly"
+  dark_mode: "supported"
+  non_4_spacing: false
 ---
 
 # 원티드 (Wanted) — design.md
@@ -974,3 +980,99 @@ pagination:
 3. https://wanted-sans.github.io — Wanted Sans 오픈소스 typeface (OFL). Wanted + 산돌 공동 제작.
 4. https://github.com/orioncactus/pretendard — Pretendard JP variable typeface. 본 시스템의 베이스 UI face.
 5. https://github.com/wanteddev/wanted-icons — Wanted 자체 아이콘 셋 npm 패키지. 24×24 그리드, 2px stroke, monochrome.
+
+## CSS Variables
+
+`docs/admin-fe-preview.html` 및 다운스트림 프로젝트가 그대로 호출할 CSS 변수 정의. 표기 규칙은 `designs/_alias-contract.md ## 10` 참조.
+
+```css
+:root[data-design="wanted"][data-theme="light"] {
+  /* Background */
+  --bg-canvas:         oklch(1 0 0);
+  --bg-surface:        oklch(1 0 0);
+  --bg-subtle:         oklch(0.972 0.002 286);
+  --bg-muted:          oklch(0.961 0.002 286);
+  --bg-elevated:       oklch(1 0 0);
+  --bg-inverse:        oklch(0.148 0.004 277);
+  --bg-brand:          oklch(0.563 0.232 257);
+  --bg-brand-subtle:   oklch(0.954 0.022 250);
+  --bg-danger-subtle:  oklch(0.951 0.018 18);
+  --bg-success-subtle: oklch(0.968 0.052 154);
+  --bg-warning-subtle: oklch(0.967 0.030 81);
+
+  /* Foreground */
+  --fg-strong:    oklch(0.148 0.004 277);
+  --fg-default:   oklch(0.259 0.010 273 / 0.88);
+  --fg-secondary: oklch(0.298 0.010 273 / 0.61);
+  --fg-tertiary:  oklch(0.298 0.010 273 / 0.43);
+  --fg-disabled:  oklch(0.298 0.010 273 / 0.28);
+  --fg-on-brand:  oklch(1 0 0);
+  --fg-brand:     oklch(0.563 0.232 257);
+  --fg-success:   oklch(0.673 0.211 144);
+  --fg-warning:   oklch(0.625 0.148 56);
+  --fg-danger:    oklch(0.546 0.220 27);
+
+  /* Border */
+  --border-subtle:  oklch(0.521 0.018 273 / 0.08);
+  --border-default: oklch(0.521 0.018 273 / 0.22);
+  --border-strong:  oklch(0.521 0.018 273 / 0.35);
+  --border-brand:   oklch(0.563 0.232 257);
+
+  /* Spacing */
+  --space-4: 4px;    --space-8: 8px;    --space-12: 12px;   --space-16: 16px;
+  --space-20: 20px;  --space-24: 24px;  --space-32: 32px;   --space-40: 40px;
+  --space-48: 48px;  --space-56: 56px;  --space-64: 64px;   --space-80: 80px;
+  --space-96: 96px;  --space-128: 128px;
+
+  /* Rounded */
+  --radius-2: 2px;   --radius-4: 4px;   --radius-8: 8px;
+  --radius-12: 12px; --radius-16: 16px; --radius-full: 9999px;
+
+  /* Elevation (popover/dropdown/modal/toast 전용) */
+  --shadow-1:   0 1px 2px oklch(0 0 0 / 0.04);
+  --shadow-2:   0 4px 8px oklch(0 0 0 / 0.06);
+  --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.10);
+}
+
+:root[data-design="wanted"][data-theme="dark"] {
+  --bg-canvas:        oklch(0.148 0.004 277);
+  --bg-surface:       oklch(0.166 0.005 271);
+  --bg-subtle:        oklch(0.135 0.002 286);
+  --bg-muted:         oklch(0.196 0.008 273);
+  --bg-elevated:      oklch(0.237 0.008 273);
+  --bg-inverse:       oklch(1 0 0);
+  --bg-brand:         oklch(0.563 0.232 257);
+  --bg-brand-subtle:  oklch(0.149 0.069 257);
+  --bg-danger-subtle: oklch(0.298 0.10 22 / 0.32);
+  --bg-success-subtle:oklch(0.298 0.10 144 / 0.28);
+  --bg-warning-subtle:oklch(0.298 0.10 56 / 0.32);
+
+  --fg-strong:    oklch(1 0 0);
+  --fg-default:   oklch(1 0 0 / 0.88);
+  --fg-secondary: oklch(1 0 0 / 0.61);
+  --fg-tertiary:  oklch(1 0 0 / 0.43);
+  --fg-disabled:  oklch(1 0 0 / 0.28);
+  --fg-on-brand:  oklch(1 0 0);
+  --fg-brand:     oklch(0.715 0.155 255);
+  --fg-success:   oklch(0.760 0.180 144);
+  --fg-warning:   oklch(0.778 0.158 64);
+  --fg-danger:    oklch(0.715 0.220 27);
+
+  --border-subtle:  oklch(1 0 0 / 0.08);
+  --border-default: oklch(1 0 0 / 0.22);
+  --border-strong:  oklch(1 0 0 / 0.35);
+  --border-brand:   oklch(0.715 0.155 255);
+
+  /* spacing/radius는 light와 동일 — 상속 */
+  --shadow-1:   0 1px 2px oklch(0 0 0 / 0.20);
+  --shadow-2:   0 4px 8px oklch(0 0 0 / 0.32);
+  --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.48);
+}
+```
+
+frontmatter `policy:` 블록:
+- `shadow_on_cards: false` — 카드 그림자 금지(헤어라인 보더가 표준)
+- `gradient_locations: ["symbol", "avatar", "thumbnail", "hero"]` — 4곳 한정
+- `copy_tone: "ko-friendly"` — `-요`/`-어요`/`-아요` 종결, 동사형 버튼 라벨
+- `dark_mode: "supported"` — light/dark 양쪽 정의
+- `non_4_spacing: false` — 4의 배수만 (button sm radius 6, lg 10 같은 컴포넌트 로컬값은 예외)
