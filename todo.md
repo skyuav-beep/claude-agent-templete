@@ -81,7 +81,7 @@ Codex 분석(2026-05-14)과 본 에이전트 재검증으로 확인된 루트/�
 - [x] `agents/reviewer-agent.md`에 `### Design 리뷰 포커스` 섹션 추가.
 - [x] `agents/researcher-agent.md`의 Feature/Refactor 조사에 DESIGN.md 확인 항목 추가.
 - [x] `templates/feature-request.md`에 `## 디자인 토큰 참조` 섹션 추가.
-- [ ] `.claude/skills/feature/SKILL.md`, `.claude/skills/refactor/SKILL.md`, `.claude/skills/bugfix/SKILL.md`에서 UI 영향이 발견되면 design skill로 연계되는 흐름을 description/본문에 명시. (design SKILL.md의 `## 다른 skill과의 연계` 섹션에 양방향으로 일부 명시했으나 개별 skill 파일 반영은 다음 사이클로 미룸)
+- [x] `.claude/skills/feature/SKILL.md`, `.claude/skills/refactor/SKILL.md`, `.claude/skills/bugfix/SKILL.md`에서 UI 영향이 발견되면 design skill로 연계되는 흐름을 description/본문에 명시. — 3개 skill 본문에 `## 다른 skill과의 연계` 섹션 추가, 각 작업 유형별 트리거 조건과 design/design-reviewer 연계 시점 명시.
 - [ ] `templates/ui-intake.md`의 기존 항목 중 DESIGN.md와 중복되는 입력(색상 톤·radius·spacing 정책)은 "DESIGN.md를 기본값으로 사용" 분기를 제공해 중복 입력을 줄인다.
 
 ## 에러/누락 처리

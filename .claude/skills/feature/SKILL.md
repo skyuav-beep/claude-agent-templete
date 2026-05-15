@@ -27,3 +27,8 @@ description: "사용자가 기능 추가, 새 기능, 신규 화면/엔드포인
 ## 완료 후
 
 구조화된 feature-request 마크다운 블록을 출력하고, 바로 구현을 시작할지 사용자에게 확인한다.
+
+## 다른 skill과의 연계
+
+- 기능 설명에 UI/화면/스타일/컴포넌트/색·spacing·radius·typography 등 디자인 키워드가 포함되거나, 검증 기준에 시각적 기준(레이아웃·간격·다크 모드 대응 등)이 들어가면 `design` skill로 연계해 `DESIGN.md`를 1차 소스로 강제 로드한다.
+- `templates/feature-request.md`의 `## 디자인 토큰 참조` 섹션이 채워졌는지 확인한다. 비어 있으면 design skill에서 토큰 호출 형식(`{group.name}`)으로 보강한다.

@@ -27,3 +27,8 @@ description: "사용자가 리팩터링, 구조 개선, 코드 정리, 동작 �
 ## 완료 후
 
 구조화된 refactor-request 마크다운 블록을 출력하고, 바로 구현을 시작할지 사용자에게 확인한다.
+
+## 다른 skill과의 연계
+
+- 리팩터링 범위에 UI 컴포넌트, 스타일 파일(CSS/SCSS/Tailwind), 디자인 토큰 호출부, 다크 모드 대응 코드가 포함되면 `design` skill로 연계해 `DESIGN.md`의 토큰/Do-Don't 위반이 없는지 점검한다.
+- 동작 불변 조건이 시각적 회귀(visual regression) 방지를 포함한다면 design skill의 alias/atomic 선택 규칙을 유지 조건으로 명시한다.
