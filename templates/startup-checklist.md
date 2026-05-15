@@ -50,6 +50,27 @@ Q2. 참고하고 싶은 서비스나 디자인이 있다면?
 Q3. 가장 중요한 사용자 흐름 1~3개는?
 Q4. 반드시 고려해야 할 화면 상태는? (예: loading, empty, error, disabled)
 Q5. 접근성 대응 수준은? (예: 키보드 탐색, 스크린 리더, 색상 대비 기준)
+
+# 디자인 시스템 선택 (designs/ 라이브러리 기반)
+Q6. 사용할 디자인 시안 슬러그는?
+    먼저 라이브러리 목록 확인:
+        bash .claude/plugins/select-design.sh --list
+    옵션:
+    A. 라이브러리 기본 시안 사용 (예: wanted) — `select-design.sh wanted`
+    B. 라이브러리 시안을 fork 해 프로젝트 전용으로 편집
+        cp designs/wanted.md designs/<custom-slug>.md
+        # frontmatter name/slug/category/last_updated 갱신
+        # 본문 토큰/컴포넌트 수정
+        bash .claude/plugins/select-design.sh <custom-slug>
+    C. 빈 골격에서 새로 작성
+        cp designs/_template.md designs/<custom-slug>.md
+        # _alias-contract.md 의 alias 32종 + 컴포넌트 7종 시그너처를 모두 채움
+        bash .claude/plugins/select-design.sh <custom-slug>
+Q7. 활성화 검증
+    cat .claude/.active-design          # 슬러그가 기록됐는지 확인
+    head -20 DESIGN.md                  # frontmatter가 선택한 시안과 일치하는지 확인
+Q8. 위 결정과 frontmatter 변경을 STATE.md `이번 세션에서 완료한 작업`에 기록한다.
+    예: "designs/library에서 toss-like 시안을 fork → designs/myadmin.md로 활성화. 카드 그림자 정책만 허용으로 override."
 ```
 
 ---

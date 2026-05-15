@@ -32,6 +32,112 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 디자인 시안 라이브러리 도입(`designs/` 폴더 + select-design.sh + install.sh --design 플래그). (2026-05-15)
+  - 신규: `designs/README.md`, `designs/_alias-contract.md`(alias 32종 + 컴포넌트 7종 + policy 5종 계약), `designs/_template.md`(빈 골격), `designs/wanted.md`(기존 DESIGN.md 이전).
+  - 신규 스크립트: `.claude/plugins/select-design.sh` — `--list`/`--current`/`<slug>` 모드. DESIGN.md가 라이브러리와 다른 직접 편집 상태면 `DESIGN.md.bak` 자동 백업 후 덮어쓰기.
+  - `install.sh` 확장: `--design <slug>` 플래그 (기본 wanted). 설치 마지막에 designs/<slug>.md → DESIGN.md 활성화 + `.claude/.active-design` 마커 생성.
+  - manifest.json에 신규 `designs` 섹션(default+files+selector) 추가. 라이브러리 4종 파일 + selector가 install dry-run 73개 대상에 포함됨.
+  - `docs/design-guidelines.md`에 라이브러리 사용 흐름 섹션 + install 정책 갱신.
+  - `templates/startup-checklist.md` 섹션 3 Q6~Q8을 라이브러리 기반 흐름으로 단순화(목록 확인/활성화 검증/STATE 기록).
+  - `templates/ui-intake.md` 사용 디자인 시스템 섹션을 (a) 라이브러리 기본/(b) fork/(c) `_template`에서 신규/(d) override 4분기로 갱신.
+  - `CLAUDE.md` Repo Map + Design System 섹션, `AGENTS.md` Context Map에 라이브러리/active 정본 구분 명시.
+  - `.claude/agents/design-reviewer.md` 일반화: 점검 항목을 A(시안 무관 일반 — alias 계약/ladder/다크 누락)와 B(시안별 정책 — frontmatter `policy:` 블록과 `## Do's and Don'ts` 자동 적용)로 분리. Wanted 고유 규칙(잡카드 채용보상금, blue-800 focus ring, gray-* 패밀리 차단)은 B 섹션의 시안별 예시로 격하.
+  - 로컬 검증: `select-design.sh --list/--current/wanted/_template/nonexistent` 5개 모드 동작 확인. `install.sh --dry-run --design wanted /tmp` 73개 대상 + 활성화 단계 출력 확인. 실설치(`/tmp/test-install-real`) 후 `DESIGN.md == designs/wanted.md` 일치 검증.
+
+- DESIGN.md에 admin/dashboard 표면 컴포넌트 5종(synthesized) 추가 + admin FE 디자인 가이드 작성. (2026-05-15)
+  - DESIGN.md `## Components` 섹션 끝에 `### Admin / Dashboard surface 컴포넌트 (synthesized)` 블록 추가.
+  - 신규 컴포넌트 5종: `login-layout`, `sidebar-nav`, `top-bar (admin)`, `stat-card (KPI)`, `data-table` — 모두 토큰 호출 형식 + 평면 표면/1px 헤어라인/단일 강조색 정책 준수.
+  - DESIGN.md frontmatter `last_updated`를 2026-05-15로 갱신.
+  - `docs/admin-fe-design-guide.md` 신규 작성 — 화면 단위 조립 패턴(login, dashboard, 리스트, 상세, 폼, 알림) + 카피 톤 체크리스트 + 데이터 밀도 + 다크 모드 + design skill 연계.
+  - `docs/admin-fe-preview.html` 신규 작성 — DESIGN.md 토큰(oklch CSS 변수)을 직접 매핑한 단일 파일 시각화. 색 토큰 swatch + admin 5종 컴포넌트 + 대시보드/리스트 페이지 조립뷰. 라이트/다크 토글, 사이드바 collapse 토글, checkbox 토글 동작. 외부 CDN 의존성 없음. JS 블록 `node --check` 통과.
+
+- todo.md 미완료 12종 일괄 처리. (2026-05-15)
+  - install.sh `--dry-run` 검증 — HTML 2종(development-process.html, intake.html) 정상 복사 확인.
+  - plugin-guide 디렉터리명 정본을 `claude-agent-templete`(GitHub 저장소명)로 결정. plugin-guide.md 3개 경로 + manifest.json `name` 필드 통일.
+  - `docs/development-process.md` Phase 3 단계 6에 `docs/ui-decisions.md` 동기화 운영 메모 추가, STATE.md 다음 작업 항목에도 inline 메모.
+  - `templates/ui-intake.md`에 `## 사용 디자인 시스템` + `## 토큰 정책` 섹션 추가 (DESIGN.md 그대로/fork/override 분기, 토큰 기본값 호출).
+  - `.claude/skills/{feature,refactor,bugfix}/SKILL.md`에 `## 다른 skill과의 연계` 섹션 추가 (UI 영향 발견 시 design skill로 연계).
+  - `templates/qa-intake.md` CI/CD 섹션에 디자인 토큰 외 값 PR 경고 정책 항목 추가.
+  - `DESIGN.md` 상단에 외부 인용 의존성 정책 boxed note 추가, `docs/design-guidelines.md` 1차 소스 규칙 보강(외부 URL 재방문 조건 4종 + `[src:N (archived)]` 보존).
+  - DESIGN.md frontmatter install 정책: 옵션 B(그대로 복사 + 첫 단계 재작성) 결정. `templates/startup-checklist.md` 섹션 3에 Q6~Q8(디자인 시스템 선택, frontmatter 재작성, STATE.md 기록) 추가.
+  - `.claude/hooks/warn-design-tokens.sh` opt-in 가드레일 신규 작성 (hex/비-4 px 검출, 항상 exit 0). `settings.local.json` 기본 미등록, 활성화 방법 `docs/design-guidelines.md`에 명시.
+  - `AGENTS.md ## 문서화 원칙`과 `docs/design-guidelines.md ## STATE.md 변경 이력 운영 규칙`에 DESIGN.md 갱신 시 운영 규칙 명시 (last_updated + STATE 변경 이력).
+
+- 문서 자기일관성 정리 + 디자인 시스템 통합을 진행했다. (2026-05-14)
+  - 자기일관성 정리:
+    - `CLAUDE.md` Repo Map의 서브에이전트 3종 표기를 5종(explorer, code-reviewer, planner, test-runner, feature-dev)으로 정정.
+    - `docs/plugin-guide.md` 설치 내용 섹션을 manifest 기준으로 동기화 — L2를 skills/commands로 분리, L4를 5종으로 갱신, supporting 영역 명시.
+    - `.claude/plugins/manifest.json` supporting.docs에 누락 자산 3종 추가(`docs/development-process.html`, `docs/intake.html`, `docs/global-claude-md-template.md`).
+    - `AGENTS.md` Context Map의 `Constraint 1: 표 금지` 적용 범위를 Context Map 섹션 한정으로 명시 (다른 문서의 표 사용 허용).
+    - `docs/development-process.md` Phase 3의 `docs/ui-decisions.md` 빈 참조를 "필요 시 작성"으로 약화.
+  - 디자인 시스템 통합:
+    - `CLAUDE.md`에 `## Design System` 섹션 신설 (토큰 호출 규칙, Do/Don't 핵심, 카피 톤, 자동 활성화 흐름) + Repo Map에 `DESIGN.md` 추가.
+    - `AGENTS.md` Context Map에 `DESIGN.md`, `docs/design-guidelines.md` 라우팅 추가 + Skills Layer를 9종으로 갱신.
+    - `.claude/skills/design/SKILL.md` 신규 작성 — UI/디자인 키워드 자동 활성화, DESIGN.md 강제 로드, 토큰 호출 형식 강제.
+    - `docs/design-guidelines.md` 신규 작성 — 1차 소스 규칙, alias/atomic 선택 기준, 다크 alias 정책, 새 컴포넌트 추가 절차, Do/Don't 운영, 카피 톤.
+    - `agents/executor-agent.md`에 디자인 공통 체크리스트 4종 + `### Design` 작업 유형 체크리스트 추가.
+    - `agents/reviewer-agent.md`에 `### Design 리뷰 포커스` 섹션 추가.
+    - `agents/researcher-agent.md`의 Feature/Refactor 조사에 DESIGN.md 확인 항목 추가.
+    - `.claude/agents/design-reviewer.md` 신규 서브에이전트 — code-reviewer와 직교(병렬 실행 가능)한 디자인 일관성 전용 리뷰어.
+    - `docs/subagent-guide.md` 디스패치 기준에 design-reviewer 추가.
+    - `templates/feature-request.md`에 `## 디자인 토큰 참조` 섹션 추가.
+    - `.claude/plugins/manifest.json`에 디자인 자산 4종 등록(L1 DESIGN.md, L2 design SKILL, L4 design-reviewer, supporting design-guidelines.md). JSON 유효성 검증 통과.
+
+- Layer 4 서브에이전트를 이미지 비전 기준 5종 체제로 확장했다. (2026-05-13)
+  - `test-runner.md` 신규: 테스트 실행/실패 분석 위임 (general-purpose 타입)
+  - `feature-dev.md` 신규: end-to-end 기능 구현 위임 (general-purpose 타입)
+  - `reviewer.md` → `code-reviewer.md` 이름 변경: 역할 명확화 (repo conventions 검토)
+  - 참조 문서 갱신: `CLAUDE.md`, `AGENTS.md`, `manifest.json`, `docs/subagent-guide.md`
+  - 최종 구성: explorer, code-reviewer, planner, test-runner, feature-dev (5종)
+
+- Skills Layer를 `.claude/commands/`(slash command)에서 `.claude/skills/<name>/SKILL.md`(자연어 자동 활성화) 구조로 전환했다. (2026-05-13)
+  - 8개 skill 디렉터리에 SKILL.md 작성: `start`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `intake`.
+  - 각 SKILL.md의 description 필드에 한국어+영문 트리거 키워드 병기.
+  - 우선순위 규칙: 명확한 유형 키워드는 개별 skill, 모호하면 `request` skill 활성화.
+  - skill 연계 흐름: `start` → `intake` 또는 개별 작업 skill로 자연스러운 전환.
+  - `$ARGUMENTS` 참조 제거 → "사용자 메시지에 ~ 있으면" 자연어 파싱 방식으로 재설계.
+  - SKILL.md 내 slash command 참조(`/feature`, `/intake` 등)를 "해당 skill이 활성화된다" 표현으로 대체.
+  - `.claude/commands/` 8종은 명시적 호출용으로 병존 유지 (역할 분리).
+  - 루트 문서 4종(`CLAUDE.md`, `AGENTS.md`, `README.md`, `STATE.md`)과 `manifest.json`, `docs/subagent-guide.md`에 변경 반영.
+  - intake 토픽 매핑 12종이 실제 `templates/*-intake.md` 파일 존재와 1:1 일치함을 검증.
+  - `settings.local.json`은 skills 관련 별도 설정 불필요(SKILL.md 파일 존재만으로 자동 활성화)임을 확인.
+  - `docs/subagent-guide.md`에 Skills vs 서브에이전트 역할 구분 섹션 추가.
+
+- Skills Layer (L2) 구현: `.claude/commands/`에 커스텀 slash command 8개를 추가했다. (2026-05-12)
+  - 오케스트레이터 3종: `start.md` (프로젝트 QnA), `intake.md` (12종 intake 라우터), `request.md` (작업 유형 라우터)
+  - 개별 요청 5종: `feature.md`, `bugfix.md`, `refactor.md`, `review.md`, `business-logic.md`
+  - 각 커맨드는 `templates/`의 원본을 읽어서 대화형으로 진행. 템플릿 내용을 중복하지 않음.
+  - `CLAUDE.md`에 Skills Layer 섹션 추가, `AGENTS.md` Context Map에 커맨드 라우팅 추가.
+  - `README.md` 사용 방법을 커맨드 중심으로 업데이트하고 커스텀 커맨드 섹션 추가.
+
+- Hooks Layer (L3) 구현: `.claude/hooks/`에 가드레일 스크립트 3개를 추가했다. (2026-05-12)
+  - `block-destructive.sh`: `rm -rf`, `git reset --hard`, `git push --force`, `git clean -f`, `git checkout .` 차단
+  - `block-secret-files.sh`: `.env`, `*.pem`, `*.key`, `credentials.json` 등 비밀 파일 쓰기 차단
+  - `state-reminder.sh`: `git commit` 시 STATE.md 미갱신 경고 (차단하지 않음)
+  - `.claude/settings.local.json`에 PreToolUse hooks 등록 완료.
+  - `CLAUDE.md`에 Hooks Layer 섹션 추가, `AGENTS.md` Context Map에 hooks 라우팅 추가.
+
+- L1 CLAUDE.md 재구조화: "에이전트 헌법" 패턴으로 개편했다. (2026-05-13)
+  - AGENTS.md에서 Core Philosophy, Golden Rules, 커뮤니케이션, 검증 원칙을 CLAUDE.md로 이동.
+  - CLAUDE.md에 Architecture Rules, Naming Conventions, Test Expectations, Repo Map 신규 섹션 추가.
+  - AGENTS.md에 헌법 역참조 추가, Context Map 설명 업데이트.
+  - `docs/global-claude-md-template.md` 생성 (글로벌 `~/.claude/CLAUDE.md` 템플릿).
+
+- Plugins Layer (L5) 구현: `.claude/plugins/`에 배포 도구를 추가했다. (2026-05-13)
+  - `manifest.json`: 전체 레이어 파일 목록과 메타데이터 (name, version, layers, supporting)
+  - `VERSION`: 1.0.0
+  - `install.sh`: 대상 프로젝트에 파일 복사 스크립트 (--force, --dry-run 지원)
+  - `docs/plugin-guide.md`: 설치/업데이트/커스텀/버전 관리 가이드
+  - `CLAUDE.md`에 Plugins Layer 섹션 추가, `AGENTS.md` Context Map에 라우팅 추가.
+  - `README.md`에 "다른 프로젝트에 설치" 섹션 추가.
+
+- Subagents Layer (L4) 구현: `.claude/agents/`에 서브에이전트 프롬프트 템플릿 3개를 추가했다. (2026-05-13)
+  - `explorer.md`: 조사/탐색 위임용 (Explore 타입, researcher-agent.md 참조)
+  - `reviewer.md`: 리스크 점검 위임용 (general-purpose 타입, reviewer-agent.md 참조)
+  - `planner.md`: 구현 계획 위임용 (Plan 타입, main-agent + executor-agent 참조)
+  - `docs/subagent-guide.md`에 디스패치 테이블 섹션 추가.
+  - `CLAUDE.md`에 서브에이전트 템플릿 섹션 추가, `AGENTS.md` Context Map에 라우팅 추가.
+
 - `templates/` 18개 파일에 작성 예시 섹션을 일괄 추가했다. (2026-05-06)
   - request 5종(`feature`, `bugfix`, `refactor`, `review`, `business-logic`): 각 파일 말미에 시나리오형 작성 예시 추가.
   - 짧은 intake 6종(`api`, `error`, `form`, `qa`, `routing`, `format`): 답변 예시 추가.
@@ -86,7 +192,7 @@
 - i18n locale별 구현 예시(키 구조, 디렉터리 배치, fallback 코드 샘플)를 추가한다.
 - 비즈니스 로직 요청 예시에서 build/docker/git 작업이 실제로 어떻게 흘러가는지 단계별 시나리오를 추가한다.
 - 프레임워크 구조 intake 답변을 받아 만든 실제 디렉터리 트리 예시를 추가한다.
-- startup-checklist 답변을 저장하는 `docs/ui-decisions.md` 템플릿을 추가한다.
+- startup-checklist 답변을 저장하는 `docs/ui-decisions.md` 템플릿을 추가한다. (동기화 메모: 신설 시 `docs/development-process.md:89` 단계 6도 함께 갱신. 한쪽이 변경되면 다른 쪽도 동기화한다.)
 - 필요하면 `docs/template-usage.md` 또는 예시 프로젝트 문서를 추가한다.
 - 필요하면 `docs/codex-reading-order.md`와 루트 `AGENTS.md`의 빠른 읽기 순서 중복을 더 줄인다.
 - `riderapp-runtime/README.md`의 예전 `riderapp` 경로 설명을 현재 워크스페이스 구조(`claude-agent-template`, `rider-platform-docs`, `riderapp-runtime`)에 맞게 갱신한다.
@@ -100,10 +206,20 @@
 - 상태 인계: `STATE.md`
 - Claude Code 운영 설정: `CLAUDE.md`
 - 역할별 지침: `agents/main-agent.md`, `agents/executor-agent.md`, `agents/reviewer-agent.md`, `agents/researcher-agent.md`
+- Skills (자동 활성화): `.claude/skills/start/SKILL.md`, `.claude/skills/intake/SKILL.md`, `.claude/skills/request/SKILL.md`, `.claude/skills/feature/SKILL.md`, `.claude/skills/bugfix/SKILL.md`, `.claude/skills/refactor/SKILL.md`, `.claude/skills/review/SKILL.md`, `.claude/skills/business-logic/SKILL.md`, `.claude/skills/design/SKILL.md`
+- Slash Commands (명시적 호출): `.claude/commands/start.md`, `.claude/commands/intake.md`, `.claude/commands/request.md`, `.claude/commands/feature.md`, `.claude/commands/bugfix.md`, `.claude/commands/refactor.md`, `.claude/commands/review.md`, `.claude/commands/business-logic.md`
+- 가드레일 hooks: `.claude/hooks/block-destructive.sh`, `.claude/hooks/block-secret-files.sh`, `.claude/hooks/state-reminder.sh`, `.claude/hooks/warn-design-tokens.sh` (opt-in)
+- hooks 설정: `.claude/settings.local.json`
+- 서브에이전트 템플릿: `.claude/agents/explorer.md`, `.claude/agents/code-reviewer.md`, `.claude/agents/planner.md`, `.claude/agents/test-runner.md`, `.claude/agents/feature-dev.md`, `.claude/agents/design-reviewer.md`
+- 플러그인: `.claude/plugins/manifest.json`, `.claude/plugins/VERSION`, `.claude/plugins/install.sh`
+- 플러그인 가이드: `docs/plugin-guide.md`
 - 요청 템플릿: `templates/feature-request.md`, `templates/bugfix-request.md`, `templates/review-request.md`, `templates/refactor-request.md`, `templates/business-logic-request.md`
 - intake 템플릿: `templates/project-intake.md`, `templates/ui-intake.md`, `templates/responsive-intake.md`, `templates/tech-intake.md`, `templates/i18n-intake.md`, `templates/framework-structure-intake.md`, `templates/startup-checklist.md`, `templates/api-intake.md`, `templates/error-intake.md`, `templates/form-intake.md`, `templates/format-intake.md`, `templates/qa-intake.md`, `templates/routing-intake.md`
-- guide 템플릿: `docs/project-guide-template.md`, `docs/i18n-guidelines.md`, `docs/business-logic-playbook.md`, `docs/framework-structure-guide.md`
-- 운영 아티팩트: `docs/codex-reading-order.md`, `docs/subagent-guide.md`, `docs/development-process.md`, `docs/development-process.html`, `docs/intake.html`
+- guide 템플릿: `docs/project-guide-template.md`, `docs/i18n-guidelines.md`, `docs/business-logic-playbook.md`, `docs/framework-structure-guide.md`, `docs/design-guidelines.md`, `docs/admin-fe-design-guide.md`
+- 디자인 시스템 카탈로그(active): `DESIGN.md`
+- 디자인 시안 라이브러리: `designs/README.md`, `designs/_alias-contract.md`, `designs/_template.md`, `designs/wanted.md`
+- 디자인 시안 selector: `.claude/plugins/select-design.sh`
+- 운영 아티팩트: `docs/codex-reading-order.md`, `docs/subagent-guide.md`, `docs/development-process.md`, `docs/development-process.html`, `docs/intake.html`, `docs/admin-fe-preview.html`
 - 런타임 앱: `../riderapp-runtime/` (sibling 저장소)
 - 비즈니스 설계 문서: `../rider-platform-docs/` (sibling 저장소, rider platform 전용)
 

@@ -1,0 +1,177 @@
+# Admin FE 디자인 가이드
+
+admin/dashboard 표면을 만들 때 `DESIGN.md`의 토큰·컴포넌트를 어떻게 조립하는지 정리한 가이드다. `DESIGN.md`가 atomic spec이라면 이 문서는 화면 단위 patterns다. 본 가이드는 `DESIGN.md`를 1차 소스로 호출하며, 토큰값을 직접 적지 않고 `{group.name}` 형식으로만 호출한다.
+
+## 1차 원칙 (admin에도 동일 적용)
+
+- 평면 표면 + 1px `{colors.border-subtle}` 헤어라인 + 단일 강조색(`{colors.bg-brand}`). 카드 그림자 금지.
+- 색상은 시맨틱 alias 우선(`bg-*`, `fg-*`, `border-*`), atomic ramp는 새 alias 정의 시에만.
+- spacing/radius는 `{spacing.*}` / `{rounded.*}` 사다리만 사용. 6/10/14/18/22 도입 금지.
+- 텍스트 위계는 alpha multiplier로 표현. 별도 gray hex 금지.
+- 카피는 친근한 존댓말(`-요`/`-어요`/`-아요`). 버튼은 동사형 단문(`저장하기`, `삭제하기`).
+- 이모지를 product UI에 inline 사용 금지. 화살표 등은 모두 monochrome SVG.
+- gradient를 chrome(top bar, sidebar, CTA, 카드)에 사용 금지.
+
+## 화면 골격
+
+admin의 표준 골격은 3개 영역으로 구성된다.
+
+```
++------+-------------------------------+
+| side | top-bar                       |
+| nav  +-------------------------------+
+| 240  | content                       |
+|      |   (page-title omitted —      |
+|      |    이미 top-bar에 있음)        |
+|      |                               |
+|      |                               |
++------+-------------------------------+
+```
+
+- 좌측 `sidebar-nav` 240(expand) / 64(collapse). bg `{colors.bg-surface}`, 우측 1px `{colors.border-subtle}`.
+- 상단 `top-bar (admin)` 56 height. 좌측 페이지 제목 + breadcrumb, 우측 search/env/notification/avatar.
+- content 영역 padding `{spacing.space-24}` ~ `{spacing.space-32}` (페이지 밀도에 따라). max-content-width 1280 권장.
+- 사이드바 + top-bar 경계는 1px 단일 라인만 사용. cross-shadow 금지.
+
+## 로그인 화면 패턴
+
+`### login-layout` 컴포넌트를 사용. 골격 외부에 standalone surface로 둔다(사이드바·top-bar 없음).
+
+```
++----------------------------------+
+|                                  |
+|     [logo 24px]                  |
+|     로그인                        |  ← {typography.title2}
+|     사용 중인 계정으로 들어가요    |  ← {typography.body2} fg-secondary
+|                                  |
+|     [email input  44h ]          |
+|     [password input  44h ]       |
+|     [ 로그인하기  ] button-primary lg full
+|                                  |
+|     비밀번호 찾기 · 회원가입       |  ← {component.button-ghost} 2개 중앙
+|                                  |
++----------------------------------+
+```
+
+- 카드 너비 400(min), padding `{spacing.space-32}`, radius `{rounded.radius-12}`.
+- 에러 inline: 입력 하단에 `{component.alert}` inline. 카피는 `이메일 또는 비밀번호가 일치하지 않아요`.
+- 다중 환경(운영/스테이징/개발) 운영 시 우측 상단에 `{component.chip}` 변형으로 환경 표시.
+- 다크 모드 대응: 카드 `{colors.bg-surface}` alias가 light/dark 자동 분기.
+
+## 대시보드 (홈) 패턴
+
+상단 KPI row + 하단 위젯/테이블 row. 모두 1px 헤어라인 카드.
+
+```
+top-bar
++--------+--------+--------+--------+
+| stat 1 | stat 2 | stat 3 | stat 4 |  ← stat-card × 4, grid gap {spacing.space-16}
++--------+--------+--------+--------+
++----------------------+ +----------+
+| 시계열 차트 카드        | | 요약 카드 |
+| 1px border-subtle    | | 동일 사양 |
+| padding space-24     | |          |
++----------------------+ +----------+
++---------------------------------+
+|  최근 활동 data-table             |
+|  comfortable density            |
++---------------------------------+
+```
+
+- `stat-card` 4개 1행은 desktop 기본. mobile에서 1열 stack + padding 1단계 축소.
+- 차트 카드 내부 차트는 단색 stroke + fill 없음. 색은 brand alias 또는 semantic signal 한 가지.
+- 카드 사이 grid gap은 `{spacing.space-16}` 또는 `{spacing.space-24}`. row gap도 동일 ladder.
+
+## 리스트 페이지 패턴
+
+가장 빈도 높은 admin 페이지. top-bar 아래에 filter bar → table → pagination 순.
+
+```
+top-bar (page-title: "주문 목록")
++-----------------------------------------------+
+| [상태 ▼] [기간 ▼] [검색 input    ]  [필터 초기화]  |  ← filter row
++-----------------------------------------------+
+| ☑ | 주문번호 | 회원 | 상태  | 금액 | 등록일 | ⋯ |  ← header-row bg bg-muted
++-----------------------------------------------+
+| ☐ | #1023   | 홍길동| pending| 24,000 | 5/15 | ⋯ |
+| ☐ | #1022   | 김민지| active | 18,500 | 5/15 | ⋯ |
+| ☐ | #1021   | 이서연| done   |  9,200 | 5/14 | ⋯ |
++-----------------------------------------------+
+| 1–20 / 320                       < 1 2 3 ⋯ > |
++-----------------------------------------------+
+```
+
+- filter row 컴포넌트: `{component.chip}` 또는 dropdown-style `{component.button-secondary}` + `{component.search}`. row 내부 gap `{spacing.space-8}`, row 자체 padding `{spacing.space-16}` 0.
+- table은 `### data-table` 명세 그대로. status 셀은 `{component.badge}` 시맨틱 색.
+- 행 클릭으로 상세 진입 시 cursor:pointer + hover bg `{colors.bg-subtle}`. 액션 셀 `{component.button-tertiary}` sm은 `event.stopPropagation()` 분리.
+- 빈 상태: `{component.empty-state}`를 테이블 container 내부에 padding 80 0으로 둠. 카피 예: `조회된 주문이 없어요. 필터를 조정해 보세요`.
+- 페이지네이션 컨트롤은 우측 정렬, ghost/tertiary 버튼 sm.
+
+## 상세 페이지 패턴
+
+리스트에서 행 클릭으로 진입. top-bar의 page-title은 상위 페이지 + breadcrumb로 위치 유지.
+
+```
+top-bar (page-title: "주문 #1023", breadcrumb: 주문 / #1023)
++----------------------+-------------------+
+| 좌: 상세 정보 카드      | 우: 사이드 패널     |
+| 1px hairline border  | 1px hairline      |
+| padding space-24     | padding space-24  |
+|                      |                   |
+| 섹션 라벨 caption1     | 액션 묶음            |
+| 값 body1/title3      | button-primary md  |
++----------------------+-------------------+
+| 활동 로그 list (timeline 패턴 — line 1px) |
++------------------------------------------+
+```
+
+- 좌측 카드는 max-width ~720, 우측 사이드 패널은 ~320. 둘 사이 gap `{spacing.space-24}`.
+- 액션 묶음에서 단일 강조 액션 1개만 primary. 나머지는 secondary/tertiary/ghost.
+- 위험 액션(주문 취소/회원 정지)은 `{component.button-danger}` 별도 행에 분리. 클릭 시 `{component.modal}` 확인 단계 필요.
+
+## 폼 / 설정 페이지 패턴
+
+`{component.input}` + `{component.checkbox}` + `{component.toggle}`를 수직 stack. 섹션 단위로 카드 분리.
+
+- 섹션 카드 padding `{spacing.space-24}`. 섹션 제목 `{typography.title3}` + sub `{typography.body2} {colors.fg-secondary}`.
+- 폼 필드 간 vertical gap `{spacing.space-16}`. 라벨은 필드 위 `{typography.label2}`.
+- 도움말 문구는 필드 아래 `{typography.caption1} {colors.fg-secondary}`. 에러는 같은 위치를 `{colors.fg-danger}`로 교체.
+- 하단 액션 바: sticky bottom 카드 또는 카드 내부 우측 정렬. 단일 primary `저장하기` + ghost `취소`.
+
+## 알림 / 토스트 / 모달
+
+- 작업 결과: `{component.toast}` 4–6초 자동 dismiss. 위치는 우측 하단(`{spacing.space-24}` offset). 카피 예: `저장되었어요`, `삭제할 수 없어요. 진행 중인 작업이 있어요`.
+- 인라인 경고: `{component.alert}` 페이지 상단 또는 섹션 헤드. 색은 semantic alias.
+- 확인 다이얼로그: `{component.modal}`(SSOT에서 dropdown/popover와 함께 grouped). 위험 액션은 본문에 결과를 명시한 후 `{component.button-danger}` 확정.
+
+## 카피 톤 체크리스트
+
+admin이라도 product 카피 톤은 동일하게 유지한다.
+
+- O: `저장되었어요`, `삭제할 수 없어요`, `정산을 다시 계산해 보세요`
+- O 버튼: `저장하기`, `취소`, `내보내기`, `다시 시도`
+- X: `저장되었습니다` (격식체), `저장 완료!` (이모지/느낌표), `여기를 눌러주세요` (챗봇 톤), `Save` (영문 단독 Title Case)
+- 표 헤더는 ALL-CAPS 금지. 한국어 명사 단문 또는 sentence case 영문.
+- 마침표는 본문 산문에만. UI 라벨/리스트/버튼 라벨 끝에는 찍지 않는다.
+
+## 데이터 밀도 결정
+
+- comfortable(56 row): 표준 admin. 사용자 1인당 동시 화면 행 ~12 이내.
+- compact(44 row): 분석 도구·로그 뷰어처럼 한 화면에 50행 이상 노출이 필요할 때만.
+- compact를 쓰면 `{typography.body2}` → `{typography.caption1}`로 1단계 내릴지 사용자 테스트 후 결정.
+
+## 다크 모드 대응
+
+- alias 토큰만 호출하면 light/dark 자동 분기됨(`{colors.bg-surface}`, `{colors.fg-default}`, `{colors.border-subtle}` 등).
+- semantic signal 배경 alias(`bg-success-subtle`, `bg-warning-subtle`, `bg-danger-subtle`)와 fg alias(`fg-success`, `fg-warning`, `fg-danger`, `fg-brand`)는 `DESIGN.md ## Known Gaps`의 합성 규칙을 따른다(blue-400 brightened for fg-brand, semantic hue @ ↑ lightness for fg-*).
+- 사이드바·top-bar 경계 라인 alpha를 dark에서 한 단계 강하게 조정해도 좋다(`{colors.border-default}`로 승격).
+
+## design skill 자동 연계
+
+admin FE 작업 키워드(테이블, 사이드바, 로그인, 카드, 폼, 토스트)는 `.claude/skills/design/SKILL.md`를 자동 활성화해 `DESIGN.md`를 강제 로드한다. 본 가이드는 그 연장선으로 호출된다. 새로운 admin 컴포넌트가 필요하면 `docs/design-guidelines.md ## 새 컴포넌트 추가 절차`를 따른다.
+
+## 운영 메모
+
+- 본 가이드를 갱신하면 `STATE.md ## 이번 세션에서 완료한 작업`에 변경 이력을 한 줄 남긴다(운영 규칙).
+- 본 가이드의 패턴은 `DESIGN.md`의 토큰/컴포넌트와 어긋날 수 없다. 어긋나면 `DESIGN.md`를 정본으로 보고 본 가이드를 갱신한다.
+- 화면 mockup이 필요하면 `.claude/agents/design-reviewer.md`로 토큰/Do-Don't 점검을 분리 위임할 수 있다.

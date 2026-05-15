@@ -13,19 +13,51 @@
 - `templates/business-logic-request.md`, `docs/business-logic-playbook.md`: 비즈니스 로직 변경용 요청 템플릿과 프로세스 가이드
 - `templates/framework-structure-intake.md`, `docs/framework-structure-guide.md`: 초기 프레임워크/디렉터리/파일 분리 기준 문서
 
+## 다른 프로젝트에 설치
+
+기존 프로젝트에 이 템플릿을 적용하려면:
+
+```bash
+bash /path/to/claude-agent-template/.claude/plugins/install.sh /path/to/my-project
+```
+
+미리보기: `--dry-run`, 덮어쓰기: `--force`. 자세한 내용은 `docs/plugin-guide.md` 참조.
+
 ## 사용 방법
 
-1. 이 저장소를 새 프로젝트의 시작점으로 복제한다.
-2. `templates/project-intake.md`, `ui-intake.md`, `responsive-intake.md`, `tech-intake.md`에 프로젝트 정보를 먼저 작성한다.
-3. 다국어 프로젝트라면 `templates/i18n-intake.md`도 함께 작성한다.
-4. intake 답변을 바탕으로 `docs/project-guide-template.md`를 프로젝트 전용 가이드로 복제하고 내용을 채운다.
-5. 다국어 프로젝트라면 `docs/i18n-guidelines.md`를 프로젝트 기준에 맞게 채운다.
-6. 초기 구조 설계가 중요하면 `templates/framework-structure-intake.md`와 `docs/framework-structure-guide.md`를 함께 사용한다.
-7. 비즈니스 로직 중심 프로젝트라면 `templates/business-logic-request.md`와 `docs/business-logic-playbook.md`를 함께 사용한다.
-8. 프로젝트 성격에 맞게 `AGENTS.md`를 커스텀한다.
-9. `agents/*.md`에서 필요한 역할만 남기고 세부 규칙을 조정한다.
-10. `templates/*.md`를 팀 작업 방식에 맞게 수정한다.
-11. 작업이 끝날 때마다 `STATE.md`를 업데이트한다.
+1. 이 저장소를 새 프로젝트의 시작점으로 복제하거나, 위 install.sh로 설치한다.
+2. Claude Code에서 자연어로 "새 프로젝트 시작하자"고 말하면 `start` skill이 자동 활성화되어 초기 설정 QnA를 진행한다.
+3. 특정 영역(예: UI, API)을 더 깊이 수집하려면 자연어로 토픽을 언급하면 `intake` skill이 활성화된다. 또는 `/intake tech` 같은 슬래시 커맨드로 명시 호출 가능.
+4. 작업 요청 시 "기능 추가", "버그 수정" 같은 키워드를 쓰면 해당 개별 skill이 자동 활성화된다. 또는 `/feature`, `/bugfix` 등 슬래시 커맨드로 명시 호출 가능.
+5. 유형이 모호하면 `request` skill이 자동으로 분류한다. 또는 `/request`로 명시 호출.
+6. 프로젝트 성격에 맞게 `AGENTS.md`를 커스텀한다.
+7. `agents/*.md`에서 필요한 역할만 남기고 세부 규칙을 조정한다.
+8. `templates/*.md`를 팀 작업 방식에 맞게 수정한다.
+9. 작업이 끝날 때마다 `STATE.md`를 업데이트한다.
+
+## Skills Layer (자동 활성화)
+
+`.claude/skills/<name>/SKILL.md`에 정의된 skill은 description의 트리거 키워드로 사용자 발화에서 자동 활성화된다.
+
+- `start` — 새 프로젝트 초기 설정 QnA (startup-checklist 11섹션)
+- `intake` — 개별 토픽 수집 (project, tech, ui, responsive, i18n, framework, api, error, form, format, routing, qa)
+- `request` — 작업 유형이 모호할 때만 활성화, 자동 분류
+- `feature` — 기능 요청 구조화
+- `bugfix` — 버그 수정 요청 구조화
+- `refactor` — 리팩터링 요청 구조화
+- `review` — 코드 리뷰 요청 구조화
+- `business-logic` — 비즈니스 로직 변경 요청 구조화
+
+각 skill은 `templates/`의 원본을 읽어서 대화형으로 진행하며, 사용자 메시지의 설명을 미리 파싱해 가능한 항목을 채운다.
+우선순위 규칙과 skill 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
+
+## Slash Commands (명시적 호출)
+
+`.claude/commands/`에 동일 이름의 slash command가 병존한다. 사용자가 직접 입력해 호출할 수 있다.
+
+- `/start`, `/intake [토픽]`, `/request [설명]`, `/feature [설명]`, `/bugfix [설명]`, `/refactor [설명]`, `/review [대상]`, `/business-logic [설명]`
+
+`[설명]` 인수를 주면 가능한 항목을 미리 채운다. skills와 동일 templates를 참조한다.
 
 ## README 운영 규칙
 

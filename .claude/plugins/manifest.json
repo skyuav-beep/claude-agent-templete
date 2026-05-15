@@ -1,0 +1,120 @@
+{
+  "name": "claude-agent-templete",
+  "version": "1.0.0",
+  "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
+  "compatibility": "Claude Code CLI",
+  "layers": {
+    "L1_memory": {
+      "description": "프로젝트 메모리 및 상태 관리 파일",
+      "files": [
+        { "path": "CLAUDE.md", "description": "Claude Code CLI operation settings" },
+        { "path": "AGENTS.md", "description": "Common agent operation rules" },
+        { "path": "STATE.md", "description": "Current state and handoff record" },
+        { "path": "DESIGN.md", "description": "Design system catalog — 1st source for UI/style work (tokens, components, Do/Don't, dark alias)" }
+      ]
+    },
+    "L2_skills": {
+      "description": "자연어 트리거 기반 자동 활성화 SKILL.md (description 키워드 매칭)",
+      "files": [
+        { "path": ".claude/skills/start/SKILL.md", "description": "New project setup QnA" },
+        { "path": ".claude/skills/intake/SKILL.md", "description": "Topic intake router (12 types)" },
+        { "path": ".claude/skills/request/SKILL.md", "description": "Auto-classify work request type (activates only when ambiguous)" },
+        { "path": ".claude/skills/feature/SKILL.md", "description": "Feature request form" },
+        { "path": ".claude/skills/bugfix/SKILL.md", "description": "Bug fix request form" },
+        { "path": ".claude/skills/refactor/SKILL.md", "description": "Refactor request form" },
+        { "path": ".claude/skills/review/SKILL.md", "description": "Code review request form" },
+        { "path": ".claude/skills/business-logic/SKILL.md", "description": "Business logic change request" },
+        { "path": ".claude/skills/design/SKILL.md", "description": "Design system enforcement — auto-loads DESIGN.md on UI keywords" }
+      ]
+    },
+    "L2_commands": {
+      "description": "skills와 병존하는 명시적 slash command (사용자가 직접 호출)",
+      "files": [
+        { "path": ".claude/commands/start.md", "description": "/start — explicit invocation" },
+        { "path": ".claude/commands/intake.md", "description": "/intake [topic] — explicit invocation" },
+        { "path": ".claude/commands/request.md", "description": "/request [desc] — explicit invocation" },
+        { "path": ".claude/commands/feature.md", "description": "/feature [desc] — explicit invocation" },
+        { "path": ".claude/commands/bugfix.md", "description": "/bugfix [desc] — explicit invocation" },
+        { "path": ".claude/commands/refactor.md", "description": "/refactor [desc] — explicit invocation" },
+        { "path": ".claude/commands/review.md", "description": "/review [target] — explicit invocation" },
+        { "path": ".claude/commands/business-logic.md", "description": "/business-logic [desc] — explicit invocation" }
+      ]
+    },
+    "L3_hooks": {
+      "description": "도구 실행 전 자동 가드레일 스크립트",
+      "files": [
+        { "path": ".claude/hooks/block-destructive.sh", "description": "Block rm -rf, git reset --hard, etc." },
+        { "path": ".claude/hooks/block-secret-files.sh", "description": "Block writing to .env, *.pem, *.key" },
+        { "path": ".claude/hooks/state-reminder.sh", "description": "Warn if STATE.md not updated on commit" },
+        { "path": ".claude/hooks/warn-design-tokens.sh", "description": "Opt-in: warn on hex/non-4px usage in CSS/JSX (not registered by default)" }
+      ],
+      "settings": ".claude/settings.local.json"
+    },
+    "L4_subagents": {
+      "description": "Agent 도구 호출용 프롬프트 템플릿",
+      "files": [
+        { "path": ".claude/agents/explorer.md", "description": "Investigation/exploration agent" },
+        { "path": ".claude/agents/code-reviewer.md", "description": "Code review against repo conventions" },
+        { "path": ".claude/agents/planner.md", "description": "Design/planning agent" },
+        { "path": ".claude/agents/test-runner.md", "description": "Test execution and failure analysis" },
+        { "path": ".claude/agents/feature-dev.md", "description": "End-to-end feature implementation" },
+        { "path": ".claude/agents/design-reviewer.md", "description": "Design consistency review against DESIGN.md tokens and Do/Don't" }
+      ]
+    }
+  },
+  "designs": {
+    "description": "Design system catalog library — root DESIGN.md는 라이브러리에서 선택된 시안의 활성 사본",
+    "default": "wanted",
+    "files": [
+      { "path": "designs/README.md", "description": "Library usage and selection flow" },
+      { "path": "designs/_alias-contract.md", "description": "Required alias tokens every catalog must define" },
+      { "path": "designs/_template.md", "description": "Skeleton for new catalog authoring" },
+      { "path": "designs/wanted.md", "description": "Wanted catalog (default active)" }
+    ],
+    "selector": ".claude/plugins/select-design.sh"
+  },
+  "supporting": {
+    "agents": [
+      "agents/main-agent.md",
+      "agents/executor-agent.md",
+      "agents/researcher-agent.md",
+      "agents/reviewer-agent.md"
+    ],
+    "templates": [
+      "templates/startup-checklist.md",
+      "templates/project-intake.md",
+      "templates/tech-intake.md",
+      "templates/ui-intake.md",
+      "templates/responsive-intake.md",
+      "templates/i18n-intake.md",
+      "templates/framework-structure-intake.md",
+      "templates/api-intake.md",
+      "templates/error-intake.md",
+      "templates/form-intake.md",
+      "templates/format-intake.md",
+      "templates/routing-intake.md",
+      "templates/qa-intake.md",
+      "templates/feature-request.md",
+      "templates/bugfix-request.md",
+      "templates/refactor-request.md",
+      "templates/review-request.md",
+      "templates/business-logic-request.md"
+    ],
+    "docs": [
+      "docs/project-guide-template.md",
+      "docs/business-logic-playbook.md",
+      "docs/framework-structure-guide.md",
+      "docs/i18n-guidelines.md",
+      "docs/codex-reading-order.md",
+      "docs/subagent-guide.md",
+      "docs/development-process.md",
+      "docs/development-process.html",
+      "docs/intake.html",
+      "docs/global-claude-md-template.md",
+      "docs/design-guidelines.md",
+      "docs/admin-fe-design-guide.md",
+      "docs/admin-fe-preview.html",
+      "docs/plugin-guide.md"
+    ]
+  }
+}

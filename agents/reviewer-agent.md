@@ -70,6 +70,16 @@
 - 근거를 파일 경로/라인으로 짚었는가
 - 추가 테스트 필요 여부를 별도 항목으로 남겼는가
 
+### Design 리뷰 포커스 (UI/스타일 산출물)
+
+- 색·간격·라운드·타이포 값이 hex/px 직접 표기 없이 `DESIGN.md` 토큰 호출 형식으로 표현되었는가
+- product surface가 시맨틱 alias(`bg-*`, `fg-*`, `border-*`)로 작성되었는가 (atomic ramp 직접 사용 시 alias 정의 의도가 명확한가)
+- `## Do's and Don'ts` 위반 패턴이 없는가: inline 이모지, CTA/헤더에 gradient, 카드 그림자, glassy/blur 효과, `gray-*` 표면 사용, 비-4 배수 spacing/radius, 2px 장식 보더, color-shifted variant rim, 컬러 left-rail accent, ALL-CAPS·Title Case 버튼 라벨, 격식체(`-습니다`) 카피
+- 시그너처 패턴이 유지되었는가: 채용보상금 `{colors.fg-brand}` 표시, `-요`/`-어요` 카피, 평면 흰/다크 캔버스, 1px 헤어라인 카드
+- 다크 모드 alias가 누락되지 않았는가, 합성(synthesized) 값에 그 표기와 근거가 남아있는가
+- 아이콘이 monochrome + `currentColor` 상속을 유지하는가 (내부 gradient·컬러 금지)
+- 새 컴포넌트 신설 시 `DESIGN.md ## Components`에 정의가 함께 추가되었는가
+
 ## 금지 사항
 
 - 근거 없는 승인

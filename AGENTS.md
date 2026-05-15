@@ -11,12 +11,7 @@
 - 작은 변경으로 시작하되, 실행과 검증까지 가능한 단위로 마무리한다.
 - 작업이 끝난 뒤 다음 작업자가 이어받을 수 있도록 상태를 명확히 남긴다.
 
-## Core Philosophy
-
-1. 모든 `AGENTS.md` 계열 문서는 가독성과 토큰 효율을 위해 가능한 한 짧게 유지하고, 루트 문서는 500라인 미만 유지를 목표로 한다.
-2. 컨텍스트 낭비를 막기 위해 이모지와 불필요한 수사는 사용하지 않는다.
-3. 루트 문서는 관제탑 역할을 하고, 상세 구현 규칙은 하위 문서에 위임한다.
-4. 실행 불가능한 조언보다 `Golden Rules`, `Operational Commands`, `Context Map` 같은 기계가 읽기 쉬운 구체 지침을 우선 제공한다.
+에이전트 헌법(Core Philosophy, Golden Rules, 커뮤니케이션, 검증 원칙, Architecture Rules, Naming Conventions, Repo Map)은 `CLAUDE.md`에 정의되어 있다. 이 파일은 운영 프로세스, 라우팅, 작업 절차를 다룬다.
 
 ## Execution Protocol
 
@@ -44,26 +39,6 @@
 - 현재 저장소는 문서 템플릿 저장소이므로 필수 빌드 명령은 없다.
 - 새 프로젝트로 복제된 뒤에는 루트 `AGENTS.md`에 반드시 실제 실행 명령을 명시한다.
 - 예시: `npm run dev`, `npm test`, `pnpm lint`, `python -m pytest`, `uv run pytest`
-
-## Golden Rules
-
-- 사용자 요청 없이 파괴적 명령을 실행하지 않는다.
-- 확인하지 않은 외부 의존성, 비밀값, API 키를 임의로 추가하지 않는다.
-- 관련 없는 파일 수정이나 목적과 무관한 구조 확장을 하지 않는다.
-- 확인되지 않은 사항을 사실처럼 단정하지 않는다.
-- 먼저 현재 문맥과 파일 구조를 읽고 작업 범위를 좁힌다.
-- 기존 패턴, 기존 구현, 기존 문서를 우선 활용한다.
-- 테스트 가능하면 테스트하고, 못 하면 이유와 위험을 남긴다.
-- 작업이 끝나면 `STATE.md`를 갱신한다.
-- 불필요한 리팩터링이나 광범위한 포맷 변경을 끼워 넣지 않는다.
-- 문서 템플릿 저장소 단계에서 실행 시스템을 과도하게 확장하지 않는다.
-
-## 커뮤니케이션
-
-- 모든 설명, 요약, 진행 보고는 한국어로 작성한다.
-- 코드, 명령어, 경로, 식별자는 원문 그대로 유지한다.
-- 사용자가 명시적으로 요청하지 않으면 장황한 설명보다 결과와 다음 액션을 우선한다.
-- 사용자가 원칙이나 요구사항을 말하면 먼저 의도, 요구사항, 제약사항을 짧게 재정리해 확인한 뒤 반영한다.
 
 ## 요청 해석 규칙
 
@@ -119,13 +94,6 @@
 - 프로젝트에 종속적인 기술 선택은 템플릿 공통 규칙이 아니라 프로젝트 문서로 분리한다.
 - 공통 규칙과 실제 작업 방식의 괴리가 생기면 루트 문서 또는 하위 문서 업데이트를 제안한다.
 
-## 검증 원칙
-
-- 코드나 설정을 바꿨다면 가능한 범위에서 작은 검증 스크립트, 테스트, 정적 확인을 먼저 시도한다.
-- 수동 확인보다 시스템적으로 검증 가능한 작은 테스트를 선호한다.
-- 환경 문제로 테스트를 못 돌린 경우 그 사유를 마지막 응답에 명확히 남긴다.
-- 문서 작업이라면 구조, 역할 구분, 재사용 가능성을 기준으로 검토한다.
-
 ## HTML UI 운영 규칙
 
 - 에이전트가 참조하는 1차 소스는 항상 `*.md` 문서다. `docs/*.html`은 사람이 보는 보조 화면이다.
@@ -145,10 +113,11 @@
 - 템플릿 저장소의 `README.md`는 이 저장소의 사용법을 설명하는 문서로 유지한다.
 - 실제 프로젝트로 복제된 뒤에는 해당 프로젝트의 `README.md`를 프로젝트 소개, 실행 방법, 설치, 환경 설정 중심으로 다시 작성한다.
 - 템플릿용 설명과 프로젝트용 설명이 충돌할 경우, 템플릿 사용법은 별도 문서로 이동시키는 방식을 우선 검토한다.
+- `DESIGN.md`(디자인 시스템 카탈로그) 갱신 시 운영 규칙: 토큰·컴포넌트·Do/Don't·dark alias 변경이 발생하면 같은 커밋에서 `DESIGN.md` frontmatter `last_updated`를 갱신하고, `STATE.md` `이번 세션에서 완료한 작업` 섹션에 변경 이력(추가/변경된 토큰명·컴포넌트명·사유)을 한 줄 이상 기록한다. 운영 메타 가이드는 `docs/design-guidelines.md`.
 
 ## Context Map (Action-Based Routing)
 
-- Constraint 1: 표(Table) 형식은 사용하지 않는다.
+- Constraint 1: 본 Context Map 섹션 내부에서는 표(Table) 형식 대신 아래 Format의 불릿 라인을 사용한다. (이 제약은 Context Map 한정이며, `agents/main-agent.md`, `docs/development-process.md` 등 다른 문서의 표 사용을 금지하지 않는다.)
 - Constraint 2: 이모지는 사용하지 않는다.
 - Format: `- **[트리거/작업 영역](상대 경로)** - 한 줄 설명`
 - 프로젝트가 커지면 작업 영역별 하위 `AGENTS.md` 또는 역할 문서를 만들고 이 섹션에 라우팅 규칙을 추가한다.
@@ -156,7 +125,9 @@
 - **[공통 운영 규칙](./AGENTS.md)** - 저장소 전체에 적용되는 공통 원칙, 작업 방식, 문서 규칙 확인 시.
 - **[현재 상태 및 인계](./STATE.md)** - 최근 변경 사항, 다음 작업, 현재 저장소 목적을 확인할 때.
 - **[템플릿 사용 안내](./README.md)** - 이 저장소를 새 프로젝트에 어떻게 복제하고 커스텀할지 확인할 때.
-- **[Claude Code 운영 설정](./CLAUDE.md)** - 이 저장소에서 Claude Code 기준 운영 메모를 확인할 때.
+- **[에이전트 헌법](./CLAUDE.md)** - Core Philosophy, Golden Rules, 커뮤니케이션, Architecture Rules, Naming, Test, Repo Map, Design System, Claude Code 레이어 설정.
+- **[디자인 시스템 카탈로그 (active)](./DESIGN.md)** - UI/스타일/컴포넌트 작업 시 토큰, 컴포넌트, Do/Don't, 다크 alias의 1차 소스. `designs/`에서 선택된 시안의 활성 사본.
+- **[디자인 시안 라이브러리](./designs/)** - 사용 가능한 시안 카탈로그 모음. 시안 스위치는 `bash .claude/plugins/select-design.sh <slug>`. 시안 작성 계약은 `designs/_alias-contract.md`.
 - **[총괄 진행 규칙](./agents/main-agent.md)** - 요청 해석, 범위 통제, 우선순위 판단이 필요할 때.
 - **[구현 작업](./agents/executor-agent.md)** - 문서 작성, 코드 수정, 설정 변경 같은 실제 산출물 작업 시.
 - **[조사 작업](./agents/researcher-agent.md)** - 기존 구조 조사, 중복 확인, 근거 수집이 필요할 때.
@@ -188,6 +159,14 @@
 - **[개발 프로세스 문서](./docs/development-process.md)** - 문서형 개발 프로세스 초안을 확인할 때.
 - **[개발 프로세스 시각화](./docs/development-process.html)** - 브라우저에서 시각 가이드, 단계별 체크리스트, STATE 미니 대시보드 확인 시.
 - **[Intake 폼 UI](./docs/intake.html)** - 브라우저에서 Startup QnA 위저드 또는 요청 템플릿(feature/bugfix/refactor/review/business-logic) 입력 후 Markdown으로 내보낼 때.
+- **[Skills Layer](./.claude/skills/)** - 자연어 트리거 기반 자동 활성화 SKILL.md 9종. `start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`. 우선순위와 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
+- **[Slash Commands](./.claude/commands/)** - skills와 동일 이름의 명시적 slash command 8종. `/start`, `/intake`, `/request`, `/feature`, `/bugfix`, `/refactor`, `/review`, `/business-logic`. 사용자가 직접 호출할 때만 동작.
+- **[Hooks Layer](./.claude/hooks/)** - 파괴적 명령 차단, 비밀 파일 쓰기 차단, STATE.md 갱신 리마인더. 설정은 `.claude/settings.local.json`.
+- **[서브에이전트 템플릿](./.claude/agents/)** - Agent 도구 호출 시 역할별 프롬프트 템플릿 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer). 디스패치 기준은 `docs/subagent-guide.md`.
+- **[Plugins Layer](./.claude/plugins/)** - manifest.json, VERSION, install.sh. 다른 프로젝트에 설치 시 `docs/plugin-guide.md` 참조.
+- **[Plugin 가이드](./docs/plugin-guide.md)** - 설치, 업데이트, 커스텀, 버전 관리 방법.
+- **[디자인 운영 가이드](./docs/design-guidelines.md)** - `DESIGN.md` 토큰 호출 규칙, alias/atomic 선택, 컴포넌트 추가 절차, dark alias 합성 표기.
+- **[Admin FE 디자인 가이드](./docs/admin-fe-design-guide.md)** - admin/dashboard 화면(로그인, 사이드바, top bar, KPI 카드, data table, 폼) 조립 패턴. DESIGN.md 토큰/컴포넌트 호출 기준.
 
 ## 사용자 확인이 필요한 상황
 

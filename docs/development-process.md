@@ -86,7 +86,8 @@ QnA 답변을 바탕으로 이 프로젝트에만 적용되는 기준 문서를 
 3. 다국어 지원이 확정되면 `docs/i18n-guidelines.md`를 작성한다.
 4. 프레임워크/디렉터리 구조 설계가 필요하면 `docs/framework-structure-guide.md`를 작성한다.
 5. 비즈니스 로직이 복잡하면 `docs/business-logic-playbook.md`를 작성한다.
-6. 모달 설정 결과는 `docs/ui-decisions.md`로 별도 저장한다.
+6. 모달이나 디자인 의사결정 기록이 필요하면 `docs/ui-decisions.md`를 작성한다. (현재 템플릿에는 파일이 존재하지 않으며, 프로젝트별로 필요할 때만 신설한다.)
+   - 동기화 운영 메모: `docs/ui-decisions.md`를 신설하면 `STATE.md`의 `다음 작업` 항목(`ui-decisions.md 템플릿 추가`)에서 해당 항목을 제거하고 `현재 기준 파일` 섹션에 추가한다. 반대로 STATE.md에서 제거되면 본 항목 (a)도 함께 단계 6에서 제거할지 검토한다. 한쪽이 변경되면 다른 쪽도 동기화한다.
 
 ### 생성 기준
 

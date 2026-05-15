@@ -10,6 +10,9 @@
 
 ## CI/CD 
 - 코드가 반영된 이후 실행되는 자동화 파이프라인 (린트 검사, 자동 배포 등)의 존재 여부와 조건
+- 디자인 토큰 외 값(hex 직접 사용, 비-4의 배수 px) PR에서 경고 표시 여부 — 없음 / 경고만 / 차단 중 선택
+  - 경고만: `.claude/hooks/warn-design-tokens.sh`(opt-in) 또는 CI 단계의 lint rule로 PR 코멘트 형태 알림
+  - 차단: stylelint/eslint 룰로 빌드 실패 처리
 
 ## 작성 예시
 
@@ -30,4 +33,5 @@
 - PR 생성 시: lint + typecheck + 단위 테스트 자동 실행.
 - main 머지 시: 빌드 + e2e 테스트 + staging 자동 배포.
 - production 배포는 수동 승인.
+- 디자인 토큰 외 값 정책: 경고만(stylelint custom rule + PR 코멘트). 차단까지는 false-positive 우려로 보류.
 ```
