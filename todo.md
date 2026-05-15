@@ -72,7 +72,7 @@ Codex 분석(2026-05-14)과 본 에이전트 재검증으로 확인된 루트/�
 - [x] `AGENTS.md` Context Map에 DESIGN.md 라우팅 추가 + Skills Layer 8→9종 갱신 + 서브에이전트 5→6종 갱신 + design-guidelines.md 라우팅 추가.
 - [x] `docs/design-guidelines.md` 신규 작성 — 1차 소스 규칙, 토큰 호출 형식, alias/atomic 선택, dark alias 정책, 컴포넌트 추가 절차, Do/Don't 운영, 카피 톤, 자동 활성화 흐름.
 - [x] `.claude/plugins/manifest.json`의 `L1_memory.files`에 `DESIGN.md` 추가, `supporting.docs`에 `docs/design-guidelines.md` 추가. JSON 유효성 통과.
-- [ ] `templates/ui-intake.md`에 `사용 디자인 시스템` 섹션 추가 — DESIGN.md를 그대로 쓸지, 프로젝트별 fork 버전을 둘지, 일부 토큰만 override할지 수집. (이번 사이클에서 미진행)
+- [x] `templates/ui-intake.md`에 `사용 디자인 시스템` 섹션 추가 — DESIGN.md를 그대로 쓸지, 프로젝트별 fork 버전을 둘지, 일부 토큰만 override할지 수집. 작성 예시에도 (a) 시나리오 반영.
 
 ## 개선 필요
 
