@@ -1,0 +1,13 @@
+# select-design.sh가 자동 생성하는 백업 (직접 편집 후 시안 전환 시)
+DESIGN.md.bak
+
+# install.sh가 대상 프로젝트에 생성하는 마커는 트래킹 (각 프로젝트가 자체 관리)
+# .claude/.active-design  ← 트래킹 함
+
+# 일반적인 OS/에디터 노이즈
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
