@@ -43,6 +43,70 @@
       --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.10);
     }
 
+    /* ----- linear-like (light) ----- */
+    :root[data-design="linear-like"][data-theme="light"] {
+      --bg-canvas:        oklch(0.985 0.005 270);
+      --bg-surface:       oklch(1 0 0);
+      --bg-subtle:        oklch(0.972 0.008 270);
+      --bg-muted:         oklch(0.952 0.012 270);
+      --bg-elevated:      oklch(1 0 0);
+      --bg-inverse:       oklch(0.160 0.020 270);
+      --bg-brand:         oklch(0.620 0.180 268);
+      --bg-brand-subtle:  oklch(0.952 0.025 268);
+      --bg-danger-subtle: oklch(0.952 0.022 22);
+      --bg-success-subtle:oklch(0.952 0.045 152);
+      --bg-warning-subtle:oklch(0.958 0.032 81);
+      --fg-strong:    oklch(0.160 0.020 270);
+      --fg-default:   oklch(0.200 0.018 270 / 0.90);
+      --fg-secondary: oklch(0.280 0.015 270 / 0.60);
+      --fg-tertiary:  oklch(0.280 0.015 270 / 0.42);
+      --fg-disabled:  oklch(0.280 0.015 270 / 0.28);
+      --fg-on-brand:  oklch(1 0 0);
+      --fg-brand:     oklch(0.500 0.180 268);
+      --fg-success:   oklch(0.520 0.180 144);
+      --fg-warning:   oklch(0.580 0.140 56);
+      --fg-danger:    oklch(0.540 0.200 27);
+      --border-subtle:  oklch(0.520 0.020 270 / 0.10);
+      --border-default: oklch(0.520 0.020 270 / 0.22);
+      --border-strong:  oklch(0.520 0.020 270 / 0.34);
+      --border-brand:   oklch(0.620 0.180 268);
+      --shadow-1:   0 1px 2px oklch(0 0 0 / 0.06);
+      --shadow-2:   0 4px 12px oklch(0 0 0 / 0.08);
+      --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.14);
+    }
+
+    /* ----- linear-like (dark) ----- */
+    :root[data-design="linear-like"][data-theme="dark"] {
+      --bg-canvas:        oklch(0.140 0.018 270);
+      --bg-surface:       oklch(0.170 0.020 270);
+      --bg-subtle:        oklch(0.120 0.015 270);
+      --bg-muted:         oklch(0.205 0.022 270);
+      --bg-elevated:      oklch(0.240 0.025 270);
+      --bg-inverse:       oklch(1 0 0);
+      --bg-brand:         oklch(0.620 0.180 268);
+      --bg-brand-subtle:  oklch(0.220 0.080 268);
+      --bg-danger-subtle: oklch(0.298 0.10 22 / 0.34);
+      --bg-success-subtle:oklch(0.298 0.10 144 / 0.30);
+      --bg-warning-subtle:oklch(0.298 0.10 56 / 0.34);
+      --fg-strong:    oklch(0.985 0.005 270);
+      --fg-default:   oklch(0.985 0.005 270 / 0.90);
+      --fg-secondary: oklch(0.985 0.005 270 / 0.60);
+      --fg-tertiary:  oklch(0.985 0.005 270 / 0.42);
+      --fg-disabled:  oklch(0.985 0.005 270 / 0.28);
+      --fg-on-brand:  oklch(1 0 0);
+      --fg-brand:     oklch(0.740 0.155 268);
+      --fg-success:   oklch(0.740 0.165 144);
+      --fg-warning:   oklch(0.770 0.150 64);
+      --fg-danger:    oklch(0.720 0.215 27);
+      --border-subtle:  oklch(0.985 0.005 270 / 0.08);
+      --border-default: oklch(0.985 0.005 270 / 0.18);
+      --border-strong:  oklch(0.985 0.005 270 / 0.30);
+      --border-brand:   oklch(0.740 0.155 268);
+      --shadow-1:   0 1px 2px oklch(0 0 0 / 0.16);
+      --shadow-2:   0 4px 12px oklch(0 0 0 / 0.24);
+      --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.40);
+    }
+
     /* ----- material-3 (light) ----- */
     :root[data-design="material-3"][data-theme="light"] {
       --bg-canvas:        oklch(0.992 0.005 295);
@@ -1204,6 +1268,16 @@
       policy: {
         shadow_on_cards: true,
         gradient_locations: [],
+        copy_tone: 'en-sentence',
+        dark_mode: 'supported',
+        non_4_spacing: false,
+      },
+    },
+    'linear-like': {
+      label: 'linear-like',
+      policy: {
+        shadow_on_cards: false,
+        gradient_locations: ['accent', 'hero'],
         copy_tone: 'en-sentence',
         dark_mode: 'supported',
         non_4_spacing: false,
