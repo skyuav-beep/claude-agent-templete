@@ -161,7 +161,7 @@
 - i18n locale별 구현 예시(키 구조, 디렉터리 배치, fallback 코드 샘플)를 추가한다.
 - 비즈니스 로직 요청 예시에서 build/docker/git 작업이 실제로 어떻게 흘러가는지 단계별 시나리오를 추가한다.
 - 프레임워크 구조 intake 답변을 받아 만든 실제 디렉터리 트리 예시를 추가한다.
-- startup-checklist 답변을 저장하는 `docs/ui-decisions.md` 템플릿을 추가한다.
+- startup-checklist 답변을 저장하는 `docs/ui-decisions.md` 템플릿을 추가한다. (동기화 메모: 신설 시 `docs/development-process.md:89` 단계 6도 함께 갱신. 한쪽이 변경되면 다른 쪽도 동기화한다.)
 - 필요하면 `docs/template-usage.md` 또는 예시 프로젝트 문서를 추가한다.
 - 필요하면 `docs/codex-reading-order.md`와 루트 `AGENTS.md`의 빠른 읽기 순서 중복을 더 줄인다.
 - `riderapp-runtime/README.md`의 예전 `riderapp` 경로 설명을 현재 워크스페이스 구조(`claude-agent-template`, `rider-platform-docs`, `riderapp-runtime`)에 맞게 갱신한다.
