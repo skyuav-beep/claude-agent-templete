@@ -113,6 +113,7 @@
 - 템플릿 저장소의 `README.md`는 이 저장소의 사용법을 설명하는 문서로 유지한다.
 - 실제 프로젝트로 복제된 뒤에는 해당 프로젝트의 `README.md`를 프로젝트 소개, 실행 방법, 설치, 환경 설정 중심으로 다시 작성한다.
 - 템플릿용 설명과 프로젝트용 설명이 충돌할 경우, 템플릿 사용법은 별도 문서로 이동시키는 방식을 우선 검토한다.
+- `DESIGN.md`(디자인 시스템 카탈로그) 갱신 시 운영 규칙: 토큰·컴포넌트·Do/Don't·dark alias 변경이 발생하면 같은 커밋에서 `DESIGN.md` frontmatter `last_updated`를 갱신하고, `STATE.md` `이번 세션에서 완료한 작업` 섹션에 변경 이력(추가/변경된 토큰명·컴포넌트명·사유)을 한 줄 이상 기록한다. 운영 메타 가이드는 `docs/design-guidelines.md`.
 
 ## Context Map (Action-Based Routing)
 

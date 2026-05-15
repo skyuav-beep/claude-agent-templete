@@ -66,6 +66,14 @@
 - UI 라벨·리스트 아이템 끝에 마침표를 찍지 않는다.
 - 영어 라벨은 항상 sentence case. ALL-CAPS, Title Case In Buttons 금지.
 
+## STATE.md 변경 이력 운영 규칙
+
+- `DESIGN.md`의 토큰·컴포넌트·Do/Don't·dark alias가 추가/변경/삭제되면 같은 커밋에서 다음을 수행한다.
+  1. `DESIGN.md` frontmatter `last_updated`를 오늘 날짜로 갱신.
+  2. `STATE.md` `이번 세션에서 완료한 작업` 섹션에 변경 이력을 한 줄 이상 기록한다. 형식 예: `- DESIGN.md 갱신: {colors.bg-accent} alias 신규 추가 (사유: 프로젝트 브랜드 컬러 도입). last_updated 2026-05-15. (YYYY-MM-DD)`
+  3. 신규 컴포넌트가 추가된 경우 `STATE.md` `현재 기준 파일` 섹션은 `DESIGN.md` 단일 항목 그대로 유지(컴포넌트별로 나누지 않는다).
+- 위 규칙은 `AGENTS.md ## 문서화 원칙`에도 동일하게 명시되어 있다. 두 문서가 어긋나면 design-guidelines.md를 정본으로 본다.
+
 ## 메타 운영
 
 - `DESIGN.md`의 frontmatter(`name`, `slug`, `category`, `last_updated`)는 카탈로그 메타다. 다른 프로젝트로 복제할 때는 해당 프로젝트의 디자인 시스템 정보로 갱신한다.
