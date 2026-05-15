@@ -186,6 +186,83 @@ admin이라도 product 카피 톤은 동일하게 유지한다.
 
 admin FE 작업 키워드(테이블, 사이드바, 로그인, 카드, 폼, 토스트)는 `.claude/skills/design/SKILL.md`를 자동 활성화해 `DESIGN.md`를 강제 로드한다. 본 가이드는 그 연장선으로 호출된다. 새로운 admin 컴포넌트가 필요하면 `docs/design-guidelines.md ## 새 컴포넌트 추가 절차`를 따른다.
 
+## 시안별 화면 조립 차이
+
+본 가이드의 화면 패턴(login/dashboard/list/상세/폼)은 alias 호출을 사용하므로 라이브러리 5개 시안 모두 자동 호환된다. 다만 각 시안의 정책 차이로 시각 결과는 달라진다. 아래는 동일 화면 패턴이 시안별로 어떻게 다르게 보이는지를 정리한 비교 매트릭스다.
+
+### 1. login 화면
+
+| 시안 | 카드 표면 | brand mark | CTA | 톤 |
+|---|---|---|---|---|
+| `wanted` | 1px border, radius-12, 그림자 없음 | 24px symbol(평면, gradient 미사용 — 카드 내부는 chrome) | bg-brand 채움, lg height 48 | "다시 만나서 반가워요" |
+| `minimal-mono` | 1px border, radius-12, 그림자 없음 | 24px logo (검정) | 검정 채움, lg height 48 | "다시 만나서 반가워요" |
+| `toss-like` | shadow-1 + 1px border 또는 보더 생략, radius-16 | 32px logo + 환경 chip | bg-brand 파랑 채움, lg height 52 | "안녕하세요!" 친근체 |
+| `material-3` | shadow-2, radius-12 | 24px Material Symbols | filled button, radius-full, "Sign in" | 영문 sentence case |
+| `linear-like` | 1px border-default, radius-8, 그림자 없음 | 20px logo + 다크 캔버스 | gradient accent CTA, "Sign in" + ⌘ Enter kbd hint | dark 1차, en-sentence |
+
+### 2. 대시보드 (홈)
+
+| 시안 | stat-card | 차트 카드 | row gap |
+|---|---|---|---|
+| `wanted` | 1px border, padding 24, 그림자 없음 | 1px border, 그림자 없음 | space-16 |
+| `minimal-mono` | 1px border, padding 24, 그림자 없음 | 1px border, 그림자 없음 | space-16 |
+| `toss-like` | shadow-1, radius-16, padding 24 | shadow-1, radius-16 | space-20 |
+| `material-3` | shadow-1 (level 1) 또는 shadow-2, radius-12, padding 24 | elevated card shadow-2 | space-24 |
+| `linear-like` | 1px border, radius-8, padding 16 (컴팩트) | 1px border, radius-8 | space-12 |
+
+stat-card의 delta 표시는 모든 시안 공통(`fg-success`/`fg-danger`/`fg-secondary` + arrow 아이콘). gradient 강조는 linear-like만 — accent gradient로 큰 숫자(`gradient-text`)를 표현 가능.
+
+### 3. 리스트 페이지 (data-table)
+
+| 시안 | row height | header bg | hover | status pill |
+|---|---|---|---|---|
+| `wanted` | 56 (comfortable) | bg-muted | bg-subtle | radius-full badge |
+| `minimal-mono` | 56 | bg-muted | bg-subtle | radius-full badge |
+| `toss-like` | 56 (모바일은 64) | bg-muted | bg-subtle (또는 shadow-1) | radius-full badge |
+| `material-3` | 52 | bg-muted | state-layer 8% brand alpha | radius-8 chip (M3 input chip) |
+| `linear-like` | 44 (compact 디폴트) | bg-muted, 작은 typography | bg-subtle | radius-4 직사각 (시그너처) |
+
+linear-like는 row 클릭 시 우측 panel slide(prose 명시)가 시그너처. 다른 시안은 별도 페이지 진입.
+
+### 4. 상세 페이지
+
+| 시안 | 좌측 카드 | 우측 사이드 패널 | 위험 액션 |
+|---|---|---|---|
+| `wanted` | 1px border, padding 24 | 1px border, padding 24 | button-danger 별도 행 + 모달 확인 |
+| `minimal-mono` | 1px border, padding 24 | 1px border, padding 24 | 동일 |
+| `toss-like` | shadow-1, radius-16, padding 24 | shadow-1, radius-16 | 동일 + bottom-sheet 모달 |
+| `material-3` | shadow-2 elevated card, radius-12 | shadow-1 | filled tonal danger button |
+| `linear-like` | 1px border, radius-8, padding 16 | 컴팩트 또는 floating panel | inline confirm + Esc 단축키 |
+
+### 5. 폼 / 설정 페이지
+
+| 시안 | 입력 height | 라벨 위치 | 액션 바 |
+|---|---|---|---|
+| `wanted` | 44 | 필드 위 (label2) | sticky bottom 또는 카드 내 우측 |
+| `minimal-mono` | 44 | 필드 위 | 동일 |
+| `toss-like` | 52 (큰 height) | 필드 위 또는 placeholder 만 | sticky bottom + 큰 라운드 |
+| `material-3` | 56 | floating label (focus 시 위로) | snackbar + bottom action |
+| `linear-like` | 32 (컴팩트) | inline label | inline save + ⌘S 단축키 |
+
+### 시안 선택 가이드
+
+| 프로젝트 유형 | 권장 시안 | 이유 |
+|---|---|---|
+| 일반 admin / internal tool | `minimal-mono` | 도메인 중립, 빠른 시작, 색 결정 부담 없음 |
+| 한국 채용/마케팅 surface | `wanted` | 친근체 + 동사형 라벨, 한국어 우선 |
+| 한국 핀테크 / consumer mobile | `toss-like` | 큰 라운드 + 카드 그림자, 모바일 우선 hit area |
+| 글로벌 enterprise / cross-platform | `material-3` | M3 표준, Android·iOS·Web 일관성, dynamic color |
+| 다크 우선 productivity / 개발자 도구 | `linear-like` | dark 1차, 키보드 시그너처, 컴팩트 밀도 |
+
+### 시안 변경의 안전 범위
+
+라이브러리 5개 시안은 모두 alias 계약을 준수하므로 select-design.sh로 즉시 전환해도 본 가이드 패턴이 깨지지 않는다. 다만 다음은 시안 변경 시 추가 점검이 필요하다.
+
+- 컴포넌트 로컬값(예: linear-like의 `radius-6` input, toss-like의 `radius-20` modal)을 직접 호출한 코드 — alias가 아닌 추가 토큰은 시안 변경 시 fallback 검토.
+- 시안 전용 컴포넌트(`kbd`, `amount` input, `reward-card`) — 호출한 코드는 시안 변경 시 fallback 또는 비활성 처리.
+- gradient 사용 위치 — 시안의 `policy.gradient_locations` 와 다른 위치에 적용된 gradient는 시안 변경 시 위반.
+- 카피 톤 — `policy.copy_tone` 변경 시 product 카피 일괄 검토 (ko-friendly ↔ en-sentence 전환 시 영향 큼).
+
 ## 운영 메모
 
 - 본 가이드를 갱신하면 `STATE.md ## 이번 세션에서 완료한 작업`에 변경 이력을 한 줄 남긴다(운영 규칙).
