@@ -71,7 +71,7 @@
 - `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타 가이드: `docs/design-guidelines.md`, admin FE 가이드: `docs/admin-fe-design-guide.md`)
 - `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 9종)
 - `.claude/commands/` — L2 보조 (명시적 slash command 8종, skills와 병존)
-- `.claude/hooks/` — L3 Guardrails (가드레일 스크립트 3종)
+- `.claude/hooks/` — L3 Guardrails (가드레일 스크립트 4종, opt-in 1종 포함)
 - `.claude/agents/` — L4 서브에이전트 프롬프트 템플릿 6종 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - `.claude/plugins/` — L5 배포 도구 (manifest, install)
 
