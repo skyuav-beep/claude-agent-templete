@@ -342,6 +342,18 @@
 
       --font-ui: "Pretendard JP", "Pretendard", "Apple SD Gothic Neo",
                  "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+
+      /* 시안 전용 토큰의 표준 fallback (designs/_alias-contract.md ## 9b 참조)
+         특정 시안만 정의하는 추가 토큰을 미정의 시안 활성 시 표준 ladder로 fallback.
+         시안 전용 시그너처 변수(--font-mono 등)는 시안 활성 블록에서 override 한다. */
+      --radius-6: 6px;       /* linear-like 시그너처, 다른 시안에서는 표준 위치는 radius-8 */
+      --radius-20: 20px;     /* toss-like xl 카드/modal */
+      --radius-28: 28px;     /* material-3 FAB, bottom sheet */
+      --shadow-3: 0 4px 8px 3px oklch(0 0 0 / 0.10), 0 1px 3px oklch(0 0 0 / 0.20);   /* M3 level 3 */
+      --shadow-4: 0 6px 10px 4px oklch(0 0 0 / 0.10), 0 2px 3px oklch(0 0 0 / 0.20);  /* M3 level 4 */
+      --shadow-cta: var(--shadow-1);  /* toss-like brand glow → 기본 shadow-1 fallback */
+      --font-mono: ui-monospace, "JetBrains Mono", "SF Mono", monospace;
+      --font-size-mono: 13px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }

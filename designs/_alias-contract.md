@@ -133,6 +133,51 @@ radius-2, radius-4, radius-8, radius-12, radius-16, radius-full
 - design-reviewer가 위반 검출 불가
 - skill 자동 활성화는 작동하지만 산출물 품질 보장 안 됨
 
+## 9b. 시안 전용 토큰 fallback 매핑
+
+시안마다 alias 계약 외 추가 토큰을 신설할 수 있다(예: `radius-6`(linear-like), `radius-20`(toss-like), `radius-28`(material-3), `mono` typography variant, `amount` typography variant, `shadow-cta`, `shadow-3`/`shadow-4`). 이런 추가 토큰을 정의한 시안에서 다른 시안으로 전환하면 호출 코드가 깨진다.
+
+### Fallback 매핑 (다운스트림 권장)
+
+신규 시안 작성자와 다운스트림 호출 코드는 **표준 alias 계약 토큰만 직접 호출**하는 것이 안전하다. 시안 전용 토큰을 호출해야 한다면 다음 fallback 매핑을 함께 정의해 시안 전환 시 깨지지 않게 한다.
+
+| 시안 전용 토큰 | 정의한 시안 | 표준 fallback | 사용 위치 |
+|---|---|---|---|
+| `--radius-6` | linear-like | `--radius-8` | input/button md (한 단계 작은 라운드) |
+| `--radius-20` | toss-like | `--radius-16` | xl 카드, modal |
+| `--radius-28` | material-3 | `--radius-16` | M3 FAB, bottom sheet |
+| `--shadow-3` | material-3 | `--shadow-2` | M3 elevation level 3 (FAB, dialog) |
+| `--shadow-4` | material-3 | `--shadow-pop` | M3 elevation level 4 (nav drawer) |
+| `--shadow-cta` | toss-like | `--shadow-1` | brand color glow CTA |
+| `font: mono` | linear-like | `font-family: ui-monospace, "SF Mono", monospace; font-size: 13px` | 단축키, 코드 inline |
+| `typography.amount` | toss-like | `font-size: 32px; font-weight: 700; tabular-nums` | 금액 강조 input |
+| `kbd` 컴포넌트 | linear-like | (전용 — 다른 시안 활성 시 비활성 처리 또는 chip fallback) | 키보드 단축키 표기 |
+| `amount-input` 컴포넌트 | toss-like | (전용 — 다른 시안 활성 시 일반 input + tabular-nums 옵션) | 금액 입력 |
+| `reward-card` 시그너처 | wanted | (전용 — 잡 도메인 한정) | 채용보상금 강조 |
+
+### CSS fallback 패턴
+
+CSS는 `var(--token, fallback)` 문법으로 미정의 시 fallback을 적용할 수 있다.
+
+```css
+.kbd {
+  font-family: var(--font-mono, ui-monospace, "SF Mono", monospace);
+  font-size: var(--font-size-mono, 13px);
+}
+.modal {
+  border-radius: var(--radius-28, var(--radius-16));
+}
+.fab-shadow {
+  box-shadow: var(--shadow-3, var(--shadow-2));
+}
+```
+
+### 권장 운영
+
+- **alias 계약 외 토큰을 신설하면 정의 시안의 Known Gaps에 명시**한다 + 본 contract 표에 한 줄 추가한다.
+- 호출 코드는 가능하면 **표준 alias만 사용**한다. 시안 전용 시그너처가 필수면 컴포넌트 단위로 분리해 시안 변경 시 컴포넌트 자체를 비활성/대체한다(예: linear-like 비활성 시 `kbd` 컴포넌트를 `chip`으로 대체).
+- preview HTML은 시안별 변수 inline 외에 `:root` 공통 블록에서 표준 ladder(`--radius-2`~`--radius-full`)만 정의 — 시안 전용 토큰은 시안별 블록에서만 정의되므로 다른 시안 활성 시 자동 미정의.
+
 ## 10. CSS Variables 표기 규칙
 
 `docs/admin-fe-preview.html`이 시안을 즉시 시각화하기 위해, 모든 시안은 `## CSS Variables` 섹션을 둔다.
