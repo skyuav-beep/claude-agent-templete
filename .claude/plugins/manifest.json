@@ -1,5 +1,5 @@
 {
-  "name": "claude-agent-template",
+  "name": "claude-agent-templete",
   "version": "1.0.0",
   "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
   "compatibility": "Claude Code CLI",

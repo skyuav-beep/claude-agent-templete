@@ -2,10 +2,12 @@
 
 이 문서는 Claude Agent Template을 다른 프로젝트에 설치하고 관리하는 방법을 설명한다.
 
+저장소 디렉터리/패키지 정본은 `claude-agent-templete`다. GitHub 저장소명과 동일하며 `manifest.json`의 `name` 필드도 같다(`template`이 아닌 `templete`). 본 문서의 예시 경로도 모두 이 표기를 사용한다.
+
 ## 빠른 설치
 
 ```bash
-bash /path/to/claude-agent-template/.claude/plugins/install.sh /path/to/my-project
+bash /path/to/claude-agent-templete/.claude/plugins/install.sh /path/to/my-project
 ```
 
 기존 파일이 있으면 건너뛴다. 덮어쓰려면 `--force` 플래그를 추가한다.
@@ -36,7 +38,7 @@ L2의 skills와 commands는 병존한다. skills는 자연어 키워드 매칭�
 2. install.sh를 `--force`로 다시 실행한다.
 
 ```bash
-cd /path/to/claude-agent-template && git pull
+cd /path/to/claude-agent-templete && git pull
 bash .claude/plugins/install.sh --force /path/to/my-project
 ```
 
@@ -65,7 +67,7 @@ bash .claude/plugins/install.sh --force /path/to/my-project
 
 ```bash
 # 템플릿 버전
-cat /path/to/claude-agent-template/.claude/plugins/VERSION
+cat /path/to/claude-agent-templete/.claude/plugins/VERSION
 
 # 설치된 버전
 cat /path/to/my-project/.claude/.plugin-version

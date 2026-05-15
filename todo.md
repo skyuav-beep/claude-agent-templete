@@ -48,7 +48,7 @@ Codex 분석(2026-05-14)과 본 에이전트 재검증으로 확인된 루트/�
 ## 개선 필요
 
 - [x] `AGENTS.md:117-122`의 `Constraint 1: 표(Table) 형식은 사용하지 않는다.` 적용 범위를 문장으로 명시한다 — 옵션 A 적용(Context Map 섹션 한정으로 재서술). 다른 문서의 표 사용은 유지. 전역화(옵션 B)가 필요하다면 별도 결정.
-- [ ] `docs/plugin-guide.md`의 `버전 확인` 예시 경로가 현재 저장소 디렉터리명(`claude-agent-templete`)과 일치하는지 검토 — 문서는 `claude-agent-template`로 표기, 실제 폴더는 `claude-agent-templete`. 둘 중 정본을 정해 통일.
+- [x] `docs/plugin-guide.md`의 `버전 확인` 예시 경로가 현재 저장소 디렉터리명(`claude-agent-templete`)과 일치하는지 검토 — 정본을 `claude-agent-templete`(GitHub 저장소명, manifest `name` 필드)로 결정. plugin-guide.md 3개 경로 + manifest.json `name` 필드 통일, 문서 첫 단락에 정본 표기 메모 추가.
 - [ ] `STATE.md` `다음 작업`의 `docs/ui-decisions.md 템플릿 추가` 항목이 실제 완료될 때 `development-process.md:89`의 참조도 함께 살아나는지 확인하고, 둘 중 한쪽이 변경되면 다른 쪽도 동기화하는 운영 메모 추가.
 
 ## 에러/누락 처리
