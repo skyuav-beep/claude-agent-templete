@@ -17,6 +17,8 @@ logo: /logos/wanted.png
 
 # 원티드 (Wanted) — design.md
 
+> **외부 인용 의존성 정책**: 본 문서의 `[src:N]` 인용은 frontmatter `sources` 항목(예: `https://api.anthropic.com/v1/design/...`)을 가리키는 reference 표기다. 본 카탈로그의 토큰·컴포넌트·Do-Don't 정의는 self-contained로 작성되어 있어 인용 출처가 오프라인이거나 만료되어도 본 문서만으로 디자인 시스템을 운영할 수 있다. 외부 URL 재방문은 SSOT 번들 갱신·신규 컴포넌트 추가·인용 출처 검증이 필요한 경우에만 수행한다. 운영 메타 가이드는 `docs/design-guidelines.md` 참조.
+
 > 원티드랩이 운영하는 한국 1위 채용·커리어 플랫폼. `wanted.co.kr` 잡 마켓플레이스, 채용담당자용 Wanted Talent 대시보드, 프리미엄 커리어 코칭 구독 Wanted Plus, 후보자/리크루터용 iOS/Android 앱을 단일 디자인 시스템 위에 얹는다 [src:1]. 본 문서는 Wanted Design System 핸드오프 번들(`wanted-design-system/` 익스포트 — `README.md`, `colors_and_type.css`, 14개 preview 카드, `ui_kits/wanted-web/` 마켓플레이스 재구성)을 1차 출처로 합성한 결과이며, 공개된 wanted.co.kr 마케팅 surface, Wanted Sans 오픈소스 레포(wanteddev/wanted-sans), Pretendard JP, wanted-icons 패키지를 보조 출처로 사용했다.
 
 ## Brand & Style

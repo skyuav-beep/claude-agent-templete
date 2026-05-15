@@ -6,7 +6,12 @@
 
 - UI/스타일 산출물을 만들거나 검토할 때 1차 소스는 항상 `DESIGN.md`다.
 - 토큰값은 `DESIGN.md`에 정의된 형식을 그대로 호출한다. hex/px 직접 표기는 toolchain(CSS/JSX) 빌드 시에만 사용한다.
-- `DESIGN.md`의 인용 출처(`[src:1]` 외부 URL)는 reference용이다. 본 카탈로그의 토큰·컴포넌트 정의는 self-contained이며 오프라인에서도 사용 가능하다.
+- `DESIGN.md`의 인용 출처(`[src:N]`)는 frontmatter `sources` 항목(예: `https://api.anthropic.com/v1/design/...`)을 가리키는 reference 표기다. 본 카탈로그의 토큰·컴포넌트·Do/Don't 정의는 self-contained로 작성되어 있어 인용 출처가 오프라인이거나 만료되어도 본 문서만으로 디자인 시스템을 운영할 수 있다.
+- 외부 URL 재방문은 다음 경우에만 수행한다.
+  - SSOT 번들(`wanted-design-system/` 등) 갱신
+  - 신규 컴포넌트/토큰 추가 시 출처 검증
+  - 인용 출처 만료/이전(rotation) 추적
+- 외부 URL이 만료되어도 본 카탈로그의 운영은 계속 가능해야 하며, 추후 보강이 필요하면 인용 마크만 `[src:N (archived)]` 표기로 보존한다.
 
 ## 토큰 호출 형식
 
