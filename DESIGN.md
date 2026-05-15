@@ -2,7 +2,7 @@
 name: 원티드
 slug: wanted
 category: etc
-last_updated: "2026-05-12"
+last_updated: "2026-05-15"
 sources:
   - https://api.anthropic.com/v1/design/h/j7_orggLzbQ43g24R8OfYA
   - https://www.wanted.co.kr
@@ -712,6 +712,184 @@ sub:   500 14/1.4 {colors.fg-secondary}
 ### icon
 
 wanted-icons system [src:1][src:5] — 24×24 그리드, 2px stroke, rounded line caps + joins, monochrome, `currentColor` 상속. outline-first; filled 변형은 active 탭과 16px 사이즈에 한정. 16/20/24/32 사이즈.
+
+### Admin / Dashboard surface 컴포넌트 (synthesized)
+
+아래 5종은 SSOT 번들에 직접 surface되지 않은 admin/dashboard 표면 컴포넌트로, 기존 토큰·atomic 컴포넌트(`button-*`, `input`, `checkbox`, `chip`, `badge`, `avatar`, `icon-button`)와 Brand & Style 정책(평면 표면 + 1px 헤어라인 + 단일 강조색 + 동일 카피 톤)을 조합해 합성한 명세다. 다운스트림 product가 admin FE를 신규로 만들 때 그대로 호출하거나 컴포넌트 로컬값만 미세 조정해 사용한다.
+
+### login-layout
+
+centered card 패턴. 마케팅 페이지가 아닌 standalone auth surface다.
+
+```yaml
+canvas:    {colors.bg-canvas}      # light: white, dark: oklch(0.148 0.004 277)
+card:
+  width:   400 (min)               # mobile <640은 width 100% - {spacing.space-32} 좌우 여백
+  padding: {spacing.space-32}       # 32 32 32 32
+  border:  1px {colors.border-subtle}
+  radius:  {rounded.radius-12}
+  bg:      {colors.bg-surface}
+  shadow:  none                    # 카드 그림자 금지 정책 그대로
+brand-block:
+  logo:    24px symbol (ungradient flat) or 32px logotype + 24 margin-bottom
+  title:   {typography.title2}     # "로그인", "어드민 로그인"
+  sub:     {typography.body2} {colors.fg-secondary}
+form:
+  gap:     {spacing.space-16}
+  fields:  {component.input} (44 height, full width)
+  cta:     {component.button-primary} size=lg, full width
+secondary:
+  align:   center
+  text:    {typography.body2} {colors.fg-secondary}
+  link:    {component.button-ghost} inline (예: "비밀번호를 잊으셨나요?")
+```
+
+카피 패턴: 헤더는 격식 없는 단문(`로그인`, `다시 만나서 반가워요`), 에러는 `이메일 또는 비밀번호가 일치하지 않아요`, secondary 액션은 동사형(`비밀번호 찾기`, `회원가입`). admin 전용 표면이면 우측 상단에 환경 표시 chip(`{component.chip}` 변형, "운영"/"스테이징"/"개발")을 둘 수 있다.
+
+### sidebar-nav
+
+수직 네비게이션 컴포넌트. expand(240) / collapse(64) 두 폭만 운영한다.
+
+```yaml
+width:        240   # expanded
+collapsed:    64    # icon-only
+bg:           {colors.bg-surface}
+border-right: 1px {colors.border-subtle}
+padding:      {spacing.space-16} {spacing.space-12}
+brand-area:
+  height:     56
+  padding:    0 {spacing.space-16}
+  logo:       24px symbol + 8 gap + 16/700 wordmark (collapsed에서 logotype 숨김)
+section-label:
+  typography: {typography.caption1}  # 12/600
+  color:      {colors.fg-tertiary}
+  text-transform: none               # ALL-CAPS 금지
+  margin:     {spacing.space-16} 0 {spacing.space-8}
+nav-item:
+  height:     40
+  padding:    0 {spacing.space-12}
+  radius:     {rounded.radius-8}
+  gap:        {spacing.space-12}     # icon 20 + label
+  typography: {typography.label1}    # 14/500
+  color:      {colors.fg-default}
+  hover:      bg {colors.bg-muted}
+  active:
+    bg:       {colors.bg-brand-subtle}
+    color:    {colors.fg-brand}
+    icon:     filled variant (16px 또는 20px)
+    indicator: 없음              # 좌측 컬러 rail 금지 (Don't 정책)
+nested-item:
+  indent:     {spacing.space-16} (icon 빠지고 dot or thin guide line 1px {colors.border-subtle})
+collapse-toggle:
+  position:   하단 또는 brand-area 우측
+  component:  {component.icon-button}
+```
+
+상태별 텍스트는 모두 동사/명사형 단문(`주문`, `정산`, `회원`). 격식체 또는 마침표 사용 금지. 알림 dot가 필요하면 nav-item 우측에 6px `{colors.bg-danger}` circle을 둔다(사이즈 텍스트는 `{component.badge}` 호출).
+
+### top-bar (admin)
+
+마케팅 `### header`와는 다른 admin 전용 chrome. 좌측 페이지 제목, 우측 user/notification.
+
+```yaml
+height:         56
+bg:             {colors.bg-surface}
+border-bottom:  1px {colors.border-subtle}
+padding:        0 {spacing.space-24}
+left-cluster:
+  page-title:   {typography.title3}  # 18/700
+  breadcrumb:   {typography.caption1} {colors.fg-secondary}
+                separator: "/" 텍스트, 좌우 {spacing.space-8} 간격
+right-cluster:
+  gap:          {spacing.space-12}
+  search:       optional, {component.search} max-width 320
+  env-chip:     운영/스테이징/개발 식별 (운영=neutral, 스테이징={colors.bg-warning-subtle}, 개발={colors.bg-success-subtle})
+  notification: {component.icon-button} + 우상단 6px {colors.bg-danger} dot
+  avatar:       {component.avatar} 32px, 우측 끝
+  user-menu:    avatar 클릭 시 popover dropdown ({elevation.shadow-pop})
+```
+
+좌측 사이드바와의 경계는 1px `{colors.border-subtle}` 한 라인만 사용한다. 그라디언트·그림자 사용 금지 — 평면 표면 정책 그대로다.
+
+### stat-card (KPI)
+
+대시보드 위쪽에 1열로 배치되는 숫자 강조 카드. 카드 그림자 금지 정책 유지.
+
+```yaml
+padding:      {spacing.space-24}
+border:       1px {colors.border-subtle}
+radius:       {rounded.radius-12}
+bg:           {colors.bg-surface}
+gap:          {spacing.space-8}     # 라벨 + 숫자 + delta 수직 간격
+label:
+  typography: {typography.caption1}  # 12/600
+  color:      {colors.fg-secondary}
+value:
+  typography: {typography.display3}  # 32/700, negative tracking
+  color:      {colors.fg-strong}
+delta:
+  typography: {typography.label2}    # 13/500
+  positive:   {colors.fg-success}    # 합성 alias 사용
+  negative:   {colors.fg-danger}
+  neutral:    {colors.fg-secondary}
+  prefix:     "▲" / "▼" 텍스트 금지 → 아이콘 12px {component.icon} arrow-up/down monochrome (currentColor 상속)
+chart-slot:   optional, 카드 우측 또는 하단에 mini sparkline (단색 1px stroke, fill 없음)
+```
+
+같은 행에 4개를 평행 배치할 때 그리드 gap은 `{spacing.space-16}`. 모바일 collapse 시 1열 stack, 카드 padding은 `{spacing.space-16}`로 1단계 축소한다.
+
+### data-table
+
+admin의 워크호스 컴포넌트. 헤더 + 행 + sort + pagination 4가지 표면을 함께 명세한다.
+
+```yaml
+container:
+  border:    1px {colors.border-subtle}
+  radius:    {rounded.radius-8}
+  bg:        {colors.bg-surface}
+  overflow:  hidden                # rounded corner 유지
+  shadow:    none
+header-row:
+  bg:        {colors.bg-muted}     # neutral-75 계열, 헤더 시각 분리
+  height:    44
+  padding:   0 {spacing.space-16}
+  typography:{typography.caption1} {colors.fg-secondary}  # 12/600 ALL-CAPS 금지
+  align:     left, 숫자 컬럼은 right
+  sort:
+    icon:    12px arrow-up-down monochrome (asc/desc/none 3-state)
+    hover:   {colors.fg-strong}
+body-row:
+  height:
+    comfortable: 56                # 디폴트
+    compact:     44                # 데이터 밀도 높은 admin (체크박스 행)
+  padding:   0 {spacing.space-16}
+  border-top:1px {colors.border-subtle}
+  bg:        {colors.bg-surface}
+  hover:     {colors.bg-subtle}    # 매우 약한 highlight
+  selected:  {colors.bg-brand-subtle}
+  typography:{typography.body2}    # 14/500
+checkbox-col:
+  width:     44
+  align:     center
+  component: {component.checkbox}
+status-cell:
+  component: {component.badge} or {component.chip} (반경 full)
+  variants:  active/pending/inactive — semantic alias 호출
+action-cell:
+  align:     right
+  components:{component.button-tertiary} sm or {component.icon-button}
+empty:
+  use:       {component.empty-state} (테이블 container 내부에 padding 80 0)
+pagination:
+  position:  container 하단, 우측 정렬
+  height:    52
+  border-top:1px {colors.border-subtle}
+  controls:
+    info:    "1–20 / 320" {typography.caption1} {colors.fg-secondary}
+    nav:     {component.button-ghost} sm × prev/next + page number {component.button-tertiary} sm
+```
+
+행 클릭으로 상세 진입하는 패턴을 쓸 때는 행 전체에 cursor:pointer + hover bg를 적용하고, 액션 셀의 버튼은 `event.stopPropagation()`로 분리한다. zebra striping(짝수행 배경 변화)은 사용하지 않는다 — 평면 표면 + 1px 라인이 행을 구분한다.
 
 ### logo
 
