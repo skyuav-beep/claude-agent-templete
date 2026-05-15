@@ -43,7 +43,7 @@ Codex 분석(2026-05-14)과 본 에이전트 재검증으로 확인된 루트/�
 - [x] `docs/plugin-guide.md`의 `커스텀` 섹션에 `.claude/skills/`와 `.claude/commands/`를 분리 항목으로 추가한다. — 설치 내용 섹션에서 함께 분리하면서 처리(커스텀 섹션은 기존 항목이 skills 분리 시점에 자연스럽게 호환됨).
 - [x] `CLAUDE.md` Repo Map의 `.claude/agents/ — L4 서브에이전트 프롬프트 템플릿 3종` 표기를 5종으로 정정한다 — `CLAUDE.md:73`. 같은 파일 131-135라인의 5종 나열과 일치시킨다.
 - [x] `manifest.json`의 `supporting.docs`에 `docs/development-process.html`, `docs/intake.html` 추가 — install.sh가 HTML UI를 함께 배포하도록 한다. 사전에 의도된 축소 배포가 아닌지 사용자 확인. (단순 누락으로 판단, 추가 진행)
-- [ ] HTML 두 파일이 설치 대상이 되면 `install.sh`가 정상 복사하는지 `--dry-run`으로 검증한다.
+- [x] HTML 두 파일이 설치 대상이 되면 `install.sh`가 정상 복사하는지 `--dry-run`으로 검증한다 — `/tmp/claude-template-dryrun-test`로 dry-run 실행, `docs/development-process.html`/`docs/intake.html` 모두 `[복사 예정]` 출력에 포함됨. 총 65개 설치 대상, 0개 건너뜀.
 
 ## 개선 필요
 
