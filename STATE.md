@@ -42,6 +42,19 @@
   - CSS `[data-design]` 속성 분기로 활성 시안 시그너처만 표시. HTML 74KB.
   - `docs/admin-fe-design-guide.md`에 `## 시안별 화면 조립 차이` 섹션 신설. login/dashboard/list/상세/폼 5개 화면 패턴별 5개 시안 비교 매트릭스 + 시안 선택 가이드(프로젝트 유형 5종 매핑) + 시안 변경 안전 범위 4종 점검 항목.
 
+- v2-5/v2-6/v2-7/v2-8 + 검수 후속: preview/가이드/fallback/카탈로그 정합 보강. (2026-05-15)
+  - **v2-5**: `admin-fe-preview.html`에 `## atomic 7종` 섹션 신설. button(5 variant × 4 size) / input(4 state) / badge / chip / avatar / icon-button / icon 시안별 차이 한 페이지 비교.
+  - **v2-6**: `admin-fe-design-guide.md` 본문 prose 일반화. 1차 원칙을 "시안 무관" + "시안 정책에 따라 분기" 2 그룹으로 재구성. 카피 톤 체크리스트를 ko-friendly / ko-formal / en-sentence 3종 매트릭스로 확장.
+  - **v2-7**: `_alias-contract.md ## 9b` 섹션 신설(시안 전용 토큰 fallback 매핑 표 + ladder 변수 정책). `admin-fe-preview.html` `:root` 공통 블록에 catalog-only fallback 변수(`--radius-6/20/28`, `--shadow-3/4/cta`, `--font-mono`) 추가.
+  - **v2-8**: `design-reviewer` 서브에이전트(general-purpose) 호출하여 5개 카탈로그 self-review 실행. 핵심 결함 6종 검출(catalog-only 토큰 CSS Variables surface 누락, alias 카운트 표기 오류 32→25, dark synthesized 마커 누락, wanted catalog-only ladder Known Gaps 누락).
+  - **v2-8 후속**: 검출된 critical 이슈 일괄 수정.
+    - alias 카운트 32→25 정정 (`_alias-contract.md`, `STATE.md`, `startup-checklist.md`, `design-reviewer.md`, `design-guidelines.md` 5개 파일).
+    - `_alias-contract.md ## 9b` fallback 표에 wanted catalog-only 토큰(`--radius-6/10/20/24/32`, `--shadow-3/4`, `--border-inverse`, `--fg-link`) 추가, ladder 변수 ship 방식(a) 시안별 자체 정의 vs (b) 공통 root 의존 정책 명시.
+    - `wanted.md` Known Gaps에 catalog-only ladder + color/border + shadow-3/4 명시 + CSS Variables 블록에 누락 토큰 8종 surface.
+    - 4개 카탈로그(`minimal-mono`, `toss-like`, `material-3`, `linear-like`) CSS Variables 블록에 spacing 14종 + radius ladder + 각 시안의 catalog-only 토큰 일괄 surface. dark 블록의 `fg-success/warning/danger` 등 합성 alias에 `/* synthesized */` 마커 명시.
+    - 재검수 자동화: 5개 카탈로그 모두 `--space-16`, `--radius-8`, 각 catalog-only 토큰 surface 검증 통과. select-design.sh 활성화/복귀 정상.
+  - 라이브러리 v2 인프라 + 시각화 + 정합 보강 완료. preview HTML 86KB, 카탈로그 평균 1100줄.
+
 - v2-2.4: linear-like 시안 라이브러리 추가. (2026-05-15)
   - `designs/linear-like.md` 신규 — productivity/issue tracker 톤. **dark 1차** + gradient accent 적극(`policy.gradient_locations: ["accent", "hero"]`) + 카드 그림자 금지(`policy.shadow_on_cards: false`) + 컴팩트 밀도(button md 32, input 32, body1 14, sidebar 220) + en-sentence 영문 카피.
   - brand는 gradient pair(violet→teal). accent gradient는 CTA hover/강조 텍스트/selection에 적극 사용, hero gradient는 마케팅 1곳.
@@ -84,7 +97,7 @@
   - `docs/design-guidelines.md`에 preview 시각 검증 섹션 추가.
 
 - 디자인 시안 라이브러리 도입(`designs/` 폴더 + select-design.sh + install.sh --design 플래그). (2026-05-15)
-  - 신규: `designs/README.md`, `designs/_alias-contract.md`(alias 32종 + 컴포넌트 7종 + policy 5종 계약), `designs/_template.md`(빈 골격), `designs/wanted.md`(기존 DESIGN.md 이전).
+  - 신규: `designs/README.md`, `designs/_alias-contract.md`(alias 25종 + 컴포넌트 7종 + policy 5종 계약), `designs/_template.md`(빈 골격), `designs/wanted.md`(기존 DESIGN.md 이전).
   - 신규 스크립트: `.claude/plugins/select-design.sh` — `--list`/`--current`/`<slug>` 모드. DESIGN.md가 라이브러리와 다른 직접 편집 상태면 `DESIGN.md.bak` 자동 백업 후 덮어쓰기.
   - `install.sh` 확장: `--design <slug>` 플래그 (기본 wanted). 설치 마지막에 designs/<slug>.md → DESIGN.md 활성화 + `.claude/.active-design` 마커 생성.
   - manifest.json에 신규 `designs` 섹션(default+files+selector) 추가. 라이브러리 4종 파일 + selector가 install dry-run 73개 대상에 포함됨.

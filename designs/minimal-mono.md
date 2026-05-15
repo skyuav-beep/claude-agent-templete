@@ -360,6 +360,16 @@ interactive: hover bg-subtle
   --border-strong:  oklch(0.145 0 0 / 0.32);
   --border-brand:   oklch(0.145 0 0);
 
+  /* Spacing (theme-invariant) */
+  --space-4: 4px;    --space-8: 8px;    --space-12: 12px;   --space-16: 16px;
+  --space-20: 20px;  --space-24: 24px;  --space-32: 32px;   --space-40: 40px;
+  --space-48: 48px;  --space-56: 56px;  --space-64: 64px;   --space-80: 80px;
+  --space-96: 96px;  --space-128: 128px;
+
+  /* Rounded (theme-invariant — 표준 ladder만, catalog-only 추가 없음) */
+  --radius-2: 2px;   --radius-4: 4px;   --radius-8: 8px;
+  --radius-12: 12px; --radius-16: 16px; --radius-full: 9999px;
+
   --shadow-1:   0 1px 2px oklch(0 0 0 / 0.04);
   --shadow-2:   0 4px 8px oklch(0 0 0 / 0.06);
   --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.10);
@@ -385,14 +395,16 @@ interactive: hover bg-subtle
   --fg-disabled:  oklch(1 0 0 / 0.28);
   --fg-on-brand:  oklch(0.145 0 0);
   --fg-brand:     oklch(1 0 0);
-  --fg-success:   oklch(0.740 0.165 144);
-  --fg-warning:   oklch(0.770 0.150 64);
-  --fg-danger:    oklch(0.720 0.215 27);
+  --fg-success:   oklch(0.740 0.165 144);                       /* synthesized */
+  --fg-warning:   oklch(0.770 0.150 64);                        /* synthesized */
+  --fg-danger:    oklch(0.720 0.215 27);                        /* synthesized */
 
   --border-subtle:  oklch(1 0 0 / 0.08);
   --border-default: oklch(1 0 0 / 0.20);
   --border-strong:  oklch(1 0 0 / 0.32);
   --border-brand:   oklch(1 0 0);
+
+  /* spacing/radius는 light와 동일 — 상속 */
 
   --shadow-1:   0 1px 2px oklch(0 0 0 / 0.20);
   --shadow-2:   0 4px 8px oklch(0 0 0 / 0.32);

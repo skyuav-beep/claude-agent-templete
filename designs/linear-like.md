@@ -390,9 +390,25 @@ text: ⌘K, ⇧⌘P, Esc
   --border-strong:  oklch(0.520 0.020 270 / 0.34);
   --border-brand:   oklch(0.620 0.180 268);
 
+  /* Spacing (theme-invariant) */
+  --space-4: 4px;    --space-8: 8px;    --space-12: 12px;   --space-16: 16px;
+  --space-20: 20px;  --space-24: 24px;  --space-32: 32px;   --space-40: 40px;
+  --space-48: 48px;  --space-56: 56px;  --space-64: 64px;   --space-80: 80px;
+  --space-96: 96px;  --space-128: 128px;
+
+  /* Rounded (표준 + catalog-only radius-6) */
+  --radius-2: 2px;   --radius-4: 4px;
+  --radius-6: 6px;                                                /* catalog-only: input/button md 시그너처 */
+  --radius-8: 8px;   --radius-12: 12px; --radius-16: 16px;
+  --radius-full: 9999px;
+
   --shadow-1:   0 1px 2px oklch(0 0 0 / 0.06);
   --shadow-2:   0 4px 12px oklch(0 0 0 / 0.08);
   --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.14);
+
+  /* mono typography variant (catalog-only) */
+  --font-mono: ui-monospace, "JetBrains Mono", "SF Mono", monospace;
+  --font-size-mono: 13px;
 }
 
 :root[data-design="linear-like"][data-theme="dark"] {
@@ -414,15 +430,17 @@ text: ⌘K, ⇧⌘P, Esc
   --fg-tertiary:  oklch(0.985 0.005 270 / 0.42);
   --fg-disabled:  oklch(0.985 0.005 270 / 0.28);
   --fg-on-brand:  oklch(1 0 0);
-  --fg-brand:     oklch(0.740 0.155 268);
-  --fg-success:   oklch(0.740 0.165 144);
-  --fg-warning:   oklch(0.770 0.150 64);
-  --fg-danger:    oklch(0.720 0.215 27);
+  --fg-brand:     oklch(0.740 0.155 268);                       /* synthesized — dark 1차 시안 */
+  --fg-success:   oklch(0.740 0.165 144);                       /* synthesized */
+  --fg-warning:   oklch(0.770 0.150 64);                        /* synthesized */
+  --fg-danger:    oklch(0.720 0.215 27);                        /* synthesized */
 
   --border-subtle:  oklch(0.985 0.005 270 / 0.08);
   --border-default: oklch(0.985 0.005 270 / 0.18);
   --border-strong:  oklch(0.985 0.005 270 / 0.30);
   --border-brand:   oklch(0.740 0.155 268);
+
+  /* spacing/radius/font-mono는 light와 동일 — 상속 */
 
   --shadow-1:   0 1px 2px oklch(0 0 0 / 0.16);
   --shadow-2:   0 4px 12px oklch(0 0 0 / 0.24);

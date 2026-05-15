@@ -357,8 +357,21 @@ bg: bg-muted
   --border-strong:  oklch(0.520 0.020 245 / 0.34);
   --border-brand:   oklch(0.620 0.180 245);
 
+  /* Spacing (theme-invariant) */
+  --space-4: 4px;    --space-8: 8px;    --space-12: 12px;   --space-16: 16px;
+  --space-20: 20px;  --space-24: 24px;  --space-32: 32px;   --space-40: 40px;
+  --space-48: 48px;  --space-56: 56px;  --space-64: 64px;   --space-80: 80px;
+  --space-96: 96px;  --space-128: 128px;
+
+  /* Rounded (표준 + catalog-only) */
+  --radius-2: 2px;   --radius-4: 4px;   --radius-8: 8px;
+  --radius-12: 12px; --radius-16: 16px;
+  --radius-20: 20px;                                              /* catalog-only: xl 카드/modal */
+  --radius-full: 9999px;
+
   --shadow-1:   0 1px 3px oklch(0 0 0 / 0.06);
   --shadow-2:   0 4px 12px oklch(0 0 0 / 0.08);
+  --shadow-cta: 0 8px 24px oklch(0.620 0.180 245 / 0.30);        /* catalog-only: brand color glow */
   --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.12);
 }
 
@@ -381,18 +394,21 @@ bg: bg-muted
   --fg-tertiary:  oklch(1 0 0 / 0.44);
   --fg-disabled:  oklch(1 0 0 / 0.28);
   --fg-on-brand:  oklch(1 0 0);
-  --fg-brand:     oklch(0.730 0.155 245);
-  --fg-success:   oklch(0.740 0.165 144);
-  --fg-warning:   oklch(0.770 0.150 64);
-  --fg-danger:    oklch(0.720 0.215 27);
+  --fg-brand:     oklch(0.730 0.155 245);                       /* synthesized */
+  --fg-success:   oklch(0.740 0.165 144);                       /* synthesized */
+  --fg-warning:   oklch(0.770 0.150 64);                        /* synthesized */
+  --fg-danger:    oklch(0.720 0.215 27);                        /* synthesized */
 
   --border-subtle:  oklch(1 0 0 / 0.10);
   --border-default: oklch(1 0 0 / 0.22);
   --border-strong:  oklch(1 0 0 / 0.34);
   --border-brand:   oklch(0.730 0.155 245);
 
+  /* spacing/radius는 light와 동일 — 상속 */
+
   --shadow-1:   0 1px 3px oklch(0 0 0 / 0.24);
   --shadow-2:   0 4px 12px oklch(0 0 0 / 0.36);
+  --shadow-cta: 0 8px 24px oklch(0.620 0.180 245 / 0.50);        /* catalog-only: brand glow dark */
   --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.50);
 }
 ```

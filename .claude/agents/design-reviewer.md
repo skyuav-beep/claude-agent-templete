@@ -41,7 +41,7 @@ UI/스타일 산출물의 디자인 일관성을 점검하는 전용 서브에�
 - radius가 ladder(`radius-2/4/8/12/16/full`) 외 값을 사용하는가
 
 #### A-3. alias 계약 위반
-- 활성 DESIGN.md가 `_alias-contract.md`의 alias 32종 중 누락한 것이 있는가
+- 활성 DESIGN.md가 `_alias-contract.md`의 alias 25종 중 누락한 것이 있는가
 - 필수 컴포넌트 7종(button-*, input, badge, chip, avatar, icon-button, icon) 시그너처가 정의돼 있는가
 
 #### A-4. 다크 모드 (DESIGN.md `policy: dark_mode == supported` 인 경우)

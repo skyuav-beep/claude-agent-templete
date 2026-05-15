@@ -118,7 +118,7 @@ radius-2, radius-4, radius-8, radius-12, radius-16, radius-full
 
 신규 시안 또는 갱신을 검수할 때 사용한다.
 
-- [ ] 색 alias 32종(bg 11 + fg 10 + border 4 + brand-subtle 등) 누락 없음
+- [ ] 색 alias 25종(bg 11 + fg 10 + border 4 + brand-subtle 등) 누락 없음
 - [ ] light + dark 양쪽 정의 (다크 미지원이면 frontmatter에 명시)
 - [ ] spacing/radius/typography ladder 누락 없음
 - [ ] 필수 컴포넌트 7종 시그너처 정의
@@ -143,17 +143,31 @@ radius-2, radius-4, radius-8, radius-12, radius-16, radius-full
 
 | 시안 전용 토큰 | 정의한 시안 | 표준 fallback | 사용 위치 |
 |---|---|---|---|
-| `--radius-6` | linear-like | `--radius-8` | input/button md (한 단계 작은 라운드) |
-| `--radius-20` | toss-like | `--radius-16` | xl 카드, modal |
+| `--radius-6` | linear-like, wanted (button sm 로컬) | `--radius-8` | input/button md (한 단계 작은 라운드) |
+| `--radius-10` | wanted (button lg 로컬) | `--radius-8` | wanted button lg height 48 |
+| `--radius-20` | toss-like, wanted | `--radius-16` | xl 카드, modal |
+| `--radius-24` | wanted | `--radius-16` | wanted 일부 카드 |
 | `--radius-28` | material-3 | `--radius-16` | M3 FAB, bottom sheet |
-| `--shadow-3` | material-3 | `--shadow-2` | M3 elevation level 3 (FAB, dialog) |
-| `--shadow-4` | material-3 | `--shadow-pop` | M3 elevation level 4 (nav drawer) |
+| `--radius-32` | wanted | `--radius-16` | wanted 일부 hero |
+| `--shadow-3` | material-3, wanted | `--shadow-2` | M3 elevation level 3 (FAB, dialog) |
+| `--shadow-4` | material-3, wanted | `--shadow-pop` | M3 elevation level 4 (nav drawer) |
 | `--shadow-cta` | toss-like | `--shadow-1` | brand color glow CTA |
+| `--border-inverse` | wanted | `--border-strong` | wanted 일부 dark surface 분리 |
+| `--fg-link` | wanted | `--fg-brand` | wanted 인라인 링크 강조 |
 | `font: mono` | linear-like | `font-family: ui-monospace, "SF Mono", monospace; font-size: 13px` | 단축키, 코드 inline |
 | `typography.amount` | toss-like | `font-size: 32px; font-weight: 700; tabular-nums` | 금액 강조 input |
 | `kbd` 컴포넌트 | linear-like | (전용 — 다른 시안 활성 시 비활성 처리 또는 chip fallback) | 키보드 단축키 표기 |
 | `amount-input` 컴포넌트 | toss-like | (전용 — 다른 시안 활성 시 일반 input + tabular-nums 옵션) | 금액 입력 |
 | `reward-card` 시그너처 | wanted | (전용 — 잡 도메인 한정) | 채용보상금 강조 |
+
+### Ladder 변수 정책 (theme-invariant)
+
+`--space-*`(14종), `--radius-*`(6종 표준 + 시안 전용 추가), elevation `--shadow-*`(시안별 정책)은 **theme-invariant** — light/dark 동일. 두 가지 ship 방식 허용한다.
+
+- (a) **시안별 자체 정의**: 각 시안의 `## CSS Variables` light 블록에 ladder 변수 inline. 다운스트림이 카탈로그 단일 파일만 복사해도 self-contained.
+- (b) **공통 root 의존**: 시안 블록은 색 alias만 ship하고, ladder는 호출 환경(preview HTML 또는 다운스트림 호스트의 공통 root)이 책임. 가벼우나 self-contained 아님.
+
+**권장: (a)** — `select-design.sh`로 카탈로그를 root DESIGN.md로 복사할 때 ladder 정의가 함께 가야 다운스트림이 깨지지 않는다. preview HTML은 (b) 모델로 운영(공통 root 블록 + 시안별 색만 분기)이 가능하나 카탈로그 자체는 (a)로 self-contained 유지.
 
 ### CSS fallback 패턴
 
@@ -213,7 +227,7 @@ alias/ladder 이름을 그대로 `--` 접두로 변환한다. 변환 규칙은 �
 :root[data-design="wanted"][data-theme="light"] {
   --bg-canvas: oklch(1 0 0);
   --bg-surface: oklch(1 0 0);
-  /* ... alias 32종 + spacing 14종 + radius 6종 + typography 72종 + elevation */
+  /* ... alias 25종 + spacing 14종 + radius 6종 + typography 72종 + elevation */
 }
 :root[data-design="wanted"][data-theme="dark"] {
   /* ... */

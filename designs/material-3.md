@@ -379,8 +379,23 @@ M3는 **5 window size class** — compact(<600) / medium(600-839) / expanded(840
   --border-strong:  oklch(0.520 0.020 295 / 0.40);
   --border-brand:   oklch(0.460 0.155 295);
 
+  /* Spacing (theme-invariant, 4dp grid) */
+  --space-4: 4px;    --space-8: 8px;    --space-12: 12px;   --space-16: 16px;
+  --space-20: 20px;  --space-24: 24px;  --space-32: 32px;   --space-40: 40px;
+  --space-48: 48px;  --space-56: 56px;  --space-64: 64px;   --space-80: 80px;
+  --space-96: 96px;  --space-128: 128px;
+
+  /* Rounded (M3 shape scale: extra-small/small/medium/large/extra-large/full) */
+  --radius-2: 2px;   --radius-4: 4px;   --radius-8: 8px;
+  --radius-12: 12px; --radius-16: 16px;
+  --radius-28: 28px;                                              /* catalog-only: M3 extra-large (FAB, modal sheet) */
+  --radius-full: 9999px;
+
+  /* M3 elevation 5단 (level 0/1/2/3/4/5) */
   --shadow-1: 0 1px 2px oklch(0 0 0 / 0.30), 0 1px 3px 1px oklch(0 0 0 / 0.15);
   --shadow-2: 0 1px 2px oklch(0 0 0 / 0.30), 0 2px 6px 2px oklch(0 0 0 / 0.15);
+  --shadow-3: 0 4px 8px 3px oklch(0 0 0 / 0.15), 0 1px 3px oklch(0 0 0 / 0.30);   /* catalog-only: M3 level 3 (FAB, dialog) */
+  --shadow-4: 0 6px 10px 4px oklch(0 0 0 / 0.15), 0 2px 3px oklch(0 0 0 / 0.30);  /* catalog-only: M3 level 4 (nav drawer) */
   --shadow-pop: 0 8px 12px 6px oklch(0 0 0 / 0.15), 0 4px 4px oklch(0 0 0 / 0.30);
 }
 
@@ -403,18 +418,22 @@ M3는 **5 window size class** — compact(<600) / medium(600-839) / expanded(840
   --fg-tertiary:  oklch(0.965 0.005 295 / 0.48);
   --fg-disabled:  oklch(0.965 0.005 295 / 0.32);
   --fg-on-brand:  oklch(0.220 0.020 295);
-  --fg-brand:     oklch(0.795 0.130 295);
-  --fg-success:   oklch(0.760 0.165 144);
-  --fg-warning:   oklch(0.785 0.150 64);
-  --fg-danger:    oklch(0.720 0.215 27);
+  --fg-brand:     oklch(0.795 0.130 295);                       /* M3 tonal 80 */
+  --fg-success:   oklch(0.760 0.165 144);                       /* synthesized */
+  --fg-warning:   oklch(0.785 0.150 64);                        /* synthesized */
+  --fg-danger:    oklch(0.720 0.215 27);                        /* synthesized */
 
   --border-subtle:  oklch(0.965 0.005 295 / 0.12);
   --border-default: oklch(0.965 0.005 295 / 0.25);
   --border-strong:  oklch(0.965 0.005 295 / 0.40);
   --border-brand:   oklch(0.795 0.130 295);
 
+  /* spacing/radius는 light와 동일 — 상속 */
+
   --shadow-1: 0 1px 2px oklch(0 0 0 / 0.50), 0 1px 3px 1px oklch(0 0 0 / 0.30);
   --shadow-2: 0 1px 2px oklch(0 0 0 / 0.50), 0 2px 6px 2px oklch(0 0 0 / 0.30);
+  --shadow-3: 0 4px 8px 3px oklch(0 0 0 / 0.30), 0 1px 3px oklch(0 0 0 / 0.50);   /* catalog-only dark */
+  --shadow-4: 0 6px 10px 4px oklch(0 0 0 / 0.30), 0 2px 3px oklch(0 0 0 / 0.50);  /* catalog-only dark */
   --shadow-pop: 0 8px 12px 6px oklch(0 0 0 / 0.30), 0 4px 4px oklch(0 0 0 / 0.50);
 }
 ```

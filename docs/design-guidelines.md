@@ -80,7 +80,7 @@
 - 라이브러리 목록 확인: `bash .claude/plugins/select-design.sh --list`
 - 시안 활성화(스위치): `bash .claude/plugins/select-design.sh <slug>` — `designs/<slug>.md` → `DESIGN.md` 복사 + `.claude/.active-design` 갱신.
 - install 시 기본 시안 지정: `bash .claude/plugins/install.sh --design <slug> /target` (기본값 `wanted`).
-- 신규 시안 작성: `cp designs/_template.md designs/<slug>.md` 후 frontmatter + 본문 채움. `designs/_alias-contract.md`의 alias 32종 + 컴포넌트 7종 시그너처는 반드시 정의.
+- 신규 시안 작성: `cp designs/_template.md designs/<slug>.md` 후 frontmatter + 본문 채움. `designs/_alias-contract.md`의 alias 25종 + 컴포넌트 7종 시그너처는 반드시 정의.
 - DESIGN.md를 직접 편집한 상태에서 select-design.sh를 실행하면 자동으로 `DESIGN.md.bak`을 만든 뒤 덮어쓴다.
 - **시안 전용 토큰 fallback**: 특정 시안만 정의하는 추가 토큰(`radius-6`, `radius-20`, `radius-28`, `shadow-3/4`, `font-mono` 등)은 다른 시안 전환 시 미정의가 된다. 호출 코드는 가능하면 표준 alias만 사용하고, 전용 토큰을 호출해야 하면 `var(--token, fallback)` 패턴 또는 컴포넌트 단위 분리(예: linear-like 비활성 시 `kbd` 컴포넌트를 `chip`으로 대체)를 사용한다. 매핑 표는 `designs/_alias-contract.md ## 9b` 참조.
 
