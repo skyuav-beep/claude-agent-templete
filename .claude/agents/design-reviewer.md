@@ -51,6 +51,20 @@ UI/스타일 산출물의 디자인 일관성을 점검하는 전용 서브에�
 #### A-5. 텍스트 위계
 - alpha multiplier 시스템(`fg-strong/default/secondary/tertiary/disabled`)을 우회해 별도 회색 hex로 위계를 만들지 않는가
 
+#### A-6. data-table 밀도와 Wide Table Cases
+`DESIGN.md ### data-table > #### Wide Table Cases` 4-케이스 매트릭스 기준.
+- cell padding이 `{spacing.space-8}` 이하인가 (hit area·가독성 위반 — 차단)
+- cell padding이 비-4의 배수(6/10/14/18/22)인가 (ladder 위반 — 차단)
+- row height가 36 미만인가 (스캔 가능성 한계 — 차단)
+- row height가 ladder 외 값(40/46/50 등)인가 (44/52/56 외 사용 — 경고)
+- 컬럼 ≥9에서 cell padding이 여전히 `{spacing.space-16}`인가 (Case B/C/D 미적용 — 경고)
+- 컬럼 ≥13에서 좌측 sticky 컬럼이 없는데 가로 스크롤이 활성화돼 있는가 (Case C/D 정책 위반 — 차단)
+- 컬럼 ≥13에서 스크롤 가능 시각 단서(시안별 affordance)가 없는가 (차단, 시안별 정합은 B-6에서 검사)
+- 컬럼 ≥19(Case D)에서 column visibility toggle이 없는가 (정책 위반 — 차단)
+- zebra striping(짝수행 배경 변화)을 도입했는가 (평면+1px 라인 정책 위반 — 차단)
+- compact 행 높이 채택 시 `{typography.body2}` → `{typography.caption1}` 다운이 사용자 테스트 없이 적용됐는가 (경고)
+- 요구사항 합의 산출물이 있는가 — `templates/data-table-density.md` 양식 또는 PR 본문에 case/시안/밀도 명시(권장, 누락 시 경고)
+
 ### B. 시안별 정책 규칙 (활성 DESIGN.md에서 추출)
 
 활성 DESIGN.md의 frontmatter `policy:` 블록과 `## Do's and Don'ts` 섹션을 시작 시 로드해 시안별로 적용. 본 섹션은 Wanted 시안 기준 예시지만, 다른 시안 활성 시 그 시안의 정책으로 자동 교체된다.
@@ -75,6 +89,15 @@ UI/스타일 산출물의 디자인 일관성을 점검하는 전용 서브에�
 
 #### B-5. 컴포넌트 로컬값
 - 활성 시안이 정의한 컴포넌트별 로컬값(예: button sm radius 6, input padding 14)을 임의로 변경하지 않는가
+
+#### B-6. Wide Table 시안별 스크롤 affordance 정합
+`DESIGN.md ### data-table > #### Wide Table Cases`의 시안별 affordance 매트릭스 + `designs/<slug>.md` frontmatter `policy.gradient_locations`와의 정합.
+- 활성 시안의 `policy.gradient_locations`에 `"table-fade-edge"`가 없는데 fade-edge gradient mask(linear-gradient 좌/우 4~8px)가 사용됐는가 — **차단**. 5개 시안 중 `toss-like`와 `linear-like`만 허용.
+- 활성 시안이 `wanted`인데 fade-edge를 사용했는가 (정책: 1px `{colors.border-default}` sticky 경계로 대체)
+- 활성 시안이 `minimal-mono`인데 fade-edge를 사용했는가 (정책: 1px `{colors.border-strong}` + inset shadow-1)
+- 활성 시안이 `material-3`인데 fade-edge를 사용했는가 (정책: state-layer 8~12% brand alpha overlay)
+- 활성 시안이 `toss-like` 또는 `linear-like`인데 fade-edge alpha가 시안 시그너처와 불일치하는가 (linear-like는 다크에서 더 강한 alpha 0.20~0.28, light는 ~0.28; toss-like는 ~0.12) — 경고
+- Case C/D를 채택했는데 affordance 구현이 sticky-l2 우측 경계와 sticky-r1 좌측 경계 양쪽에 모두 적용됐는가 — 한쪽만 있으면 경고
 
 ## 출력 형식
 

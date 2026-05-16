@@ -98,6 +98,7 @@
       "templates/format-intake.md",
       "templates/routing-intake.md",
       "templates/qa-intake.md",
+      "templates/data-table-density.md",
       "templates/feature-request.md",
       "templates/bugfix-request.md",
       "templates/refactor-request.md",
@@ -118,6 +119,7 @@
       "docs/design-guidelines.md",
       "docs/admin-fe-design-guide.md",
       "docs/admin-fe-preview.html",
+      "docs/ui-decisions.md",
       "docs/plugin-guide.md"
     ]
   }

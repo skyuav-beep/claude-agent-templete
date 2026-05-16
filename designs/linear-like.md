@@ -2,7 +2,7 @@
 name: Linear-like
 slug: linear-like
 category: productivity
-last_updated: "2026-05-15"
+last_updated: "2026-05-16"
 sources:
   - "(self-contained — productivity/issue tracker UI 일반 관례 합성)"
 related_services: []
@@ -10,7 +10,7 @@ lang: en
 logo: /logos/linear-like.png
 policy:
   shadow_on_cards: false
-  gradient_locations: ["accent", "hero"]
+  gradient_locations: ["accent", "hero", "table-fade-edge"]
   copy_tone: "en-sentence"
   dark_mode: "supported"
   non_4_spacing: false
@@ -24,7 +24,7 @@ policy:
 
 본 시안의 시각 시그너처는 **다크 캔버스 위에 적극적인 gradient accent**다. 다른 시안과 가장 큰 차이:
 - **dark 1차** — 디폴트 dark, light는 옵션 (`policy.dark_mode: "supported"` 이지만 dark 표면 1차 설계).
-- **gradient를 accent와 hero에 적극 사용** (`policy.gradient_locations: ["accent", "hero"]`) — Wanted의 4곳 한정 / toss-like의 hero 1곳 / minimal-mono의 전면 금지와 직교.
+- **gradient를 accent와 hero에 적극 사용, wide data-table fade-edge에도 허용** (`policy.gradient_locations: ["accent", "hero", "table-fade-edge"]`) — Wanted의 4곳 한정 / toss-like의 hero+fade-edge / minimal-mono의 전면 금지와 직교. 컴팩트 밀도 시안 특성상 Case C/D 와이드 테이블 사용 빈도가 높아 fade-edge mask가 자연스럽다.
 - **카드 그림자 금지** (`policy.shadow_on_cards: false`) — 1px 헤어라인 + 다크 캔버스의 깊이로 위계 표현.
 - **컴팩트 밀도** — 데이터 행 44 우선(comfortable 56 옵션). 키보드 단축키 우선 워크플로.
 

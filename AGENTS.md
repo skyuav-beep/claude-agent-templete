@@ -167,6 +167,7 @@
 - **[Plugin 가이드](./docs/plugin-guide.md)** - 설치, 업데이트, 커스텀, 버전 관리 방법.
 - **[디자인 운영 가이드](./docs/design-guidelines.md)** - `DESIGN.md` 토큰 호출 규칙, alias/atomic 선택, 컴포넌트 추가 절차, dark alias 합성 표기.
 - **[Admin FE 디자인 가이드](./docs/admin-fe-design-guide.md)** - admin/dashboard 화면(로그인, 사이드바, top bar, KPI 카드, data table, 폼) 조립 패턴. DESIGN.md 토큰/컴포넌트 호출 기준.
+- **[UI Decisions 템플릿](./docs/ui-decisions.md)** - startup-checklist 섹션 3~5 + `data-table-density.md` 등 UI 결정 사항을 통합 기록. 프로젝트별로 필요 섹션만 채워 사용.
 
 ## 사용자 확인이 필요한 상황
 

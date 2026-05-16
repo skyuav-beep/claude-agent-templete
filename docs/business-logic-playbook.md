@@ -124,17 +124,112 @@
 - Docker rebuild 명령
 - DB migration 명령
 
-예시 명령:
+기본 명령 레퍼런스(프로젝트 스택에 맞게 치환):
 
-- `npm test`
-- `npm run build`
-- `docker compose build`
-- `docker compose up -d --build`
-- `git pull`
-- `git status`
-- `git add`
-- `git commit -m "..."`
-- `git push`
+- `npm test` / `pnpm test` / `vitest run`
+- `npm run build` / `pnpm build`
+- `npm run lint` / `pnpm lint` / `biome check .`
+- `docker compose build` / `docker compose up -d --build`
+- `git pull --rebase` / `git status` / `git add <path>` / `git commit -m "..."` / `git push`
+- `pnpm db:migrate` / `prisma migrate deploy` / `supabase db push`
+
+### 5.1. 단계별 실행 흐름 (Step 7 상세)
+
+비즈니스 로직 변경이 끝난 뒤 다음 6단계를 순서대로 실행한다. 각 단계는 직전 단계가 통과해야 진행한다 — 실패 시 5.4를 따른다.
+
+```
+1) git status로 작업 트리 확인           → 의도 외 파일이 staged면 unstage
+2) lint                                  → 정적 분석 실패 시 즉시 수정
+3) unit test (변경 모듈 + 인접)           → red면 코드 수정, green이면 다음
+4) build                                 → 타입 오류·번들 실패 차단
+5) e2e (선택, happy path 1~2개)          → 가능한 경우만, 환경 미구성이면 사유 기록
+6) docker rebuild 판단 (5.2)             → 필요하면 rebuild + smoke
+```
+
+각 단계의 통과 기준:
+
+- lint: exit 0. warning은 허용하되 PR 본문에 개수와 사유를 기록.
+- unit test: 변경 모듈 + 인접 모듈 모두 green. 신규 시나리오 테스트는 본 변경 PR 안에 포함.
+- build: production 모드(`NODE_ENV=production` 또는 build script)로 실행. dev 모드 통과만으로는 미흡.
+- e2e: 환경 변수·DB 시드가 갖춰진 경우만 실행. 미갖춰진 경우 그 사실과 "다음 단계에서 자동 실행될 위치"를 PR 본문에 명시.
+
+### 5.2. Docker rebuild 판단 기준
+
+Docker를 쓰는 프로젝트에서 코드 변경 후 rebuild가 필요한지는 변경 파일 종류로 판단한다.
+
+| 변경 위치 | rebuild 필요? | 명령 |
+|---|---|---|
+| `src/**` 애플리케이션 소스만 | **불필요**. dev 컨테이너는 volume mount면 즉시 반영. 운영 이미지는 다음 배포에서 자연스럽게 빌드 | — |
+| `package.json` / `pnpm-lock.yaml` / `requirements.txt` 의존성 | **필요**. 이미지 레이어가 의존성 설치 단계에서 시작 | `docker compose build --no-cache <service>` |
+| `Dockerfile` / `docker-compose.yml` / `.dockerignore` | **필요**. 이미지 정의 자체 변경 | `docker compose build <service>` |
+| 환경 변수(`.env`, `compose` env) | rebuild 불필요. 컨테이너만 재시작 | `docker compose up -d <service>` |
+| migration SQL · seed 데이터 | rebuild 불필요. 별도 migration 명령 실행 | `docker compose exec <service> <migration cmd>` |
+| nginx/reverse-proxy 설정 | proxy 컨테이너만 rebuild + restart | `docker compose build proxy && docker compose up -d proxy` |
+
+판단 후 PR 본문 `## 검증 계획`에 "Docker rebuild: 불필요 (src/만 변경)" 또는 "필요 (pnpm-lock.yaml 갱신 → `docker compose build --no-cache api`)" 같이 사유를 명시한다.
+
+### 5.3. Git 작업 흐름 시나리오
+
+표준 단일 PR 흐름:
+
+```bash
+# 1) 작업 시작 전 — 최신 base로 정렬
+git status                          # 작업 트리 clean 확인
+git checkout main                   # 또는 develop
+git pull --rebase origin main
+
+# 2) 작업 브랜치 생성 (Conventional Commits + scope)
+git checkout -b feat/orders-cancel-window
+
+# 3) 작업 진행 — 자주 작은 commit
+git add src/server/orders/cancelService.ts
+git add src/server/orders/__tests__/cancelService.test.ts
+git commit -m "feat(orders): extend self-cancel window to 60m"
+
+# 4) 5.1 단계별 검증 통과 후 push 전
+git status                          # untracked가 있다면 의도 확인
+git diff --staged --check           # whitespace/trailing 검출
+grep -nE "console\.(log|debug)|TODO\(self\)" -r src/  # 디버그 잔재
+git log --oneline main..HEAD        # 본 브랜치 commit 개수와 순서 확인
+
+# 5) push 및 PR
+git push -u origin feat/orders-cancel-window
+# gh pr create --title ... --body ... (또는 웹 UI)
+```
+
+push 전 강제 점검 항목:
+
+- [ ] `git status`에 의도 외 파일이 없다
+- [ ] commit 메시지가 Conventional Commits 규칙(`feat|fix|refactor|chore(scope): ...`)을 따른다
+- [ ] commit이 논리 단위로 분리됐다 (테스트·구현·문서가 한 commit에 섞이지 않음, 단 작은 변경은 한 commit OK)
+- [ ] `.env`, `*.pem`, `*.key`, `credentials.json` 같은 비밀 파일이 staged되지 않았다 (block-secret-files hook이 1차 방어, 수동 재확인)
+- [ ] generated 파일(`dist/`, `.next/`, `coverage/`)이 staged되지 않았다
+- [ ] PR 본문에 "검증 통과 증거"(테스트 결과 / 빌드 결과 / docker rebuild 여부)가 포함됐다
+
+base 갱신 중 충돌:
+
+```bash
+git fetch origin
+git rebase origin/main              # main이 앞서갔다면
+# 충돌 발생 시: 파일 수정 → git add → git rebase --continue
+# 포기 시: git rebase --abort
+```
+
+`git push --force`는 본인 작업 브랜치에서 `--force-with-lease`로만 허용. `main`/`master`/`develop`에는 절대 금지(`block-destructive.sh` hook이 차단).
+
+### 5.4. 실패 케이스 대응
+
+각 단계에서 실패가 발생하면 단계 자체에서 멈추고 근본 원인을 해결한 뒤 처음부터 다시 실행한다.
+
+- **lint 실패**: 자동 수정 가능하면 `--fix` 또는 `biome format`. 규칙 자체에 이견이면 PR 분리해 별도 논의.
+- **unit test 실패**: 실패 메시지가 비즈니스 규칙과 어긋나는지 확인. 테스트가 잘못된 가정인지 코드가 잘못됐는지 먼저 판단. 단순히 테스트를 삭제·skip하지 않는다.
+- **build 실패 (타입 오류)**: 임시로 `any`/`as unknown as`로 우회하지 않는다. 타입 정의를 수정하거나 호출부를 정렬.
+- **build 실패 (번들·imports)**: barrel index 순서, dynamic import 경로 확인.
+- **docker rebuild 실패**: 캐시 문제면 `--no-cache`. 의존성 설치 실패면 lock 파일과 base 이미지 버전 정합 확인.
+- **push 거부 (non-fast-forward)**: `git pull --rebase` 후 충돌 해결. 강제 push는 본인 브랜치 + `--force-with-lease`만 사용.
+- **CI 실패**: 로컬에서 동일 명령 재현. 환경 차이(NODE_ENV, OS, 시간대)부터 점검.
+
+실패 후 우회·skip을 코드로 남기지 않는다. 원인 해결 후 PR 본문 또는 commit 메시지에 "원인 + 해결" 한 줄 기록.
 
 ## 6. 리뷰 포인트
 

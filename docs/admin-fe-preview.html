@@ -747,6 +747,108 @@
     .pagination .nav { display: flex; align-items: center; gap: 4px; }
 
     /* ============================================================
+       5b) Wide Table Cases (B 컴팩트 / C 와이드+sticky)
+       ============================================================ */
+    .case-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-24);
+    }
+    .case-card { display: flex; flex-direction: column; gap: var(--space-12); }
+    .case-card .case-meta {
+      display: flex; align-items: center; gap: var(--space-12); flex-wrap: wrap;
+      font-size: 12px; color: var(--fg-secondary);
+    }
+    .case-card .case-meta .label {
+      font-size: 11px; font-weight: 600; padding: 2px 8px;
+      border-radius: var(--radius-full); background: var(--bg-muted); color: var(--fg-strong);
+    }
+    .case-card .case-meta code {
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 11px; color: var(--fg-strong);
+    }
+
+    /* Case B — compact density (no sticky, no scroll) */
+    .table.compact thead th { height: 44px; padding: 0 var(--space-12); }
+    .table.compact tbody td { height: 44px; padding: 0 var(--space-12); font-size: 13px; }
+    .table.compact .col-check { width: 40px; }
+
+    /* Case C — wide frame + horizontal scroll + sticky columns */
+    .wide-frame {
+      position: relative;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-8);
+      overflow: hidden;
+    }
+    .wide-scroll { overflow-x: auto; overflow-y: hidden; max-height: 280px; }
+    .table-wide { width: max-content; min-width: 1280px; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+    .table-wide thead th {
+      position: sticky; top: 0; z-index: 2;
+      background: var(--bg-muted);
+      height: 44px; padding: 0 var(--space-12);
+      font-size: 12px; font-weight: 600; color: var(--fg-secondary);
+      text-align: left; letter-spacing: -0.005em; white-space: nowrap;
+    }
+    .table-wide thead th.right { text-align: right; }
+    .table-wide tbody td {
+      height: 44px; padding: 0 var(--space-12);
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      color: var(--fg-default); vertical-align: middle;
+      white-space: nowrap;
+    }
+    .table-wide tbody td.right { text-align: right; }
+    .table-wide tbody td.num { font-variant-numeric: tabular-nums; color: var(--fg-strong); font-weight: 600; }
+    .table-wide tbody tr:hover td { background: var(--bg-subtle); }
+    .table-wide tbody tr.selected td { background: var(--bg-brand-subtle); }
+
+    .table-wide .sticky-l1 { position: sticky; left: 0; z-index: 3; width: 40px; text-align: center; }
+    .table-wide .sticky-l2 { position: sticky; left: 40px; z-index: 3; min-width: 100px; }
+    .table-wide .sticky-r1 { position: sticky; right: 0; z-index: 3; width: 80px; text-align: right; }
+    .table-wide thead .sticky-l1,
+    .table-wide thead .sticky-l2,
+    .table-wide thead .sticky-r1 { z-index: 4; background: var(--bg-muted); }
+    .table-wide tbody tr.selected .sticky-l1,
+    .table-wide tbody tr.selected .sticky-l2,
+    .table-wide tbody tr.selected .sticky-r1 { background: var(--bg-brand-subtle); }
+    .table-wide tbody tr:hover .sticky-l1,
+    .table-wide tbody tr:hover .sticky-l2,
+    .table-wide tbody tr:hover .sticky-r1 { background: var(--bg-subtle); }
+
+    /* 시안별 스크롤 affordance (좌 sticky 우측 경계 + 우 sticky 좌측 경계) */
+    /* wanted: 1px border-default 단순 라인 */
+    [data-design="wanted"] .table-wide .sticky-l2 { box-shadow: 1px 0 0 0 var(--border-default); }
+    [data-design="wanted"] .table-wide .sticky-r1 { box-shadow: -1px 0 0 0 var(--border-default); }
+    /* minimal-mono: 1px border-strong + 4px inset shadow */
+    [data-design="minimal-mono"] .table-wide .sticky-l2 { box-shadow: 1px 0 0 0 var(--border-strong), 4px 0 6px -4px oklch(0 0 0 / 0.16); }
+    [data-design="minimal-mono"] .table-wide .sticky-r1 { box-shadow: -1px 0 0 0 var(--border-strong), -4px 0 6px -4px oklch(0 0 0 / 0.16); }
+    /* toss-like: fade-edge gradient mask 8px */
+    [data-design="toss-like"] .table-wide .sticky-l2::after,
+    [data-design="toss-like"] .table-wide .sticky-r1::after {
+      content: ""; position: absolute; top: 0; bottom: 0; width: 8px; pointer-events: none;
+    }
+    [data-design="toss-like"] .table-wide .sticky-l2::after { right: 0; transform: translateX(100%); background: linear-gradient(to right, oklch(0 0 0 / 0.12), transparent); }
+    [data-design="toss-like"] .table-wide .sticky-r1::after { left: 0; transform: translateX(-100%); background: linear-gradient(to left, oklch(0 0 0 / 0.12), transparent); }
+    /* material-3: state-layer 8~12% brand alpha overlay */
+    [data-design="material-3"] .table-wide .sticky-l2::after,
+    [data-design="material-3"] .table-wide .sticky-r1::after {
+      content: ""; position: absolute; top: 0; bottom: 0; width: 4px; pointer-events: none;
+      background: oklch(0.460 0.155 295 / 0.12);
+    }
+    [data-design="material-3"] .table-wide .sticky-l2::after { right: 0; transform: translateX(100%); }
+    [data-design="material-3"] .table-wide .sticky-r1::after { left: 0; transform: translateX(-100%); }
+    /* linear-like: fade-edge gradient mask, 다크 친화 */
+    [data-design="linear-like"] .table-wide .sticky-l2::after,
+    [data-design="linear-like"] .table-wide .sticky-r1::after {
+      content: ""; position: absolute; top: 0; bottom: 0; width: 8px; pointer-events: none;
+    }
+    [data-design="linear-like"] .table-wide .sticky-l2::after { right: 0; transform: translateX(100%); background: linear-gradient(to right, oklch(0 0 0 / 0.28), transparent); }
+    [data-design="linear-like"] .table-wide .sticky-r1::after { left: 0; transform: translateX(-100%); background: linear-gradient(to left, oklch(0 0 0 / 0.28), transparent); }
+    [data-design="linear-like"][data-theme="dark"] .table-wide .sticky-l2::after { background: linear-gradient(to right, oklch(1 0 0 / 0.20), transparent); }
+    [data-design="linear-like"][data-theme="dark"] .table-wide .sticky-r1::after { background: linear-gradient(to left, oklch(1 0 0 / 0.20), transparent); }
+
+    /* ============================================================
        Assembly views
        ============================================================ */
     .dashboard {
@@ -963,6 +1065,7 @@
   <a href="#topbar">top-bar</a>
   <a href="#stat">stat-card</a>
   <a href="#table">data-table</a>
+  <a href="#widetable">wide table cases</a>
   <a href="#dashboard">대시보드 조립</a>
   <a href="#listpage">리스트 페이지 조립</a>
 </div>
@@ -1217,7 +1320,7 @@
   <!-- toss-like: hero gradient + amount input -->
   <div class="specimen signature-only toss-like">
     <div class="specimen-label">TOSS-LIKE 시그너처 — hero gradient + amount input</div>
-    <div class="signature-meta">policy.gradient_locations: ["hero"] 한정</div>
+    <div class="signature-meta">policy.gradient_locations: ["hero", "table-fade-edge"] — 마케팅 hero + 와이드 테이블 affordance</div>
     <div class="hero-banner">
       <div class="title">간편하게 송금해 보세요</div>
       <div class="sub">계좌번호 없이 전화번호로 보낼 수 있어요</div>
@@ -1535,6 +1638,209 @@
   </div>
 </section>
 
+<!-- ===================== Wide Table Cases ===================== -->
+<section class="section" id="widetable">
+  <div class="section-head">
+    <h2>5b. Wide Table Cases (밀도 비교 — B 컴팩트 / C 와이드+sticky)</h2>
+    <p>컬럼 수와 밀도가 늘어날 때 임의로 padding을 줄이지 않고 4-케이스(`DESIGN.md ### data-table > #### Wide Table Cases`)에서 선택한다. 시안 선택에 따라 Case C의 스크롤 affordance 시각 단서가 달라진다.</p>
+  </div>
+
+  <!-- Case B — compact -->
+  <div class="case-card">
+    <div class="case-meta">
+      <span class="label">Case B</span>
+      <span>컬럼 9~12 · row 44 · padding <code>{spacing.space-12}</code> · 가로 스크롤 없음</span>
+    </div>
+    <div class="table-frame">
+      <table class="table compact">
+        <thead>
+          <tr>
+            <th class="col-check"><span class="check"></span></th>
+            <th>주문번호</th>
+            <th>주문일시</th>
+            <th>회원</th>
+            <th>상품</th>
+            <th class="right">수량</th>
+            <th class="right">금액</th>
+            <th>결제수단</th>
+            <th>상태</th>
+            <th>라이더</th>
+            <th class="col-action">액션</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="selected">
+            <td class="col-check"><span class="check on"><svg class="icon sm" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span></td>
+            <td>#1023</td>
+            <td style="color:var(--fg-secondary)">05-15 14:22</td>
+            <td>홍길동</td>
+            <td>아메리카노 외 2건</td>
+            <td class="right num">3</td>
+            <td class="right num">24,000</td>
+            <td>카드</td>
+            <td><span class="badge pending">대기중</span></td>
+            <td>김라이더</td>
+            <td class="col-action"><button class="button tertiary sm">보기</button></td>
+          </tr>
+          <tr>
+            <td class="col-check"><span class="check"></span></td>
+            <td>#1022</td>
+            <td style="color:var(--fg-secondary)">05-15 14:08</td>
+            <td>김민지</td>
+            <td>샌드위치 세트</td>
+            <td class="right num">1</td>
+            <td class="right num">18,500</td>
+            <td>간편결제</td>
+            <td><span class="badge active">진행중</span></td>
+            <td>박라이더</td>
+            <td class="col-action"><button class="button tertiary sm">보기</button></td>
+          </tr>
+          <tr>
+            <td class="col-check"><span class="check"></span></td>
+            <td>#1021</td>
+            <td style="color:var(--fg-secondary)">05-15 13:55</td>
+            <td>이서연</td>
+            <td>샐러드</td>
+            <td class="right num">2</td>
+            <td class="right num">9,200</td>
+            <td>카드</td>
+            <td><span class="badge inactive">완료</span></td>
+            <td>이라이더</td>
+            <td class="col-action"><button class="button tertiary sm">보기</button></td>
+          </tr>
+          <tr>
+            <td class="col-check"><span class="check"></span></td>
+            <td>#1020</td>
+            <td style="color:var(--fg-secondary)">05-15 13:40</td>
+            <td>박지훈</td>
+            <td>버거 세트</td>
+            <td class="right num">1</td>
+            <td class="right num">12,800</td>
+            <td>현금</td>
+            <td><span class="badge danger">취소</span></td>
+            <td>—</td>
+            <td class="col-action"><button class="button tertiary sm">보기</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Case C — wide + sticky + scroll + 시안별 affordance -->
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">Case C</span>
+      <span>컬럼 13~18 · row 44 · padding <code>{spacing.space-12}</code> · 좌 2 + 우 1 sticky · 가로 스크롤 · 헤더 sticky</span>
+      <span style="margin-left:auto">스크롤 affordance는 활성 시안 정책으로 분기 → 좌/우 sticky 경계 관찰</span>
+    </div>
+    <div class="wide-frame">
+      <div class="wide-scroll">
+        <table class="table-wide">
+          <thead>
+            <tr>
+              <th class="sticky-l1"><span class="check"></span></th>
+              <th class="sticky-l2">주문번호</th>
+              <th>주문일시</th>
+              <th>고객명</th>
+              <th>상품</th>
+              <th class="right">수량</th>
+              <th class="right">금액</th>
+              <th>결제수단</th>
+              <th>배송상태</th>
+              <th>배송지</th>
+              <th>라이더</th>
+              <th>메모</th>
+              <th>등록자</th>
+              <th class="sticky-r1">액션</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="selected">
+              <td class="sticky-l1"><span class="check on"><svg class="icon sm" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span></td>
+              <td class="sticky-l2">#1023</td>
+              <td style="color:var(--fg-secondary)">2026-05-15 14:22</td>
+              <td>홍길동</td>
+              <td>아메리카노 외 2건</td>
+              <td class="right num">3</td>
+              <td class="right num">24,000</td>
+              <td>카드</td>
+              <td><span class="badge pending">대기중</span></td>
+              <td>서울 강남구 역삼동 822-3</td>
+              <td>김라이더</td>
+              <td style="color:var(--fg-secondary)">문 앞에 두고 노크</td>
+              <td>운영자(김)</td>
+              <td class="sticky-r1"><button class="button tertiary sm">보기</button></td>
+            </tr>
+            <tr>
+              <td class="sticky-l1"><span class="check"></span></td>
+              <td class="sticky-l2">#1022</td>
+              <td style="color:var(--fg-secondary)">2026-05-15 14:08</td>
+              <td>김민지</td>
+              <td>샌드위치 세트</td>
+              <td class="right num">1</td>
+              <td class="right num">18,500</td>
+              <td>간편결제</td>
+              <td><span class="badge active">진행중</span></td>
+              <td>서울 마포구 합정동 411-9</td>
+              <td>박라이더</td>
+              <td style="color:var(--fg-secondary)">—</td>
+              <td>운영자(이)</td>
+              <td class="sticky-r1"><button class="button tertiary sm">보기</button></td>
+            </tr>
+            <tr>
+              <td class="sticky-l1"><span class="check"></span></td>
+              <td class="sticky-l2">#1021</td>
+              <td style="color:var(--fg-secondary)">2026-05-15 13:55</td>
+              <td>이서연</td>
+              <td>샐러드</td>
+              <td class="right num">2</td>
+              <td class="right num">9,200</td>
+              <td>카드</td>
+              <td><span class="badge inactive">완료</span></td>
+              <td>서울 송파구 잠실동 30-1</td>
+              <td>이라이더</td>
+              <td style="color:var(--fg-secondary)">드레싱 별도</td>
+              <td>운영자(박)</td>
+              <td class="sticky-r1"><button class="button tertiary sm">보기</button></td>
+            </tr>
+            <tr>
+              <td class="sticky-l1"><span class="check"></span></td>
+              <td class="sticky-l2">#1020</td>
+              <td style="color:var(--fg-secondary)">2026-05-15 13:40</td>
+              <td>박지훈</td>
+              <td>버거 세트</td>
+              <td class="right num">1</td>
+              <td class="right num">12,800</td>
+              <td>현금</td>
+              <td><span class="badge danger">취소</span></td>
+              <td>서울 영등포구 여의도동 23</td>
+              <td>—</td>
+              <td style="color:var(--fg-secondary)">고객 변심</td>
+              <td>운영자(김)</td>
+              <td class="sticky-r1"><button class="button tertiary sm">보기</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <span class="info">1–4 / 320</span>
+        <div class="nav">
+          <button class="button ghost sm">이전</button>
+          <button class="button tertiary sm" style="min-width:32px">1</button>
+          <button class="button ghost sm" style="min-width:32px">2</button>
+          <button class="button ghost sm" style="min-width:32px">3</button>
+          <button class="button ghost sm">다음</button>
+        </div>
+      </div>
+    </div>
+    <div class="case-meta" style="margin-top:var(--space-8)">
+      <span>현재 시안의 affordance:</span>
+      <code id="case-c-affordance">—</code>
+      <span style="color:var(--fg-tertiary)">(시안 변경 시 자동 갱신)</span>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== Assembly: Dashboard ===================== -->
 <section class="section" id="dashboard">
   <div class="section-head">
@@ -1695,7 +2001,7 @@
       label: 'toss-like',
       policy: {
         shadow_on_cards: true,
-        gradient_locations: ['hero'],
+        gradient_locations: ['hero', 'table-fade-edge'],
         copy_tone: 'ko-friendly',
         dark_mode: 'supported',
         non_4_spacing: false,
@@ -1715,7 +2021,7 @@
       label: 'linear-like',
       policy: {
         shadow_on_cards: false,
-        gradient_locations: ['accent', 'hero'],
+        gradient_locations: ['accent', 'hero', 'table-fade-edge'],
         copy_tone: 'en-sentence',
         dark_mode: 'supported',
         non_4_spacing: false,
@@ -1761,6 +2067,19 @@
     policyStrip.innerHTML = '<span class="policy-strip-label">POLICY</span>' + chips.join('');
   }
 
+  /* Case C affordance description per design */
+  const CASE_C_AFFORDANCE = {
+    'wanted': '1px border-default 라인 (chrome 외 grad 금지 정책)',
+    'minimal-mono': '1px border-strong + 4px inset shadow (전면 grad 금지)',
+    'toss-like': 'fade-edge 8px gradient mask (gradient_locations: table-fade-edge)',
+    'material-3': 'state-layer 8% brand alpha overlay (M3 state layer)',
+    'linear-like': 'fade-edge 8px gradient mask, 다크 친화 강 alpha (gradient_locations: table-fade-edge)',
+  };
+  function renderCaseCAffordance(slug) {
+    const el = document.getElementById('case-c-affordance');
+    if (el) el.textContent = CASE_C_AFFORDANCE[slug] || '—';
+  }
+
   function setTheme(t) {
     root.setAttribute('data-theme', t);
     btnLight.setAttribute('aria-pressed', t === 'light');
@@ -1772,6 +2091,7 @@
     root.setAttribute('data-design', slug);
     selectDesign.value = slug;
     renderPolicy(slug);
+    renderCaseCAffordance(slug);
     try { localStorage.setItem(KEY_DESIGN, slug); } catch (e) {}
   }
 

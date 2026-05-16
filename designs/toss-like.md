@@ -2,7 +2,7 @@
 name: Toss-like
 slug: toss-like
 category: finance
-last_updated: "2026-05-15"
+last_updated: "2026-05-16"
 sources:
   - "(self-contained — 한국 금융 fintech UI 패턴 일반 관례 합성)"
 related_services: []
@@ -10,7 +10,7 @@ lang: ko
 logo: /logos/toss-like.png
 policy:
   shadow_on_cards: true
-  gradient_locations: ["hero"]
+  gradient_locations: ["hero", "table-fade-edge"]
   copy_tone: "ko-friendly"
   dark_mode: "supported"
   non_4_spacing: false
@@ -24,7 +24,7 @@ policy:
 
 핀테크 표면의 시각 시그너처는 **밝은 캔버스 + 단일 강조 파랑 + 부드러운 라운드 그림자 카드** 조합이다. 위계는 (1) 큰 라운드(`radius-12` ~ `radius-16` 카드 표준), (2) `shadow-1`/`shadow-2` 부드러운 elevation, (3) 단일 강조 파랑 CTA로 만들어진다 (`policy.shadow_on_cards: true`).
 
-표면은 평면이지만 카드에 옅은 그림자를 허용한다 — 카드 그룹 사이에 공간감을 만드는 게 본 시안의 핵심 차별화다(Wanted/minimal-mono는 그림자 금지, 본 시안은 허용). gradient는 마케팅 hero에만 허용된다(`policy.gradient_locations: ["hero"]`).
+표면은 평면이지만 카드에 옅은 그림자를 허용한다 — 카드 그룹 사이에 공간감을 만드는 게 본 시안의 핵심 차별화다(Wanted/minimal-mono는 그림자 금지, 본 시안은 허용). gradient는 마케팅 hero와 wide data-table fade-edge(가로 스크롤 affordance)에 허용된다(`policy.gradient_locations: ["hero", "table-fade-edge"]`).
 
 대상 사용자는 **일반 소비자(non-technical)** 가 1차다. 금융/결제/송금/투자 surface처럼 *신뢰감 + 친근감*이 모두 필요한 도메인. 마케팅 landing → 본인인증 → core flow → 알림 4개 surface를 단일 시스템으로 운영한다.
 

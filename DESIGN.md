@@ -2,7 +2,7 @@
 name: 원티드
 slug: wanted
 category: etc
-last_updated: "2026-05-15"
+last_updated: "2026-05-16"
 sources:
   - https://api.anthropic.com/v1/design/h/j7_orggLzbQ43g24R8OfYA
   - https://www.wanted.co.kr
@@ -896,6 +896,45 @@ pagination:
 ```
 
 행 클릭으로 상세 진입하는 패턴을 쓸 때는 행 전체에 cursor:pointer + hover bg를 적용하고, 액션 셀의 버튼은 `event.stopPropagation()`로 분리한다. zebra striping(짝수행 배경 변화)은 사용하지 않는다 — 평면 표면 + 1px 라인이 행을 구분한다.
+
+#### Wide Table Cases
+
+위 명세는 표준 폭(컬럼 ≤8) 기준이다. 컬럼이 많아지거나 화면 폭이 부족할 때는 임의로 padding을 줄이지 않고 아래 4-케이스 매트릭스에서 한 가지를 선택해 합의한다. 요구사항 수집 양식은 `templates/data-table-density.md`.
+
+| 케이스 | 컬럼 수 | row height | cell padding | sticky | 가로 스크롤 | 추가 정책 |
+|---|---|---|---|---|---|---|
+| **A — 표준** | ≤8 | 56 (comfortable) | `{spacing.space-16}` | 없음 | 없음 | 디폴트. `{typography.body2}` |
+| **B — 컴팩트** | 9~12 | 44 (compact) | `{spacing.space-12}` | 없음 | 없음 | numeric 컬럼 right-align, checkbox-col 40으로 축소 가능 |
+| **C — 와이드 + sticky** | 13~18 | 44 | `{spacing.space-12}` | 좌 1~2 + 우 액션 | 있음 | 헤더 row sticky, 좌/우 스크롤 affordance(시안별 분기, 아래 표 참조), 키보드 ←→ 스크롤 |
+| **D — 초과밀도** | 19+ | 44 | `{spacing.space-12}` | 좌/우 + 헤더 | 있음 | column visibility toggle 필수, density toggle 사용자 노출, drag-reorder + resize 옵션, virtualization(행 30+), CSV export 항상 노출, 선택 상태 localStorage 저장 |
+
+운영 규칙:
+
+- cell padding을 `{spacing.space-8}` 이하로 내리지 않는다(hit area·가독성 위반). 비-4의 배수(6/10/14) 도입 금지.
+- compact에서 row를 36 이하로 내리지 않는다.
+- C/D 채택 시 좌측 sticky는 최소 한 컬럼(체크박스 또는 식별자)을 두어 가로 스크롤 중에도 행을 식별할 수 있어야 한다.
+- C/D 채택 시 스크롤 가능 시각 단서를 반드시 둔다 — 시안별 정책은 아래 매트릭스 참조.
+
+C/D 채택 시 시안별 스크롤 affordance 정책(`policy.gradient_locations`와 정합):
+
+| 시안 | affordance 방식 | gradient_locations |
+|---|---|---|
+| `wanted` | sticky 컬럼 경계 1px `{colors.border-default}` 강조 | `["symbol", "avatar", "thumbnail", "hero"]` (fade-edge 미포함) |
+| `minimal-mono` | sticky 컬럼 경계 1px `{colors.border-strong}` + 우측 inset shadow-1 4px | `[]` (전면 금지) |
+| `toss-like` | **fade-edge 4px 좌/우 gradient mask** (`bg-canvas` → transparent) | `["hero", "table-fade-edge"]` |
+| `material-3` | state-layer 8% brand alpha overlay 좌/우 4px 정적 | `[]` (전면 금지, M3 state layer로 대체) |
+| `linear-like` | **fade-edge 4px 좌/우 gradient mask** (다크 캔버스 친화) | `["accent", "hero", "table-fade-edge"]` |
+
+- 컬럼이 13개 이상이면 "다 보여주기" 대신 컬럼 가시성 토글 + 사용자 저장을 우선 검토한다(Case D 정책을 13~18 구간에도 선택적으로 적용 가능).
+
+시안별 디폴트 매핑(`docs/admin-fe-design-guide.md ## 시안별 화면 조립 차이 ### 3. 리스트 페이지`와 정합):
+
+| 시안 | 디폴트 케이스 | 비고 |
+|---|---|---|
+| `wanted` / `minimal-mono` | A | C/D 채택 시 fade-edge는 정책 합의 필요(gradient_locations 외 위치) |
+| `toss-like` | A | shadow는 컨테이너 카드에만, 표 자체는 평면 유지 |
+| `material-3` | A (row 52) | state-layer hover 유지, B/C/D 모두 가능 |
+| `linear-like` | **B** (디폴트) | row 44 시그너처. ⌘K 컬럼 토글, ⌘\ side panel 권장 |
 
 ### logo
 

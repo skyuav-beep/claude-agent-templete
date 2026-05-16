@@ -32,6 +32,71 @@
 
 ## 이번 세션에서 완료한 작업
 
+- `docs/business-logic-playbook.md` §5 확장 + `templates/business-logic-request.md` 작성 예시 보강 — build/docker/git 단계별 시나리오. (2026-05-16)
+  - **§5.1 단계별 실행 흐름**: 6단계 순서(`git status` → lint → unit test → build → e2e → docker rebuild 판단) + 각 단계 통과 기준.
+  - **§5.2 Docker rebuild 판단 기준**: 6종 변경 위치 매트릭스(src만 / package.json·lock / Dockerfile / .env / migration / nginx config) + rebuild 필요 여부 + 명령. PR 본문 사유 기록 정책.
+  - **§5.3 Git 작업 흐름 시나리오**: 5단계 표준 흐름(base 정렬 → 브랜치 생성 → commit → push 전 점검 → push/PR) 실제 bash 명령 + push 전 6종 체크리스트 + rebase 충돌 대응 + `--force-with-lease` 정책(main/develop 금지).
+  - **§5.4 실패 케이스 대응**: 7종 실패 유형(lint/test/build 타입/build 번들/docker/push 거부/CI) 별 근본 원인 해결 가이드. skip/우회 코드 금지 정책.
+  - `templates/business-logic-request.md` 작성 예시의 `## 검증 계획` 한 줄(`pnpm test && pnpm build`)을 5단계 흐름 + Docker rebuild 판단 사유로 확장. `## Git 작업 계획`도 시작/작업 중/push 전 점검/PR 본문 필수 항목으로 세분화.
+  - 156줄 → 244줄 playbook, 86줄 → 114줄 template.
+  - STATE.md `## 다음 작업`에서 비즈니스 로직 build/docker/git 시나리오 항목 제거.
+
+- `docs/i18n-guidelines.md`에 구현 예시 §10~§13 추가 — 디렉터리 배치 / 키 네이밍 / fallback 코드 / CI 체크리스트. (2026-05-16)
+  - **§10 디렉터리 배치 패턴**: namespace-split(권장, 중대형) / locale-flat(MVP) / feature-co-located(monorepo) 3종 + 각 트레이드오프.
+  - **§11 키 네이밍 구조**: dot-nested + snake_case + 깊이 4 한도 / plural(i18next suffix or ICU) / interpolation 정책.
+  - **§12 fallback 코드 샘플** 3종: (a) Next.js App Router + next-intl(`getRequestConfig` + middleware subpath), (b) react-i18next(`fallbackLng` chain per locale + missing key handler + CI 키 diff 스크립트), (c) vanilla Intl(라이브러리 없는 fallback chain 함수).
+  - **§13 CI 운영 체크리스트** 5종: 키 diff 0 / 하드코딩 검출 / namespace 갱신 / subpath 라우팅 정합 / interpolation 변수명 일치.
+  - 58줄 → ~280줄. 기존 1~9 추상 정책은 그대로 유지하고, 10번부터 실행 가능한 구현 예시로 확장.
+  - STATE.md `## 다음 작업`에서 i18n 항목 제거.
+
+- `docs/ui-decisions.md` 템플릿 신설 + `development-process.md` 단계 6 동기화. (2026-05-16)
+  - 신규 `docs/ui-decisions.md` — 11개 섹션(디자인 시스템 선택 / UI 톤 / 핵심 흐름 / 화면 상태 / 접근성 / 모달 / 반응형 / 폼 / 데이터 테이블 / 컴포넌트 변형 / 카피 톤) + 변경 이력 + 작성 예시. `templates/startup-checklist.md` 섹션 3~5 + `data-table-density.md` 등 UI 결정 일괄 통합.
+  - `docs/development-process.md` 단계 6 문구 갱신: "현재 파일이 존재하지 않으며 필요할 때만 신설" → "본 템플릿 사용". 동기화 운영 메모 삭제(템플릿 존재로 해결됨).
+  - `AGENTS.md ## Context Map`의 디자인 라우팅에 UI Decisions 템플릿 한 줄 추가.
+  - `CLAUDE.md ## Repo Map` 갱신: templates 13종 → 14종(`data-table-density.md` 포함), docs 라우팅에 `ui-decisions.md` 추가.
+  - `.claude/plugins/manifest.json supporting.docs`에 `docs/ui-decisions.md` 등록 (admin-fe-preview.html 다음, plugin-guide.md 이전).
+  - STATE.md `## 다음 작업`의 ui-decisions.md 항목 제거.
+
+- design-reviewer 서브에이전트에 Wide Table 위반 검출 항목 추가. (2026-05-16)
+  - **A-6 (시안 무관 일반 규칙)** 신설 — `### data-table` 밀도와 Wide Table Cases 정합. 11종 검사 항목:
+    - 차단: cell padding ≤ space-8, 비-4의 배수 padding(6/10/14), row < 36, 컬럼 ≥13에서 좌측 sticky 누락 + 가로 스크롤, Case C/D 스크롤 단서 누락, Case D에서 컬럼 가시성 토글 누락, zebra striping 도입.
+    - 경고: 컬럼 ≥9에서 padding 미축소, row ladder 외 값(40/46/50), compact 채택 시 caption1 다운 미테스트, density intake 양식 미작성.
+  - **B-6 (시안별 정책 규칙)** 신설 — Wide Table 시안별 스크롤 affordance 정합. `policy.gradient_locations`에 `"table-fade-edge"` 없는 시안(wanted/minimal-mono/material-3)에서 fade-edge gradient mask 사용 시 차단. 시안별 대체 affordance(border, inset shadow, state-layer) 호출 검증. linear-like alpha 강도 light/dark 분기 검증.
+  - 본 추가로 design-reviewer는 PR diff에서 Wide Table Cases 양식 미준수와 시안 정책 외 fade-edge 사용을 자동 검출 가능.
+
+- admin-fe-preview.html에 Wide Table Cases specimen 추가 — Case B(컴팩트 11컬럼) + Case C(와이드 13컬럼 + sticky 좌2/우1 + 가로 스크롤) 비교 카드 신설. (2026-05-16)
+  - `#widetable` 섹션 신설(TOC 등록), data-table과 dashboard 사이에 배치.
+  - CSS: `.table.compact`(row 44 + padding `{spacing.space-12}`), `.wide-frame` + `.wide-scroll`(max-height 280, overflow-x auto), `.table-wide`(min-width 1280, white-space nowrap), `.sticky-l1`(40px checkbox) + `.sticky-l2`(주문번호) + `.sticky-r1`(액션) sticky 위치 + z-index 매트릭스(thead 4, tbody 3).
+  - 5개 시안별 affordance를 `[data-design]` 셀렉터로 분기:
+    - `wanted`: box-shadow 1px border-default
+    - `minimal-mono`: box-shadow 1px border-strong + 4px blur inset shadow
+    - `toss-like`: ::after pseudo 8px linear-gradient mask (oklch 0 0 0 / 0.12)
+    - `material-3`: ::after pseudo 4px brand alpha overlay (oklch 0.460 0.155 295 / 0.12)
+    - `linear-like`: ::after pseudo 8px linear-gradient mask, light(0.28)/dark(0.20) 분기
+  - JS: `CASE_C_AFFORDANCE` 매핑 + `renderCaseCAffordance(slug)` 함수 추가, `setDesign()`에 호출 연결. specimen 하단 `#case-c-affordance` 텍스트가 시안 변경 시 affordance 설명을 자동 갱신.
+  - 검증: JS 구문 `node --check` 통과. HTML 102KB → 104KB(+2KB).
+
+- wide data-table fade-edge 정책 5개 시안 일괄 합의 + DESIGN.md 시안별 affordance 매트릭스 + preview policy chip 동기화. (2026-05-16)
+  - 정책 매트릭스: `toss-like`/`linear-like` 2개 시안만 fade-edge gradient mask 허용(`gradient_locations`에 `"table-fade-edge"` 추가), `wanted`/`minimal-mono`/`material-3` 3개 시안은 시안별 정책에 정합한 대체 affordance 채택.
+    - `wanted`: sticky 컬럼 경계 1px `{colors.border-default}` 강조 (chrome 외 grad 금지 정책 유지)
+    - `minimal-mono`: 1px `{colors.border-strong}` + 우측 inset shadow-1 4px (`gradient_locations: []` 정책 유지)
+    - `material-3`: state-layer 8% brand alpha overlay 좌/우 4px 정적 (M3 state layer 정합, `gradient_locations: []` 유지)
+    - `toss-like`: `gradient_locations: ["hero", "table-fade-edge"]` 4px 좌/우 mask
+    - `linear-like`: `gradient_locations: ["accent", "hero", "table-fade-edge"]` 4px 좌/우 mask (다크 캔버스 친화)
+  - `DESIGN.md ### data-table > #### Wide Table Cases` 매트릭스 갱신: Case C/D 운영 규칙에서 fade-edge 단일 옵션을 시안별 분기 표(5종)로 확장. 케이스 매트릭스의 affordance 문구를 "시안별 분기, 아래 표 참조"로 일반화.
+  - `designs/wanted.md`, `designs/minimal-mono.md`, `designs/material-3.md` Known Gaps에 fade-edge 정책 항목 신설(대체 affordance 명시).
+  - `designs/toss-like.md`, `designs/linear-like.md` Brand & Style 단락에 fade-edge 허용 사유 추가.
+  - `docs/admin-fe-preview.html DESIGNS` 객체의 toss-like/linear-like `gradient_locations` 동기화 → 활성 시안 전환 시 policy chip이 새 키워드 자동 노출.
+  - 5개 시안 frontmatter `last_updated` 일괄 2026-05-16 갱신.
+
+- data-table Wide Table Cases 매트릭스 + density intake 템플릿 신설. (2026-05-16)
+  - `DESIGN.md ### data-table` 끝에 `#### Wide Table Cases` 신설 — 컬럼 수/밀도 기준 4-케이스(A 표준 ≤8 / B 컴팩트 9~12 / C 와이드+sticky 13~18 / D 초과밀도 19+) 매트릭스 + 운영 규칙(`{spacing.space-8}` 이하 금지, 36px 미만 row 금지, 좌측 sticky 최소 1컬럼, 시각 단서 필수) + 5개 시안별 디폴트 케이스 매핑(linear-like만 B 디폴트, 나머지 A).
+  - `templates/data-table-density.md` 신규 — 8개 섹션 양식(화면 컨텍스트, 컬럼 구성, 밀도/행 정책, 케이스 선택, 가로 스크롤 정책, 컬럼 가시성/저장, 빈/오류/로딩, 합의·기록) + 14컬럼 주문 리스트(Case C) 작성 예시.
+  - `docs/admin-fe-design-guide.md ## 리스트 페이지 패턴`에 Wide Table Cases 링크 한 줄 추가(컬럼 ≥9 또는 "여백 과다" 호소 시 4-케이스 매트릭스 호출).
+  - `DESIGN.md` frontmatter `last_updated` 2026-05-15 → 2026-05-16.
+  - `.claude/plugins/manifest.json supporting.templates`에 `data-table-density.md` 등록(qa-intake와 feature-request 사이).
+  - 배경: 사용자가 admin 페이지 여백 과다 + 컬럼 다수 케이스에서 어떻게 요구사항을 확인할지 케이스 사례 선택 양식이 필요하다고 요청. 임의 padding 축소 방지를 위해 사다리(`space-16/12`)만 사용 + 시안별 디폴트와 케이스 선택을 분리.
+
 - v2-3 + v2-4: 시안별 시그너처 시각화 + 화면 조립 비교 가이드. (2026-05-15)
   - `docs/admin-fe-preview.html`에 `## 시안 시그너처` 섹션 신설(`#signature`). 시안별 차별화를 활성 시안 dropdown에 연동된 specimen으로 시각화.
     - wanted: 채용보상금 잡카드(우측 하단 fg-brand 강조)
@@ -260,10 +325,7 @@
 
 ### 기존 보류 항목
 
-- i18n locale별 구현 예시(키 구조, 디렉터리 배치, fallback 코드 샘플)를 추가한다.
-- 비즈니스 로직 요청 예시에서 build/docker/git 작업이 실제로 어떻게 흘러가는지 단계별 시나리오를 추가한다.
 - 프레임워크 구조 intake 답변을 받아 만든 실제 디렉터리 트리 예시를 추가한다.
-- startup-checklist 답변을 저장하는 `docs/ui-decisions.md` 템플릿을 추가한다. (동기화 메모: 신설 시 `docs/development-process.md:89` 단계 6도 함께 갱신. 한쪽이 변경되면 다른 쪽도 동기화한다.)
 - 필요하면 `docs/template-usage.md` 또는 예시 프로젝트 문서를 추가한다.
 - 필요하면 `docs/codex-reading-order.md`와 루트 `AGENTS.md`의 빠른 읽기 순서 중복을 더 줄인다.
 - `riderapp-runtime/README.md`의 예전 `riderapp` 경로 설명을 현재 워크스페이스 구조(`claude-agent-template`, `rider-platform-docs`, `riderapp-runtime`)에 맞게 갱신한다.
@@ -286,7 +348,7 @@
 - 플러그인 가이드: `docs/plugin-guide.md`
 - 요청 템플릿: `templates/feature-request.md`, `templates/bugfix-request.md`, `templates/review-request.md`, `templates/refactor-request.md`, `templates/business-logic-request.md`
 - intake 템플릿: `templates/project-intake.md`, `templates/ui-intake.md`, `templates/responsive-intake.md`, `templates/tech-intake.md`, `templates/i18n-intake.md`, `templates/framework-structure-intake.md`, `templates/startup-checklist.md`, `templates/api-intake.md`, `templates/error-intake.md`, `templates/form-intake.md`, `templates/format-intake.md`, `templates/qa-intake.md`, `templates/routing-intake.md`
-- guide 템플릿: `docs/project-guide-template.md`, `docs/i18n-guidelines.md`, `docs/business-logic-playbook.md`, `docs/framework-structure-guide.md`, `docs/design-guidelines.md`, `docs/admin-fe-design-guide.md`
+- guide 템플릿: `docs/project-guide-template.md`, `docs/i18n-guidelines.md`, `docs/business-logic-playbook.md`, `docs/framework-structure-guide.md`, `docs/design-guidelines.md`, `docs/admin-fe-design-guide.md`, `docs/ui-decisions.md`
 - 디자인 시스템 카탈로그(active): `DESIGN.md`
 - 디자인 시안 라이브러리: `designs/README.md`, `designs/_alias-contract.md`, `designs/_template.md`, `designs/wanted.md`, `designs/minimal-mono.md`, `designs/toss-like.md`, `designs/material-3.md`, `designs/linear-like.md`
 - 디자인 시안 selector: `.claude/plugins/select-design.sh`

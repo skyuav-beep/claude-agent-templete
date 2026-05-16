@@ -110,6 +110,7 @@ top-bar (page-title: "주문 목록")
 
 - filter row 컴포넌트: `{component.chip}` 또는 dropdown-style `{component.button-secondary}` + `{component.search}`. row 내부 gap `{spacing.space-8}`, row 자체 padding `{spacing.space-16}` 0.
 - table은 `### data-table` 명세 그대로. status 셀은 `{component.badge}` 시맨틱 색.
+- **컬럼이 많을 때**(9개 이상) 또는 사용자가 "여백 과다"를 호소할 때는 padding을 임의로 줄이지 않는다. `DESIGN.md ### data-table > #### Wide Table Cases`의 4-케이스(A 표준 / B 컴팩트 / C 와이드+sticky / D 초과밀도)에서 한 가지를 선택하고, 요구사항은 `templates/data-table-density.md` 양식으로 합의한다.
 - 행 클릭으로 상세 진입 시 cursor:pointer + hover bg `{colors.bg-subtle}`. 액션 셀 `{component.button-tertiary}` sm은 `event.stopPropagation()` 분리.
 - 빈 상태: `{component.empty-state}`를 테이블 container 내부에 padding 80 0으로 둠. 카피 예 (ko-friendly): `조회된 주문이 없어요. 필터를 조정해 보세요` / (en-sentence): `No orders found. Try adjusting filters.`
 - 페이지네이션 컨트롤은 우측 정렬, ghost/tertiary 버튼 sm.

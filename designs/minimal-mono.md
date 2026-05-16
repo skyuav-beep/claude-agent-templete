@@ -2,7 +2,7 @@
 name: Minimal Mono
 slug: minimal-mono
 category: starter
-last_updated: "2026-05-15"
+last_updated: "2026-05-16"
 sources:
   - "(self-contained — 합성 catalog, 외부 SSOT 없음)"
 related_services: []
@@ -318,6 +318,7 @@ interactive: hover bg-subtle
 
 ## Known Gaps
 
+- **wide data-table fade-edge 정책** — 본 시안은 `policy.gradient_locations: []` 전면 금지로, fade-edge gradient mask는 도입하지 않는다. `DESIGN.md ### data-table > #### Wide Table Cases`의 Case C/D 채택 시 스크롤 가능 시각 단서는 **sticky 컬럼 경계 1px `{colors.border-strong}` + 우측 inset shadow-1**(우측 가장자리 4px inset)로 대체한다. 둘 다 평면 표면 정책에 정합.
 - **brand 표현 한계** — 채도 0 정책 때문에 카테고리 색 코딩(예: 매장별 컬러 태그)이 어렵다. 그런 요구가 있으면 시그널 색 4종(success/warning/danger + 1)을 카테고리로 전용하거나, fork해서 brand hue를 도입한다.
 - **마케팅 표면 미지원** — header/footer/hero-banner/job-card는 정의하지 않았다. 본 시안은 admin/도구 surface 1차. 마케팅이 필요한 프로젝트는 다른 시안을 선택한다.
 - **OKLCH 변환** — 본 시안의 OKLCH는 sRGB → OKLab 표준 변환이며 ±0.002 lightness/chroma 오차가 있을 수 있다.

@@ -2,7 +2,7 @@
 name: Material 3
 slug: material-3
 category: enterprise
-last_updated: "2026-05-15"
+last_updated: "2026-05-16"
 sources:
   - https://m3.material.io
   - https://m3.material.io/styles/color/system/overview
@@ -336,6 +336,7 @@ M3는 **5 window size class** — compact(<600) / medium(600-839) / expanded(840
 - **dynamic color seed 변환** — 본 catalog는 seed `#6750A4` 정적 매핑만 ship. 다른 brand로 dynamic color를 구현하려면 host 앱이 M3 spec의 tonal palette 알고리즘(HCT color space)을 직접 구현해야 한다.
 - **ripple/motion 토큰** — duration 50ms~500ms 11종, easing 6종(emphasized/standard 등)은 본 catalog 범위 외. prose 명시만.
 - **state layer** — M3는 hover/pressed/dragged/focused 4 state를 brand color 8/12/16% alpha overlay로 표현. 본 catalog는 alias로 명시하지 않고 prose로만 surface.
+- **wide data-table fade-edge 정책** — 본 시안은 `policy.gradient_locations: []` 전면 금지로, fade-edge gradient mask는 도입하지 않는다. `DESIGN.md ### data-table > #### Wide Table Cases`의 Case C/D 채택 시 스크롤 가능 시각 단서는 **state-layer 8% brand alpha overlay**(좌/우 가장자리 4px 정적 overlay)로 대체한다. M3 state layer 정합.
 - **surface tint elevation** — 다크 모드에서 elevation을 brand tonal overlay로 표현하는 M3 정책은 본 catalog의 정적 그림자로 대체.
 - **추가 alias** — `radius-28`(extra-large), `shadow-3`/`shadow-4`(M3 level 3-4)는 alias 계약 외 추가 토큰. 다른 시안에서 호출 시 fallback 필요.
 
