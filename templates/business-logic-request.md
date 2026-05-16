@@ -72,14 +72,34 @@
 - 데이터: 변경 없음 (시간 비교 상수만 수정)
 
 ## 검증 계획
-- 단위 테스트: 30/59/60/61분 4개 경계값
-- 수동: 주문 상세에서 시간대별 버튼 노출 확인
-- 빌드 확인: `pnpm test && pnpm build`
-- Docker rebuild: 불필요 (코드만 변경)
-- 배포 전: 관리자 권한 우회 경로 회귀 확인
+- 단위 테스트: `OrderCancelService.canCancel()` 30/59/60/61분 4개 경계값 + 관리자 우회 1개
+- 통합 테스트: `POST /api/orders/:id/cancel`를 paid 주문 / 배송 시작 주문 / 시간 초과 주문 3종으로 호출
+- 수동: 주문 상세 페이지에서 시간대별 버튼 노출/disabled 상태 확인
+- 빌드 확인 흐름 (playbook §5.1 순서):
+  1. `pnpm lint` (Biome) — exit 0
+  2. `pnpm test src/server/orders` — 변경 모듈 단위 테스트 green
+  3. `pnpm test` — 전체 회귀 green
+  4. `pnpm build` (production 모드) — 타입 + 번들 오류 없음
+  5. e2e: `pnpm test:e2e orders/cancel.spec.ts` (CI 환경에서 자동 실행, 로컬 환경 미구성 시 PR 본문에 사유 기록)
+- Docker rebuild 판단 (playbook §5.2):
+  - 변경 파일이 `src/server/orders/` 코드만이므로 **불필요**.
+  - dev 환경은 volume mount로 즉시 반영. 운영 이미지는 다음 배포에서 자연 빌드.
+  - 만약 `pnpm-lock.yaml`이 함께 갱신됐다면 `docker compose build --no-cache api` 필요.
+- 배포 전: 관리자 권한 우회 경로 회귀 확인 + Sentry 에러율 베이스라인 캡처
 
-## Git 작업 계획
-- `git pull` 후 작업 시작
-- commit: `feat(orders): extend self-cancel window from 30m to 60m`
-- push 전: 단위 테스트 + e2e 주문 시나리오 통과 확인
+## Git 작업 계획 (playbook §5.3)
+- 작업 시작:
+  - `git status`로 작업 트리 clean 확인
+  - `git checkout main && git pull --rebase origin main`
+  - `git checkout -b feat/orders-cancel-window`
+- 작업 중: 구현·테스트를 한 commit으로 묶거나(변경이 작으면) 분리 commit (구현 + 테스트). commit 메시지는 Conventional Commits.
+  - 예: `feat(orders): extend self-cancel window from 30m to 60m`
+  - 예: `test(orders): add boundary cases for canCancel (30/59/60/61m)`
+- push 전 점검:
+  - `git diff --staged --check` (whitespace)
+  - `grep -rnE "console\.(log|debug)" src/server/orders` (디버그 잔재 0건)
+  - `.env`/`*.key`/`*.pem` staged 여부 재확인
+  - 단위 + 통합 + e2e 통과 증거를 PR 본문 `## Test plan`에 붙임
+- push: `git push -u origin feat/orders-cancel-window` → `gh pr create`
+- PR 본문 필수 항목: 변경 요약 / 검증 통과 결과 / Docker rebuild 여부 + 사유 / rollback 방법(코드 상수만 되돌리면 즉시 복귀 가능)
 ```

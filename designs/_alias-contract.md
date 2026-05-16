@@ -118,7 +118,7 @@ radius-2, radius-4, radius-8, radius-12, radius-16, radius-full
 
 신규 시안 또는 갱신을 검수할 때 사용한다.
 
-- [ ] 색 alias 32종(bg 11 + fg 10 + border 4 + brand-subtle 등) 누락 없음
+- [ ] 색 alias 25종(bg 11 + fg 10 + border 4 + brand-subtle 등) 누락 없음
 - [ ] light + dark 양쪽 정의 (다크 미지원이면 frontmatter에 명시)
 - [ ] spacing/radius/typography ladder 누락 없음
 - [ ] 필수 컴포넌트 7종 시그너처 정의
@@ -132,3 +132,108 @@ radius-2, radius-4, radius-8, radius-12, radius-16, radius-full
 - preview HTML이 깨짐 (CSS 변수 매핑 실패)
 - design-reviewer가 위반 검출 불가
 - skill 자동 활성화는 작동하지만 산출물 품질 보장 안 됨
+
+## 9b. 시안 전용 토큰 fallback 매핑
+
+시안마다 alias 계약 외 추가 토큰을 신설할 수 있다(예: `radius-6`(linear-like), `radius-20`(toss-like), `radius-28`(material-3), `mono` typography variant, `amount` typography variant, `shadow-cta`, `shadow-3`/`shadow-4`). 이런 추가 토큰을 정의한 시안에서 다른 시안으로 전환하면 호출 코드가 깨진다.
+
+### Fallback 매핑 (다운스트림 권장)
+
+신규 시안 작성자와 다운스트림 호출 코드는 **표준 alias 계약 토큰만 직접 호출**하는 것이 안전하다. 시안 전용 토큰을 호출해야 한다면 다음 fallback 매핑을 함께 정의해 시안 전환 시 깨지지 않게 한다.
+
+| 시안 전용 토큰 | 정의한 시안 | 표준 fallback | 사용 위치 |
+|---|---|---|---|
+| `--radius-6` | linear-like, wanted (button sm 로컬) | `--radius-8` | input/button md (한 단계 작은 라운드) |
+| `--radius-10` | wanted (button lg 로컬) | `--radius-8` | wanted button lg height 48 |
+| `--radius-20` | toss-like, wanted | `--radius-16` | xl 카드, modal |
+| `--radius-24` | wanted | `--radius-16` | wanted 일부 카드 |
+| `--radius-28` | material-3 | `--radius-16` | M3 FAB, bottom sheet |
+| `--radius-32` | wanted | `--radius-16` | wanted 일부 hero |
+| `--shadow-3` | material-3, wanted | `--shadow-2` | M3 elevation level 3 (FAB, dialog) |
+| `--shadow-4` | material-3, wanted | `--shadow-pop` | M3 elevation level 4 (nav drawer) |
+| `--shadow-cta` | toss-like | `--shadow-1` | brand color glow CTA |
+| `--border-inverse` | wanted | `--border-strong` | wanted 일부 dark surface 분리 |
+| `--fg-link` | wanted | `--fg-brand` | wanted 인라인 링크 강조 |
+| `font: mono` | linear-like | `font-family: ui-monospace, "SF Mono", monospace; font-size: 13px` | 단축키, 코드 inline |
+| `typography.amount` | toss-like | `font-size: 32px; font-weight: 700; tabular-nums` | 금액 강조 input |
+| `kbd` 컴포넌트 | linear-like | (전용 — 다른 시안 활성 시 비활성 처리 또는 chip fallback) | 키보드 단축키 표기 |
+| `amount-input` 컴포넌트 | toss-like | (전용 — 다른 시안 활성 시 일반 input + tabular-nums 옵션) | 금액 입력 |
+| `reward-card` 시그너처 | wanted | (전용 — 잡 도메인 한정) | 채용보상금 강조 |
+
+### Ladder 변수 정책 (theme-invariant)
+
+`--space-*`(14종), `--radius-*`(6종 표준 + 시안 전용 추가), elevation `--shadow-*`(시안별 정책)은 **theme-invariant** — light/dark 동일. 두 가지 ship 방식 허용한다.
+
+- (a) **시안별 자체 정의**: 각 시안의 `## CSS Variables` light 블록에 ladder 변수 inline. 다운스트림이 카탈로그 단일 파일만 복사해도 self-contained.
+- (b) **공통 root 의존**: 시안 블록은 색 alias만 ship하고, ladder는 호출 환경(preview HTML 또는 다운스트림 호스트의 공통 root)이 책임. 가벼우나 self-contained 아님.
+
+**권장: (a)** — `select-design.sh`로 카탈로그를 root DESIGN.md로 복사할 때 ladder 정의가 함께 가야 다운스트림이 깨지지 않는다. preview HTML은 (b) 모델로 운영(공통 root 블록 + 시안별 색만 분기)이 가능하나 카탈로그 자체는 (a)로 self-contained 유지.
+
+### CSS fallback 패턴
+
+CSS는 `var(--token, fallback)` 문법으로 미정의 시 fallback을 적용할 수 있다.
+
+```css
+.kbd {
+  font-family: var(--font-mono, ui-monospace, "SF Mono", monospace);
+  font-size: var(--font-size-mono, 13px);
+}
+.modal {
+  border-radius: var(--radius-28, var(--radius-16));
+}
+.fab-shadow {
+  box-shadow: var(--shadow-3, var(--shadow-2));
+}
+```
+
+### 권장 운영
+
+- **alias 계약 외 토큰을 신설하면 정의 시안의 Known Gaps에 명시**한다 + 본 contract 표에 한 줄 추가한다.
+- 호출 코드는 가능하면 **표준 alias만 사용**한다. 시안 전용 시그너처가 필수면 컴포넌트 단위로 분리해 시안 변경 시 컴포넌트 자체를 비활성/대체한다(예: linear-like 비활성 시 `kbd` 컴포넌트를 `chip`으로 대체).
+- preview HTML은 시안별 변수 inline 외에 `:root` 공통 블록에서 표준 ladder(`--radius-2`~`--radius-full`)만 정의 — 시안 전용 토큰은 시안별 블록에서만 정의되므로 다른 시안 활성 시 자동 미정의.
+
+## 10. CSS Variables 표기 규칙
+
+`docs/admin-fe-preview.html`이 시안을 즉시 시각화하기 위해, 모든 시안은 `## CSS Variables` 섹션을 둔다.
+
+### 10-1. 명명 규칙
+
+alias/ladder 이름을 그대로 `--` 접두로 변환한다. 변환 규칙은 모든 시안에 동일하게 적용된다.
+
+| 종류 | alias | CSS 변수 |
+|---|---|---|
+| 색 | `bg-canvas`, `fg-strong`, `border-subtle` | `--bg-canvas`, `--fg-strong`, `--border-subtle` |
+| 간격 | `space-4`, `space-16`, `space-128` | `--space-4`, `--space-16`, `--space-128` |
+| 라운드 | `radius-2`, `radius-8`, `radius-full` | `--radius-2`, `--radius-8`, `--radius-full` |
+| 타이포 size | `body1`, `title2`, `display1` | `--font-size-body1`, `--font-weight-body1`, `--line-height-body1`, `--letter-spacing-body1` (alias 1종당 4 변수) |
+| elevation | `shadow-1`, `shadow-pop` | `--shadow-1`, `--shadow-pop` |
+
+### 10-2. 시안별 분기 셀렉터
+
+`docs/admin-fe-preview.html`은 다음 두 속성 cascade로 시안과 테마를 분기한다.
+
+```css
+:root[data-design="<slug>"][data-theme="light"] { /* light 변수 */ }
+:root[data-design="<slug>"][data-theme="dark"]  { /* dark 변수 */ }
+```
+
+`<slug>`는 frontmatter `slug` 필드와 동일. 모든 시안은 light는 반드시, dark는 `policy.dark_mode == supported`인 경우만 정의.
+
+### 10-3. md 내 코드 블록 형식
+
+각 시안 md의 `## CSS Variables` 섹션은 위 두 블록을 fenced ```css 블록으로 ship한다. preview HTML 또는 다운스트림 프로젝트가 동일 블록을 그대로 복사해 사용한다.
+
+```css
+:root[data-design="wanted"][data-theme="light"] {
+  --bg-canvas: oklch(1 0 0);
+  --bg-surface: oklch(1 0 0);
+  /* ... alias 25종 + spacing 14종 + radius 6종 + typography 72종 + elevation */
+}
+:root[data-design="wanted"][data-theme="dark"] {
+  /* ... */
+}
+```
+
+### 10-4. preview 정합 검증
+
+`docs/admin-fe-preview.html` 상단 시안 셀렉터에서 슬러그를 바꿔도 모든 컴포넌트가 동일 alias로 렌더링되도록 한다. 변수 누락 시 컴포넌트가 깨진 상태로 표시되어 검수 단계에서 검출된다.

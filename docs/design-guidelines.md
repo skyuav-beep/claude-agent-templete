@@ -80,8 +80,9 @@
 - 라이브러리 목록 확인: `bash .claude/plugins/select-design.sh --list`
 - 시안 활성화(스위치): `bash .claude/plugins/select-design.sh <slug>` — `designs/<slug>.md` → `DESIGN.md` 복사 + `.claude/.active-design` 갱신.
 - install 시 기본 시안 지정: `bash .claude/plugins/install.sh --design <slug> /target` (기본값 `wanted`).
-- 신규 시안 작성: `cp designs/_template.md designs/<slug>.md` 후 frontmatter + 본문 채움. `designs/_alias-contract.md`의 alias 32종 + 컴포넌트 7종 시그너처는 반드시 정의.
+- 신규 시안 작성: `cp designs/_template.md designs/<slug>.md` 후 frontmatter + 본문 채움. `designs/_alias-contract.md`의 alias 25종 + 컴포넌트 7종 시그너처는 반드시 정의.
 - DESIGN.md를 직접 편집한 상태에서 select-design.sh를 실행하면 자동으로 `DESIGN.md.bak`을 만든 뒤 덮어쓴다.
+- **시안 전용 토큰 fallback**: 특정 시안만 정의하는 추가 토큰(`radius-6`, `radius-20`, `radius-28`, `shadow-3/4`, `font-mono` 등)은 다른 시안 전환 시 미정의가 된다. 호출 코드는 가능하면 표준 alias만 사용하고, 전용 토큰을 호출해야 하면 `var(--token, fallback)` 패턴 또는 컴포넌트 단위 분리(예: linear-like 비활성 시 `kbd` 컴포넌트를 `chip`으로 대체)를 사용한다. 매핑 표는 `designs/_alias-contract.md ## 9b` 참조.
 
 ## 메타 운영
 
@@ -109,6 +110,17 @@
   "hooks": [{ "type": "command", "command": "bash .claude/hooks/warn-design-tokens.sh" }]
 }
 ```
+
+## preview 시각 검증
+
+라이브러리 시안의 토큰·컴포넌트가 의도대로 렌더링되는지 `docs/admin-fe-preview.html`에서 확인한다.
+
+- 신규 시안 추가 시 `admin-fe-preview.html`의 `<style>` 블록에 시안의 `## CSS Variables` 두 블록(`:root[data-design][data-theme]`)을 inline 하고, `<script>` 의 `DESIGNS` 객체에 한 항목 추가한다.
+- preview 상단 dropdown으로 시안 토글 후 다음을 시각 검수한다.
+  - 색 swatch 9종(background) + 텍스트 위계 9종(foreground) — 알 수 없는 색/누락 없음
+  - admin 5종 컴포넌트가 헤어라인/그림자/gradient 정책 차이를 정확히 반영
+  - frontmatter `policy:` 블록과 POLICY strip의 chip이 일치
+- 위반 시 시안 md의 `## CSS Variables`와 `## Do's and Don'ts`를 우선 갱신한다.
 
 ## 자동 활성화 흐름
 

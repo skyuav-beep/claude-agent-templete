@@ -32,8 +32,137 @@
 
 ## 이번 세션에서 완료한 작업
 
+- `docs/business-logic-playbook.md` §5 확장 + `templates/business-logic-request.md` 작성 예시 보강 — build/docker/git 단계별 시나리오. (2026-05-16)
+  - **§5.1 단계별 실행 흐름**: 6단계 순서(`git status` → lint → unit test → build → e2e → docker rebuild 판단) + 각 단계 통과 기준.
+  - **§5.2 Docker rebuild 판단 기준**: 6종 변경 위치 매트릭스(src만 / package.json·lock / Dockerfile / .env / migration / nginx config) + rebuild 필요 여부 + 명령. PR 본문 사유 기록 정책.
+  - **§5.3 Git 작업 흐름 시나리오**: 5단계 표준 흐름(base 정렬 → 브랜치 생성 → commit → push 전 점검 → push/PR) 실제 bash 명령 + push 전 6종 체크리스트 + rebase 충돌 대응 + `--force-with-lease` 정책(main/develop 금지).
+  - **§5.4 실패 케이스 대응**: 7종 실패 유형(lint/test/build 타입/build 번들/docker/push 거부/CI) 별 근본 원인 해결 가이드. skip/우회 코드 금지 정책.
+  - `templates/business-logic-request.md` 작성 예시의 `## 검증 계획` 한 줄(`pnpm test && pnpm build`)을 5단계 흐름 + Docker rebuild 판단 사유로 확장. `## Git 작업 계획`도 시작/작업 중/push 전 점검/PR 본문 필수 항목으로 세분화.
+  - 156줄 → 244줄 playbook, 86줄 → 114줄 template.
+  - STATE.md `## 다음 작업`에서 비즈니스 로직 build/docker/git 시나리오 항목 제거.
+
+- `docs/i18n-guidelines.md`에 구현 예시 §10~§13 추가 — 디렉터리 배치 / 키 네이밍 / fallback 코드 / CI 체크리스트. (2026-05-16)
+  - **§10 디렉터리 배치 패턴**: namespace-split(권장, 중대형) / locale-flat(MVP) / feature-co-located(monorepo) 3종 + 각 트레이드오프.
+  - **§11 키 네이밍 구조**: dot-nested + snake_case + 깊이 4 한도 / plural(i18next suffix or ICU) / interpolation 정책.
+  - **§12 fallback 코드 샘플** 3종: (a) Next.js App Router + next-intl(`getRequestConfig` + middleware subpath), (b) react-i18next(`fallbackLng` chain per locale + missing key handler + CI 키 diff 스크립트), (c) vanilla Intl(라이브러리 없는 fallback chain 함수).
+  - **§13 CI 운영 체크리스트** 5종: 키 diff 0 / 하드코딩 검출 / namespace 갱신 / subpath 라우팅 정합 / interpolation 변수명 일치.
+  - 58줄 → ~280줄. 기존 1~9 추상 정책은 그대로 유지하고, 10번부터 실행 가능한 구현 예시로 확장.
+  - STATE.md `## 다음 작업`에서 i18n 항목 제거.
+
+- `docs/ui-decisions.md` 템플릿 신설 + `development-process.md` 단계 6 동기화. (2026-05-16)
+  - 신규 `docs/ui-decisions.md` — 11개 섹션(디자인 시스템 선택 / UI 톤 / 핵심 흐름 / 화면 상태 / 접근성 / 모달 / 반응형 / 폼 / 데이터 테이블 / 컴포넌트 변형 / 카피 톤) + 변경 이력 + 작성 예시. `templates/startup-checklist.md` 섹션 3~5 + `data-table-density.md` 등 UI 결정 일괄 통합.
+  - `docs/development-process.md` 단계 6 문구 갱신: "현재 파일이 존재하지 않으며 필요할 때만 신설" → "본 템플릿 사용". 동기화 운영 메모 삭제(템플릿 존재로 해결됨).
+  - `AGENTS.md ## Context Map`의 디자인 라우팅에 UI Decisions 템플릿 한 줄 추가.
+  - `CLAUDE.md ## Repo Map` 갱신: templates 13종 → 14종(`data-table-density.md` 포함), docs 라우팅에 `ui-decisions.md` 추가.
+  - `.claude/plugins/manifest.json supporting.docs`에 `docs/ui-decisions.md` 등록 (admin-fe-preview.html 다음, plugin-guide.md 이전).
+  - STATE.md `## 다음 작업`의 ui-decisions.md 항목 제거.
+
+- design-reviewer 서브에이전트에 Wide Table 위반 검출 항목 추가. (2026-05-16)
+  - **A-6 (시안 무관 일반 규칙)** 신설 — `### data-table` 밀도와 Wide Table Cases 정합. 11종 검사 항목:
+    - 차단: cell padding ≤ space-8, 비-4의 배수 padding(6/10/14), row < 36, 컬럼 ≥13에서 좌측 sticky 누락 + 가로 스크롤, Case C/D 스크롤 단서 누락, Case D에서 컬럼 가시성 토글 누락, zebra striping 도입.
+    - 경고: 컬럼 ≥9에서 padding 미축소, row ladder 외 값(40/46/50), compact 채택 시 caption1 다운 미테스트, density intake 양식 미작성.
+  - **B-6 (시안별 정책 규칙)** 신설 — Wide Table 시안별 스크롤 affordance 정합. `policy.gradient_locations`에 `"table-fade-edge"` 없는 시안(wanted/minimal-mono/material-3)에서 fade-edge gradient mask 사용 시 차단. 시안별 대체 affordance(border, inset shadow, state-layer) 호출 검증. linear-like alpha 강도 light/dark 분기 검증.
+  - 본 추가로 design-reviewer는 PR diff에서 Wide Table Cases 양식 미준수와 시안 정책 외 fade-edge 사용을 자동 검출 가능.
+
+- admin-fe-preview.html에 Wide Table Cases specimen 추가 — Case B(컴팩트 11컬럼) + Case C(와이드 13컬럼 + sticky 좌2/우1 + 가로 스크롤) 비교 카드 신설. (2026-05-16)
+  - `#widetable` 섹션 신설(TOC 등록), data-table과 dashboard 사이에 배치.
+  - CSS: `.table.compact`(row 44 + padding `{spacing.space-12}`), `.wide-frame` + `.wide-scroll`(max-height 280, overflow-x auto), `.table-wide`(min-width 1280, white-space nowrap), `.sticky-l1`(40px checkbox) + `.sticky-l2`(주문번호) + `.sticky-r1`(액션) sticky 위치 + z-index 매트릭스(thead 4, tbody 3).
+  - 5개 시안별 affordance를 `[data-design]` 셀렉터로 분기:
+    - `wanted`: box-shadow 1px border-default
+    - `minimal-mono`: box-shadow 1px border-strong + 4px blur inset shadow
+    - `toss-like`: ::after pseudo 8px linear-gradient mask (oklch 0 0 0 / 0.12)
+    - `material-3`: ::after pseudo 4px brand alpha overlay (oklch 0.460 0.155 295 / 0.12)
+    - `linear-like`: ::after pseudo 8px linear-gradient mask, light(0.28)/dark(0.20) 분기
+  - JS: `CASE_C_AFFORDANCE` 매핑 + `renderCaseCAffordance(slug)` 함수 추가, `setDesign()`에 호출 연결. specimen 하단 `#case-c-affordance` 텍스트가 시안 변경 시 affordance 설명을 자동 갱신.
+  - 검증: JS 구문 `node --check` 통과. HTML 102KB → 104KB(+2KB).
+
+- wide data-table fade-edge 정책 5개 시안 일괄 합의 + DESIGN.md 시안별 affordance 매트릭스 + preview policy chip 동기화. (2026-05-16)
+  - 정책 매트릭스: `toss-like`/`linear-like` 2개 시안만 fade-edge gradient mask 허용(`gradient_locations`에 `"table-fade-edge"` 추가), `wanted`/`minimal-mono`/`material-3` 3개 시안은 시안별 정책에 정합한 대체 affordance 채택.
+    - `wanted`: sticky 컬럼 경계 1px `{colors.border-default}` 강조 (chrome 외 grad 금지 정책 유지)
+    - `minimal-mono`: 1px `{colors.border-strong}` + 우측 inset shadow-1 4px (`gradient_locations: []` 정책 유지)
+    - `material-3`: state-layer 8% brand alpha overlay 좌/우 4px 정적 (M3 state layer 정합, `gradient_locations: []` 유지)
+    - `toss-like`: `gradient_locations: ["hero", "table-fade-edge"]` 4px 좌/우 mask
+    - `linear-like`: `gradient_locations: ["accent", "hero", "table-fade-edge"]` 4px 좌/우 mask (다크 캔버스 친화)
+  - `DESIGN.md ### data-table > #### Wide Table Cases` 매트릭스 갱신: Case C/D 운영 규칙에서 fade-edge 단일 옵션을 시안별 분기 표(5종)로 확장. 케이스 매트릭스의 affordance 문구를 "시안별 분기, 아래 표 참조"로 일반화.
+  - `designs/wanted.md`, `designs/minimal-mono.md`, `designs/material-3.md` Known Gaps에 fade-edge 정책 항목 신설(대체 affordance 명시).
+  - `designs/toss-like.md`, `designs/linear-like.md` Brand & Style 단락에 fade-edge 허용 사유 추가.
+  - `docs/admin-fe-preview.html DESIGNS` 객체의 toss-like/linear-like `gradient_locations` 동기화 → 활성 시안 전환 시 policy chip이 새 키워드 자동 노출.
+  - 5개 시안 frontmatter `last_updated` 일괄 2026-05-16 갱신.
+
+- data-table Wide Table Cases 매트릭스 + density intake 템플릿 신설. (2026-05-16)
+  - `DESIGN.md ### data-table` 끝에 `#### Wide Table Cases` 신설 — 컬럼 수/밀도 기준 4-케이스(A 표준 ≤8 / B 컴팩트 9~12 / C 와이드+sticky 13~18 / D 초과밀도 19+) 매트릭스 + 운영 규칙(`{spacing.space-8}` 이하 금지, 36px 미만 row 금지, 좌측 sticky 최소 1컬럼, 시각 단서 필수) + 5개 시안별 디폴트 케이스 매핑(linear-like만 B 디폴트, 나머지 A).
+  - `templates/data-table-density.md` 신규 — 8개 섹션 양식(화면 컨텍스트, 컬럼 구성, 밀도/행 정책, 케이스 선택, 가로 스크롤 정책, 컬럼 가시성/저장, 빈/오류/로딩, 합의·기록) + 14컬럼 주문 리스트(Case C) 작성 예시.
+  - `docs/admin-fe-design-guide.md ## 리스트 페이지 패턴`에 Wide Table Cases 링크 한 줄 추가(컬럼 ≥9 또는 "여백 과다" 호소 시 4-케이스 매트릭스 호출).
+  - `DESIGN.md` frontmatter `last_updated` 2026-05-15 → 2026-05-16.
+  - `.claude/plugins/manifest.json supporting.templates`에 `data-table-density.md` 등록(qa-intake와 feature-request 사이).
+  - 배경: 사용자가 admin 페이지 여백 과다 + 컬럼 다수 케이스에서 어떻게 요구사항을 확인할지 케이스 사례 선택 양식이 필요하다고 요청. 임의 padding 축소 방지를 위해 사다리(`space-16/12`)만 사용 + 시안별 디폴트와 케이스 선택을 분리.
+
+- v2-3 + v2-4: 시안별 시그너처 시각화 + 화면 조립 비교 가이드. (2026-05-15)
+  - `docs/admin-fe-preview.html`에 `## 시안 시그너처` 섹션 신설(`#signature`). 시안별 차별화를 활성 시안 dropdown에 연동된 specimen으로 시각화.
+    - wanted: 채용보상금 잡카드(우측 하단 fg-brand 강조)
+    - minimal-mono: 색 없는 size+weight+underline 타이포 위계
+    - toss-like: hero gradient banner + amount input(tabular-nums, 32/700)
+    - material-3: 5종 button variant(filled/tonal/elevated/outlined/text, radius-full + +0.10em letter-spacing) + elevated card(shadow-2)
+    - linear-like: kbd 단축키(⌘K/⇧⌘P/Esc) + gradient accent(CTA + 강조 텍스트 background-clip)
+  - CSS `[data-design]` 속성 분기로 활성 시안 시그너처만 표시. HTML 74KB.
+  - `docs/admin-fe-design-guide.md`에 `## 시안별 화면 조립 차이` 섹션 신설. login/dashboard/list/상세/폼 5개 화면 패턴별 5개 시안 비교 매트릭스 + 시안 선택 가이드(프로젝트 유형 5종 매핑) + 시안 변경 안전 범위 4종 점검 항목.
+
+- v2-5/v2-6/v2-7/v2-8 + 검수 후속: preview/가이드/fallback/카탈로그 정합 보강. (2026-05-15)
+  - **v2-5**: `admin-fe-preview.html`에 `## atomic 7종` 섹션 신설. button(5 variant × 4 size) / input(4 state) / badge / chip / avatar / icon-button / icon 시안별 차이 한 페이지 비교.
+  - **v2-6**: `admin-fe-design-guide.md` 본문 prose 일반화. 1차 원칙을 "시안 무관" + "시안 정책에 따라 분기" 2 그룹으로 재구성. 카피 톤 체크리스트를 ko-friendly / ko-formal / en-sentence 3종 매트릭스로 확장.
+  - **v2-7**: `_alias-contract.md ## 9b` 섹션 신설(시안 전용 토큰 fallback 매핑 표 + ladder 변수 정책). `admin-fe-preview.html` `:root` 공통 블록에 catalog-only fallback 변수(`--radius-6/20/28`, `--shadow-3/4/cta`, `--font-mono`) 추가.
+  - **v2-8**: `design-reviewer` 서브에이전트(general-purpose) 호출하여 5개 카탈로그 self-review 실행. 핵심 결함 6종 검출(catalog-only 토큰 CSS Variables surface 누락, alias 카운트 표기 오류 32→25, dark synthesized 마커 누락, wanted catalog-only ladder Known Gaps 누락).
+  - **v2-8 후속**: 검출된 critical 이슈 일괄 수정.
+    - alias 카운트 32→25 정정 (`_alias-contract.md`, `STATE.md`, `startup-checklist.md`, `design-reviewer.md`, `design-guidelines.md` 5개 파일).
+    - `_alias-contract.md ## 9b` fallback 표에 wanted catalog-only 토큰(`--radius-6/10/20/24/32`, `--shadow-3/4`, `--border-inverse`, `--fg-link`) 추가, ladder 변수 ship 방식(a) 시안별 자체 정의 vs (b) 공통 root 의존 정책 명시.
+    - `wanted.md` Known Gaps에 catalog-only ladder + color/border + shadow-3/4 명시 + CSS Variables 블록에 누락 토큰 8종 surface.
+    - 4개 카탈로그(`minimal-mono`, `toss-like`, `material-3`, `linear-like`) CSS Variables 블록에 spacing 14종 + radius ladder + 각 시안의 catalog-only 토큰 일괄 surface. dark 블록의 `fg-success/warning/danger` 등 합성 alias에 `/* synthesized */` 마커 명시.
+    - 재검수 자동화: 5개 카탈로그 모두 `--space-16`, `--radius-8`, 각 catalog-only 토큰 surface 검증 통과. select-design.sh 활성화/복귀 정상.
+  - 라이브러리 v2 인프라 + 시각화 + 정합 보강 완료. preview HTML 86KB, 카탈로그 평균 1100줄.
+
+- v2-2.4: linear-like 시안 라이브러리 추가. (2026-05-15)
+  - `designs/linear-like.md` 신규 — productivity/issue tracker 톤. **dark 1차** + gradient accent 적극(`policy.gradient_locations: ["accent", "hero"]`) + 카드 그림자 금지(`policy.shadow_on_cards: false`) + 컴팩트 밀도(button md 32, input 32, body1 14, sidebar 220) + en-sentence 영문 카피.
+  - brand는 gradient pair(violet→teal). accent gradient는 CTA hover/강조 텍스트/selection에 적극 사용, hero gradient는 마케팅 1곳.
+  - 시안 전용 추가 토큰: `radius-6`(input/button md 디폴트), `mono` typography variant(JetBrains Mono/SF Mono), `kbd` 컴포넌트(키보드 단축키 표기). alias 계약 외 항목으로 Known Gaps에 명시.
+  - CSS 변수 단일 값으로는 gradient 표기 불가 → preview HTML은 solid brand로 fallback, accent gradient는 prose 명시.
+  - 라이브러리 v1 시드 5종 완성(wanted, minimal-mono, toss-like, material-3, linear-like). 5개 시안 모두 select-design.sh로 활성화·복귀 검증 통과.
+
+- v2-2.3: material-3 시안 라이브러리 추가. (2026-05-15)
+  - `designs/material-3.md` 신규 — Google Material Design 3 공식 사양 매핑. tonal palette seed(`#6750A4` ≈ oklch(0.460 0.155 295)) 기반 light/dark 시맨틱 alias. elevation 5단(shadow-1~shadow-pop + level 3/4 추가) + button `radius-full` 시그너처 + positive letter-spacing(`+0.03em` ~ `+0.10em`).
+  - 영문 sentence case copy tone(`policy.copy_tone: "en-sentence"`) — 본 라이브러리에서 첫 en-sentence 시안.
+  - 시안 전용 추가 토큰: `radius-28`(extra-large modal/FAB), `shadow-3`/`shadow-4`(M3 elevation level 3/4), Roboto/Material Symbols 서체. alias 계약 외 항목으로 Known Gaps에 명시.
+  - dynamic color seed 변환·ripple motion·state layer는 prose로만 surface(host 앱 구현 영역).
+  - `admin-fe-preview.html` 변수 두 블록 inline + DESIGNS 항목 추가. `manifest.json` 등록. select-design 활성화/복귀 검증.
+
+- v2-2.2: toss-like 시안 라이브러리 추가. (2026-05-15)
+  - `designs/toss-like.md` 신규 — 한국 핀테크 톤. 단일 강조 파랑(`bg-brand: oklch(0.620 0.180 245)`) + 큰 라운드(`radius-12`~`radius-16`) + 카드 그림자 허용(`policy.shadow_on_cards: true`) + 마케팅 hero gradient(`policy.gradient_locations: ["hero"]`).
+  - 시안 전용 추가 토큰: `radius-20`(modal/xl 카드), `shadow-cta`(brand color glow), `amount` typography variant(tabular-nums + 32/700/1.0). alias 계약 외 항목으로 Known Gaps에 명시.
+  - 모바일 우선 — 컴포넌트 height 한 단계 큼 (button md 44, input 52, avatar 40, icon-button 40). touch target 48 권장.
+  - `admin-fe-preview.html`에 toss-like 변수 두 블록 + DESIGNS 객체 항목 추가. dropdown에서 wanted/minimal-mono/toss-like 토글 동작.
+  - `manifest.json designs.files` 등록.
+
+- v2-2.1: minimal-mono 시안 라이브러리 추가. (2026-05-15)
+  - `designs/minimal-mono.md` 신규 — self-contained 합성 catalog. 흑백 단색 + 평면 표면 + 헤어라인 보더 + 단색 brand(가장 진한 neutral). gradient 전면 금지(`policy.gradient_locations: []`). 4의 배수 정규화(button sm radius 4, lg 8 — Wanted의 6/10 로컬값 제거).
+  - 필수 7종 컴포넌트 + admin 5종 시그너처 + Do/Don't + light/dark CSS Variables 32+14+6+elevation 정의.
+  - alias 계약 검수 체크리스트 8종 통과(색 32종, ladder 누락 없음, 컴포넌트 7종, policy 5종 frontmatter, last_updated, STATE 기록 포함).
+  - `admin-fe-preview.html`에 minimal-mono CSS 변수 두 블록 inline + DESIGNS 객체에 항목 추가. dropdown에서 wanted ↔ minimal-mono 토글 동작. policy chip이 "gradient: 전면 금지"로 정상 표시.
+  - `manifest.json designs.files`에 minimal-mono 등록. install dry-run에 포함.
+  - 검증: `select-design.sh minimal-mono` 활성화 → DESIGN.md == designs/minimal-mono.md 일치, `--list`에서 wanted/minimal-mono 모두 노출, 다시 wanted로 복귀 정상.
+
+- v2-1: admin-fe-preview.html 일반화 + 시안별 CSS Variables 섹션 도입. (2026-05-15)
+  - `designs/_alias-contract.md`에 `## 10 CSS Variables 표기 규칙` 섹션 신설. alias→CSS 변수 명명 규칙, `data-design`+`data-theme` 2축 cascade 셀렉터, md fenced css 블록 형식, preview 정합 검증 정책.
+  - `designs/wanted.md` 와 `designs/_template.md`에 `## CSS Variables` 섹션 추가. wanted.md frontmatter에 `policy:` 블록 5종(shadow_on_cards/gradient_locations/copy_tone/dark_mode/non_4_spacing) 명시.
+  - `docs/admin-fe-preview.html` 리팩터:
+    - 기존 `:root[data-theme]` 하드코딩 블록을 `:root[data-design="wanted"][data-theme="light|dark"]` 분기로 교체.
+    - 상단 preview-bar에 시안 dropdown(`<select id="design-select">`) 추가. localStorage `admin-fe-preview-design` 키로 선택 유지.
+    - preview-bar 아래 `policy-strip` 신설. 활성 시안의 frontmatter policy 5종을 chip으로 자동 렌더링(success/danger/info variant).
+    - JS `DESIGNS` 객체에서 dropdown 자동 populate, 시안 변경 시 `data-design` 속성 + policy strip 동기 갱신.
+    - JS 구문 `node --check` 통과. HTML 50KB.
+  - `docs/admin-fe-design-guide.md`에 preview 시각 확인 섹션 + 시안 추가 절차(3단계) 명시.
+  - `docs/design-guidelines.md`에 preview 시각 검증 섹션 추가.
+
 - 디자인 시안 라이브러리 도입(`designs/` 폴더 + select-design.sh + install.sh --design 플래그). (2026-05-15)
-  - 신규: `designs/README.md`, `designs/_alias-contract.md`(alias 32종 + 컴포넌트 7종 + policy 5종 계약), `designs/_template.md`(빈 골격), `designs/wanted.md`(기존 DESIGN.md 이전).
+  - 신규: `designs/README.md`, `designs/_alias-contract.md`(alias 25종 + 컴포넌트 7종 + policy 5종 계약), `designs/_template.md`(빈 골격), `designs/wanted.md`(기존 DESIGN.md 이전).
   - 신규 스크립트: `.claude/plugins/select-design.sh` — `--list`/`--current`/`<slug>` 모드. DESIGN.md가 라이브러리와 다른 직접 편집 상태면 `DESIGN.md.bak` 자동 백업 후 덮어쓰기.
   - `install.sh` 확장: `--design <slug>` 플래그 (기본 wanted). 설치 마지막에 designs/<slug>.md → DESIGN.md 활성화 + `.claude/.active-design` 마커 생성.
   - manifest.json에 신규 `designs` 섹션(default+files+selector) 추가. 라이브러리 4종 파일 + selector가 install dry-run 73개 대상에 포함됨.
@@ -189,10 +318,14 @@
 
 ## 다음 작업
 
-- i18n locale별 구현 예시(키 구조, 디렉터리 배치, fallback 코드 샘플)를 추가한다.
-- 비즈니스 로직 요청 예시에서 build/docker/git 작업이 실제로 어떻게 흘러가는지 단계별 시나리오를 추가한다.
+### 디자인 라이브러리 후속 (사용자 검수 대기)
+- **사용자가 `docs/admin-fe-preview.html` 브라우저 시각 검수 진행 중**. 활성 시안 = `wanted`. dropdown으로 5개 시안 토글하며 의도와 다른 부분 발견 시 토큰값/fallback/시그너처 spec 조정 예정. 검수 결과 받으면 해당 카탈로그 갱신 + STATE 변경 이력 기록.
+- preview HTML fetch 모델 마이그레이션은 시안 5종 단계에서 보류. 시안 10+ 시점에 재검토(현재 inline 모델 86KB는 충분히 가벼움).
+- 라이브러리 v1 시드 5종 완성: `wanted`, `minimal-mono`, `toss-like`, `material-3`, `linear-like`. 추가 시안 요청 시 `designs/_template.md`에서 시작.
+
+### 기존 보류 항목
+
 - 프레임워크 구조 intake 답변을 받아 만든 실제 디렉터리 트리 예시를 추가한다.
-- startup-checklist 답변을 저장하는 `docs/ui-decisions.md` 템플릿을 추가한다. (동기화 메모: 신설 시 `docs/development-process.md:89` 단계 6도 함께 갱신. 한쪽이 변경되면 다른 쪽도 동기화한다.)
 - 필요하면 `docs/template-usage.md` 또는 예시 프로젝트 문서를 추가한다.
 - 필요하면 `docs/codex-reading-order.md`와 루트 `AGENTS.md`의 빠른 읽기 순서 중복을 더 줄인다.
 - `riderapp-runtime/README.md`의 예전 `riderapp` 경로 설명을 현재 워크스페이스 구조(`claude-agent-template`, `rider-platform-docs`, `riderapp-runtime`)에 맞게 갱신한다.
@@ -215,9 +348,9 @@
 - 플러그인 가이드: `docs/plugin-guide.md`
 - 요청 템플릿: `templates/feature-request.md`, `templates/bugfix-request.md`, `templates/review-request.md`, `templates/refactor-request.md`, `templates/business-logic-request.md`
 - intake 템플릿: `templates/project-intake.md`, `templates/ui-intake.md`, `templates/responsive-intake.md`, `templates/tech-intake.md`, `templates/i18n-intake.md`, `templates/framework-structure-intake.md`, `templates/startup-checklist.md`, `templates/api-intake.md`, `templates/error-intake.md`, `templates/form-intake.md`, `templates/format-intake.md`, `templates/qa-intake.md`, `templates/routing-intake.md`
-- guide 템플릿: `docs/project-guide-template.md`, `docs/i18n-guidelines.md`, `docs/business-logic-playbook.md`, `docs/framework-structure-guide.md`, `docs/design-guidelines.md`, `docs/admin-fe-design-guide.md`
+- guide 템플릿: `docs/project-guide-template.md`, `docs/i18n-guidelines.md`, `docs/business-logic-playbook.md`, `docs/framework-structure-guide.md`, `docs/design-guidelines.md`, `docs/admin-fe-design-guide.md`, `docs/ui-decisions.md`
 - 디자인 시스템 카탈로그(active): `DESIGN.md`
-- 디자인 시안 라이브러리: `designs/README.md`, `designs/_alias-contract.md`, `designs/_template.md`, `designs/wanted.md`
+- 디자인 시안 라이브러리: `designs/README.md`, `designs/_alias-contract.md`, `designs/_template.md`, `designs/wanted.md`, `designs/minimal-mono.md`, `designs/toss-like.md`, `designs/material-3.md`, `designs/linear-like.md`
 - 디자인 시안 selector: `.claude/plugins/select-design.sh`
 - 운영 아티팩트: `docs/codex-reading-order.md`, `docs/subagent-guide.md`, `docs/development-process.md`, `docs/development-process.html`, `docs/intake.html`, `docs/admin-fe-preview.html`
 - 런타임 앱: `../riderapp-runtime/` (sibling 저장소)

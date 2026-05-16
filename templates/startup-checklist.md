@@ -64,7 +64,7 @@ Q6. 사용할 디자인 시안 슬러그는?
         bash .claude/plugins/select-design.sh <custom-slug>
     C. 빈 골격에서 새로 작성
         cp designs/_template.md designs/<custom-slug>.md
-        # _alias-contract.md 의 alias 32종 + 컴포넌트 7종 시그너처를 모두 채움
+        # _alias-contract.md 의 alias 25종 + 컴포넌트 7종 시그너처를 모두 채움
         bash .claude/plugins/select-design.sh <custom-slug>
 Q7. 활성화 검증
     cat .claude/.active-design          # 슬러그가 기록됐는지 확인

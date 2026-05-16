@@ -177,3 +177,63 @@ shadow-pop: [...]
 ## References
 
 [출처 URL 목록 — frontmatter sources와 일치]
+
+## CSS Variables
+
+`docs/admin-fe-preview.html`이 시안을 즉시 시각화하기 위한 CSS 변수 블록. 표기 규칙은 `designs/_alias-contract.md ## 10` 참조. `<slug>`는 frontmatter slug와 동일하게 채운다.
+
+```css
+:root[data-design="<slug>"][data-theme="light"] {
+  /* Background */
+  --bg-canvas:         [...];
+  --bg-surface:        [...];
+  --bg-subtle:         [...];
+  --bg-muted:          [...];
+  --bg-elevated:       [...];
+  --bg-inverse:        [...];
+  --bg-brand:          [...];
+  --bg-brand-subtle:   [...];
+  --bg-danger-subtle:  [...];
+  --bg-success-subtle: [...];
+  --bg-warning-subtle: [...];
+
+  /* Foreground */
+  --fg-strong:    [...];
+  --fg-default:   [...];
+  --fg-secondary: [...];
+  --fg-tertiary:  [...];
+  --fg-disabled:  [...];
+  --fg-on-brand:  [...];
+  --fg-brand:     [...];
+  --fg-success:   [...];
+  --fg-warning:   [...];
+  --fg-danger:    [...];
+
+  /* Border */
+  --border-subtle:  [...];
+  --border-default: [...];
+  --border-strong:  [...];
+  --border-brand:   [...];
+
+  /* Spacing */
+  --space-4: 4px;    --space-8: 8px;    --space-12: 12px;   --space-16: 16px;
+  --space-20: 20px;  --space-24: 24px;  --space-32: 32px;   --space-40: 40px;
+  --space-48: 48px;  --space-56: 56px;  --space-64: 64px;   --space-80: 80px;
+  --space-96: 96px;  --space-128: 128px;
+
+  /* Rounded */
+  --radius-2: 2px;   --radius-4: 4px;   --radius-8: 8px;
+  --radius-12: 12px; --radius-16: 16px; --radius-full: 9999px;
+
+  /* Elevation */
+  --shadow-1:   [...];
+  --shadow-2:   [...];
+  --shadow-pop: [...];
+}
+
+:root[data-design="<slug>"][data-theme="dark"] {
+  /* (policy.dark_mode == supported 인 경우만 정의)
+     light와 동일한 키 세트를 다크 캔버스 기준 값으로 채운다.
+     spacing/radius는 light에서 상속되므로 재정의 불필요. */
+}
+```

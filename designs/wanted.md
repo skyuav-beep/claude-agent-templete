@@ -2,7 +2,7 @@
 name: 원티드
 slug: wanted
 category: etc
-last_updated: "2026-05-15"
+last_updated: "2026-05-16"
 sources:
   - https://api.anthropic.com/v1/design/h/j7_orggLzbQ43g24R8OfYA
   - https://www.wanted.co.kr
@@ -13,6 +13,12 @@ sources:
 related_services: []
 lang: ko
 logo: /logos/wanted.png
+policy:
+  shadow_on_cards: false
+  gradient_locations: ["symbol", "avatar", "thumbnail", "hero"]
+  copy_tone: "ko-friendly"
+  dark_mode: "supported"
+  non_4_spacing: false
 ---
 
 # 원티드 (Wanted) — design.md
@@ -966,6 +972,10 @@ pagination:
 - **공식 motion 토큰** — duration·easing의 시스템 토큰은 명시되지 않았으며, hover transition은 100–150ms ease, page transition은 ~200ms fade-in이라는 정책만 README에 prose로 surface된다 [src:1]. 본 문서의 Motion 표는 SSOT의 정책 prose에서 추출한 권장값이며, 명시 토큰은 아니다.
 - **다크 모드 alias 완전성** — SSOT의 dark theme 토큰은 background(canvas, surface, subtle, muted, elevated, inverse, brand-subtle)·foreground(strong, default, secondary, tertiary, disabled, on-brand)·border(subtle, default, strong)까지 surface되어 있다 [src:1]. `bg-danger-subtle`/`bg-success-subtle`/`bg-warning-subtle`와 `fg-brand`/`fg-danger`/`fg-success`/`fg-warning`의 다크 alias는 SSOT가 surface하지 않았으며, 본 카탈로그의 preview 구현을 위해 위 `### Semantic alias — Dark` 블록에 적정 대비값으로 **합성(synthesized)**하여 수록했다 — 다운스트림이 동일 패턴(blue-400 brightened for fg-brand, semantic hue @ ↑ lightness for fg-*, low-alpha colored fill for bg-*-subtle)으로 host 토큰을 ship할 수 있게 한다.
 - **wanted-icons 토큰 인벤토리** — wanted-icons는 자체 npm 패키지로 ship되며 Figma `/Icon` 페이지에 ~340개 아이콘이 정의된다 [src:1][src:5]. SSOT 번들은 production용 wanted-icons의 stand-in으로 Lucide CDN을 link하므로, 본 catalog가 적용되는 host는 production에서 `wanted-icons` 패키지로 교체해야 한다. 개별 아이콘의 토큰 명세(이름 매핑, 16px filled 변형 ID)는 본 문서 범위 외다.
+- **wide data-table fade-edge 정책** — 본 시안은 `policy.gradient_locations: ["symbol", "avatar", "thumbnail", "hero"]` 4곳 한정이며 chrome 성격의 fade-edge mask는 도입하지 않는다. `DESIGN.md ### data-table > #### Wide Table Cases`의 Case C/D 채택 시 스크롤 가능 시각 단서는 **sticky 컬럼 경계 1px `{colors.border-default}` 강조**로 대체한다.
+- **catalog-only ladder 토큰** — 본 카탈로그는 alias 계약(`radius-2/4/8/12/16/full`) 외에 `radius-6`(button sm 로컬), `radius-10`(button lg 로컬), `radius-20`/`radius-24`/`radius-32`(일부 카드/hero)를 추가 ladder로 surface한다. 모두 4의 배수 또는 SSOT의 컴포넌트 로컬값에서 직접 가져온다. `_alias-contract.md ## 9b` fallback 표에 등재되어 다른 시안 활성 시 표준 `--radius-8` 또는 `--radius-16`으로 fallback된다.
+- **catalog-only color/border alias** — `fg-link`(인라인 링크 강조)와 `border-inverse`(dark surface 분리)는 alias 계약 외 추가 토큰. 다른 시안에서는 `fg-brand`, `border-strong`로 fallback된다.
+- **shadow-3 / shadow-4** — Wanted SSOT가 elevation을 5단까지 surface하지는 않지만, 본 catalog는 합성된 `shadow-3`/`shadow-4`를 popover/dropdown/modal/toast 외 카드 surface에 사용하지 않는 정책으로 ship한다. CSS Variables 블록에는 fallback 대상으로만 명시(`var(--shadow-3, var(--shadow-2))`).
 
 ## References
 
@@ -974,3 +984,110 @@ pagination:
 3. https://wanted-sans.github.io — Wanted Sans 오픈소스 typeface (OFL). Wanted + 산돌 공동 제작.
 4. https://github.com/orioncactus/pretendard — Pretendard JP variable typeface. 본 시스템의 베이스 UI face.
 5. https://github.com/wanteddev/wanted-icons — Wanted 자체 아이콘 셋 npm 패키지. 24×24 그리드, 2px stroke, monochrome.
+
+## CSS Variables
+
+`docs/admin-fe-preview.html` 및 다운스트림 프로젝트가 그대로 호출할 CSS 변수 정의. 표기 규칙은 `designs/_alias-contract.md ## 10` 참조.
+
+```css
+:root[data-design="wanted"][data-theme="light"] {
+  /* Background */
+  --bg-canvas:         oklch(1 0 0);
+  --bg-surface:        oklch(1 0 0);
+  --bg-subtle:         oklch(0.972 0.002 286);
+  --bg-muted:          oklch(0.961 0.002 286);
+  --bg-elevated:       oklch(1 0 0);
+  --bg-inverse:        oklch(0.148 0.004 277);
+  --bg-brand:          oklch(0.563 0.232 257);
+  --bg-brand-subtle:   oklch(0.954 0.022 250);
+  --bg-danger-subtle:  oklch(0.951 0.018 18);
+  --bg-success-subtle: oklch(0.968 0.052 154);
+  --bg-warning-subtle: oklch(0.967 0.030 81);
+
+  /* Foreground */
+  --fg-strong:    oklch(0.148 0.004 277);
+  --fg-default:   oklch(0.259 0.010 273 / 0.88);
+  --fg-secondary: oklch(0.298 0.010 273 / 0.61);
+  --fg-tertiary:  oklch(0.298 0.010 273 / 0.43);
+  --fg-disabled:  oklch(0.298 0.010 273 / 0.28);
+  --fg-on-brand:  oklch(1 0 0);
+  --fg-brand:     oklch(0.563 0.232 257);
+  --fg-success:   oklch(0.673 0.211 144);
+  --fg-warning:   oklch(0.625 0.148 56);
+  --fg-danger:    oklch(0.546 0.220 27);
+  --fg-link:      oklch(0.563 0.232 257);                       /* catalog-only */
+
+  /* Border */
+  --border-subtle:  oklch(0.521 0.018 273 / 0.08);
+  --border-default: oklch(0.521 0.018 273 / 0.22);
+  --border-strong:  oklch(0.521 0.018 273 / 0.35);
+  --border-brand:   oklch(0.563 0.232 257);
+  --border-inverse: oklch(1 0 0 / 0.16);                        /* catalog-only */
+
+  /* Spacing */
+  --space-4: 4px;    --space-8: 8px;    --space-12: 12px;   --space-16: 16px;
+  --space-20: 20px;  --space-24: 24px;  --space-32: 32px;   --space-40: 40px;
+  --space-48: 48px;  --space-56: 56px;  --space-64: 64px;   --space-80: 80px;
+  --space-96: 96px;  --space-128: 128px;
+
+  /* Rounded (표준 + catalog-only ladder) */
+  --radius-2: 2px;   --radius-4: 4px;   --radius-6: 6px;        /* catalog-only: button sm 로컬 */
+  --radius-8: 8px;   --radius-10: 10px;                          /* catalog-only: button lg 로컬 */
+  --radius-12: 12px; --radius-16: 16px;
+  --radius-20: 20px; --radius-24: 24px; --radius-32: 32px;       /* catalog-only: 일부 카드/hero */
+  --radius-full: 9999px;
+
+  /* Elevation (popover/dropdown/modal/toast 전용) */
+  --shadow-1:   0 1px 2px oklch(0 0 0 / 0.04);
+  --shadow-2:   0 4px 8px oklch(0 0 0 / 0.06);
+  --shadow-3:   var(--shadow-2);                                 /* catalog-only fallback */
+  --shadow-4:   var(--shadow-pop);                               /* catalog-only fallback */
+  --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.10);
+}
+
+:root[data-design="wanted"][data-theme="dark"] {
+  --bg-canvas:        oklch(0.148 0.004 277);
+  --bg-surface:       oklch(0.166 0.005 271);
+  --bg-subtle:        oklch(0.135 0.002 286);
+  --bg-muted:         oklch(0.196 0.008 273);
+  --bg-elevated:      oklch(0.237 0.008 273);
+  --bg-inverse:       oklch(1 0 0);
+  --bg-brand:         oklch(0.563 0.232 257);
+  --bg-brand-subtle:  oklch(0.149 0.069 257);
+  --bg-danger-subtle: oklch(0.298 0.10 22 / 0.32);
+  --bg-success-subtle:oklch(0.298 0.10 144 / 0.28);
+  --bg-warning-subtle:oklch(0.298 0.10 56 / 0.32);
+
+  --fg-strong:    oklch(1 0 0);
+  --fg-default:   oklch(1 0 0 / 0.88);
+  --fg-secondary: oklch(1 0 0 / 0.61);
+  --fg-tertiary:  oklch(1 0 0 / 0.43);
+  --fg-disabled:  oklch(1 0 0 / 0.28);
+  --fg-on-brand:  oklch(1 0 0);
+  --fg-brand:     oklch(0.715 0.155 255);
+  --fg-success:   oklch(0.760 0.180 144);
+  --fg-warning:   oklch(0.778 0.158 64);
+  --fg-danger:    oklch(0.715 0.220 27);
+  --fg-link:      oklch(0.715 0.155 255);                       /* catalog-only synthesized */
+
+  --border-subtle:  oklch(1 0 0 / 0.08);
+  --border-default: oklch(1 0 0 / 0.22);
+  --border-strong:  oklch(1 0 0 / 0.35);
+  --border-brand:   oklch(0.715 0.155 255);
+  --border-inverse: oklch(0 0 0 / 0.32);                         /* catalog-only synthesized */
+
+  /* spacing/radius는 light와 동일 — 상속 */
+  --shadow-1:   0 1px 2px oklch(0 0 0 / 0.20);
+  --shadow-2:   0 4px 8px oklch(0 0 0 / 0.32);
+  --shadow-3:   var(--shadow-2);                                 /* catalog-only fallback */
+  --shadow-4:   var(--shadow-pop);                               /* catalog-only fallback */
+  --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.48);
+}
+```
+
+frontmatter `policy:` 블록:
+- `shadow_on_cards: false` — 카드 그림자 금지(헤어라인 보더가 표준)
+- `gradient_locations: ["symbol", "avatar", "thumbnail", "hero"]` — 4곳 한정
+- `copy_tone: "ko-friendly"` — `-요`/`-어요`/`-아요` 종결, 동사형 버튼 라벨
+- `dark_mode: "supported"` — light/dark 양쪽 정의
+- `non_4_spacing: false` — 4의 배수만 (button sm radius 6, lg 10 같은 컴포넌트 로컬값은 예외)

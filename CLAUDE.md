@@ -67,11 +67,11 @@
 - `DESIGN.md` — 디자인 시스템 카탈로그(active). UI/스타일 작업의 1차 소스 (토큰, 컴포넌트, Do/Don't, 다크 alias). `designs/`에서 선택된 시안의 활성 사본
 - `designs/` — 디자인 시안 라이브러리. 시안 선택은 `bash .claude/plugins/select-design.sh <slug>`
 - `agents/` — 역할별 에이전트 행동 규칙 (main, executor, researcher, reviewer)
-- `templates/` — 작업 요청 5종 + intake 양식 13종
-- `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타 가이드: `docs/design-guidelines.md`, admin FE 가이드: `docs/admin-fe-design-guide.md`)
+- `templates/` — 작업 요청 5종 + intake 양식 14종 (`data-table-density.md` 포함)
+- `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타: `docs/design-guidelines.md`, admin FE: `docs/admin-fe-design-guide.md`, UI 결정 기록: `docs/ui-decisions.md`)
 - `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 9종)
 - `.claude/commands/` — L2 보조 (명시적 slash command 8종, skills와 병존)
-- `.claude/hooks/` — L3 Guardrails (가드레일 스크립트 3종)
+- `.claude/hooks/` — L3 Guardrails (가드레일 스크립트 4종, opt-in 1종 포함)
 - `.claude/agents/` — L4 서브에이전트 프롬프트 템플릿 6종 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - `.claude/plugins/` — L5 배포 도구 (manifest, install)
 
