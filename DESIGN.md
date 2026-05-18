@@ -2,7 +2,7 @@
 name: 원티드
 slug: wanted
 category: etc
-last_updated: "2026-05-16"
+last_updated: "2026-05-18"
 sources:
   - https://api.anthropic.com/v1/design/h/j7_orggLzbQ43g24R8OfYA
   - https://www.wanted.co.kr
@@ -723,6 +723,34 @@ wanted-icons system [src:1][src:5] — 24×24 그리드, 2px stroke, rounded lin
 
 아래 5종은 SSOT 번들에 직접 surface되지 않은 admin/dashboard 표면 컴포넌트로, 기존 토큰·atomic 컴포넌트(`button-*`, `input`, `checkbox`, `chip`, `badge`, `avatar`, `icon-button`)와 Brand & Style 정책(평면 표면 + 1px 헤어라인 + 단일 강조색 + 동일 카피 톤)을 조합해 합성한 명세다. 다운스트림 product가 admin FE를 신규로 만들 때 그대로 호출하거나 컴포넌트 로컬값만 미세 조정해 사용한다.
 
+각 컴포넌트의 padding/row/gap 등 여백 토큰은 아래 `#### Admin Surface Density Cases` 4-케이스에서 한 가지를 화면 단위로 선택해 일괄 적용한다.
+
+#### Admin Surface Density Cases
+
+admin 표면(대시보드/KPI/리스트/상세) 전체에 일관된 여백을 적용하기 위한 밀도 케이스. 한 화면 안에서 두 케이스를 섞지 않는다(예: KPI는 표준인데 그 아래 테이블만 미니멈으로 축소 금지). 화면 단위 케이스 선택은 `templates/data-table-density.md §1 화면 컨텍스트`에 기록.
+
+| 케이스 | content padding | card padding | KPI gap | KPI row | input/button height | data-table row | 적합 상황 |
+|---|---|---|---|---|---|---|---|
+| **A — 표준 (Spacious)** | `{spacing.space-32}` | `{spacing.space-24}` | `{spacing.space-16}` | 1열 4장 | 40 (md) | 56 (comfortable) | 데스크탑 운영(1440+), 일반 운영 |
+| **B — 컴팩트 (Compact)** | `{spacing.space-24}` | `{spacing.space-16}` | `{spacing.space-12}` | 1열 4~6장 | 36 (md-compact) | 44 (compact) | 1280 해상도, 정보 밀도 우선 |
+| **C — 미니멈 (Minimum)** | `{spacing.space-16}` | `{spacing.space-12}` | `{spacing.space-8}` | 1열 6~8장 | 32 (sm) | 40 (tight) | 1440+ 대형 모니터에 KPI 다량, 빽빽한 모니터링 |
+| **D — 모니터링 (Monitor)** | `{spacing.space-8}` | `{spacing.space-8}` | `{spacing.space-8}` | 1열 8장+ | 32 (sm) | 36 (dense) | 24시간 모니터링/전광판/콜센터, 정보 최대화 |
+
+운영 규칙:
+- 모든 토큰은 4의 배수 ladder만 사용한다(6/10/14 같은 비-4 padding 금지). row 36은 컴팩트 한계, 그 아래(32/30)는 차단.
+- 케이스 C/D에서 row 40 이하 채택 시 `{typography.body2}` → `{typography.label2}` 또는 `{typography.caption1}` 다운을 함께 적용해 시각 균형을 맞춘다.
+- 케이스 D는 전광판/24시간 모니터링 표면 전용. 일반 운영 화면에 적용 시 hit-area·가독성 저하 차단.
+- 카드 그림자 금지 정책은 그대로 — 케이스 변경이 그림자 도입을 허용하지 않는다.
+- 케이스를 화면 단위로 결정한 뒤 `data-density` 속성(`spacious`/`compact`/`minimum`/`monitor`)을 root에 부여하면 모든 토큰이 일괄 적용되는 cascade를 host 앱이 정의한다.
+
+시안별 디폴트:
+
+| 시안 | 디폴트 | 비고 |
+|---|---|---|
+| `wanted` / `toss-like` / `material-3` | A | 카드 padding 24 + row 56 표준 |
+| `minimal-mono` | B | 미니멀 톤은 row 44 + content padding 24 |
+| `linear-like` | **C** (디폴트) | compact 시그너처. Case D 채택 가능(모니터링 뷰) |
+
 ### login-layout
 
 centered card 패턴. 마케팅 페이지가 아닌 standalone auth surface다.
@@ -935,6 +963,255 @@ C/D 채택 시 시안별 스크롤 affordance 정책(`policy.gradient_locations`
 | `toss-like` | A | shadow는 컨테이너 카드에만, 표 자체는 평면 유지 |
 | `material-3` | A (row 52) | state-layer hover 유지, B/C/D 모두 가능 |
 | `linear-like` | **B** (디폴트) | row 44 시그너처. ⌘K 컬럼 토글, ⌘\ side panel 권장 |
+
+#### List Toolbar Cases
+
+admin 리스트 페이지에서 검색·내보내기·페이지 크기 등 보조 컨트롤도 임의로 디자인하지 말고 아래 케이스 매트릭스에서 선택해 합의한다. 요구사항 수집 양식은 `templates/data-table-density.md`의 §9 List Toolbar.
+
+**1) Search Clear (검색 입력 X 닫기)** — 검색 input 우측에 표시되는 clear indicator.
+
+```yaml
+slot:       input trailing (padding-right 36 확보)
+hit-area:   20×20
+icon:       14×14 stroke 1.5 close (X) — {component.icon}
+color:      {colors.fg-tertiary}
+hover:      {colors.fg-default}
+focus:      ring 2px {colors.border-brand}
+component:  {component.icon-button} ghost xs (radius-full)
+keyboard:   Esc(focus 내) 또는 ⌘+Backspace
+a11y:       aria-label "검색어 지우기"
+trigger:    input.value.length > 0
+```
+
+| 케이스 | 표시 조건 | 적합한 상황 |
+|---|---|---|
+| **A — 항상 표시** | 값이 있으면 항상 노출 | 마우스 위주 + 즉시 가시성 필요 (운영 대시보드 기본) |
+| **B — 호버/포커스 시만** | input 또는 trailing slot에 hover/focus일 때만 노출 | 미니멀 톤, 시각 노이즈 최소화 |
+| **C — 없음 (키보드만)** | clear indicator 미노출, Esc/⌘+Backspace 단축키만 | 단축키 친화 시그너처(예: linear-like) |
+
+시안별 디폴트:
+
+| 시안 | 디폴트 | 비고 |
+|---|---|---|
+| `wanted` / `toss-like` | A | 즉각 가시성 우선 |
+| `minimal-mono` / `material-3` | B | 시각 노이즈 최소화 |
+| `linear-like` | C | ⌘K/Esc 단축키 시그너처 |
+
+**2) Excel Export (엑셀 다운로드)** — 리스트 페이지에서 현재 데이터 내보내기.
+
+```yaml
+position:   top-bar right-cluster 끝 또는 filter-bar 우측
+default-size: md (height 40)
+icon:       16×16 download arrow — {component.icon}
+copy:       동사형 ("엑셀 다운로드", "내보내기")
+file:       .xlsx (또는 .csv 옵션)
+async:      행 수 > 1000 또는 서버 export 시 비동기 처리
+toast:      비동기 완료 시 {component.toast} + 다운로드 링크
+a11y:       aria-label "엑셀 다운로드"
+```
+
+| 케이스 | 컴포넌트 | 옵션 | 동작 |
+|---|---|---|---|
+| **A — 단일 버튼** | `{component.button-secondary}` md + 좌측 download icon | 없음 | 즉시 다운로드 (전체 결과) |
+| **B — 아이콘 only** | `{component.icon-button}` md ghost + tooltip "엑셀 다운로드" | 없음 | 즉시 다운로드, 공간 절약형 |
+| **C — 옵션 dropdown** | `{component.button-secondary}` md + chevron-down → popover ({elevation.shadow-pop}) | 전체 / 필터링 결과 / 선택한 항목만 / 현재 페이지 | 선택 후 다운로드. 선택 항목 0건이면 disabled |
+| **D — 비동기 progress** | C와 동일 진입 + 진행 toast/modal (스피너 + 진행률) | C의 옵션 + 알림 이메일 옵션 | 서버 export 큐 등록 → 완료 시 toast로 다운로드 링크 노출 |
+
+운영 규칙:
+- export 중 동일 버튼 disabled, 진행 중인 비동기 작업은 상단 우측 `{component.icon-button}`(notification dot)로도 노출.
+- CSV/Excel 선택지를 두면 옵션 dropdown(C) 패턴으로 통합한다. 별도 버튼 두 개 노출 금지.
+- 비-chrome 위치 gradient 금지 정책은 그대로 — Excel 버튼 chip/popover에 gradient 사용 금지.
+
+시안별 디폴트:
+
+| 시안 | 디폴트 | 비고 |
+|---|---|---|
+| `wanted` / `toss-like` / `material-3` | A | 텍스트 라벨 + 명확한 액션 |
+| `minimal-mono` | B | 시각 노이즈 최소화, tooltip 의존 |
+| `linear-like` | B + ⌘E 단축키 | 단축키 시그너처. 옵션 필요 시 C로 승격 |
+
+**3) Page Size (리스트 보기 행 개수 선택)** — pagination 영역의 행 수 선택.
+
+```yaml
+position:   pagination 좌측(정보 옆) 또는 우측(nav 전)
+default:    20
+options:    [10, 20, 50, 100]                # 100은 가상 스크롤 적용 시만
+storage:    localStorage `<page-slug>-page-size`
+copy:       "20개씩 보기" 또는 "행: 20"
+component:  case 별 분기 (아래 표)
+a11y:       aria-label "페이지당 행 수"
+```
+
+| 케이스 | 컴포넌트 | 옵션 노출 | 적합한 상황 |
+|---|---|---|---|
+| **A — dropdown** | `{component.button-tertiary}` sm + chevron → popover list | 10 / 20 / 50 / 100 | 4단계 이상 옵션, 공간 절약 (기본) |
+| **B — segmented control** | 3개 토글(pill 그룹, `{rounded.radius-full}` 컨테이너 + `{rounded.radius-8}` 내부 셀, active는 `{colors.bg-surface}` + `{elevation.shadow-1}`) | 10 / 20 / 50 (3단) | 시각적 즉시 비교, compact density 시그너처 |
+| **C — auto-fit** | UI 없음, 컨테이너 높이로 자동 계산(`Math.floor((vh - header - filter - pagination) / row-height)`) | 사용자 노출 없음 | 풀-블리드 운영 화면, 사용자 선택 불필요한 모니터링 뷰 |
+
+운영 규칙:
+- 디폴트 행 수는 시안 디폴트 케이스(`Wide Table Cases`)와 정합되어야 한다. A(56) → 20, B(44) → 30 권장.
+- 100 이상은 가상 스크롤(virtualization) 활성 시에만 허용한다.
+- 변경 시 1페이지로 reset + URL query(`?size=`) 동기화는 host 앱 책임.
+- C(auto-fit) 채택 시 행 수 정보는 pagination info(`1–N / total`)에 그대로 노출한다.
+
+시안별 디폴트:
+
+| 시안 | 디폴트 | 비고 |
+|---|---|---|
+| `wanted` / `minimal-mono` / `toss-like` / `material-3` | A (20) | 4단계 옵션 popover |
+| `linear-like` | **B** (20) | compact 시그너처. Case D 리스트는 C(auto-fit) 권장 |
+
+#### Column Filter Cases
+
+테이블 컬럼별 필터(헤더 안에서 정렬·필터를 동시 수행)를 어디까지 노출할지 선택한다. Filter Bar(`### filter-bar (admin) > #### Filter Bar Cases`)의 전역 필터와 충돌하지 않도록 듀얼 채택 시 우선순위를 명시한다.
+
+```yaml
+header-control:
+  sort-icon: 12×12 arrow-up-down, 3-state (asc/desc/none)
+  filter-icon: 12×12 funnel monochrome — 활성 시 {colors.fg-brand}로 dot indicator
+  popover:
+    trigger:    헤더 셀 우측 끝 icon-button xs (24×24)
+    container:  {elevation.shadow-pop}, radius {rounded.radius-8}, padding {spacing.space-12}
+    width:      240 (text 검색) / 280 (다중 선택) / 320 (날짜 범위)
+    body:       검색 input | checkbox 리스트(스크롤 max-height 240) | date-range
+    footer:     button-ghost sm '초기화' + button-primary sm '적용'
+  inline-row:   thead 아래 별도 row, 컬럼별 input/select inline
+counter:        Filter Bar의 `필터 (N)` 카운터와 합산, 컬럼 필터는 `+컬럼 N`로 분리 표기
+```
+
+| 케이스 | 헤더 컨트롤 | UI 위치 | 적합 상황 |
+|---|---|---|---|
+| **A — 정렬만** | sort 3-state icon | 헤더 셀 우측 끝, 텍스트 옆 | 컬럼별 필터 불필요(상태 chip 또는 전역 필터로 충분) — 기본 |
+| **B — 헤더 아이콘 popover** | sort + funnel icon, 클릭 시 popover (검색/체크박스/날짜) | 헤더 셀 우측 끝, icon-button xs | 데이터 점검·임시 탐색이 필요한 운영 화면 |
+| **C — 인라인 필터 row** | thead 다음 row에 컬럼별 input/select 영구 노출 | 헤더 row 바로 아래 (sticky 가능) | 빈번한 컬럼별 검색, "Excel 필터" 패턴 — 회계/정산 |
+| **D — 듀얼 (전역 + 컬럼)** | B 또는 C + 전역 Filter Bar 동시 운영 | Filter Bar는 상단, 컬럼 필터는 헤더 | Case D(초과밀도) 테이블 + 운영자 전문 사용 |
+
+운영 규칙:
+- 컬럼 필터 적용 시 헤더 셀 우측 funnel icon에 brand dot(4×4)로 활성 상태를 표시한다. 텍스트로 'filtered'라고 적지 않는다.
+- 적용된 컬럼 필터 요약은 표 상단에 chip(`상태: 대기·진행`) 형태로 함께 노출(Case D)하여 사용자가 어디서 적용됐는지 식별 가능하게 한다.
+- Case C(인라인 필터 row)는 컬럼 폭이 좁아도 input height ≥32, 정렬은 thead와 동일 right/left 규칙.
+- Case D 채택 시 "전역 Filter Bar = 데이터 셋 결정 / 컬럼 필터 = 결과 내 추가 좁히기" 역할 분리를 PR/문서에 명시한다.
+- 정렬·필터 동시 적용 가능. 동일 컬럼에서 sort+filter는 popover 내부 두 영역으로 분리(하단 sort 토글 또는 별도 메뉴 항목).
+
+시안별 디폴트:
+
+| 시안 | 디폴트 | 비고 |
+|---|---|---|
+| `wanted` / `toss-like` / `material-3` | A | 전역 Filter Bar 우선 |
+| `minimal-mono` | A or B | popover 도입 시 헤어라인 보더 유지 |
+| `linear-like` | **B** | ⌘F 컬럼 필터 단축키, popover에 키보드 탐색 시그너처 |
+
+### filter-bar (admin)
+
+마케팅 영역의 `### filter-bar`와 별개. admin 리스트 페이지의 검색·기간·정적 필터·내보내기를 통합 운영하는 상단 컨트롤 바.
+
+```yaml
+container:
+  padding-y:       {spacing.space-12}      # density Case A. B는 12, C는 8, D는 8
+  padding-x:       0                       # 외곽 content padding 상속
+  gap:             {spacing.space-12}
+  align:           center, flex-wrap on narrow
+  border-bottom:   1px {colors.border-subtle}   # 옵션, Case C/D 다중 패널 시 제거
+left-cluster:
+  date-range:
+    component:     {component.button-tertiary} md + chevron-down
+    leading-icon:  16×16 calendar
+    label:         '기간: 최근 7일' | '2026-05-01 — 2026-05-18'
+    popover:       2-month grid + preset chips(오늘/어제/최근 7일/이번 달/최근 30일/직접 입력)
+                   {elevation.shadow-pop}, radius {rounded.radius-8}
+  status-chip:     {component.chip} multi-select (현재 선택은 brand-subtle)
+  filter-pill:     {component.filter-pill}, ≥6개면 Case C 패널로 승격
+center:
+  search:          {component.search} max-width 320, growable
+right-cluster:
+  gap:             {spacing.space-8}
+  counter:         '필터 (3)' 텍스트, 0이면 숨김
+  reset:           {component.button-ghost} sm '필터 초기화'
+  saved-views:     optional, {component.button-tertiary} sm '저장된 뷰 ▾'
+  view-switch:     optional, segmented (테이블/보드/카드)
+  column-toggle:   optional, {component.icon-button} 'columns' (Wide Table Case D)
+  export:          {component.button-secondary} md 또는 icon-button
+                   (List Toolbar Cases §2의 케이스 선택을 그대로 호출)
+```
+
+#### Filter Bar Cases
+
+| 케이스 | 좌측 | 검색 | 우측 | 적합 상황 |
+|---|---|---|---|---|
+| **A — 기본 chip** | 상태/카테고리 chip 3~5종 | input 320 | reset | 일반 리스트, 필터 정적 |
+| **B — 일시 범위 + 엑셀** | date-range picker + chip 1~3종 | input growable | reset + 엑셀 다운로드 (List Toolbar §2 케이스) | 주문/정산/매출 — 기간 + 내보내기 |
+| **C — 다중 필터 패널** | 토글 버튼 `필터 (3)` → 좌측 slide panel(width 320, padding 24) | input 320 | 저장된 뷰 + 엑셀 | 복합 필터 6+종, 저장된 뷰 |
+| **D — 검색만** | (없음) | input full-width 또는 600 | (없음) | 단일 검색 페이지(회원/주문 단건 조회) |
+
+운영 규칙:
+- 일시(date-range)는 **단일 컨트롤로 통합**한다 — 시작일/종료일 input 두 개 분리 금지. preset chips(오늘/어제/최근 7일/이번 달)는 popover 내부에 두고 상단 바에는 단일 트리거만 노출.
+- 엑셀 다운로드는 `### data-table > #### List Toolbar Cases §2`의 케이스 선택을 그대로 호출한다. Filter Bar에서 별도 정의 금지.
+- 필터 활성 개수 `필터 (3)` 카운터는 0일 때 숨긴다.
+- 필터 chip이 6개 이상이거나 필터 종류가 시각적으로 한 줄에 안 들어가면 Case C(좌측 슬라이드 패널)로 승격한다.
+- 필터 변경 시 1페이지로 reset + URL query 동기화는 host 책임.
+- 패널(Case C)에서 적용 전 변경값은 `button-primary` '적용'을 누르기 전까지 본문 결과를 갱신하지 않는다(데이터 트래픽·인지 부담 방지).
+
+시안별 디폴트:
+
+| 시안 | 디폴트 | 비고 |
+|---|---|---|
+| `wanted` / `minimal-mono` / `toss-like` / `material-3` | A (또는 화면 의도에 따라 B) | 운영 화면 기본 |
+| `linear-like` | **C** (디폴트) | 저장된 뷰 + 단축키 시그너처, ⌘. 필터 토글 |
+
+### tab (admin)
+
+상세 페이지 또는 다중 섹션 화면에서 콘텐츠 그룹을 전환하는 컴포넌트. 페이지 헤더(top-bar) 바로 아래에 두며, browser tab과 다른 in-page tab을 가리킨다.
+
+```yaml
+height:          40   # Case A/B 기본. density C/D는 36
+gap-between:     {spacing.space-8}
+padding-x:       0    # 컨테이너 padding 상속
+container:
+  bg:            {colors.bg-surface}
+  border-bottom: 1px {colors.border-subtle}    # Case A에서만, B/C/D는 없음
+item:
+  typography:    {typography.label1}     # 14/500
+  color:         {colors.fg-secondary}
+  padding-x:     {spacing.space-12}      # 가로 여백
+  active-color:  {colors.fg-strong}
+  active-weight: 600
+  hover-color:   {colors.fg-default}
+  disabled:      {colors.fg-disabled}
+counter:
+  position:      label 우측 4px 간격
+  component:     {component.badge}  # ' (12)' 텍스트 금지 → badge sm
+  active-variant:bg-brand-subtle + fg-brand
+overflow:
+  threshold:     컨테이너 폭 초과 시 우측 '... 더보기' menu (Case A/B)
+                 또는 horizontal scroll (Case C/D)
+```
+
+#### Tab Page Cases
+
+| 케이스 | active 표시 | 외형 | 적합 상황 |
+|---|---|---|---|
+| **A — line underline (기본)** | 하단 2px solid `{colors.fg-strong}` underline | 평면 + 1px bottom border, 라벨만 | 상세 페이지 안의 섹션 전환(주문 상세 > 기본/배송/이력), 기본 |
+| **B — pill 채움** | `{colors.bg-brand-subtle}` + `{colors.fg-brand}` (또는 `{colors.bg-strong}` + white invert) 채움, `{rounded.radius-full}` | container border 없음, 탭은 채워진 칩 | 카테고리 전환(상품 카테고리 탭, 정산 유형 탭) |
+| **C — segmented 카드** | active 셀: `{colors.bg-surface}` + `{elevation.shadow-1}`, 그 외: 투명 | `{colors.bg-muted}` 컨테이너 + `{rounded.radius-full}` 외곽, 내부 셀 `{rounded.radius-8}` | 2~3개 전환, 분명한 토글(테이블/보드 뷰, 일/월 단위) |
+| **D — vertical 좌측** | 좌측 3px solid `{colors.fg-strong}` indicator + `{colors.bg-brand-subtle}` 행 채움 | 좌측 폭 200~240 좌측 컬럼 navigation, 본문 우측 | 세부 페이지 다단(설정 페이지: 일반/알림/권한/보안), 탭 수 5+ |
+
+운영 규칙:
+- 한 화면에 두 케이스를 섞지 않는다(섹션 탭은 A, 그 안의 서브 토글은 C 식으로 위계만 분리).
+- 비활성 탭에 이모지·아이콘 장식 사용 금지. 의미가 필요하면 16px stroke icon을 라벨 좌측에 둔다.
+- 활성 indicator에 gradient 사용 금지(Case A/B/C 모두). gradient 정책은 시안 `policy.gradient_locations` 따른다.
+- 카운터(`주문(12)`)는 텍스트 괄호 표기 금지 → badge sm로 분리한다.
+- 탭 ≥7개는 Case D(vertical) 또는 nav-link로 승격 검토. horizontal에서 강제 스크롤은 가독성 손해가 크다.
+- 탭 라벨은 명사 단문(`기본 정보`, `배송`, `이력`). 격식체·동사형 금지.
+
+시안별 디폴트:
+
+| 시안 | 디폴트 | 비고 |
+|---|---|---|
+| `wanted` | A | nav-link active 패턴(밑줄 underline)과 정합 |
+| `minimal-mono` | A | underline 색 `{colors.fg-strong}` (단색 invert) |
+| `toss-like` | A (또는 B) | 마케팅 카테고리 전환은 B |
+| `material-3` | **A** | M3 Primary Tabs(라벨 + indicator) 매핑 |
+| `linear-like` | **C** (디폴트) | segmented compact 시그너처. 설정·세부 페이지는 D |
 
 ### logo
 

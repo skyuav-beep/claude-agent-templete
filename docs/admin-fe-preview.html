@@ -849,6 +849,297 @@
     [data-design="linear-like"][data-theme="dark"] .table-wide .sticky-r1::after { background: linear-gradient(to left, oklch(1 0 0 / 0.20), transparent); }
 
     /* ============================================================
+       List Toolbar Cases — search clear / excel export / page size
+       ============================================================ */
+    .toolbar-grid { display: grid; gap: var(--space-12); }
+    .toolbar-row {
+      display: flex; align-items: center; gap: var(--space-12); flex-wrap: wrap;
+      padding: var(--space-12) var(--space-16);
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-8);
+      background: var(--bg-surface);
+    }
+    .toolbar-row .row-label {
+      font-size: 11px; font-weight: 600; padding: 2px 8px;
+      border-radius: var(--radius-full); background: var(--bg-muted); color: var(--fg-strong);
+      min-width: 80px; text-align: center;
+    }
+    .toolbar-row .row-hint { font-size: 12px; color: var(--fg-tertiary); margin-left: auto; }
+
+    /* search input with trailing clear */
+    .search-input {
+      position: relative; display: inline-flex; align-items: center;
+      width: 320px; max-width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-8);
+      padding: 0 4px 0 12px;
+      height: 40px; gap: 8px;
+    }
+    .search-input .leading { color: var(--fg-tertiary); display: inline-flex; }
+    .search-input input {
+      flex: 1; min-width: 0; border: none; outline: none; background: transparent;
+      color: var(--fg-default); font-size: 14px;
+    }
+    .search-input .clear {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; border-radius: var(--radius-full);
+      border: none; background: transparent; color: var(--fg-tertiary); cursor: pointer; padding: 0;
+    }
+    .search-input .clear:hover { color: var(--fg-default); background: var(--bg-muted); }
+    .search-input .clear:focus-visible { outline: 2px solid var(--border-brand); outline-offset: 1px; }
+    /* Case B — hover/focus 시만 */
+    .search-input.case-b .clear { opacity: 0; transition: opacity 0.12s ease; }
+    .search-input.case-b:hover .clear,
+    .search-input.case-b:focus-within .clear { opacity: 1; }
+    /* Case C — 미노출 */
+    .search-input.case-c .clear { display: none; }
+
+    /* segmented control (page-size B) */
+    .segmented {
+      display: inline-flex; background: var(--bg-muted);
+      border-radius: var(--radius-full); padding: 3px; gap: 2px;
+    }
+    .segmented button {
+      border: none; background: transparent;
+      padding: 4px 12px; font-size: 13px;
+      color: var(--fg-secondary); border-radius: var(--radius-full);
+      cursor: pointer; font-family: inherit;
+    }
+    .segmented button.on {
+      background: var(--bg-surface); color: var(--fg-strong);
+      box-shadow: var(--shadow-1); font-weight: 600;
+    }
+
+    /* auto-fit tag (page-size C) */
+    .auto-fit-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: var(--radius-full);
+      background: var(--bg-muted); color: var(--fg-secondary); font-size: 12px;
+    }
+
+    /* async export progress (excel D) */
+    .export-progress {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 4px 10px; border-radius: var(--radius-full);
+      background: var(--bg-brand-subtle); color: var(--fg-brand);
+      font-size: 12px; font-weight: 600;
+    }
+    .export-progress::before {
+      content: ""; width: 10px; height: 10px; border-radius: 50%;
+      border: 2px solid currentColor; border-top-color: transparent;
+      animation: toolbar-spin 0.8s linear infinite;
+    }
+    @keyframes toolbar-spin { to { transform: rotate(360deg); } }
+
+    /* ============================================================
+       Surface Density Cases — content/card padding, gap, row, height
+       ============================================================ */
+    .density-grid { display: grid; gap: var(--space-12); }
+    .density-row {
+      display: grid; grid-template-columns: 100px 1fr;
+      gap: var(--space-12); align-items: center;
+      padding: var(--space-12); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-8); background: var(--bg-surface);
+    }
+    .density-row .row-label {
+      font-size: 11px; font-weight: 600;
+      padding: 4px 8px; border-radius: var(--radius-full);
+      background: var(--bg-muted); color: var(--fg-strong); text-align: center;
+    }
+    .density-mini {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto auto auto;
+      gap: var(--m-gap, 16px); align-items: stretch;
+    }
+    .density-mini .kpi {
+      padding: var(--m-card-pad, 24px);
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-8);
+      background: var(--bg-surface);
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .density-mini .kpi-label { font-size: 11px; color: var(--fg-secondary); }
+    .density-mini .kpi-val { font-size: 18px; font-weight: 700; color: var(--fg-strong); }
+    .density-mini .mini-btn {
+      align-self: center;
+      height: var(--m-h, 40px); padding: 0 12px;
+      background: var(--bg-brand); color: var(--fg-on-brand);
+      border: none; border-radius: var(--radius-8); font-size: 13px;
+      font-family: inherit; white-space: nowrap; cursor: pointer;
+    }
+    .density-mini .mini-input {
+      align-self: center;
+      height: var(--m-h, 40px); padding: 0 12px;
+      border: 1px solid var(--border-default); border-radius: var(--radius-8);
+      background: var(--bg-surface); color: var(--fg-default); font-size: 13px;
+      font-family: inherit; width: 140px;
+    }
+    .density-mini .mini-row {
+      align-self: center;
+      height: var(--m-row, 56px); width: 160px;
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-8);
+      display: flex; align-items: center; padding: 0 var(--m-card-pad, 16px);
+      font-size: 13px; color: var(--fg-secondary);
+    }
+    .density-mini.spacious { --m-gap: 16px; --m-card-pad: 24px; --m-h: 40px; --m-row: 56px; }
+    .density-mini.compact  { --m-gap: 12px; --m-card-pad: 16px; --m-h: 36px; --m-row: 44px; }
+    .density-mini.minimum  { --m-gap: 8px;  --m-card-pad: 12px; --m-h: 32px; --m-row: 40px; }
+    .density-mini.monitor  { --m-gap: 8px;  --m-card-pad: 8px;  --m-h: 32px; --m-row: 36px; }
+
+    /* ============================================================
+       Filter Bar Cases — chip / date-range / panel / search-only
+       ============================================================ */
+    .fbar {
+      display: flex; align-items: center; gap: var(--space-8); flex-wrap: wrap;
+      padding: var(--space-12); border-radius: var(--radius-8);
+      background: var(--bg-surface); border: 1px solid var(--border-subtle);
+    }
+    .fbar .grow { flex: 1; min-width: 0; }
+    .fbar .grow .search-input { width: 100%; max-width: 100%; }
+    .date-trigger {
+      display: inline-flex; align-items: center; gap: 8px;
+      height: 36px; padding: 0 12px;
+      background: var(--bg-surface); border: 1px solid var(--border-default);
+      border-radius: var(--radius-8); font-size: 13px; color: var(--fg-default);
+      cursor: pointer; font-family: inherit;
+    }
+    .date-trigger .cal { color: var(--fg-tertiary); display: inline-flex; }
+    .fbar-counter {
+      font-size: 12px; font-weight: 600; color: var(--fg-strong);
+      padding: 2px 8px; border-radius: var(--radius-full);
+      background: var(--bg-muted);
+    }
+    .panel-trigger {
+      display: inline-flex; align-items: center; gap: 8px;
+      height: 36px; padding: 0 12px;
+      background: var(--bg-muted); color: var(--fg-strong);
+      border-radius: var(--radius-8); border: none; font-size: 13px;
+      font-family: inherit; cursor: pointer;
+    }
+    .panel-trigger .pt-dot {
+      width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center;
+      background: var(--bg-brand); color: var(--fg-on-brand);
+      border-radius: var(--radius-full); font-size: 11px; font-weight: 700;
+    }
+
+    /* ============================================================
+       Column Filter Cases — header sort/funnel/inline row
+       ============================================================ */
+    .colf-frame {
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-8);
+      background: var(--bg-surface); overflow: hidden;
+    }
+    .mini-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+    .mini-table thead th {
+      height: 40px; padding: 0 12px; background: var(--bg-muted);
+      color: var(--fg-secondary); font-size: 12px; font-weight: 600;
+      text-align: left; border-bottom: 1px solid var(--border-subtle);
+    }
+    .mini-table tbody td {
+      height: 44px; padding: 0 12px; color: var(--fg-default);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .mini-table tbody tr:last-child td { border-bottom: none; }
+    .h-control {
+      display: inline-flex; align-items: center; gap: 6px;
+      width: 100%; justify-content: space-between;
+    }
+    .h-control .ctrl-cluster { display: inline-flex; gap: 2px; }
+    .h-control .ctrl-btn {
+      width: 22px; height: 22px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: none; background: transparent; color: var(--fg-tertiary);
+      border-radius: 4px; cursor: pointer; padding: 0; position: relative;
+    }
+    .h-control .ctrl-btn:hover { color: var(--fg-default); background: var(--bg-surface); }
+    .h-control .ctrl-btn.on { color: var(--fg-brand); }
+    .h-control .ctrl-btn.on::after {
+      content: ""; position: absolute; right: 2px; top: 2px;
+      width: 4px; height: 4px; border-radius: 50%; background: currentColor;
+    }
+    .colf-inline-row td {
+      background: var(--bg-subtle); height: 40px; padding: 4px 8px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .colf-inline-row input,
+    .colf-inline-row select {
+      width: 100%; height: 30px; padding: 0 8px; font-size: 12px;
+      background: var(--bg-surface); border: 1px solid var(--border-default);
+      border-radius: var(--radius-4); color: var(--fg-default); font-family: inherit;
+    }
+
+    /* ============================================================
+       Tab Page Cases — line / pill / segmented / vertical
+       ============================================================ */
+    .tab-group {
+      padding: var(--space-12);
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-8);
+      background: var(--bg-surface);
+    }
+    .tab-line { display: flex; gap: var(--space-8); border-bottom: 1px solid var(--border-subtle); }
+    .tab-line button {
+      position: relative; height: 40px; padding: 0 12px;
+      background: transparent; border: none; cursor: pointer;
+      font-size: 14px; font-weight: 500; color: var(--fg-secondary); font-family: inherit;
+    }
+    .tab-line button.on { color: var(--fg-strong); font-weight: 600; }
+    .tab-line button.on::after {
+      content: ""; position: absolute; left: 12px; right: 12px; bottom: -1px;
+      height: 2px; background: var(--fg-strong);
+    }
+    .tab-pill { display: flex; gap: var(--space-8); }
+    .tab-pill button {
+      height: 32px; padding: 0 14px; border-radius: var(--radius-full);
+      background: transparent; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 500; color: var(--fg-secondary); font-family: inherit;
+    }
+    .tab-pill button.on {
+      background: var(--bg-brand-subtle); color: var(--fg-brand); font-weight: 600;
+    }
+    .tab-segment {
+      display: inline-flex; background: var(--bg-muted);
+      border-radius: var(--radius-full); padding: 3px; gap: 2px;
+    }
+    .tab-segment button {
+      height: 30px; padding: 0 14px; border-radius: var(--radius-full);
+      background: transparent; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 500; color: var(--fg-secondary); font-family: inherit;
+    }
+    .tab-segment button.on {
+      background: var(--bg-surface); color: var(--fg-strong);
+      box-shadow: var(--shadow-1); font-weight: 600;
+    }
+    .tab-vertical-frame {
+      display: grid; grid-template-columns: 200px 1fr;
+      min-height: 200px;
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-8);
+      overflow: hidden;
+    }
+    .tab-vertical-nav {
+      border-right: 1px solid var(--border-subtle);
+      padding: var(--space-8);
+      display: flex; flex-direction: column; gap: 2px;
+      background: var(--bg-surface);
+    }
+    .tab-vertical-nav button {
+      position: relative; height: 36px; padding: 0 12px;
+      background: transparent; border: none; cursor: pointer; text-align: left;
+      font-size: 13px; font-weight: 500; color: var(--fg-secondary); font-family: inherit;
+      border-radius: var(--radius-8);
+    }
+    .tab-vertical-nav button:hover { background: var(--bg-muted); color: var(--fg-default); }
+    .tab-vertical-nav button.on {
+      background: var(--bg-brand-subtle); color: var(--fg-brand); font-weight: 600;
+    }
+    .tab-vertical-nav button.on::before {
+      content: ""; position: absolute; left: -1px; top: 8px; bottom: 8px;
+      width: 3px; background: var(--fg-strong); border-radius: 0 2px 2px 0;
+    }
+    .tab-vertical-body {
+      padding: var(--space-16);
+      color: var(--fg-secondary); font-size: 13px;
+      background: var(--bg-surface);
+    }
+
+    /* ============================================================
        Assembly views
        ============================================================ */
     .dashboard {
@@ -1066,6 +1357,11 @@
   <a href="#stat">stat-card</a>
   <a href="#table">data-table</a>
   <a href="#widetable">wide table cases</a>
+  <a href="#toolbar">list toolbar cases</a>
+  <a href="#density">surface density</a>
+  <a href="#filterbar">filter bar cases</a>
+  <a href="#colfilter">column filter cases</a>
+  <a href="#tabs">tab page cases</a>
   <a href="#dashboard">대시보드 조립</a>
   <a href="#listpage">리스트 페이지 조립</a>
 </div>
@@ -1841,6 +2137,519 @@
   </div>
 </section>
 
+<!-- ===================== List Toolbar Cases ===================== -->
+<section class="section" id="toolbar">
+  <div class="section-head">
+    <h2>5c. List Toolbar Cases (검색 X / 엑셀 다운로드 / 페이지 크기)</h2>
+    <p>리스트 페이지 보조 컨트롤 케이스 비교. 임의 디자인 대신 케이스를 선택해 합의한다. <code>DESIGN.md ### data-table > #### List Toolbar Cases</code>. 우측 hint가 활성 시안의 디폴트 케이스를 자동 표시.</p>
+  </div>
+
+  <!-- 1) Search Clear -->
+  <div class="case-card">
+    <div class="case-meta">
+      <span class="label">검색 X (Search Clear)</span>
+      <span>A 항상 / B 호버·포커스 시 / C 없음(키보드만)</span>
+      <span class="row-hint" id="toolbar-hint-search">디폴트: —</span>
+    </div>
+    <div class="toolbar-grid">
+      <div class="toolbar-row">
+        <span class="row-label">A — 항상</span>
+        <div class="search-input case-a">
+          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <input value="홍길동" />
+          <button class="clear" aria-label="검색어 지우기"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <span class="row-hint">값이 있으면 즉시 노출</span>
+      </div>
+      <div class="toolbar-row">
+        <span class="row-label">B — 호버</span>
+        <div class="search-input case-b">
+          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <input value="김민지" />
+          <button class="clear" aria-label="검색어 지우기"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <span class="row-hint">input hover/focus 시만 (행에 마우스를 올려보세요)</span>
+      </div>
+      <div class="toolbar-row">
+        <span class="row-label">C — 없음</span>
+        <div class="search-input case-c">
+          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <input value="이서연" />
+          <button class="clear" aria-label="검색어 지우기"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <span class="row-hint">Esc 또는 ⌘+Backspace</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2) Excel Export -->
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">엑셀 다운로드 (Export)</span>
+      <span>A 단일 버튼 / B 아이콘 only / C 옵션 dropdown / D 비동기 progress</span>
+      <span class="row-hint" id="toolbar-hint-export">디폴트: —</span>
+    </div>
+    <div class="toolbar-grid">
+      <div class="toolbar-row">
+        <span class="row-label">A — 버튼</span>
+        <button class="button secondary md">
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+          엑셀 다운로드
+        </button>
+        <span class="row-hint">즉시 다운로드 (.xlsx)</span>
+      </div>
+      <div class="toolbar-row">
+        <span class="row-label">B — 아이콘</span>
+        <button class="icon-btn" title="엑셀 다운로드" aria-label="엑셀 다운로드">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+        </button>
+        <span class="row-hint">tooltip 의존, 공간 절약</span>
+      </div>
+      <div class="toolbar-row">
+        <span class="row-label">C — dropdown</span>
+        <button class="button secondary md">
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+          엑셀 다운로드
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <span class="row-hint">옵션: 전체 / 필터 결과 / 선택한 항목 / 현재 페이지</span>
+      </div>
+      <div class="toolbar-row">
+        <span class="row-label">D — async</span>
+        <button class="button secondary md" disabled>
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+          엑셀 다운로드
+        </button>
+        <span class="export-progress">처리 중 — 2,481 / 12,000</span>
+        <span class="row-hint">서버 export 큐 + 완료 시 toast</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3) Page Size -->
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">페이지 크기 (Page Size)</span>
+      <span>A dropdown / B segmented / C auto-fit</span>
+      <span class="row-hint" id="toolbar-hint-pagesize">디폴트: —</span>
+    </div>
+    <div class="toolbar-grid">
+      <div class="toolbar-row">
+        <span class="row-label">A — dropdown</span>
+        <button class="button tertiary sm">
+          20개씩 보기
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <span class="row-hint">10 / 20 / 50 / 100 popover</span>
+      </div>
+      <div class="toolbar-row">
+        <span class="row-label">B — segmented</span>
+        <div class="segmented" role="tablist">
+          <button type="button">10</button>
+          <button type="button" class="on">20</button>
+          <button type="button">50</button>
+        </div>
+        <span class="row-hint">즉시 비교, compact 시그너처</span>
+      </div>
+      <div class="toolbar-row">
+        <span class="row-label">C — auto-fit</span>
+        <span class="auto-fit-tag">
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M4 12h16M4 6h16M4 18h16"/></svg>
+          자동 (현재 24행)
+        </span>
+        <span class="row-hint">UI 미노출, 컨테이너 높이로 자동 계산</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Surface Density Cases ===================== -->
+<section class="section" id="density">
+  <div class="section-head">
+    <h2>5d. Admin Surface Density Cases (대시보드/KPI/data-table 여백)</h2>
+    <p>화면 단위로 한 가지 케이스를 선택. 같은 화면에서 두 케이스 혼용 금지. 미니멈(C)·모니터링(D)은 4의 배수 ladder 유지하면서 정보 밀도 최대화. <code>DESIGN.md ### Admin / Dashboard surface > #### Admin Surface Density Cases</code>.</p>
+  </div>
+
+  <div class="case-card">
+    <div class="case-meta">
+      <span class="label">4 케이스 비교</span>
+      <span>content padding · card padding · KPI gap · button/input · row</span>
+      <span class="row-hint" id="density-hint">디폴트: —</span>
+    </div>
+    <div class="density-grid">
+      <div class="density-row">
+        <span class="row-label">A — 표준<br/>32 · 24 · 16<br/>btn 40 · row 56</span>
+        <div class="density-mini spacious">
+          <div class="kpi"><span class="kpi-label">오늘 주문</span><span class="kpi-val">1,284</span></div>
+          <div class="kpi"><span class="kpi-label">신규 회원</span><span class="kpi-val">328</span></div>
+          <div class="kpi"><span class="kpi-label">매출</span><span class="kpi-val">₩48.2M</span></div>
+          <input class="mini-input" value="주문번호 검색" />
+          <button class="mini-btn">엑셀 다운로드</button>
+          <div class="mini-row">#1023 · 홍길동</div>
+        </div>
+      </div>
+      <div class="density-row">
+        <span class="row-label">B — 컴팩트<br/>24 · 16 · 12<br/>btn 36 · row 44</span>
+        <div class="density-mini compact">
+          <div class="kpi"><span class="kpi-label">오늘 주문</span><span class="kpi-val">1,284</span></div>
+          <div class="kpi"><span class="kpi-label">신규 회원</span><span class="kpi-val">328</span></div>
+          <div class="kpi"><span class="kpi-label">매출</span><span class="kpi-val">₩48.2M</span></div>
+          <input class="mini-input" value="주문번호 검색" />
+          <button class="mini-btn">엑셀 다운로드</button>
+          <div class="mini-row">#1023 · 홍길동</div>
+        </div>
+      </div>
+      <div class="density-row">
+        <span class="row-label">C — 미니멈<br/>16 · 12 · 8<br/>btn 32 · row 40</span>
+        <div class="density-mini minimum">
+          <div class="kpi"><span class="kpi-label">오늘 주문</span><span class="kpi-val">1,284</span></div>
+          <div class="kpi"><span class="kpi-label">신규 회원</span><span class="kpi-val">328</span></div>
+          <div class="kpi"><span class="kpi-label">매출</span><span class="kpi-val">₩48.2M</span></div>
+          <input class="mini-input" value="주문번호 검색" />
+          <button class="mini-btn">엑셀 다운로드</button>
+          <div class="mini-row">#1023 · 홍길동</div>
+        </div>
+      </div>
+      <div class="density-row">
+        <span class="row-label">D — 모니터링<br/>8 · 8 · 8<br/>btn 32 · row 36</span>
+        <div class="density-mini monitor">
+          <div class="kpi"><span class="kpi-label">오늘 주문</span><span class="kpi-val">1,284</span></div>
+          <div class="kpi"><span class="kpi-label">신규 회원</span><span class="kpi-val">328</span></div>
+          <div class="kpi"><span class="kpi-label">매출</span><span class="kpi-val">₩48.2M</span></div>
+          <input class="mini-input" value="주문번호 검색" />
+          <button class="mini-btn">엑셀 다운로드</button>
+          <div class="mini-row">#1023 · 홍길동</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Filter Bar Cases ===================== -->
+<section class="section" id="filterbar">
+  <div class="section-head">
+    <h2>5e. Filter Bar Cases (admin) — 일시 + 엑셀 포함</h2>
+    <p>리스트 페이지 상단 필터 바 케이스. 일시(date-range)는 단일 트리거로 통합, 엑셀 다운로드는 <code>List Toolbar §2</code> 케이스 호출. <code>DESIGN.md ### filter-bar (admin) > #### Filter Bar Cases</code>.</p>
+  </div>
+
+  <div class="case-card">
+    <div class="case-meta">
+      <span class="label">A — 기본 chip</span>
+      <span>상태/카테고리 chip + 검색 + reset</span>
+      <span class="row-hint" id="fbar-hint">디폴트: —</span>
+    </div>
+    <div class="fbar">
+      <button class="chip">상태: 전체</button>
+      <button class="chip">카테고리: 음식</button>
+      <button class="chip">매장: 전체</button>
+      <div class="grow">
+        <div class="search-input case-a">
+          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <input value="" placeholder="주문번호, 회원명" />
+          <button class="clear" aria-label="검색어 지우기" style="display:none"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+      </div>
+      <button class="button ghost sm">필터 초기화</button>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">B — 일시 + 엑셀</span>
+      <span>date-range 단일 트리거 + chip 1~3 + 우측 엑셀 다운로드</span>
+    </div>
+    <div class="fbar">
+      <button class="date-trigger" aria-haspopup="dialog">
+        <span class="cal"><svg class="icon sm" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
+        기간: 2026-05-11 — 2026-05-18
+        <svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <button class="chip">상태: 전체</button>
+      <button class="chip">매장: 강남점·홍대점</button>
+      <div class="grow">
+        <div class="search-input case-a">
+          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <input value="홍길동" />
+          <button class="clear" aria-label="검색어 지우기"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+      </div>
+      <span class="fbar-counter">필터 (3)</span>
+      <button class="button ghost sm">필터 초기화</button>
+      <button class="button secondary md">
+        <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+        엑셀 다운로드
+      </button>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">C — 다중 패널</span>
+      <span>필터 토글 → 좌측 slide panel(320) + 저장된 뷰 + 엑셀 옵션 dropdown</span>
+    </div>
+    <div class="fbar">
+      <button class="panel-trigger" aria-expanded="false">
+        <svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
+        필터
+        <span class="pt-dot">5</span>
+      </button>
+      <button class="button tertiary sm">저장된 뷰: VIP 회원 ▾</button>
+      <div class="grow">
+        <div class="search-input case-a">
+          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <input value="" placeholder="회원/주문 검색" />
+          <button class="clear" aria-label="검색어 지우기" style="display:none"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+      </div>
+      <button class="button secondary md">
+        <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+        엑셀 다운로드
+        <svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">D — 검색만</span>
+      <span>단일 검색 페이지(회원/주문 단건 조회), 정적 필터 없음</span>
+    </div>
+    <div class="fbar">
+      <div class="grow" style="max-width:600px">
+        <div class="search-input case-a" style="width:100%">
+          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <input value="" placeholder="회원 ID 또는 주문번호 입력" />
+          <button class="clear" aria-label="검색어 지우기" style="display:none"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Column Filter Cases ===================== -->
+<section class="section" id="colfilter">
+  <div class="section-head">
+    <h2>5f. Column Filter Cases (테이블 컬럼 필터)</h2>
+    <p>컬럼 헤더 안에서 정렬·필터를 어디까지 노출할지. 전역 Filter Bar와 듀얼(D) 운영 시 역할 분리를 PR 본문에 명시. <code>DESIGN.md ### data-table > #### Column Filter Cases</code>.</p>
+  </div>
+
+  <div class="case-card">
+    <div class="case-meta">
+      <span class="label">A — 정렬만</span>
+      <span>sort 3-state icon만 노출, 컬럼 필터 없음</span>
+      <span class="row-hint" id="colf-hint">디폴트: —</span>
+    </div>
+    <div class="colf-frame">
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th><span class="h-control">주문번호 <span class="ctrl-cluster"><button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button></span></span></th>
+            <th><span class="h-control">고객명 <span class="ctrl-cluster"><button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button></span></span></th>
+            <th><span class="h-control">상태 <span class="ctrl-cluster"><button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button></span></span></th>
+            <th><span class="h-control">금액 <span class="ctrl-cluster"><button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button></span></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>#1023</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td>24,000</td></tr>
+          <tr><td>#1022</td><td>김민지</td><td><span class="badge active">진행중</span></td><td>18,500</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">B — 헤더 popover</span>
+      <span>sort + funnel icon, 활성 시 brand dot. 헤더 클릭 → popover에서 검색/체크박스/날짜</span>
+    </div>
+    <div class="colf-frame">
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th><span class="h-control">주문번호 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn" aria-label="필터"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+            <th><span class="h-control">고객명 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn on" aria-label="필터 적용됨"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+            <th><span class="h-control">상태 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn on" aria-label="필터 적용됨"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+            <th><span class="h-control">금액 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn" aria-label="필터"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>#1023</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td>24,000</td></tr>
+          <tr><td>#1022</td><td>김민지</td><td><span class="badge active">진행중</span></td><td>18,500</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="case-meta" style="margin-top:var(--space-8)">
+      <span style="color:var(--fg-tertiary)">고객명·상태 컬럼 funnel에 brand dot — 활성 필터 표기 (텍스트 'filtered' 라벨 금지).</span>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">C — 인라인 row</span>
+      <span>thead 다음 row에 컬럼별 input/select 영구 노출 (Excel 필터 패턴, 회계/정산)</span>
+    </div>
+    <div class="colf-frame">
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th>주문번호</th>
+            <th>고객명</th>
+            <th>상태</th>
+            <th>금액</th>
+          </tr>
+          <tr class="colf-inline-row">
+            <td><input placeholder="#1000-" /></td>
+            <td><input placeholder="홍길..." /></td>
+            <td>
+              <select>
+                <option>전체</option>
+                <option>대기중</option>
+                <option>진행중</option>
+                <option>완료</option>
+              </select>
+            </td>
+            <td><input placeholder="≥ 10,000" /></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>#1023</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td>24,000</td></tr>
+          <tr><td>#1022</td><td>김민지</td><td><span class="badge active">진행중</span></td><td>18,500</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">D — 듀얼</span>
+      <span>전역 Filter Bar + 컬럼 popover/inline 동시. Case D(초과밀도) 테이블 + 운영자 전문 사용</span>
+    </div>
+    <div class="fbar" style="margin-bottom:var(--space-8)">
+      <button class="date-trigger">
+        <span class="cal"><svg class="icon sm" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
+        기간: 최근 30일
+        <svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <button class="chip">상태: 진행중·완료</button>
+      <span class="fbar-counter">전역 (2) +컬럼 (2)</span>
+      <button class="button ghost sm">전체 초기화</button>
+    </div>
+    <div class="colf-frame">
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th><span class="h-control">주문번호 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn" aria-label="필터"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+            <th><span class="h-control">고객명 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn on" aria-label="필터 적용됨"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+            <th><span class="h-control">상태 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn" aria-label="필터"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+            <th><span class="h-control">금액 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn on" aria-label="필터 적용됨"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>#1023</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td>24,000</td></tr>
+          <tr><td>#1022</td><td>김민지</td><td><span class="badge active">진행중</span></td><td>18,500</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Tab Page Cases ===================== -->
+<section class="section" id="tabs">
+  <div class="section-head">
+    <h2>5g. Tab Page Cases (탭 페이지 패턴)</h2>
+    <p>in-page 탭(browser tab과 다른 콘텐츠 그룹 전환). 한 화면에 두 케이스 혼용 금지 — 섹션 탭은 A, 그 안 서브 토글은 C 식 위계 분리. <code>DESIGN.md ### tab (admin) > #### Tab Page Cases</code>.</p>
+  </div>
+
+  <div class="case-card">
+    <div class="case-meta">
+      <span class="label">A — line</span>
+      <span>하단 2px solid 강조 underline, 상세 페이지 안 섹션 전환 (주문 상세 &gt; 기본/배송/이력)</span>
+      <span class="row-hint" id="tab-hint">디폴트: —</span>
+    </div>
+    <div class="tab-group">
+      <div class="tab-line">
+        <button type="button" class="on">기본 정보</button>
+        <button type="button">배송 <span class="badge inactive" style="margin-left:6px">2</span></button>
+        <button type="button">결제</button>
+        <button type="button">이력</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">B — pill</span>
+      <span>brand-subtle 채움 pill, 카테고리/유형 전환 (상품 카테고리, 정산 유형)</span>
+    </div>
+    <div class="tab-group">
+      <div class="tab-pill">
+        <button type="button" class="on">음식</button>
+        <button type="button">생필품</button>
+        <button type="button">의약품</button>
+        <button type="button">반려동물</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">C — segmented</span>
+      <span>2~3개 분명한 토글 (테이블/보드 뷰, 일/월 단위)</span>
+    </div>
+    <div class="tab-group">
+      <div class="tab-segment" role="tablist">
+        <button type="button">일별</button>
+        <button type="button" class="on">월별</button>
+        <button type="button">연간</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">D — vertical</span>
+      <span>좌측 200~240 navigation 컬럼, 탭 5+ 또는 세부 페이지 다단 (설정 페이지)</span>
+    </div>
+    <div class="tab-vertical-frame">
+      <nav class="tab-vertical-nav" aria-label="설정 섹션">
+        <button type="button">일반</button>
+        <button type="button" class="on">알림</button>
+        <button type="button">권한</button>
+        <button type="button">보안</button>
+        <button type="button">결제</button>
+        <button type="button">통합</button>
+      </nav>
+      <div class="tab-vertical-body">
+        본문 영역 — 활성 탭(알림)의 콘텐츠가 우측에 표시됩니다.
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== Assembly: Dashboard ===================== -->
 <section class="section" id="dashboard">
   <div class="section-head">
@@ -2080,6 +2889,44 @@
     if (el) el.textContent = CASE_C_AFFORDANCE[slug] || '—';
   }
 
+  /* List Toolbar Cases — 시안별 디폴트 표기 (DESIGN.md ### data-table > #### List Toolbar Cases) */
+  const TOOLBAR_DEFAULT = {
+    'wanted':       { search: 'A — 항상 표시', export: 'A — 단일 버튼',          pagesize: 'A — dropdown (20)' },
+    'minimal-mono': { search: 'B — 호버/포커스', export: 'B — 아이콘 only',       pagesize: 'A — dropdown (20)' },
+    'toss-like':    { search: 'A — 항상 표시', export: 'A — 단일 버튼',          pagesize: 'A — dropdown (20)' },
+    'material-3':   { search: 'B — 호버/포커스', export: 'A — 단일 버튼',          pagesize: 'A — dropdown (20)' },
+    'linear-like':  { search: 'C — 없음 (Esc/⌘+Backspace)', export: 'B — 아이콘 only (⌘E)', pagesize: 'B — segmented (20)' },
+  };
+  function renderToolbarDefault(slug) {
+    const d = TOOLBAR_DEFAULT[slug] || {};
+    const hs = document.getElementById('toolbar-hint-search');
+    const he = document.getElementById('toolbar-hint-export');
+    const hp = document.getElementById('toolbar-hint-pagesize');
+    if (hs) hs.textContent = '디폴트: ' + (d.search || '—');
+    if (he) he.textContent = '디폴트: ' + (d.export || '—');
+    if (hp) hp.textContent = '디폴트: ' + (d.pagesize || '—');
+  }
+
+  /* Surface Density / Filter Bar / Column Filter / Tab 시안별 디폴트 (DESIGN.md 각 케이스 매트릭스 정합) */
+  const ADMIN_DEFAULT = {
+    'wanted':       { density: 'A — 표준',   fbar: 'A 또는 B',     colf: 'A — 정렬만',  tab: 'A — line' },
+    'minimal-mono': { density: 'B — 컴팩트', fbar: 'A 또는 B',     colf: 'A or B',      tab: 'A — line' },
+    'toss-like':    { density: 'A — 표준',   fbar: 'A 또는 B',     colf: 'A — 정렬만',  tab: 'A — line (또는 B)' },
+    'material-3':   { density: 'A — 표준',   fbar: 'A 또는 B',     colf: 'A — 정렬만',  tab: 'A — line (M3 Primary)' },
+    'linear-like':  { density: 'C — 미니멈', fbar: 'C — 다중 패널', colf: 'B — popover (⌘F)', tab: 'C — segmented (설정은 D)' },
+  };
+  function renderAdminDefault(slug) {
+    const d = ADMIN_DEFAULT[slug] || {};
+    const setHint = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = '디폴트: ' + (val || '—');
+    };
+    setHint('density-hint', d.density);
+    setHint('fbar-hint',    d.fbar);
+    setHint('colf-hint',    d.colf);
+    setHint('tab-hint',     d.tab);
+  }
+
   function setTheme(t) {
     root.setAttribute('data-theme', t);
     btnLight.setAttribute('aria-pressed', t === 'light');
@@ -2092,6 +2939,8 @@
     selectDesign.value = slug;
     renderPolicy(slug);
     renderCaseCAffordance(slug);
+    renderToolbarDefault(slug);
+    renderAdminDefault(slug);
     try { localStorage.setItem(KEY_DESIGN, slug); } catch (e) {}
   }
 

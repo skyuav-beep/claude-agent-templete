@@ -32,6 +32,23 @@
 
 ## 이번 세션에서 완료한 작업
 
+- admin surface 4종 케이스 매트릭스 추가 — Surface Density / Filter Bar / Column Filter / Tab Page. (2026-05-18)
+  - **DESIGN.md `#### Admin Surface Density Cases`** (admin 영역 소개 글 직후) — 4-케이스(A 표준 32/24/16·row 56 / B 컴팩트 24/16/12·row 44 / C 미니멈 16/12/8·row 40 / D 모니터링 8/8/8·row 36) + 화면 단위 한 케이스 적용 원칙 + 시안 디폴트(wanted·toss-like·material-3=A / minimal-mono=B / linear-like=C).
+  - **DESIGN.md `### filter-bar (admin)` 신설 + `#### Filter Bar Cases`** — 마케팅 `### filter-bar`와 별개 admin용 컴포넌트. 4-케이스(A 기본 chip / B 일시범위+엑셀 / C 다중 패널+저장된 뷰 / D 검색만) + yaml 사양(date-range 단일 트리거 + List Toolbar §2 엑셀 호출 + counter `필터 (N)` + saved-views + column-toggle).
+  - **DESIGN.md `### data-table > #### Column Filter Cases`** — 4-케이스(A 정렬만 / B 헤더 popover + brand dot 활성 표기 / C 인라인 row + Excel 필터 패턴 / D 듀얼 전역+컬럼). popover 사양(240/280/320) + 활성 표기 정책(텍스트 'filtered' 금지).
+  - **DESIGN.md `### tab (admin)` 신설 + `#### Tab Page Cases`** — 4-케이스(A line underline / B pill 채움 / C segmented / D vertical 좌측). yaml 사양(height 40, counter badge sm, overflow). 운영 규칙(혼용 금지·이모지/gradient 금지·탭 ≥7 시 D 승격·라벨 명사 단문).
+  - **admin-fe-preview.html 5d~5g 4 섹션 신설** (TOC 4 항목 추가) — `#density` 4행 비교 specimen(spacious/compact/minimum/monitor 클래스로 CSS variable 전환), `#filterbar` 4 케이스(date-trigger + chip + counter + 엑셀 dropdown + panel-trigger), `#colfilter` 4 케이스(mini-table 4컬럼 + h-control sort/funnel + colf-inline-row select), `#tabs` 4 케이스(line underline + pill + segment + vertical-frame indicator). `ADMIN_DEFAULT` 매핑 + `renderAdminDefault(slug)`로 4 섹션 우측 hint 동기. JS `node --check` 통과. 116KB → 144KB.
+  - **`.claude/agents/design-reviewer.md A-8~A-11`** 신설 — Surface Density(케이스 혼재/비-4 ladder/row 36 미만/Case D 일반 화면 적용 차단 등), Filter Bar(일시 분리 금지·List Toolbar §2 호출 필수·필터 0 카운터 숨김·6+ chip 패널 승격 등), Column Filter(text 'filtered' 차단·Case C input ≥32·sort+filter 분리 등), Tab Page(혼용·이모지·gradient·텍스트 카운터·탭 ≥7·라벨 명사형 등).
+  - **`templates/data-table-density.md`** §1 화면 컨텍스트에 density 케이스 선택 4종 + §9 Filter Bar + §10 Column Filter + §11 Tab Page 신설(기존 §9 합의/기록 → §12). 14컬럼 주문 리스트 작성 예시도 §9/§10/§11 항목 추가.
+  - DESIGN.md frontmatter `last_updated` 2026-05-18 유지.
+
+- `### data-table` 아래 `#### List Toolbar Cases` 신설 + admin-fe-preview specimen + design-reviewer A-7 + density intake §8 확장. (2026-05-18)
+  - **DESIGN.md ### data-table > #### List Toolbar Cases** 신규 — 검색 입력 X(clear) 3종(A 항상 / B 호버·포커스 / C 없음) + 엑셀 다운로드 4종(A 단일 버튼 / B 아이콘 only / C 옵션 dropdown / D 비동기 progress) + 페이지 크기 3종(A dropdown / B segmented / C auto-fit) 매트릭스. 각 컴포넌트 yaml 토큰 사양(slot/size/color/component/keyboard/a11y) + 시안별 디폴트 표 5종.
+  - `templates/data-table-density.md` 섹션 재편: 기존 §8 합의/기록 → §9로 밀고 §8 List Toolbar 신설(8.1 검색 clear / 8.2 엑셀 / 8.3 페이지 크기). 작성 예시도 14컬럼 주문 리스트 시나리오에 §8 답변 추가.
+  - `.claude/agents/design-reviewer.md A-7` 신설 — 3 컴포넌트 차단/경고 항목 18종(검색: hit area / 색 alias / Case A 노출 / Case C 접근성 / aria-label, 엑셀: 두 버튼 통합 / Case D 승격 / gradient 정책 / disabled 중복호출 / 동사형 카피 / tooltip, 페이지 크기: ladder 외 옵션 / 100+ virtual / reset / segmented 강조색 / auto-fit info / aria-label) + 공통 시안 디폴트 정합.
+  - `docs/admin-fe-preview.html` 5c 섹션 `#toolbar` 신설(TOC 추가) — 9개 케이스 row 모두 인터랙티브 specimen으로 렌더, 시안 dropdown에 연동되는 `TOOLBAR_DEFAULT` 매핑(`renderToolbarDefault(slug)`)으로 우측 hint에 활성 시안 디폴트 자동 표기. CSS는 `.toolbar-grid`/`.toolbar-row`/`.search-input` (.case-a/b/c) + `.segmented` + `.auto-fit-tag` + `.export-progress` 스피너 신설. JS `node --check` 통과.
+  - DESIGN.md frontmatter `last_updated` 2026-05-16 → 2026-05-18.
+
 - `docs/business-logic-playbook.md` §5 확장 + `templates/business-logic-request.md` 작성 예시 보강 — build/docker/git 단계별 시나리오. (2026-05-16)
   - **§5.1 단계별 실행 흐름**: 6단계 순서(`git status` → lint → unit test → build → e2e → docker rebuild 판단) + 각 단계 통과 기준.
   - **§5.2 Docker rebuild 판단 기준**: 6종 변경 위치 매트릭스(src만 / package.json·lock / Dockerfile / .env / migration / nginx config) + rebuild 필요 여부 + 명령. PR 본문 사유 기록 정책.
@@ -320,6 +337,8 @@
 
 ### 디자인 라이브러리 후속 (사용자 검수 대기)
 - **사용자가 `docs/admin-fe-preview.html` 브라우저 시각 검수 진행 중**. 활성 시안 = `wanted`. dropdown으로 5개 시안 토글하며 의도와 다른 부분 발견 시 토큰값/fallback/시그너처 spec 조정 예정. 검수 결과 받으면 해당 카탈로그 갱신 + STATE 변경 이력 기록.
+- 2026-05-18 추가 결과: `검색창 X / 엑셀 다운로드 / 페이지 크기` 3 컴포넌트도 케이스별 선택 가능하게 추가 요청 → `List Toolbar Cases`로 일괄 반영 완료. 검수자는 `#toolbar` 섹션에서 5개 시안 × 9개 케이스 row 확인.
+- 2026-05-18 추가 검수 요청: 대시보드/KPI/data-table `여백 최소화 포함` + `검색 필터에 일시 + 엑셀` + `컬럼 필터` + `탭 페이지` 4 매트릭스로 확장 → 모두 반영. preview `#density`/`#filterbar`/`#colfilter`/`#tabs` 4 신규 섹션에서 시안 dropdown 토글로 케이스 비교 가능.
 - preview HTML fetch 모델 마이그레이션은 시안 5종 단계에서 보류. 시안 10+ 시점에 재검토(현재 inline 모델 86KB는 충분히 가벼움).
 - 라이브러리 v1 시드 5종 완성: `wanted`, `minimal-mono`, `toss-like`, `material-3`, `linear-like`. 추가 시안 요청 시 `designs/_template.md`에서 시작.
 

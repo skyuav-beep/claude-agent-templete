@@ -65,6 +65,75 @@ UI/스타일 산출물의 디자인 일관성을 점검하는 전용 서브에�
 - compact 행 높이 채택 시 `{typography.body2}` → `{typography.caption1}` 다운이 사용자 테스트 없이 적용됐는가 (경고)
 - 요구사항 합의 산출물이 있는가 — `templates/data-table-density.md` 양식 또는 PR 본문에 case/시안/밀도 명시(권장, 누락 시 경고)
 
+#### A-7. List Toolbar Cases (검색 X / 엑셀 / 페이지 크기)
+`DESIGN.md ### data-table > #### List Toolbar Cases` 3 컴포넌트 × 케이스 매트릭스 기준.
+
+**검색 입력 X(clear)**
+- 검색 input(`{component.search}` 또는 list filter 검색)에 trailing X 노출 시 case A/B/C 중 한 가지를 명시했는가 (누락 시 경고)
+- X 아이콘이 14×14 + 20×20 hit area 미만인가 (touch target 위반 — 차단)
+- X 아이콘 색이 `{colors.fg-tertiary}` 외 임의 값인가 (alias 위반 — 차단)
+- Case A에서 값이 있는데 X가 노출되지 않는가 (정책 위반 — 차단)
+- Case C(키보드만)인데 단축키 안내(placeholder, aria 또는 tooltip)가 없는가 (접근성 — 경고)
+- aria-label "검색어 지우기" 누락(`Esc`/`Clear` 영문 라벨도 허용) — 차단
+
+**엑셀 다운로드**
+- 동일 화면에 별도 Excel + CSV 두 버튼을 노출했는가 (Case C로 통합 필수 — 차단)
+- Case A/B에서 행 수 1000+ 가능한 export인데 Case D로 승격하지 않았는가 (UX 위반 — 경고)
+- export 버튼/popover에 비-chrome gradient를 사용했는가 (B-2 정책과 정합 — 차단)
+- Case D 비동기 진행 중 동일 버튼이 disabled가 아닌가 (중복 호출 — 차단)
+- copy가 동사형(`엑셀 다운로드`, `내보내기`)이 아닌가 (B-3 정책 — 경고)
+- Case B(아이콘 only)인데 tooltip/aria-label 누락 — 차단
+
+**페이지 크기**
+- 옵션 값이 ladder 외(15/25/40 등)인가 → 10/20/50/100 또는 10/20/50 외 값 사용 시 경고
+- 100 이상 옵션이 있는데 가상 스크롤이 비활성인가 — 차단
+- 변경 시 1페이지로 reset되지 않는가 (UX 위반 — 경고)
+- Case B(segmented)에서 active 셀이 `{colors.bg-surface}` + `{elevation.shadow-1}` 정책 위반(임의 강조색) — 차단
+- Case C(auto-fit)인데 pagination info(`1–N / total`)에 행 수가 노출되지 않는가 — 경고
+- aria-label "페이지당 행 수" 또는 동등한 label 누락 — 차단
+
+**3 컴포넌트 공통**
+- 활성 시안의 디폴트 케이스(`DESIGN.md` 매트릭스의 "시안별 디폴트" 표)와 실제 구현이 불일치하면서 정책 합의 기록(`templates/data-table-density.md §8` 또는 PR 본문)이 없는가 — 경고
+
+#### A-8. Admin Surface Density Cases (화면 단위 여백)
+`DESIGN.md ### Admin / Dashboard surface > #### Admin Surface Density Cases` 4-케이스(A 표준/B 컴팩트/C 미니멈/D 모니터링) 기준.
+- 한 화면에 두 케이스의 토큰이 혼재돼 있는가(예: KPI는 padding 24인데 그 아래 테이블만 padding 8) — 차단
+- 비-4의 배수 padding/gap(6/10/14/18/22)이 도입됐는가 — 차단
+- row height 36 미만(예: 32/30) 사용 — 차단
+- Case C/D에서 row 40 이하인데 `{typography.body2}` 그대로(label2/caption1 다운 미적용) — 경고
+- Case D(모니터링)를 일반 운영 화면(주문 관리/회원 관리)에 적용 — 차단(전광판/콜센터 전용)
+- 카드에 그림자 도입(시안 `policy.shadow_on_cards: false`인 경우) — B-1과 정합, 차단
+- 화면 단위 케이스 결정 기록 없음(`templates/data-table-density.md §1` density 항목) — 경고
+
+#### A-9. Filter Bar Cases (admin)
+`DESIGN.md ### filter-bar (admin) > #### Filter Bar Cases` 기준.
+- 일시(date-range)를 시작일/종료일 input 두 개로 분리 노출 — 차단(단일 트리거 통합 필수)
+- 엑셀 다운로드를 Filter Bar에서 별도 정의(List Toolbar Cases 호출 없이 inline button 작성) — 차단
+- 필터 활성 개수 카운터가 0인데 `필터 (0)` 텍스트 노출 — 경고(숨김 필수)
+- filter chip ≥6개인데 패널(Case C)로 승격하지 않음 — 경고
+- Case C 패널에서 변경 즉시 본문 결과 갱신(`적용` 버튼 누르지 않아도 fetch) — 경고(데이터 트래픽·인지 부담)
+- 일시 preset chips(오늘/어제/최근 7일)를 상단 바에 직접 노출(popover 내부 권장) — 경고
+- 필터 변경 시 1페이지 reset 또는 URL query 동기화 누락 — 경고
+
+#### A-10. Column Filter Cases
+`DESIGN.md ### data-table > #### Column Filter Cases` 기준.
+- 활성 컬럼 필터 상태를 텍스트(`filtered` 라벨)로 표기 — 차단(brand dot 4×4 표기 필수)
+- Case D(듀얼)인데 전역/컬럼 역할 분리 명시 없음(PR 본문) — 경고
+- Case C(인라인 row) input height < 32 — 차단
+- Case C(인라인 row) 정렬 규칙(right/left)이 thead와 불일치 — 차단
+- 동일 컬럼에서 sort+filter가 한 버튼에 결합(분리되지 않음) — 경고
+- 컬럼 필터 popover footer에 `초기화` + `적용` 버튼 누락 — 경고
+
+#### A-11. Tab Page Cases
+`DESIGN.md ### tab (admin) > #### Tab Page Cases` 기준.
+- 한 화면에 두 케이스 혼용(섹션 탭 A + 그 안 서브 토글 C는 허용 / 동일 레벨에 line + pill 혼용은 차단)
+- 카운터를 텍스트 괄호(`주문(12)`)로 표기 — 차단(`{component.badge}` sm 분리 필수)
+- 비활성 탭에 이모지 사용 — 차단
+- 활성 indicator에 gradient 사용 — 차단(시안 `policy.gradient_locations` 무관, 일괄 금지)
+- 탭 ≥7개인데 horizontal(A/B/C) 유지(Case D 또는 nav-link 미승격) — 경고
+- 탭 라벨이 동사형 또는 격식체(`정보를 봅니다`, `정보 확인`) — 차단(명사 단문)
+- Case D(vertical)에서 좌측 폭 200~240 범위 외 — 차단(시안 sidebar-nav와 정합)
+
 ### B. 시안별 정책 규칙 (활성 DESIGN.md에서 추출)
 
 활성 DESIGN.md의 frontmatter `policy:` 블록과 `## Do's and Don'ts` 섹션을 시작 시 로드해 시안별로 적용. 본 섹션은 Wanted 시안 기준 예시지만, 다른 시안 활성 시 그 시안의 정책으로 자동 교체된다.
