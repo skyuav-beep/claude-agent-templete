@@ -2,7 +2,7 @@
 name: 원티드
 slug: wanted
 category: etc
-last_updated: "2026-05-18"
+last_updated: "2026-05-19"
 sources:
   - https://api.anthropic.com/v1/design/h/j7_orggLzbQ43g24R8OfYA
   - https://www.wanted.co.kr
@@ -1212,6 +1212,241 @@ overflow:
 | `toss-like` | A (또는 B) | 마케팅 카테고리 전환은 B |
 | `material-3` | **A** | M3 Primary Tabs(라벨 + indicator) 매핑 |
 | `linear-like` | **C** (디폴트) | segmented compact 시그너처. 설정·세부 페이지는 D |
+
+### User FE surface 컴포넌트 (synthesized)
+
+아래 5종은 consumer-facing user FE 표면(모바일 반응형 + 모바일 전용)을 신규로 만들 때 필요한 합성 컴포넌트다. admin 5종이 sidebar·top-bar 같은 chrome 중심이라면, user FE 5종은 mobile-first 화면 골격(app-bar·bottom-nav)과 consumer 카탈로그 패턴(feed-card·search-bar·bottom-sheet)을 다룬다. 기존 토큰·atomic 컴포넌트(`button-*`, `input`, `chip`, `badge`, `avatar`, `icon-button`)와 Brand & Style 정책(평면 표면 + 1px 헤어라인 + 단일 강조색 + 카피 톤)을 조합해 합성한 명세이며, 다운스트림 product가 user FE를 신규로 만들 때 그대로 호출하거나 컴포넌트 로컬값만 미세 조정해 사용한다.
+
+각 컴포넌트는 반응형(mobile/tablet/desktop)과 모바일 전용(viewport 360~430) 두 운영 모드를 모두 지원한다. 반응형 동작은 본 섹션과 별개로 `## Responsive Behavior`의 breakpoint 사다리를 따른다.
+
+### app-bar (mobile)
+
+모바일 화면 상단 chrome. admin `### top-bar`의 user FE 변형이며, height·gap·우측 cluster 구성이 다르다. sticky top + safe-area-inset-top 보존이 표준.
+
+```yaml
+height:         52                          # mobile 디폴트. desktop ≥1024에서는 56으로 승격
+bg:             {colors.bg-surface}
+border-bottom:  1px {colors.border-subtle}  # 시안의 policy에 따라 생략 가능 (toss-like, material-3)
+padding:        0 {spacing.space-16}
+safe-area:      env(safe-area-inset-top)    # iOS notch 회피, 상단 padding에 합산
+left-cluster:
+  variants:
+    - back-button: {component.icon-button} (chevron-left 24px) — 상세/하위 화면
+    - hamburger:   {component.icon-button} (menu 24px) — 루트 화면(옵션)
+    - logo:        24px symbol — 루트 화면 디폴트
+  gap:        {spacing.space-12}
+center-cluster:
+  variants:
+    - page-title: {typography.title3}  # 상세 화면 (back-button과 페어)
+    - search-bar: full-width {component.search} (검색 중심 화면)
+    - none:       (홈/피드 — 로고 좌측이면 center는 비움)
+right-cluster:
+  gap:        {spacing.space-8}
+  items:      max 2개 {component.icon-button} (예: 검색, 알림). 3+ 시 우측 'more' menu 권장
+  notification-dot: 6px {colors.bg-danger} circle, icon 우상단
+```
+
+좌측 cluster가 page-title을 포함하지 않는 디자인(toss-like 모바일)에서는 center를 사용하고, page-title은 항상 단문이며 줄바꿈 금지 — overflow는 `...` ellipsis.
+
+### bottom-nav
+
+모바일 1차 네비게이션. desktop에서는 sidebar 또는 top-nav로 분리되며 본 컴포넌트는 사용하지 않는다.
+
+```yaml
+height:         56                          # tap target 48 + 상하 padding
+bg:             {colors.bg-surface}
+border-top:     1px {colors.border-subtle}
+padding-bottom: env(safe-area-inset-bottom) # iOS home indicator 회피
+position:       sticky bottom, z-index 50
+display:        flex, items 균등 분배
+item:
+  width:        100% / item-count           # 균등 분배 (3~5탭)
+  min-width:    64                          # hit area
+  padding:      {spacing.space-8} 0
+  gap:          {spacing.space-4}           # icon + label 수직 간격
+  icon:         24px stroke (active는 filled 또는 weight 상승)
+  label:        {typography.caption2}       # 11/600, ALL-CAPS 금지
+  color:        {colors.fg-tertiary}        # inactive
+  active-color: {colors.fg-brand}
+  active-icon:  filled variant + currentColor 상속
+  indicator:    label 위에 4px dot 또는 아이콘 weight 상승만 (좌측 rail 금지)
+fab-variant:                                # Cases B 중앙 강조 액션
+  size:         56 (원형), radius-full
+  bg:           {colors.bg-brand}
+  fg:           {colors.fg-on-brand}
+  position:     중앙 탭 자리에 -8 offset (bottom-nav 위로 살짝 돌출)
+  shadow:       {elevation.shadow-2} (시안의 shadow_on_cards 정책 무시 — fab은 elevation 표면)
+```
+
+운영 규칙:
+- 탭 개수는 3·4·5 중 하나. 6 이상은 더보기 메뉴로 그룹화한다.
+- 활성 indicator에 gradient 사용 금지(시안 `policy.gradient_locations` 따른다).
+- 라벨이 없는 icon-only 모드(`label-display: false`)는 hit area 보장을 위해 icon 28px로 승격.
+- iOS Safari 하단 chrome 침범 회피용 `safe-area-inset-bottom` padding 필수.
+
+#### Bottom Nav Cases
+
+| 케이스 | 구성 | 적합 상황 |
+|---|---|---|
+| **A — 5탭 균등 (표준)** | icon + label 5개 균등 분배 | 일반 user FE 앱 디폴트 (커머스, SNS, 라이프스타일) |
+| **B — 중앙 FAB + 4탭** | 좌2 + FAB + 우2. FAB은 주요 액션(글쓰기, 카메라, 신청) | 컨텐츠 생성 액션이 명확할 때 (인스타·트위터·신청 앱) |
+| **C — 라벨 only (텍스트 탭)** | 텍스트 라벨만, 아이콘 없음. height 44 | 텍스트 위계 강조 (linear-like, 문서/뉴스 앱) |
+| **D — 아이콘 only (compact)** | 아이콘만, 라벨 없음. icon 28px, height 48 | 모바일 game/카메라처럼 chrome 최소화 |
+
+시안별 디폴트:
+
+| 시안 | 디폴트 | 비고 |
+|---|---|---|
+| `wanted` / `toss-like` / `material-3` | A | 5탭 균등이 user FE 표준 |
+| `minimal-mono` | A (또는 C) | 미니멀 톤은 텍스트 only도 정합 |
+| `linear-like` | **C** | 텍스트 + dark 시그너처 |
+
+### feed-card
+
+홈/피드/리스트 화면의 기본 unit. 마케팅 `### job-card`의 일반화된 형태로, 썸네일 + 제목 + 메타 + (옵션) 액션 구성. consumer 카탈로그(상품, 게시물, 콘텐츠) 공통.
+
+```yaml
+container:
+  bg:          {colors.bg-surface}
+  border:      1px {colors.border-subtle}     # 시안 policy.shadow_on_cards가 true면 shadow-1로 대체 가능
+  radius:      {rounded.radius-12}            # mobile은 12, desktop은 8~12 시안 정책
+  padding:     {spacing.space-16}
+  gap:         {spacing.space-12}             # 썸네일 + 본문 수직 또는 수평
+layout-variants:
+  - vertical:   썸네일 상단 full-width, 본문 하단. aspect 16/9 또는 4/3
+  - horizontal: 썸네일 좌측 (96~120 width), 본문 우측. mobile list
+  - compact:    썸네일 없음, 텍스트만. row 64
+thumbnail:
+  aspect:      16/9 (vertical media), 1/1 (avatar 카드), 4/3 (상품)
+  radius:      {rounded.radius-8}
+  placeholder: gradient (시안 policy.gradient_locations에 `"thumbnail"` 있을 때만) 또는 평면 {colors.bg-muted}
+body:
+  title:       {typography.title3}            # 18/700, 2줄 ellipsis
+  description: {typography.body2} {colors.fg-secondary}  # 1~2줄 ellipsis
+  meta-row:                                   # 작성자/시간/카테고리 등
+    typography: {typography.caption1}
+    color:      {colors.fg-tertiary}
+    separator:  "·" 텍스트, 좌우 {spacing.space-8} 간격
+  badges:      {component.badge} 또는 {component.chip} sm (좌측 정렬, 최대 2개)
+action-row:                                    # 옵션
+  position:    카드 하단 또는 우측 (변형에 따라)
+  items:       {component.icon-button} sm 또는 {component.button-tertiary} sm
+  examples:    좋아요, 북마크, 공유, 더보기
+state-hover:
+  bg:          {colors.bg-subtle}              # 매우 약한 highlight, mobile에서는 active state
+  cursor:      pointer
+```
+
+운영 규칙:
+- 카드 전체 click area로 상세 진입. action-row의 액션 버튼은 `event.stopPropagation()` 분리.
+- 모바일에서 carousel 슬라이드 표시 시 카드 폭은 viewport - `{spacing.space-32}` (좌우 16 peek).
+- 가격/숫자 강조가 필요하면 본문 하단에 `{typography.title2}` + `{colors.fg-strong}` 또는 `{colors.fg-brand}` (예: 쇼핑 카드의 가격).
+
+### search-bar
+
+화면 상단 또는 app-bar 안에 sticky로 두는 mobile-first 검색 표면. desktop은 header 내부 inline `{component.search}`를 사용하고 본 컴포넌트는 mobile-only 변형이다.
+
+```yaml
+container:
+  bg:          {colors.bg-surface}              # 시안에 따라 bg-muted (sunken style)
+  height:      48
+  border:      1px {colors.border-subtle}       # bg-muted 변형은 border 생략
+  radius:      {rounded.radius-12}              # mobile은 12, 시안 toss-like는 16
+  padding:     0 {spacing.space-12}
+  gap:         {spacing.space-8}
+icon-left:
+  component:   {component.icon} (search 20px), color {colors.fg-tertiary}
+input:
+  flex:        1
+  typography:  {typography.body1}
+  placeholder-color: {colors.fg-tertiary}
+  placeholder-text:  "검색어를 입력해 보세요" (ko-friendly) / "Search" (en-sentence)
+icon-right:
+  variants:
+    - clear:    {component.icon-button} sm (x icon 16px). input 비어있으면 숨김
+    - voice:    {component.icon-button} sm (mic icon 16px) — 옵션
+    - filter:   {component.icon-button} sm (sliders icon 18px) — 필터와 페어 운영 시
+focus-mode:                                       # mobile 풀스크린 검색 패턴
+  trigger:     input focus
+  surface:     full-viewport overlay {colors.bg-canvas}
+  app-bar:     좌측 back-button + 검색 input + 우측 cancel 텍스트 버튼
+  content:     최근 검색어 / 추천 / 자동완성 list
+  exit:        cancel 텍스트 버튼 (한글: "취소", en: "Cancel") 또는 back-button
+```
+
+#### Search Cases
+
+| 케이스 | 트리거 동작 | 적합 상황 |
+|---|---|---|
+| **A — inline (표준)** | input focus → 같은 자리에서 입력. 자동완성은 dropdown | 검색이 보조 액션인 일반 user FE |
+| **B — 풀스크린 overlay** | input focus → 풀스크린 검색 모드 진입. cancel 버튼으로 복귀 | 검색이 1차 액션인 앱(쇼핑·미디어·맵) |
+| **C — voice + filter combo** | input + 우측 mic + filter icon. 모두 옵션 | 음성 검색이 의미 있는 도메인(맵, 음악) |
+| **D — sunken pill** | bg-muted 채움, border 없음, radius-full | 미니멀 톤 또는 search가 chrome 안에 통합되는 경우 |
+
+### bottom-sheet
+
+모바일에서 modal·dropdown·picker를 대체하는 표준 surface. 데스크탑은 `{component.modal}` 또는 popover로 분기.
+
+```yaml
+container:
+  bg:           {colors.bg-surface}
+  border-top:   1px {colors.border-subtle}       # 시안 policy.shadow_on_cards가 true면 상단에 shadow-2 추가
+  radius-top:   {rounded.radius-16} {rounded.radius-16} 0 0  # 상단 좌우만
+  padding:      {spacing.space-16} {spacing.space-16} {spacing.space-24}
+  max-height:   85vh                              # 화면 상단 15% 여백
+  position:     fixed bottom
+  z-index:      60
+handle:                                            # 시각적 drag 가능 표시
+  width:        36
+  height:       4
+  bg:           {colors.border-strong}
+  radius:       {rounded.radius-full}
+  align:        center, margin-bottom {spacing.space-12}
+header:
+  title:        {typography.title3}
+  subtitle:     {typography.body2} {colors.fg-secondary}
+  close:        {component.icon-button} 우측 (X icon 20px)
+  border-bottom:1px {colors.border-subtle} (옵션, content 분리 시)
+content:
+  scroll:       overflow-y auto, padding bottom {spacing.space-24}
+  list-style:   {component.input}, {component.checkbox}, list-row 등 자유 조립
+action-bar:                                       # 옵션, sticky bottom
+  bg:           {colors.bg-surface}
+  border-top:   1px {colors.border-subtle}
+  padding:      {spacing.space-12} {spacing.space-16}
+  cta:          {component.button-primary} lg full-width
+backdrop:
+  bg:           rgba(0,0,0, 0.40)
+  click:        dismiss (옵션 — 위험 액션은 dismiss 금지)
+animation:
+  enter:        translate-y from 100% to 0, 200ms ease-out
+  exit:         translate-y from 0 to 100%, 150ms ease-in
+```
+
+운영 규칙:
+- 단순 선택(필터, 정렬, 카테고리)은 bottom-sheet, 위험 액션(삭제 확인)은 `{component.modal}`로 분리.
+- handle 표시는 드래그 가능한 sheet일 때만. 고정 sheet는 handle 생략.
+- iOS safe-area-inset-bottom은 action-bar padding에 합산.
+- sheet 내부 form은 한 화면 안에 들어가도록 — 길어지면 풀스크린 modal로 승격.
+
+#### 모바일 전용 인터랙션 패턴 (mobile-only 운영)
+
+본 절은 viewport 360~430 고정 운영(`docs/user-fe-mobile-design-guide.md`) 시점에 한해 적용되는 추가 인터랙션 패턴이다. 반응형 운영(`docs/user-fe-design-guide.md`)에서는 옵션이며 데스크탑 표면에는 적용하지 않는다.
+
+**segmented-control (in-page tab)**
+admin `### tab (admin)` Case C(segmented)의 모바일 변형. height 36, container `{colors.bg-muted}` + `{rounded.radius-full}`, active cell `{colors.bg-surface}` + `{elevation.shadow-1}` (시안 `policy.shadow_on_cards: false`인 경우 `{colors.border-default}` 1px로 대체). 2~3개 토글 전용(예: 일/월/연, 리스트/지도). 4개+는 `### tab (admin)` Case A(line underline) 사용.
+
+**list-row swipe-action**
+horizontal 스와이프로 행 우측에 액션 노출(삭제, 즐겨찾기 등). 액션 버튼은 height = row height, width 64~80, bg `{colors.bg-danger}` (삭제) 또는 `{colors.bg-brand}` (즐겨찾기), color `{colors.fg-on-brand}`, `{typography.label2}`. 시각 affordance: 행 우측 끝에 chevron 또는 dot indicator 노출(스와이프 가능 표시). 위험 액션(삭제)은 swipe만으로 즉시 실행 금지 — 확인 단계(`### bottom-sheet` 또는 second tap) 거침.
+
+**pull-to-refresh**
+화면 상단에서 아래로 당기는 제스처로 콘텐츠 새로고침. affordance: 당기는 동안 상단에 spinner 또는 progress arc 노출(`{spacing.space-32}` 높이 영역), 80px 임계 이상 당기면 release-to-refresh 표기. refresh 중에는 상단 sticky spinner 유지. 데스크탑/태블릿 표면에는 미적용 — 명시 새로고침 버튼 사용.
+
+**native-like toast (mobile)**
+`{component.toast}`의 모바일 변형. 위치는 상단 sticky(app-bar 아래 `{spacing.space-12}` offset) 또는 하단 sticky(bottom-nav 위 `{spacing.space-12}` offset, sticky CTA가 있으면 그 위). max-width: viewport - `{spacing.space-32}`. radius `{rounded.radius-12}`. duration 3~4초. swipe-to-dismiss 허용.
+
+**sticky CTA 표준**
+모든 1차 액션 화면(상세/폼/신청/결제)에서 sticky bottom CTA를 표준으로 둔다. height 64 (CTA 48 + padding 8/8), bg `{colors.bg-surface}`, border-top 1px `{colors.border-subtle}`. safe-area-inset-bottom 합산. desktop은 본 패턴 미사용(우측 사이드 패널 또는 페이지 인라인).
 
 ### logo
 

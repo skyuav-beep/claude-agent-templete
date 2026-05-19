@@ -134,6 +134,100 @@ UI/스타일 산출물의 디자인 일관성을 점검하는 전용 서브에�
 - 탭 라벨이 동사형 또는 격식체(`정보를 봅니다`, `정보 확인`) — 차단(명사 단문)
 - Case D(vertical)에서 좌측 폭 200~240 범위 외 — 차단(시안 sidebar-nav와 정합)
 
+#### A-12. User FE 반응형 컴포넌트 정합
+`DESIGN.md ### User FE surface 컴포넌트 (synthesized)` 5종(`app-bar`/`bottom-nav`/`feed-card`/`search-bar`/`bottom-sheet`)과 `## Responsive Behavior` 4단계 breakpoint 정합.
+
+**app-bar (mobile)**
+- height가 52 외 값(48/56/60) — 차단. desktop ≥1024 한정 56 승격은 허용.
+- safe-area-inset-top 미적용(iOS notch 위 chrome 잘림 위험) — 경고.
+- 좌측 cluster에 logo + back-button 동시 사용 — 차단(둘 중 하나만).
+- right-cluster icon-button ≥3개(more menu 미사용) — 경고.
+
+**bottom-nav**
+- 탭 개수가 3·4·5 외(2개 또는 6+) — 차단(6+는 더보기 menu로 그룹화).
+- 데스크탑(≥1024 breakpoint)에서 bottom-nav 노출 — **차단**(sidebar-nav 또는 top-nav로 분리).
+- 활성 indicator에 좌측 컬러 rail(width ≥3px) 사용 — 차단(label 위 dot 또는 아이콘 weight 상승만).
+- 활성 indicator에 gradient 사용 — 차단(시안 `policy.gradient_locations` 무관, 일괄 금지).
+- safe-area-inset-bottom 미적용(iOS home indicator 침범) — 경고.
+- FAB variant에서 fab-button shadow 누락 — 경고(elevation 표면 정책).
+- icon-only Case D에서 icon ≤24px — 차단(hit area 보장 위해 28px 승격 필수).
+- 라벨 텍스트가 격식체(`-습니다`) 또는 동사형(`보내기`/`Send`) — 차단(명사 단문: `홈`/`탐색`/`마이`).
+
+**feed-card**
+- thumbnail aspect가 ladder 외 값(예: 5/4, 3/5) — 경고(`16/9`/`4/3`/`1/1` 중 하나 권장).
+- 카드 click area와 action-row button click이 분리되지 않음(`event.stopPropagation()` 누락) — 차단.
+- carousel mode에서 카드 폭이 viewport - `{spacing.space-32}` 외 값 — 경고.
+- horizontal 변형에서 thumbnail width 96/120 외 값 — 경고.
+- 가격/숫자 강조 영역이 `tabular-nums` 미적용 — 경고.
+
+**search-bar**
+- height가 48 외 값(40/44/52/56) — 차단. app-bar 내부 sunken 변형 36은 허용.
+- input에 라벨 없이 placeholder만으로 의미 전달 — 차단(접근성 — `aria-label` 또는 visible label 필수).
+- focus-mode(Case B) 진입 시 풀스크린 overlay 미적용(같은 자리에서 dropdown만 노출) — 경고.
+- 풀스크린 검색 mode에서 cancel 텍스트 버튼 누락(back-button만) — 경고.
+- voice icon(Case C)을 도메인이 음성과 무관한 화면에 surface — 경고(쇼핑 검색에 mic 등).
+
+**bottom-sheet**
+- 위험 액션(삭제/계정 해지/주문 취소) 확인 단계로 bottom-sheet 사용 — 차단(`{component.modal}` 또는 명시적 confirm 필수).
+- handle width/height 36×4 외 값 — 경고.
+- backdrop 미적용(투명 sheet 단독 노출) — 차단.
+- sheet 내부 form이 풀스크린 + 다단계인데 sheet로 유지 — 경고(풀스크린 modal로 승격 권장).
+- max-height 85vh 초과 — 경고(상단 15% 여백 정책).
+- safe-area-inset-bottom 미적용 — 경고.
+
+**반응형 일반**
+- mobile (≤640)에서 desktop hover-only 인터랙션이 1차 액션 — 차단(tap 가능 alternative 필수).
+- touch target <44×44 — 차단. button sm(32)/chip(34)/icon-button(36)은 padding으로 보장 가능, 그 외는 차단.
+- desktop에서 모바일 전용 컴포넌트(app-bar/bottom-nav/bottom-sheet)를 그대로 사용 — 차단(`sidebar-nav`/`top-bar`/`modal`로 분기).
+- 4-step breakpoint(640/1024/1280) 외 임의 breakpoint(720/900 등) 도입 — 경고.
+- viewport 폭이 모바일인데 카드 padding `{spacing.space-24}` 이상(공간 낭비) — 경고(mobile은 16 권장).
+
+#### A-13. 모바일 전용판 특화 정합
+`docs/user-fe-mobile-design-guide.md` 적용 화면(또는 PR 본문이 "모바일 전용", "viewport 360~430 고정", "네이티브-like"를 명시한 경우)에 한해 추가 검증. 반응형판(`user-fe-design-guide.md`)에는 적용하지 않는다.
+
+**viewport / breakpoint**
+- 미디어쿼리에 1024/768 등 데스크탑/태블릿 breakpoint 도입 — 차단(모바일 전용은 360~430 단일 breakpoint).
+- 412+ 추가 조정 외 `@media (min-width: 641px)` 등 사용 — 차단.
+- 컴포넌트 폭이 viewport - `{spacing.space-32}` 초과(좌우 peek 미보장) — 경고.
+
+**인터랙션 / gesture**
+- `:hover` 1차 인터랙션 — **차단**. `:active` 또는 명시 tap state 사용. hover가 disclosure에 필요한 경우 tap 대체(예: tooltip → bottom-sheet 또는 inline).
+- 우클릭/contextmenu 기반 액션 — 차단(모바일에 없음).
+- swipe gesture 사용 시 시각 affordance(handle/chevron/dot indicator) 누락 — 경고.
+- swipe만으로 위험 액션(삭제) 즉시 실행 — **차단**(confirm 단계 필수).
+- carousel auto-rotate에 정지 컨트롤 누락 — 경고.
+
+**sticky CTA / nav**
+- 상세/폼/신청/결제 화면에 sticky bottom CTA 누락 — 차단(모바일 전용 표준).
+- 루트 화면(홈/탐색/즐겨찾기/알림/마이) 외 화면에 bottom-nav 노출 — 차단(상세/폼은 숨김).
+- sticky CTA + bottom-nav 동시 노출(stacking 충돌) — 차단(한쪽만).
+- sticky CTA height가 64 외 값(48/72) — 경고.
+- safe-area-inset-bottom 미적용 — 차단(iOS home indicator 침범).
+
+**Toast / Modal**
+- toast 위치가 우측 하단 corner(desktop 패턴) — 차단(하단 sticky 또는 상단 sticky만).
+- toast stack(동시에 2+개 노출) — 차단(단일 toast 정책).
+- 위험 액션 확인 단계에 일반 `### bottom-sheet` 사용 — 차단(`{component.modal}` 풀스크린 또는 명시 confirm).
+- modal width가 viewport보다 작은 desktop-style modal — 차단(모바일 전용은 풀스크린 또는 sheet).
+
+**Pull-to-refresh**
+- 홈/피드/리스트/알림/마이 화면에 pull-to-refresh 누락 + 명시 새로고침 버튼도 없음 — 경고.
+- pull-to-refresh affordance(상단 spinner 또는 progress arc)가 toolbar 또는 다른 콘텐츠와 겹침 — 차단.
+
+**Tab / Segmented**
+- 4+ 토글에 `segmented-control` 사용 — 차단(admin Case A line underline 또는 nav-link로 승격).
+- segmented-control height 36 외 값 — 경고.
+- in-page tab과 bottom-nav가 같은 시각 위계로 노출(혼동 위험) — 차단.
+
+**Keyboard / Desktop-only**
+- `linear-like` 시안의 ⌘K / kbd 시그너처를 모바일 전용에서 surface — 차단(데스크탑 fallback에서만).
+- `material-3` 시안의 keyboard navigation indicator를 모바일에서 노출 — 차단.
+
+**Phone 환경**
+- iOS Safari status bar 영역 회피용 `env(safe-area-inset-top)` 미적용 — 차단(app-bar 잘림).
+- iOS swipe-back gesture 충돌 영역(좌측 12px) 내에 swipe-action 또는 carousel 트리거 — 경고.
+- Android Material You dynamic color와 시안 brand 충돌 시 우선순위 미정의(시안 brand 고정 또는 dynamic 따름) — 경고(`material-3` 시안 한정).
+
 ### B. 시안별 정책 규칙 (활성 DESIGN.md에서 추출)
 
 활성 DESIGN.md의 frontmatter `policy:` 블록과 `## Do's and Don'ts` 섹션을 시작 시 로드해 시안별로 적용. 본 섹션은 Wanted 시안 기준 예시지만, 다른 시안 활성 시 그 시안의 정책으로 자동 교체된다.
@@ -167,6 +261,28 @@ UI/스타일 산출물의 디자인 일관성을 점검하는 전용 서브에�
 - 활성 시안이 `material-3`인데 fade-edge를 사용했는가 (정책: state-layer 8~12% brand alpha overlay)
 - 활성 시안이 `toss-like` 또는 `linear-like`인데 fade-edge alpha가 시안 시그너처와 불일치하는가 (linear-like는 다크에서 더 강한 alpha 0.20~0.28, light는 ~0.28; toss-like는 ~0.12) — 경고
 - Case C/D를 채택했는데 affordance 구현이 sticky-l2 우측 경계와 sticky-r1 좌측 경계 양쪽에 모두 적용됐는가 — 한쪽만 있으면 경고
+
+#### B-7. User FE 시안별 정책 정합
+`DESIGN.md ### User FE surface 컴포넌트 (synthesized)`의 5종 컴포넌트가 활성 시안의 frontmatter `policy:` 블록·Bottom Nav Cases·Search Cases 디폴트와 정합하는지 검증.
+
+**Bottom Nav 시안별 디폴트** (`#### Bottom Nav Cases` 표)
+- `wanted`/`toss-like`/`material-3`: A(5탭 균등) 외 채택 시 사유 요구 — 경고.
+- `minimal-mono`: A 또는 C(텍스트 only) 외 채택 시 — 경고.
+- `linear-like`: C(텍스트 only) 외 채택 시 — 경고(시그너처 위반).
+
+**Search Cases 시안별 디폴트** (`#### Search Cases` 표)
+- `wanted`/`material-3`: A(inline) 외 채택 시 사유 요구 — 경고.
+- `minimal-mono`: A 또는 D(sunken pill) 외 — 경고.
+- `toss-like`: B(풀스크린 overlay) 외 모바일 화면 — 경고.
+- `linear-like`: B + ⌘K kbd 시그너처 누락 — 경고.
+
+**시안별 user FE 추가 정책**
+- `toss-like`: input/button height 모바일에서 48 미만 — 차단(모바일 우선 정책의 hit area 강화). feed-card radius < `{rounded.radius-16}` — 경고.
+- `material-3`: bottom-nav가 M3 navigation bar 스펙(activeIndicator pill 또는 background) 미준수 — 경고. FAB 사용 시 `shadow-2` 미적용 — 차단.
+- `linear-like`: bottom-nav 텍스트 only 외 변형 — 경고. dark mode 1차 정책인데 light에서 시각 hierarchy 검수 미수행 — 경고.
+- `wanted`/`minimal-mono`: feed-card에 그림자 적용(`policy.shadow_on_cards: false`) — 차단(1px 헤어라인 보더로 대체).
+- bottom-sheet FAB 외 일반 컴포넌트에 gradient 사용 — 시안의 `policy.gradient_locations` 검사 후 차단/허용.
+- 모든 시안: app-bar에 시안 `policy.gradient_locations`에 `"chrome"` 또는 `"header"`가 없는데 gradient 배경 사용 — 차단.
 
 ## 출력 형식
 
