@@ -2,7 +2,7 @@
 name: 원티드
 slug: wanted
 category: etc
-last_updated: "2026-05-19"
+last_updated: "2026-05-20"
 sources:
   - https://api.anthropic.com/v1/design/h/j7_orggLzbQ43g24R8OfYA
   - https://www.wanted.co.kr
@@ -732,13 +732,13 @@ admin 표면(대시보드/KPI/리스트/상세) 전체에 일관된 여백을 �
 | 케이스 | content padding | card padding | KPI gap | KPI row | input/button height | data-table row | 적합 상황 |
 |---|---|---|---|---|---|---|---|
 | **A — 표준 (Spacious)** | `{spacing.space-32}` | `{spacing.space-24}` | `{spacing.space-16}` | 1열 4장 | 40 (md) | 56 (comfortable) | 데스크탑 운영(1440+), 일반 운영 |
-| **B — 컴팩트 (Compact)** | `{spacing.space-24}` | `{spacing.space-16}` | `{spacing.space-12}` | 1열 4~6장 | 36 (md-compact) | 44 (compact) | 1280 해상도, 정보 밀도 우선 |
-| **C — 미니멈 (Minimum)** | `{spacing.space-16}` | `{spacing.space-12}` | `{spacing.space-8}` | 1열 6~8장 | 32 (sm) | 40 (tight) | 1440+ 대형 모니터에 KPI 다량, 빽빽한 모니터링 |
+| **B — 컴팩트 (Compact)** | `{spacing.space-24}` | `{spacing.space-16}` | `{spacing.space-12}` | 1열 4~6장 | 36 (md-compact) | 40 (compact) | 1280 해상도, 정보 밀도 우선 |
+| **C — 미니멈 (Minimum)** | `{spacing.space-16}` | `{spacing.space-12}` | `{spacing.space-8}` | 1열 6~8장 | 32 (sm) | 36 (tight) | 1440+ 대형 모니터에 KPI 다량, 빽빽한 모니터링 |
 | **D — 모니터링 (Monitor)** | `{spacing.space-8}` | `{spacing.space-8}` | `{spacing.space-8}` | 1열 8장+ | 32 (sm) | 36 (dense) | 24시간 모니터링/전광판/콜센터, 정보 최대화 |
 
 운영 규칙:
 - 모든 토큰은 4의 배수 ladder만 사용한다(6/10/14 같은 비-4 padding 금지). row 36은 컴팩트 한계, 그 아래(32/30)는 차단.
-- 케이스 C/D에서 row 40 이하 채택 시 `{typography.body2}` → `{typography.label2}` 또는 `{typography.caption1}` 다운을 함께 적용해 시각 균형을 맞춘다.
+- row 40 이하 케이스(B/C/D)에서 `{typography.body2}` → `{typography.label2}` 또는 `{typography.caption1}` 다운을 함께 적용해 시각 균형을 맞춘다.
 - 케이스 D는 전광판/24시간 모니터링 표면 전용. 일반 운영 화면에 적용 시 hit-area·가독성 저하 차단.
 - 카드 그림자 금지 정책은 그대로 — 케이스 변경이 그림자 도입을 허용하지 않는다.
 - 케이스를 화면 단위로 결정한 뒤 `data-density` 속성(`spacious`/`compact`/`minimum`/`monitor`)을 root에 부여하면 모든 토큰이 일괄 적용되는 cascade를 host 앱이 정의한다.
@@ -748,7 +748,7 @@ admin 표면(대시보드/KPI/리스트/상세) 전체에 일관된 여백을 �
 | 시안 | 디폴트 | 비고 |
 |---|---|---|
 | `wanted` / `toss-like` / `material-3` | A | 카드 padding 24 + row 56 표준 |
-| `minimal-mono` | B | 미니멀 톤은 row 44 + content padding 24 |
+| `minimal-mono` | B | 미니멀 톤은 row 40 + content padding 24 |
 | `linear-like` | **C** (디폴트) | compact 시그너처. Case D 채택 가능(모니터링 뷰) |
 
 ### login-layout

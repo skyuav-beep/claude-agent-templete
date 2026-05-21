@@ -32,6 +32,15 @@
 
 ## 이번 세션에서 완료한 작업
 
+- preview 검수 결과 반영 #1 — Admin Surface Density Cases row ladder 재배치(B 44→40, C 40→36). (2026-05-20)
+  - 배경: 사용자가 admin-fe-preview `#density` 검수 중 **Case B(컴팩트) row 44가 너무 크다**고 판단. 4의 배수 ladder + 하한 36 제약상 B를 40으로 내리면 C(40)와 충돌 → C·D를 36으로 합쳐 해소(B 40 / C·D 36 안 채택). C/D는 row 36 공유하되 padding(16/12/8 vs 8/8/8)으로 구분.
+  - **DESIGN.md `#### Admin Surface Density Cases`** 표: B `44 (compact)`→`40 (compact)`, C `40 (tight)`→`36 (tight)`. 운영 규칙 typography-down 항목을 case-기반("C/D에서")에서 값-기반("row 40 이하 케이스(B/C/D)에서")으로 일반화 — B가 40이 되며 임계에 포함됨. 시안별 디폴트 `minimal-mono` 비고 `row 44`→`row 40`. frontmatter `last_updated` 2026-05-19→2026-05-20.
+  - **Wide Table Cases(컬럼 수 축)는 미변경** — 별도 매트릭스로 B=44 유지. Surface Density와 독립.
+  - `.claude/agents/design-reviewer.md A-8`: typography-down 경고 항목 `Case C/D에서 row 40 이하` → `row 40 이하 케이스(B/C/D)`.
+  - `templates/data-table-density.md §1` Surface Density 체크리스트: B `row 44`→`row 40`, C `row 40`→`row 36`. (§3/§4/작성예시의 Wide Table row 44는 미변경)
+  - `docs/admin-fe-preview.html`: `.density-mini.compact --m-row 44px`→`40px`, `.minimum --m-row 40px`→`36px`. specimen 라벨 B `row 44`→`row 40`, C `row 40`→`row 36`. (JS 미변경)
+  - 후속 검토(미반영, 사용자 판단 대기): (a) `linear-like` Surface Density 디폴트가 C인데 C가 36(=D 모니터 밀도)로 내려가 "compact 시그너처"와 결이 어긋남 — B(40)로 올릴지 검토. (b) **DESIGN.md(1643줄)는 designs/wanted.md(1093줄)와 이미 분기** — admin/User-FE 섹션 전부 DESIGN.md에만 존재. Surface Density도 라이브러리 원본에 없어 이번 수정은 DESIGN.md에만 반영. select-design.sh 재실행 시 admin 콘텐츠 유실 위험은 기존부터 존재(`.bak` 백업 의존).
+
 - User FE 모바일 전용판 디자인 시안 인프라 신설 — DESIGN.md 모바일 인터랙션 패턴 절 + 가이드 + preview HTML + design-reviewer A-13. (2026-05-19)
   - **DESIGN.md `### bottom-sheet` 끝에 `#### 모바일 전용 인터랙션 패턴` 절 신설** — segmented-control(in-page tab, height 36, radius-full, 2~3개 토글), list-row swipe-action(width 72 액션, 위험은 confirm 단계), pull-to-refresh(80px 임계, spinner), native-like toast(하단 sticky, 단일, swipe-down-dismiss), sticky bottom CTA(height 64, safe-area-inset-bottom 합산).
   - **`docs/user-fe-mobile-design-guide.md` 신설** (반응형판 가이드와 차이점 중심, 360줄대) — 적용 범위(360~430 고정 + 데스크탑 미지원 + 네이티브-like) + 반응형판과의 차이 역방향 표 + 1차 원칙 추가(hover 금지/gesture 우선/sticky CTA 표준/single-page-flow/keyboard 미사용/back-button 일관성) + 단일 breakpoint(360~430) + 화면 골격(status-bar safe-area + app-bar + content + sticky CTA + bottom-nav + home-indicator safe-area) + 컴포넌트 5종 모바일 전용 로컬값 + 모바일 전용 인터랙션 5종(segmented/swipe-action/pull-to-refresh/toast/sticky CTA) + 7 화면 mobile-only 변형 + 시안별 모바일 디폴트.

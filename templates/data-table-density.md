@@ -11,8 +11,8 @@ admin/리스트 페이지에서 컬럼 수·밀도·sticky·스크롤 정책을 
 - 사용자 주요 행동(스캔/비교 우선 | 클릭/편집 우선):
 - 화면 surface density(`DESIGN.md ### Admin / Dashboard surface > #### Admin Surface Density Cases`):
   - [ ] A — 표준 (content 32 / card 24 / gap 16 / btn 40 / row 56)
-  - [ ] B — 컴팩트 (content 24 / card 16 / gap 12 / btn 36 / row 44)
-  - [ ] C — 미니멈 (content 16 / card 12 / gap 8 / btn 32 / row 40)
+  - [ ] B — 컴팩트 (content 24 / card 16 / gap 12 / btn 36 / row 40)
+  - [ ] C — 미니멈 (content 16 / card 12 / gap 8 / btn 32 / row 36)
   - [ ] D — 모니터링 (content 8 / card 8 / gap 8 / btn 32 / row 36) — 전광판/콜센터 전용
   - 사유:
 

@@ -100,7 +100,7 @@ UI/스타일 산출물의 디자인 일관성을 점검하는 전용 서브에�
 - 한 화면에 두 케이스의 토큰이 혼재돼 있는가(예: KPI는 padding 24인데 그 아래 테이블만 padding 8) — 차단
 - 비-4의 배수 padding/gap(6/10/14/18/22)이 도입됐는가 — 차단
 - row height 36 미만(예: 32/30) 사용 — 차단
-- Case C/D에서 row 40 이하인데 `{typography.body2}` 그대로(label2/caption1 다운 미적용) — 경고
+- row 40 이하 케이스(B/C/D)인데 `{typography.body2}` 그대로(label2/caption1 다운 미적용) — 경고
 - Case D(모니터링)를 일반 운영 화면(주문 관리/회원 관리)에 적용 — 차단(전광판/콜센터 전용)
 - 카드에 그림자 도입(시안 `policy.shadow_on_cards: false`인 경우) — B-1과 정합, 차단
 - 화면 단위 케이스 결정 기록 없음(`templates/data-table-density.md §1` density 항목) — 경고
