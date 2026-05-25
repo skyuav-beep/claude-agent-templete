@@ -9,7 +9,6 @@
 - 작업 요청 템플릿과 intake 양식은 `templates/` 아래에 둔다.
 - 가이드 문서는 `docs/` 아래에 둔다.
 - 본 템플릿을 소비하는 런타임 앱은 sibling 저장소 `../riderapp-runtime/`이다.
-- 본 템플릿을 사용하는 첫 비즈니스 프로젝트의 설계 문서는 sibling 저장소 `../rider-platform-docs/`에 분리되어 있다.
 
 ## 이전 세션까지 완료한 작업
 
@@ -31,6 +30,10 @@
 - 런타임 에이전트 앱 `riderapp-runtime`을 sibling 저장소로 신규 생성했다. (`/home/skyua/projects/riderapp-runtime`, pnpm workspace, Claude Agent SDK 래퍼/비용 통제/SQLite/Next.js 대시보드)
 
 ## 이번 세션에서 완료한 작업
+
+- STATE.md 커밋 정책 명문화 + `rider-platform-docs` 잔재 정리. (2026-05-25)
+  - `CLAUDE.md`, `AGENTS.md`, `agents/main-agent.md` 3곳의 "`STATE.md` 갱신" 문구를 "갱신하고 커밋"으로 동기화. `AGENTS.md`에 커밋 순서 한 줄(STATE.md 갱신 → 스테이징 → commit, 미포함 시 hook 경고) 추가.
+  - 삭제된 sibling 저장소 `rider-platform-docs` 참조 7곳 정리: 현재형/기준 섹션(현재 상태·현재 기준 파일·주의 사항·다음 작업)은 제거·수정, 과거 dated 로그는 "(이후 삭제됨)" 표기로 이력 보존.
 
 - `docs/business-logic-playbook.md` §5 확장 + `templates/business-logic-request.md` 작성 예시 보강 — build/docker/git 단계별 시나리오. (2026-05-16)
   - **§5.1 단계별 실행 흐름**: 6단계 순서(`git status` → lint → unit test → build → e2e → docker rebuild 판단) + 각 단계 통과 기준.
@@ -294,7 +297,7 @@
   - 외부 의존성 없이 단일 HTML 파일로 동작한다. `node --check`로 두 페이지의 JS 블록 구문 검증을 통과했다.
 - 기존 `~/projects/riderapp` 폴더를 두 개로 분리했다.
   - `~/projects/claude-agent-template/` (현재 저장소): 범용 에이전트 운영 템플릿
-  - `~/projects/rider-platform-docs/`: rider platform 비즈니스 설계 문서
+  - `~/projects/rider-platform-docs/`: rider platform 비즈니스 설계 문서 (이후 삭제됨)
 - `riderapp-runtime/rules` 심볼릭 링크를 신규 템플릿 저장소로 갱신했다.
 - 메모리(`project_riderapp_runtime.md`)를 새 경로 기준으로 갱신했다.
 - 루트 `AGENTS.md`를 관제탑 중심 구조로 슬림화했다.
@@ -306,9 +309,8 @@
   - `AGENTS.md` 커뮤니케이션 섹션의 "확인되지 않은 사항은 사실처럼 단정하지 않는다" 항목을 제거했다. 동일 의미 문장이 Golden Rules에 이미 존재한다.
   - `STATE.md`의 과거 기록 중 실제 AGENTS.md 섹션명과 어긋나던 표현을 정정했다. (`Standards & References` 삭제, `공통 코딩 원칙` -> `세부 규칙 위임`으로 보정)
 - 워크스페이스 3개 폴더 기준 실행 셋팅을 재확인했다. (2026-05-04)
-  - 현재 워크스페이스 폴더는 `claude-agent-template`, `rider-platform-docs`, `riderapp-runtime`이다.
+  - 당시 워크스페이스 폴더는 `claude-agent-template`, `rider-platform-docs`, `riderapp-runtime`이었다. (`rider-platform-docs`는 이후 삭제, 현재는 2-저장소 구조)
   - `claude-agent-template`은 에이전트 운영 규칙/템플릿 저장소이며 실행 앱이 아니다.
-  - `rider-platform-docs`는 라이더 플랫폼 비즈니스/시스템 설계 문서 저장소이며 실행 앱이 아니다.
   - 실제 실행 대상은 `riderapp-runtime`이다.
   - `riderapp-runtime/rules` 심볼릭 링크가 `/home/skyua/projects/claude-agent-template`을 가리키는 것을 확인했다.
   - `riderapp-runtime`에서 `pnpm typecheck`와 `pnpm build`가 통과했다.
@@ -328,7 +330,7 @@
 - 프레임워크 구조 intake 답변을 받아 만든 실제 디렉터리 트리 예시를 추가한다.
 - 필요하면 `docs/template-usage.md` 또는 예시 프로젝트 문서를 추가한다.
 - 필요하면 `docs/codex-reading-order.md`와 루트 `AGENTS.md`의 빠른 읽기 순서 중복을 더 줄인다.
-- `riderapp-runtime/README.md`의 예전 `riderapp` 경로 설명을 현재 워크스페이스 구조(`claude-agent-template`, `rider-platform-docs`, `riderapp-runtime`)에 맞게 갱신한다.
+- `riderapp-runtime/README.md`의 예전 `riderapp` 경로 설명을 현재 워크스페이스 구조(`claude-agent-template`, `riderapp-runtime`)에 맞게 갱신한다.
 - intake.html에 나머지 intake 템플릿(project/ui/responsive/tech/i18n/format/api/error/routing/form/qa/framework-structure)도 폼으로 추가한다.
 - md → HTML 자동 동기화 스크립트 또는 단일 진입점(`docs/index.html`) 도입을 검토한다.
 
@@ -354,12 +356,11 @@
 - 디자인 시안 selector: `.claude/plugins/select-design.sh`
 - 운영 아티팩트: `docs/codex-reading-order.md`, `docs/subagent-guide.md`, `docs/development-process.md`, `docs/development-process.html`, `docs/intake.html`, `docs/admin-fe-preview.html`
 - 런타임 앱: `../riderapp-runtime/` (sibling 저장소)
-- 비즈니스 설계 문서: `../rider-platform-docs/` (sibling 저장소, rider platform 전용)
 
 ## 주의 사항
 
 - 이 저장소의 목적은 `런타임 멀티 에이전트 앱` 구현이 아니라 `개발 프로젝트용 에이전트 운영규칙 템플릿` 정리다.
-- rider platform 비즈니스 도메인 설계 문서는 이 저장소에 두지 않는다. (`../rider-platform-docs/`로 이동)
+- rider platform 비즈니스 도메인 설계 문서는 이 저장소에 두지 않는다.
 - 이후 코드 파일을 추가하더라도 공통 규칙과 템플릿 문서의 목적을 흐리지 않도록 유지한다.
 
 ## 알려진 TODO
