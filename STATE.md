@@ -32,6 +32,15 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 템플릿 예시의 rider 프로젝트 종속 제거 — 예시 7파일 + admin preview를 도메인 중립화. (2026-05-27)
+  - 배경: 사용자가 "agent가 특정 프로젝트에 종속됐는지" 점검 요청. 규칙/구조 레이어(`CLAUDE.md`, `AGENTS.md`, `agents/`, skills, hooks, `DESIGN.md`)는 비종속이나, (a) `STATE.md`의 sibling 저장소 인계 정보와 (b) templates/docs 작성 예시의 "헬멧 세척 라이더 매칭 플랫폼" 시나리오가 rider 프로젝트에 결합돼 있음을 확인. 사용자가 (b)만 일반화 선택, 방식은 "추상 placeholder 중립화" 채택.
+  - **A군 (full placeholder)**: `templates/project-intake.md`, `templates/startup-checklist.md`, `templates/framework-structure-intake.md`, `docs/project-guide-template.md`. 매핑: 주문→`<엔티티A>`/`entity-a`, 라이더→`<엔티티B>`/`entity-b`, 매장→`<엔티티C>`/`entity-c`, 배차/재배차→`<핵심 액션>`, 매장 매니저→`<2차 사용자>`, 도메인→`<프로젝트 한 줄 설명>`, KPI 3종→`<지표1~3>`, 라이더 앱→`<외부 연동 시스템>`, AI 매칭 추천→AI 추천 기능. 기술 스택/breakpoint/디렉터리 구조 등 범용 내용은 유지.
+  - **B군 (rider 토큰만 제거, 범용 커머스 어휘 유지)**: `docs/i18n-guidelines.md`(`riders.json`→`products.json`, ns 배열 `riders`→`products`; orders·주문 JSON 샘플은 동작 코드라 유지), `templates/data-table-density.md`(14컬럼 중 `라이더`→`담당자`만 교체; 주문·배송·고객명·`/admin/orders`는 유지). 사유: orders/배송 등은 어느 admin 툴에나 있는 범용 어휘로 rider 프로젝트 식별성이 없음.
+  - **`docs/ui-decisions.md`**: §9에 구체 data-table을 포함해 문서 내부 일관성을 위해 전체 concrete 유지 + rider 토큰만 제거(라이더 재배차→담당자 재배정, 신규 라이더 등록→신규 담당자 등록, `/admin/riders`→`/admin/staff`, 카피톤 어휘 예시 `라이더 → rider`→`운영자 → operator, 관리자 → admin`). 주문/orders 유지.
+  - **`docs/admin-fe-preview.html`** (협의 7파일 밖이나 동일 rider 데모라 함께 정리): 주문 데모 테이블 2종의 `라이더` 컬럼 헤더→`담당자`, 샘플명 김/박/이라이더→김도현/박서준/정민호. 나머지 커머스 데모 데이터 유지.
+  - **의도적 미변경**: `STATE.md`·`todo.md`의 rider 언급은 실제 sibling 저장소(`../riderapp-runtime/`, `../rider-platform-docs/`) 인계 기록이라 유지. "매칭"이 든 `CLAUDE.md`/`manifest.json`/`plugin-guide.md`는 "키워드 매칭" 기술 용어 오탐(미변경).
+  - 검증: 전체 저장소 sweep(`라이더|배차|재배차|헬멧|매칭|매장 매니저|riders.json|/admin/riders`)에서 rider 식별 토큰은 STATE.md/todo.md에만 잔존, 나머지는 오탐임을 확인.
+
 - preview 검수 결과 반영 #1 — Admin Surface Density Cases row ladder 재배치(B 44→40, C 40→36). (2026-05-20)
   - 배경: 사용자가 admin-fe-preview `#density` 검수 중 **Case B(컴팩트) row 44가 너무 크다**고 판단. 4의 배수 ladder + 하한 36 제약상 B를 40으로 내리면 C(40)와 충돌 → C·D를 36으로 합쳐 해소(B 40 / C·D 36 안 채택). C/D는 row 36 공유하되 padding(16/12/8 vs 8/8/8)으로 구분.
   - **DESIGN.md `#### Admin Surface Density Cases`** 표: B `44 (compact)`→`40 (compact)`, C `40 (tight)`→`36 (tight)`. 운영 규칙 typography-down 항목을 case-기반("C/D에서")에서 값-기반("row 40 이하 케이스(B/C/D)에서")으로 일반화 — B가 40이 되며 임계에 포함됨. 시안별 디폴트 `minimal-mono` 비고 `row 44`→`row 40`. frontmatter `last_updated` 2026-05-19→2026-05-20.

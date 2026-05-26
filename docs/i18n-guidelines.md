@@ -69,7 +69,7 @@ locales/
 │  ├─ errors.json        # 에러 메시지 + HTTP status
 │  ├─ admin.json         # admin 도메인
 │  ├─ orders.json        # 주문 도메인
-│  └─ riders.json        # 라이더 도메인
+│  └─ products.json      # 상품 도메인
 ├─ en/
 │  └─ ...  (ko와 동일 namespace 구조)
 └─ ja/
@@ -240,7 +240,7 @@ i18n
       'ja': ['en', 'ko'],   // ja 누락 시 en → ko 순으로 fallback
       'default': ['ko'],
     },
-    ns: ['common', 'orders', 'riders', 'errors'],
+    ns: ['common', 'orders', 'products', 'errors'],
     defaultNS: 'common',
     backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' },
     interpolation: { escapeValue: false },  // React가 이미 escape함

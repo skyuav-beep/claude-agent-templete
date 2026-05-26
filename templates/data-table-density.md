@@ -173,7 +173,7 @@ admin/리스트 페이지에서 컬럼 수·밀도·sticky·스크롤 정책을 
   8. 결제수단 · badge · 100
   9. 배송상태 · badge · 100
   10. 배송지 · text · 200 (ellipsis)
-  11. 라이더 · text · 100
+  11. 담당자 · text · 100
   12. 메모 · text · 160 (ellipsis + hover-tooltip)
   13. 등록자 · text · 100
   14. 액션 · action · 80 (우 sticky)

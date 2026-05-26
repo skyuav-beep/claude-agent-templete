@@ -257,13 +257,13 @@ Q3. 프로젝트에 반영 후 즉각적으로 실행되는 CI/CD(린트 점검,
 ## 초기 설정 결과 요약
 
 ### 확정 사항
-- 프로젝트: 헬멧 세척 라이더 매칭 운영 대시보드 MVP (4주)
-- 핵심 기능: 주문 목록/상세, 라이더 배차 현황, 수동 재배차, 일별 KPI
+- 프로젝트: <프로젝트 한 줄 설명> 운영 대시보드 MVP (4주)
+- 핵심 기능: <엔티티A> 목록/상세, <엔티티B> 현황, 수동 <핵심 액션>, 일별 KPI
 - 스택: Next.js 15 + TypeScript + Supabase + pnpm + Biome + Vitest/Playwright
 - 배포: Vercel preview + production
 - UI 톤: Linear/Stripe 참고. 정보 밀도 높음, 미니멀
 - 우선 디바이스: PC 우선 (운영자 대상)
-- 인증: Supabase Auth, 권한 3등급 (운영자/매장 매니저/일반)
+- 인증: Supabase Auth, 권한 3등급 (운영자/<2차 사용자>/일반)
 - 다국어: 미적용 (운영자 한국어 전용)
 - 에러: Sentry, 토스트 + 폼 인라인
 - API: BFF 경유, React Query, OpenAPI 자동 타입
@@ -278,7 +278,7 @@ Q3. 프로젝트에 반영 후 즉각적으로 실행되는 CI/CD(린트 점검,
 - e2e 테스트 DB 시드 전략: CI 환경 구성 시 결정
 
 ### 제외 사항
-- 정산 모듈, 고객 CS 도구, 라이더 모바일 앱, 다국어, AI 매칭
+- 정산 모듈, 고객 CS 도구, <엔티티B> 모바일 앱, 다국어, AI 추천
 
 ### 다음 액션
 1. `docs/project-guide.md` 작성 (project-guide-template 기준)
