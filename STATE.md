@@ -31,6 +31,10 @@
 
 ## 이번 세션에서 완료한 작업
 
+- `CLAUDE.md` Core Philosophy #2 이모지 규칙 스코프 명시. (2026-05-27)
+  - 답변 포맷 가이드가 유저 전역 `~/.claude/CLAUDE.md`(`## 답변 포맷`)로 이전된 뒤, 프로젝트 `CLAUDE.md` Core Philosophy #2("이모지·수사 사용하지 않는다")가 스코프 미명시 상태여서 전역의 "채팅 답변 절제 이모지 마커 허용"과 해석 충돌 소지가 있었다.
+  - Core Philosophy #2를 "루트 문서 본문 한정"으로 못박고, 채팅 답변 텍스트의 상태 마커는 전역 `## 답변 포맷`을 따른다고 명시(옵션 a). `AGENTS.md` Constraint 2(Context Map 한정), Design System(product UI 한정)과 스코프가 직교하도록 정리.
+
 - STATE.md 커밋 정책 명문화 + `rider-platform-docs` 잔재 정리. (2026-05-25)
   - `CLAUDE.md`, `AGENTS.md`, `agents/main-agent.md` 3곳의 "`STATE.md` 갱신" 문구를 "갱신하고 커밋"으로 동기화. `AGENTS.md`에 커밋 순서 한 줄(STATE.md 갱신 → 스테이징 → commit, 미포함 시 hook 경고) 추가.
   - 삭제된 sibling 저장소 `rider-platform-docs` 참조 7곳 정리: 현재형/기준 섹션(현재 상태·현재 기준 파일·주의 사항·다음 작업)은 제거·수정, 과거 dated 로그는 "(이후 삭제됨)" 표기로 이력 보존.
