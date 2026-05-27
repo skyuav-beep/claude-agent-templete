@@ -38,8 +38,9 @@
   - **B군 (rider 토큰만 제거, 범용 커머스 어휘 유지)**: `docs/i18n-guidelines.md`(`riders.json`→`products.json`, ns 배열 `riders`→`products`; orders·주문 JSON 샘플은 동작 코드라 유지), `templates/data-table-density.md`(14컬럼 중 `라이더`→`담당자`만 교체; 주문·배송·고객명·`/admin/orders`는 유지). 사유: orders/배송 등은 어느 admin 툴에나 있는 범용 어휘로 rider 프로젝트 식별성이 없음.
   - **`docs/ui-decisions.md`**: §9에 구체 data-table을 포함해 문서 내부 일관성을 위해 전체 concrete 유지 + rider 토큰만 제거(라이더 재배차→담당자 재배정, 신규 라이더 등록→신규 담당자 등록, `/admin/riders`→`/admin/staff`, 카피톤 어휘 예시 `라이더 → rider`→`운영자 → operator, 관리자 → admin`). 주문/orders 유지.
   - **`docs/admin-fe-preview.html`** (협의 7파일 밖이나 동일 rider 데모라 함께 정리): 주문 데모 테이블 2종의 `라이더` 컬럼 헤더→`담당자`, 샘플명 김/박/이라이더→김도현/박서준/정민호. 나머지 커머스 데모 데이터 유지.
-  - **의도적 미변경**: `STATE.md`·`todo.md`의 rider 언급은 실제 sibling 저장소(`../riderapp-runtime/`, `../rider-platform-docs/`) 인계 기록이라 유지. "매칭"이 든 `CLAUDE.md`/`manifest.json`/`plugin-guide.md`는 "키워드 매칭" 기술 용어 오탐(미변경).
+  - **의도적 미변경**: `STATE.md`의 rider 언급은 실제 sibling 저장소(`../riderapp-runtime/`, `../rider-platform-docs/`) 인계 기록이라 유지. "매칭"이 든 `CLAUDE.md`/`manifest.json`/`plugin-guide.md`는 "키워드 매칭" 기술 용어 오탐(미변경).
   - 검증: 전체 저장소 sweep(`라이더|배차|재배차|헬멧|매칭|매장 매니저|riders.json|/admin/riders`)에서 rider 식별 토큰은 STATE.md/todo.md에만 잔존, 나머지는 오탐임을 확인.
+  - 후속(같은 세션, 사용자 요청): `todo.md` §A의 `riderapp-runtime/README.md` 경로 갱신 태스크(sibling 저장소 cross-repo 작업)를 제거. 템플릿 저장소가 특정 소비 프로젝트의 태스크를 추적하지 않도록 정리 — 해당 작업이 여전히 필요하면 `riderapp-runtime` 저장소에서 관리. 이로써 rider 식별 토큰은 `STATE.md`(인계 기록)에만 잔존.
 
 - preview 검수 결과 반영 #1 — Admin Surface Density Cases row ladder 재배치(B 44→40, C 40→36). (2026-05-20)
   - 배경: 사용자가 admin-fe-preview `#density` 검수 중 **Case B(컴팩트) row 44가 너무 크다**고 판단. 4의 배수 ladder + 하한 36 제약상 B를 40으로 내리면 C(40)와 충돌 → C·D를 36으로 합쳐 해소(B 40 / C·D 36 안 채택). C/D는 row 36 공유하되 padding(16/12/8 vs 8/8/8)으로 구분.
