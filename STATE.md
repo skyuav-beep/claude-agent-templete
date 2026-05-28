@@ -31,6 +31,17 @@
 
 ## 이번 세션에서 완료한 작업
 
+- `CLAUDE.md` `## 답변 포맷` 섹션 추가 + 구분선 `═══` 적용. (2026-05-28)
+  - 답변 포맷 규칙(구조·이모지·표기·과정/결론 구분선·결론 형식·적용 범위 8개)을 `CLAUDE.md`에 직접 내장. 연결 프로젝트 6개(`rules/CLAUDE.md` 읽기 순서 포함)에 자동 반영.
+  - Core Philosophy #2 참조 대상을 `~/.claude/CLAUDE.md` → `## 답변 포맷` 섹션으로 변경.
+  - 과정/결론 구분선을 `---` → `═══════════════════════════════════════════════════════════════════════`(U+2550 이중선)으로 변경. 전역 `~/.claude/CLAUDE.md`도 동기화.
+
+- 연결 프로젝트 7개 symlink 전환 및 커밋 가이드 일괄 적용. (2026-05-28)
+  - `riderwebapp`, `aica2`, `skim`, `trippass`, `signal2`: 상대경로 방식 → `rules/` symlink 전환. CLAUDE.md 읽기 순서에 `rules/CLAUDE.md` 추가. AGENTS.md 경로 전체 치환.
+  - `makeupshop`: 플러그인 설치 → symlink 전환. `.claude/` 하위 5개 디렉터리를 `../rules/.claude/*` symlink로 교체. CLAUDE.md 프로젝트 전용 진입 문서로 교체.
+  - 전체 연결 프로젝트(`riderwebapp`, `aica2`, `skim`, `trippass`, `signal2`, `vwallet`, `makeupshop`) CLAUDE.md에 "STATE.md 갱신하고 커밋한다" 적용 완료.
+  - `.claude/settings.local.json` 신규 생성 — hooks 3종(block-destructive, block-secret-files, state-reminder) 등록.
+
 - `CLAUDE.md` Core Philosophy #2 이모지 규칙 스코프 명시. (2026-05-27)
   - 답변 포맷 가이드가 유저 전역 `~/.claude/CLAUDE.md`(`## 답변 포맷`)로 이전된 뒤, 프로젝트 `CLAUDE.md` Core Philosophy #2("이모지·수사 사용하지 않는다")가 스코프 미명시 상태여서 전역의 "채팅 답변 절제 이모지 마커 허용"과 해석 충돌 소지가 있었다.
   - Core Philosophy #2를 "루트 문서 본문 한정"으로 못박고, 채팅 답변 텍스트의 상태 마커는 전역 `## 답변 포맷`을 따른다고 명시(옵션 a). `AGENTS.md` Constraint 2(Context Map 한정), Design System(product UI 한정)과 스코프가 직교하도록 정리.
