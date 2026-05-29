@@ -20,7 +20,7 @@ UI/스타일 산출물을 만들거나 검토할 때 `DESIGN.md`를 강제 로�
 
 ## 입력 처리
 
-- 사용자 메시지에 구체 컴포넌트(button, card, header, chip, toggle, badge, toast, alert, empty-state, job-card, hero-banner, filter-bar, avatar, icon-button, search 등)가 있으면 `DESIGN.md ## Components` 해당 섹션을 우선 인용한다.
+- 사용자 메시지에 구체 컴포넌트(button, card, header, chip, toggle, badge, toast, alert, modal, dialog, bottom-sheet, empty-state, job-card, hero-banner, filter-bar, avatar, icon-button, search 등)가 있으면 `DESIGN.md ## Components` 해당 섹션을 우선 인용한다.
 - 색·간격·라운드 값이 직접 적혀 있으면 가장 가까운 토큰으로 변환해 제안한다.
 - 다크 모드 관련 요청이 있으면 `### Semantic alias — Dark` 섹션을 우선 참조하고, 합성(synthesized) 표기 정책을 알린다.
 - 카피·라벨 작성이 포함되면 `-요`/`-어요` 종결과 동사형 버튼 라벨 정책을 적용한다.
@@ -32,6 +32,7 @@ UI/스타일 산출물을 만들거나 검토할 때 `DESIGN.md`를 강제 로�
 - gradient는 (1) 심볼 마크, (2) 아바타 circle, (3) 잡카드 thumb placeholder, (4) 마케팅 hero banner 네 자리에만 허용한다.
 - 이모지를 product UI에 inline으로 넣지 않는다. 화살표·아이콘은 SVG로 그리도록 안내한다.
 - `gray-*` 패밀리는 utility로만 쓰고, UI 표면 색은 `neutral-*` 패밀리에서 호출한다.
+- 모달/시트는 닫기 버튼·헤더 X·`ESC`로만 닫고 배경(scrim) 클릭·스와이프 닫기를 도입하지 않는다. 항상 커스텀 표면(`{component.modal}`)으로 구현하도록 안내하고, native(`alert/confirm/prompt`)·pre-styled 라이브러리 모달을 제안하지 않는다(headless 동작 위임은 허용).
 
 ## 다른 skill과의 연계
 

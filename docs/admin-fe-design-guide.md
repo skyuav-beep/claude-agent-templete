@@ -150,7 +150,7 @@ top-bar (page-title: "주문 #1023", breadcrumb: 주문 / #1023)
 
 - 작업 결과: `{component.toast}` 4–6초 자동 dismiss. 위치는 우측 하단(`{spacing.space-24}` offset). 카피 예 (ko-friendly): `저장되었어요`, `삭제할 수 없어요. 진행 중인 작업이 있어요` / (en-sentence): `Saved`, `Cannot delete: an operation is in progress`.
 - 인라인 경고: `{component.alert}` 페이지 상단 또는 섹션 헤드. 색은 semantic alias.
-- 확인 다이얼로그: `{component.modal}`(SSOT에서 dropdown/popover와 함께 grouped). 위험 액션은 본문에 결과를 명시한 후 `{component.button-danger}` 확정.
+- 확인 다이얼로그: `{component.modal}`(`DESIGN.md ### modal / dialog`). 항상 커스텀 표면으로 구현하고(native·pre-styled 라이브러리 모달 금지, a11y 동작은 headless 위임 허용), 닫기는 헤더 X·푸터 닫기 버튼·`ESC` 세 가지로만 — 배경(scrim) 클릭으로는 닫지 않는다. 위험 액션은 본문에 결과를 명시한 후 `{component.button-danger}` 확정.
 
 ## 카피 톤 체크리스트
 

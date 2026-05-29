@@ -153,6 +153,7 @@ radius-2, radius-4, radius-8, radius-12, radius-16, radius-full
 | `--shadow-4` | material-3, wanted | `--shadow-pop` | M3 elevation level 4 (nav drawer) |
 | `--shadow-cta` | toss-like | `--shadow-1` | brand color glow CTA |
 | `--border-inverse` | wanted | `--border-strong` | wanted 일부 dark surface 분리 |
+| `--bg-scrim` | wanted | `oklch(0 0 0 / 0.5)` (flat 반투명 흑색, blur 금지) | modal/sheet backdrop |
 | `--fg-link` | wanted | `--fg-brand` | wanted 인라인 링크 강조 |
 | `font: mono` | linear-like | `font-family: ui-monospace, "SF Mono", monospace; font-size: 13px` | 단축키, 코드 inline |
 | `typography.amount` | toss-like | `font-size: 32px; font-weight: 700; tabular-nums` | 금액 강조 input |

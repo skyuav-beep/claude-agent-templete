@@ -31,6 +31,17 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 모달 닫기 정책 + 커스텀 모달 강제 코딩 가이드 신설. (2026-05-29)
+  - 배경: 모달 SSOT 명세 부재(`docs/admin-fe-design-guide.md`가 `{component.modal}`을 호출하나 `DESIGN.md`에 정의 없음 = dangling reference) + 닫기/구현 방식이 intake·decision 템플릿마다 열린 옵션. 사용자 요구 = 배경 클릭 닫기 금지(닫기 버튼·X·ESC만) + 항상 커스텀 모달. bottom-sheet 동일 적용.
+  - "항상 커스텀" 범위 분석 → **Headless 허용** 채택: 시각 표면은 항상 `DESIGN.md` 토큰으로 커스텀 구현, a11y 동작(focus-trap·scroll-lock·ESC·`aria-modal`)만 headless 라이브러리(Radix/Headless UI/React Aria) 위임 허용. native(`alert/confirm/prompt`)·pre-styled 라이브러리 모달 금지. (완전 직접 구현=a11y 버그·비용 과다, native만 금지=디자인 일관성 훼손이라 중간안 채택)
+  - `DESIGN.md`: `## Components`에 `### modal / dialog` 신설(bg-elevated/border-subtle/radius-12/space-24/shadow-4·pop 재사용 + 닫기 3종 고정 + bottom-sheet 변형). `### Semantic alias`(Light `oklch(0 0 0 / 0.5)`·Dark `0.6`)와 CSS Variables 양 블록에 `bg-scrim` 신설(flat 반투명, blur 금지). `## Do's and Don'ts`에 Do 1종 + Don't 2종(배경 클릭/스와이프 닫기 금지, native/pre-styled 금지). `## Known Gaps`에 `bg-scrim` synthesized 항목.
+  - `designs/_alias-contract.md ## 9b` fallback 표에 `--bg-scrim` 등재.
+  - `docs/ui-decisions.md ## 6. 모달 정책`: 구현=커스텀(고정), 닫기=닫기/X/ESC(표준 고정, 배경 클릭은 비표준 예외)로 옵션 → 규칙 전환. 모바일 시트 동일 적용 한 줄.
+  - `templates/startup-checklist.md ## 섹션 4`: Q1 커스텀 표준(B 완전 직접 구현, native/pre-styled 배제), Q3 배경 클릭 옵션 제거(닫기/X/ESC 표준 고정). 섹션 7 Q3 바텀 시트도 동일 닫기 정책 명시.
+  - `.claude/skills/design/SKILL.md`: 자동 인용 컴포넌트 목록에 modal/dialog/bottom-sheet 추가 + 진행 규칙에 닫기/커스텀 정책 1줄.
+  - `docs/admin-fe-design-guide.md`: `{component.modal}` 항목에 닫기 affordance(X/닫기/ESC, 배경 클릭 금지)+커스텀 구현 보강 → dangling reference 해소.
+  - 범위 밖: `designs/` 개별 시안 동기화(toss-like bottom-sheet 등)는 후속 별건.
+
 - `CLAUDE.md` `## 답변 포맷` 섹션 추가 + 구분선 `═══` 적용. (2026-05-28)
   - 답변 포맷 규칙(구조·이모지·표기·과정/결론 구분선·결론 형식·적용 범위 8개)을 `CLAUDE.md`에 직접 내장. 연결 프로젝트 6개(`rules/CLAUDE.md` 읽기 순서 포함)에 자동 반영.
   - Core Philosophy #2 참조 대상을 `~/.claude/CLAUDE.md` → `## 답변 포맷` 섹션으로 변경.

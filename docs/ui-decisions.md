@@ -63,13 +63,16 @@ head -20 DESIGN.md           # frontmatter 일치 확인
 
 ## 6. 모달 정책
 
-- 구현 방식: 커스텀 | 라이브러리(<이름, 예: Radix UI / Headless UI / shadcn>)
+표준은 `DESIGN.md ### modal / dialog`를 정본으로 따른다. 아래는 프로젝트 고유 결정만 남긴다.
+
+- 구현 방식: **커스텀(고정)** — 시각 표면은 항상 `DESIGN.md` 토큰으로 직접 구현. a11y 동작(focus-trap·scroll-lock·ESC·`aria-modal`)은 headless 라이브러리(Radix / Headless UI / React Aria 등) 위임 허용. native(`window.alert/confirm/prompt`)·pre-styled 라이브러리 모달 금지.
 - 애니메이션: 페이드 | 슬라이드(up/down) | 스케일 | 없음
-- 닫기 방법(복수 가능): 닫기 버튼 / 배경 클릭 / ESC / 조건부
+- 닫기 방법: **닫기 버튼 / 헤더 X / ESC (표준 고정)**. 배경(scrim) 클릭·시트 스와이프 닫기는 **비표준** — 예외 승인 시에만 도입하고 사유를 `## 변경 이력`에 남긴다.
 - 중첩 허용: 허용 (최대 <N>단) | 불허
 - 배경 스크롤: 잠금 | 허용
 - 내부 스크롤: 필요 | 불필요 | 케이스별
 - 접근성: focus trap / `role="dialog"` / `aria-modal` / aria-label
+- 모바일 전환(7번 `바텀 시트 전환` 시): bottom-sheet도 동일 닫기 정책 적용 — X/닫기 버튼/ESC만, 배경 클릭·스와이프 닫기 금지.
 
 ## 7. 반응형과 레이아웃
 
