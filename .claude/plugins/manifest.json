@@ -148,6 +148,10 @@
       "docs/design-guidelines.md",
       "docs/admin-fe-design-guide.md",
       "docs/admin-fe-preview.html",
+      "docs/user-fe-design-guide.md",
+      "docs/user-fe-preview.html",
+      "docs/user-fe-mobile-design-guide.md",
+      "docs/user-fe-mobile-preview.html",
       "docs/ui-decisions.md",
       "docs/plugin-guide.md"
     ]

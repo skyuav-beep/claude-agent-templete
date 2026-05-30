@@ -86,9 +86,59 @@
   - 답변 포맷 가이드가 유저 전역 `~/.claude/CLAUDE.md`(`## 답변 포맷`)로 이전된 뒤, 프로젝트 `CLAUDE.md` Core Philosophy #2("이모지·수사 사용하지 않는다")가 스코프 미명시 상태여서 전역의 "채팅 답변 절제 이모지 마커 허용"과 해석 충돌 소지가 있었다.
   - Core Philosophy #2를 "루트 문서 본문 한정"으로 못박고, 채팅 답변 텍스트의 상태 마커는 전역 `## 답변 포맷`을 따른다고 명시(옵션 a). `AGENTS.md` Constraint 2(Context Map 한정), Design System(product UI 한정)과 스코프가 직교하도록 정리.
 
+- 템플릿 예시의 rider 프로젝트 종속 제거 — 예시 7파일 + admin preview를 도메인 중립화. (2026-05-27)
+  - 배경: 사용자가 "agent가 특정 프로젝트에 종속됐는지" 점검 요청. 규칙/구조 레이어(`CLAUDE.md`, `AGENTS.md`, `agents/`, skills, hooks, `DESIGN.md`)는 비종속이나, (a) `STATE.md`의 sibling 저장소 인계 정보와 (b) templates/docs 작성 예시의 "헬멧 세척 라이더 매칭 플랫폼" 시나리오가 rider 프로젝트에 결합돼 있음을 확인. 사용자가 (b)만 일반화 선택, 방식은 "추상 placeholder 중립화" 채택.
+  - **A군 (full placeholder)**: `templates/project-intake.md`, `templates/startup-checklist.md`, `templates/framework-structure-intake.md`, `docs/project-guide-template.md`. 매핑: 주문→`<엔티티A>`/`entity-a`, 라이더→`<엔티티B>`/`entity-b`, 매장→`<엔티티C>`/`entity-c`, 배차/재배차→`<핵심 액션>`, 매장 매니저→`<2차 사용자>`, 도메인→`<프로젝트 한 줄 설명>`, KPI 3종→`<지표1~3>`, 라이더 앱→`<외부 연동 시스템>`, AI 매칭 추천→AI 추천 기능. 기술 스택/breakpoint/디렉터리 구조 등 범용 내용은 유지.
+  - **B군 (rider 토큰만 제거, 범용 커머스 어휘 유지)**: `docs/i18n-guidelines.md`(`riders.json`→`products.json`, ns 배열 `riders`→`products`; orders·주문 JSON 샘플은 동작 코드라 유지), `templates/data-table-density.md`(14컬럼 중 `라이더`→`담당자`만 교체; 주문·배송·고객명·`/admin/orders`는 유지). 사유: orders/배송 등은 어느 admin 툴에나 있는 범용 어휘로 rider 프로젝트 식별성이 없음.
+  - **`docs/ui-decisions.md`**: §9에 구체 data-table을 포함해 문서 내부 일관성을 위해 전체 concrete 유지 + rider 토큰만 제거(라이더 재배차→담당자 재배정, 신규 라이더 등록→신규 담당자 등록, `/admin/riders`→`/admin/staff`, 카피톤 어휘 예시 `라이더 → rider`→`운영자 → operator, 관리자 → admin`). 주문/orders 유지.
+  - **`docs/admin-fe-preview.html`** (협의 7파일 밖이나 동일 rider 데모라 함께 정리): 주문 데모 테이블 2종의 `라이더` 컬럼 헤더→`담당자`, 샘플명 김/박/이라이더→김도현/박서준/정민호. 나머지 커머스 데모 데이터 유지.
+  - **의도적 미변경**: `STATE.md`의 rider 언급은 실제 sibling 저장소(`../riderapp-runtime/`, `../rider-platform-docs/`) 인계 기록이라 유지. "매칭"이 든 `CLAUDE.md`/`manifest.json`/`plugin-guide.md`는 "키워드 매칭" 기술 용어 오탐(미변경).
+  - 검증: 전체 저장소 sweep(`라이더|배차|재배차|헬멧|매칭|매장 매니저|riders.json|/admin/riders`)에서 rider 식별 토큰은 STATE.md/todo.md에만 잔존, 나머지는 오탐임을 확인.
+  - 후속(같은 세션, 사용자 요청): `todo.md` §A의 `riderapp-runtime/README.md` 경로 갱신 태스크(sibling 저장소 cross-repo 작업)를 제거. 템플릿 저장소가 특정 소비 프로젝트의 태스크를 추적하지 않도록 정리 — 해당 작업이 여전히 필요하면 `riderapp-runtime` 저장소에서 관리. 이로써 rider 식별 토큰은 `STATE.md`(인계 기록)에만 잔존.
+
 - STATE.md 커밋 정책 명문화 + `rider-platform-docs` 잔재 정리. (2026-05-25)
   - `CLAUDE.md`, `AGENTS.md`, `agents/main-agent.md` 3곳의 "`STATE.md` 갱신" 문구를 "갱신하고 커밋"으로 동기화. `AGENTS.md`에 커밋 순서 한 줄(STATE.md 갱신 → 스테이징 → commit, 미포함 시 hook 경고) 추가.
   - 삭제된 sibling 저장소 `rider-platform-docs` 참조 7곳 정리: 현재형/기준 섹션(현재 상태·현재 기준 파일·주의 사항·다음 작업)은 제거·수정, 과거 dated 로그는 "(이후 삭제됨)" 표기로 이력 보존.
+
+- preview 검수 결과 반영 #1 — Admin Surface Density Cases row ladder 재배치(B 44→40, C 40→36). (2026-05-20)
+  - 배경: 사용자가 admin-fe-preview `#density` 검수 중 **Case B(컴팩트) row 44가 너무 크다**고 판단. 4의 배수 ladder + 하한 36 제약상 B를 40으로 내리면 C(40)와 충돌 → C·D를 36으로 합쳐 해소(B 40 / C·D 36 안 채택). C/D는 row 36 공유하되 padding(16/12/8 vs 8/8/8)으로 구분.
+  - **DESIGN.md `#### Admin Surface Density Cases`** 표: B `44 (compact)`→`40 (compact)`, C `40 (tight)`→`36 (tight)`. 운영 규칙 typography-down 항목을 case-기반("C/D에서")에서 값-기반("row 40 이하 케이스(B/C/D)에서")으로 일반화 — B가 40이 되며 임계에 포함됨. 시안별 디폴트 `minimal-mono` 비고 `row 44`→`row 40`. frontmatter `last_updated` 2026-05-19→2026-05-20.
+  - **Wide Table Cases(컬럼 수 축)는 미변경** — 별도 매트릭스로 B=44 유지. Surface Density와 독립.
+  - `.claude/agents/design-reviewer.md A-8`: typography-down 경고 항목 `Case C/D에서 row 40 이하` → `row 40 이하 케이스(B/C/D)`.
+  - `templates/data-table-density.md §1` Surface Density 체크리스트: B `row 44`→`row 40`, C `row 40`→`row 36`. (§3/§4/작성예시의 Wide Table row 44는 미변경)
+  - `docs/admin-fe-preview.html`: `.density-mini.compact --m-row 44px`→`40px`, `.minimum --m-row 40px`→`36px`. specimen 라벨 B `row 44`→`row 40`, C `row 40`→`row 36`. (JS 미변경)
+  - 후속 검토(미반영, 사용자 판단 대기): (a) `linear-like` Surface Density 디폴트가 C인데 C가 36(=D 모니터 밀도)로 내려가 "compact 시그너처"와 결이 어긋남 — B(40)로 올릴지 검토. (b) **DESIGN.md(1643줄)는 designs/wanted.md(1093줄)와 이미 분기** — admin/User-FE 섹션 전부 DESIGN.md에만 존재. Surface Density도 라이브러리 원본에 없어 이번 수정은 DESIGN.md에만 반영. select-design.sh 재실행 시 admin 콘텐츠 유실 위험은 기존부터 존재(`.bak` 백업 의존).
+
+- User FE 모바일 전용판 디자인 시안 인프라 신설 — DESIGN.md 모바일 인터랙션 패턴 절 + 가이드 + preview HTML + design-reviewer A-13. (2026-05-19)
+  - **DESIGN.md `### bottom-sheet` 끝에 `#### 모바일 전용 인터랙션 패턴` 절 신설** — segmented-control(in-page tab, height 36, radius-full, 2~3개 토글), list-row swipe-action(width 72 액션, 위험은 confirm 단계), pull-to-refresh(80px 임계, spinner), native-like toast(하단 sticky, 단일, swipe-down-dismiss), sticky bottom CTA(height 64, safe-area-inset-bottom 합산).
+  - **`docs/user-fe-mobile-design-guide.md` 신설** (반응형판 가이드와 차이점 중심, 360줄대) — 적용 범위(360~430 고정 + 데스크탑 미지원 + 네이티브-like) + 반응형판과의 차이 역방향 표 + 1차 원칙 추가(hover 금지/gesture 우선/sticky CTA 표준/single-page-flow/keyboard 미사용/back-button 일관성) + 단일 breakpoint(360~430) + 화면 골격(status-bar safe-area + app-bar + content + sticky CTA + bottom-nav + home-indicator safe-area) + 컴포넌트 5종 모바일 전용 로컬값 + 모바일 전용 인터랙션 5종(segmented/swipe-action/pull-to-refresh/toast/sticky CTA) + 7 화면 mobile-only 변형 + 시안별 모바일 디폴트.
+  - **`docs/user-fe-mobile-preview.html` 신설** (반응형 preview cp 후 mobile-only 변형, 2995줄) — viewport switcher 3종 phone model(iPhone SE 360 / Pixel 7 390 / iPhone 14 Pro Max 430), `.phone-frame` 클래스(8px black bezel + radius 36 + notch 120×24 + shadow) 7 화면 specimen에 적용, 인터랙션 specimen 4종 신설(`#segmented`/`#swipeaction`/`#pull`/`#toast`), JS swipe-row 클릭 토글 + segmented active 토글 + BNAV/SEARCH 디폴트 메시지 모바일 강조본으로 갱신, localStorage prefix `user-fe-mobile-*`로 분리. JS `node --check` 통과.
+  - **`.claude/agents/design-reviewer.md A-13` 신설** — 모바일 전용판 적용 시(또는 PR 본문 "모바일 전용"·"viewport 360~430"·"네이티브-like" 명시 시)에 한해 추가 검증. viewport/breakpoint(데스크탑 breakpoint 차단), 인터랙션(hover 금지·우클릭 차단·swipe affordance·위험 swipe confirm), sticky CTA/nav(상세/폼 sticky CTA 표준·stacking 충돌 차단·safe-area-inset-bottom), Toast/Modal(우측 corner 차단·single toast·위험 액션 modal), pull-to-refresh, segmented(4+ 차단·height 36), keyboard(linear-like ⌘K·material-3 keyboard nav 차단), phone 환경(iOS swipe-back 충돌·Material You dynamic color 우선순위).
+  - `manifest.json supporting.docs`에 `docs/user-fe-mobile-design-guide.md`, `docs/user-fe-mobile-preview.html` 등록(반응형판 쌍 직후). JSON 유효성 통과.
+
+- User FE 반응형판 디자인 시안 인프라 신설 — DESIGN.md synthesized 컴포넌트 5종 + 가이드 + preview HTML + design-reviewer A-12/B-7. (2026-05-19)
+  - **DESIGN.md `### User FE surface 컴포넌트 (synthesized)` 신설** (admin 5종 다음, `### logo` 직전) — `app-bar (mobile)`(height 52, safe-area-inset-top, 좌/중/우 cluster 변형), `bottom-nav`(height 56, 3~5탭, safe-area-inset-bottom, FAB variant + #### Bottom Nav Cases 4종 A/B/C/D + 시안별 디폴트), `feed-card`(vertical/horizontal/compact 3변형, thumbnail aspect ladder), `search-bar`(48 height, 4 Cases A inline / B 풀스크린 / C voice+filter / D sunken pill), `bottom-sheet`(handle + max-height 85vh + sticky action-bar + backdrop + animation spec). last_updated 2026-05-18 → 2026-05-19.
+  - **`docs/user-fe-design-guide.md` 신설** — 반응형(mobile/tablet/desktop) 운영 가정. 1차 원칙(mobile-first + touch target 44 + nav 분기 + safe-area-inset) + Breakpoints 4단(640/1024/1280) + 화면 골격 3종(mobile/tablet/desktop) + 7종 화면 패턴(splash/login/home/list/detail/form/mypage) + 시안별 화면 조립 차이 매트릭스(hero/카드/CTA/입력 비교) + 카피 톤 3종 + preview 시각 확인 + 모바일 전용판과의 차이 표.
+  - **`docs/user-fe-preview.html` 신설** — `admin-fe-preview.html` cp 후 본문 교체. 상단 셀렉터 3축(시안 dropdown + viewport dropdown `mobile 360 / tablet 768 / desktop 1280` + light/dark) → `data-design` + `data-viewport` + `data-theme` cascade. `.uf-frame` viewport simulator(`:root[data-viewport=...] .uf-frame { width: ... }`). 6 컴포넌트 specimen(app-bar 3변형 / bottom-nav 4 케이스 / feed-card 3변형 / search-bar 4 케이스 / bottom-sheet 2변형) + 7 화면 specimen(splash/login/home/list/detail/form/mypage). `BNAV_DEFAULT`/`SEARCH_DEFAULT` 시안별 디폴트 매핑 + `renderBnavDefault`/`renderSearchDefault`로 우측 hint 자동 갱신. bottom-nav 활성 탭 클릭 토글 + chip-row 활성 토글 데모. JS `node --check` 통과. 2742줄.
+  - **`.claude/agents/design-reviewer.md A-12 + B-7` 신설** — A-12: User FE 반응형 컴포넌트 정합(app-bar height 52 / bottom-nav 데스크탑 노출 차단 + 탭 3~5개 + 라벨 명사형 + safe-area / feed-card thumbnail aspect ladder + click area 분리 / search-bar height 48 + 접근성 라벨 / bottom-sheet 위험 액션 차단 + max-height 85vh / 반응형 일반 touch target 44 + breakpoint 사다리). B-7: User FE 시안별 정책(Bottom Nav 시안별 디폴트 표 정합 + Search Cases 시안별 디폴트 + toss-like 모바일 height 48 미만 차단 + material-3 FAB shadow-2 + linear-like 텍스트 only 시그너처 + wanted/minimal-mono shadow_on_cards 정책 정합).
+  - `manifest.json supporting.docs`에 `docs/user-fe-design-guide.md`, `docs/user-fe-preview.html` 등록(admin 쌍 직후, ui-decisions 직전). JSON 유효성 통과.
+
+- admin surface 4종 케이스 매트릭스 추가 — Surface Density / Filter Bar / Column Filter / Tab Page. (2026-05-18)
+  - **DESIGN.md `#### Admin Surface Density Cases`** (admin 영역 소개 글 직후) — 4-케이스(A 표준 32/24/16·row 56 / B 컴팩트 24/16/12·row 44 / C 미니멈 16/12/8·row 40 / D 모니터링 8/8/8·row 36) + 화면 단위 한 케이스 적용 원칙 + 시안 디폴트(wanted·toss-like·material-3=A / minimal-mono=B / linear-like=C).
+  - **DESIGN.md `### filter-bar (admin)` 신설 + `#### Filter Bar Cases`** — 마케팅 `### filter-bar`와 별개 admin용 컴포넌트. 4-케이스(A 기본 chip / B 일시범위+엑셀 / C 다중 패널+저장된 뷰 / D 검색만) + yaml 사양(date-range 단일 트리거 + List Toolbar §2 엑셀 호출 + counter `필터 (N)` + saved-views + column-toggle).
+  - **DESIGN.md `### data-table > #### Column Filter Cases`** — 4-케이스(A 정렬만 / B 헤더 popover + brand dot 활성 표기 / C 인라인 row + Excel 필터 패턴 / D 듀얼 전역+컬럼). popover 사양(240/280/320) + 활성 표기 정책(텍스트 'filtered' 금지).
+  - **DESIGN.md `### tab (admin)` 신설 + `#### Tab Page Cases`** — 4-케이스(A line underline / B pill 채움 / C segmented / D vertical 좌측). yaml 사양(height 40, counter badge sm, overflow). 운영 규칙(혼용 금지·이모지/gradient 금지·탭 ≥7 시 D 승격·라벨 명사 단문).
+  - **admin-fe-preview.html 5d~5g 4 섹션 신설** (TOC 4 항목 추가) — `#density` 4행 비교 specimen(spacious/compact/minimum/monitor 클래스로 CSS variable 전환), `#filterbar` 4 케이스(date-trigger + chip + counter + 엑셀 dropdown + panel-trigger), `#colfilter` 4 케이스(mini-table 4컬럼 + h-control sort/funnel + colf-inline-row select), `#tabs` 4 케이스(line underline + pill + segment + vertical-frame indicator). `ADMIN_DEFAULT` 매핑 + `renderAdminDefault(slug)`로 4 섹션 우측 hint 동기. JS `node --check` 통과. 116KB → 144KB.
+  - **`.claude/agents/design-reviewer.md A-8~A-11`** 신설 — Surface Density(케이스 혼재/비-4 ladder/row 36 미만/Case D 일반 화면 적용 차단 등), Filter Bar(일시 분리 금지·List Toolbar §2 호출 필수·필터 0 카운터 숨김·6+ chip 패널 승격 등), Column Filter(text 'filtered' 차단·Case C input ≥32·sort+filter 분리 등), Tab Page(혼용·이모지·gradient·텍스트 카운터·탭 ≥7·라벨 명사형 등).
+  - **`templates/data-table-density.md`** §1 화면 컨텍스트에 density 케이스 선택 4종 + §9 Filter Bar + §10 Column Filter + §11 Tab Page 신설(기존 §9 합의/기록 → §12). 14컬럼 주문 리스트 작성 예시도 §9/§10/§11 항목 추가.
+  - DESIGN.md frontmatter `last_updated` 2026-05-18 유지.
+
+- `### data-table` 아래 `#### List Toolbar Cases` 신설 + admin-fe-preview specimen + design-reviewer A-7 + density intake §8 확장. (2026-05-18)
+  - **DESIGN.md ### data-table > #### List Toolbar Cases** 신규 — 검색 입력 X(clear) 3종(A 항상 / B 호버·포커스 / C 없음) + 엑셀 다운로드 4종(A 단일 버튼 / B 아이콘 only / C 옵션 dropdown / D 비동기 progress) + 페이지 크기 3종(A dropdown / B segmented / C auto-fit) 매트릭스. 각 컴포넌트 yaml 토큰 사양(slot/size/color/component/keyboard/a11y) + 시안별 디폴트 표 5종.
+  - `templates/data-table-density.md` 섹션 재편: 기존 §8 합의/기록 → §9로 밀고 §8 List Toolbar 신설(8.1 검색 clear / 8.2 엑셀 / 8.3 페이지 크기). 작성 예시도 14컬럼 주문 리스트 시나리오에 §8 답변 추가.
+  - `.claude/agents/design-reviewer.md A-7` 신설 — 3 컴포넌트 차단/경고 항목 18종(검색: hit area / 색 alias / Case A 노출 / Case C 접근성 / aria-label, 엑셀: 두 버튼 통합 / Case D 승격 / gradient 정책 / disabled 중복호출 / 동사형 카피 / tooltip, 페이지 크기: ladder 외 옵션 / 100+ virtual / reset / segmented 강조색 / auto-fit info / aria-label) + 공통 시안 디폴트 정합.
+  - `docs/admin-fe-preview.html` 5c 섹션 `#toolbar` 신설(TOC 추가) — 9개 케이스 row 모두 인터랙티브 specimen으로 렌더, 시안 dropdown에 연동되는 `TOOLBAR_DEFAULT` 매핑(`renderToolbarDefault(slug)`)으로 우측 hint에 활성 시안 디폴트 자동 표기. CSS는 `.toolbar-grid`/`.toolbar-row`/`.search-input` (.case-a/b/c) + `.segmented` + `.auto-fit-tag` + `.export-progress` 스피너 신설. JS `node --check` 통과.
+  - DESIGN.md frontmatter `last_updated` 2026-05-16 → 2026-05-18.
 
 - `docs/business-logic-playbook.md` §5 확장 + `templates/business-logic-request.md` 작성 예시 보강 — build/docker/git 단계별 시나리오. (2026-05-16)
   - **§5.1 단계별 실행 흐름**: 6단계 순서(`git status` → lint → unit test → build → e2e → docker rebuild 판단) + 각 단계 통과 기준.
@@ -376,7 +426,13 @@
 ## 다음 작업
 
 ### 디자인 라이브러리 후속 (사용자 검수 대기)
+- **2026-05-19 추가**: User FE 반응형판 + **모바일 전용판** 두 세트 모두 시안 검수 대기.
+  - 반응형판: `docs/user-fe-preview.html` 브라우저 확인. 상단 셀렉터 시안 5종 × viewport(mobile 360 / tablet 768 / desktop 1280) × light/dark 토글하며 6 컴포넌트 + 7 화면 specimen 점검.
+  - 모바일 전용판: `docs/user-fe-mobile-preview.html` 브라우저 확인. 상단 셀렉터 시안 5종 × phone model(iPhone SE 360 / Pixel 7 390 / iPhone 14 Pro Max 430) × light/dark 토글. 7 화면 specimen은 `.phone-frame`(bezel + notch) 적용. 추가 인터랙션 specimen 4종(segmented/swipe-action/pull-to-refresh/native toast).
+  - 의도와 다른 부분 발견 시 DESIGN.md `### User FE surface 컴포넌트` 또는 `#### 모바일 전용 인터랙션 패턴` 절, 또는 카탈로그·preview 조정.
 - **사용자가 `docs/admin-fe-preview.html` 브라우저 시각 검수 진행 중**. 활성 시안 = `wanted`. dropdown으로 5개 시안 토글하며 의도와 다른 부분 발견 시 토큰값/fallback/시그너처 spec 조정 예정. 검수 결과 받으면 해당 카탈로그 갱신 + STATE 변경 이력 기록.
+- 2026-05-18 추가 결과: `검색창 X / 엑셀 다운로드 / 페이지 크기` 3 컴포넌트도 케이스별 선택 가능하게 추가 요청 → `List Toolbar Cases`로 일괄 반영 완료. 검수자는 `#toolbar` 섹션에서 5개 시안 × 9개 케이스 row 확인.
+- 2026-05-18 추가 검수 요청: 대시보드/KPI/data-table `여백 최소화 포함` + `검색 필터에 일시 + 엑셀` + `컬럼 필터` + `탭 페이지` 4 매트릭스로 확장 → 모두 반영. preview `#density`/`#filterbar`/`#colfilter`/`#tabs` 4 신규 섹션에서 시안 dropdown 토글로 케이스 비교 가능.
 - preview HTML fetch 모델 마이그레이션은 시안 5종 단계에서 보류. 시안 10+ 시점에 재검토(현재 inline 모델 86KB는 충분히 가벼움).
 - 라이브러리 v1 시드 5종 완성: `wanted`, `minimal-mono`, `toss-like`, `material-3`, `linear-like`. 추가 시안 요청 시 `designs/_template.md`에서 시작.
 
@@ -405,11 +461,11 @@
 - 플러그인 가이드: `docs/plugin-guide.md`
 - 요청 템플릿: `templates/feature-request.md`, `templates/bugfix-request.md`, `templates/review-request.md`, `templates/refactor-request.md`, `templates/business-logic-request.md`
 - intake 템플릿: `templates/project-intake.md`, `templates/ui-intake.md`, `templates/responsive-intake.md`, `templates/tech-intake.md`, `templates/i18n-intake.md`, `templates/framework-structure-intake.md`, `templates/startup-checklist.md`, `templates/api-intake.md`, `templates/error-intake.md`, `templates/form-intake.md`, `templates/format-intake.md`, `templates/qa-intake.md`, `templates/routing-intake.md`
-- guide 템플릿: `docs/project-guide-template.md`, `docs/i18n-guidelines.md`, `docs/business-logic-playbook.md`, `docs/framework-structure-guide.md`, `docs/design-guidelines.md`, `docs/admin-fe-design-guide.md`, `docs/ui-decisions.md`
+- guide 템플릿: `docs/project-guide-template.md`, `docs/i18n-guidelines.md`, `docs/business-logic-playbook.md`, `docs/framework-structure-guide.md`, `docs/design-guidelines.md`, `docs/admin-fe-design-guide.md`, `docs/user-fe-design-guide.md`, `docs/user-fe-mobile-design-guide.md`, `docs/ui-decisions.md`
 - 디자인 시스템 카탈로그(active): `DESIGN.md`
 - 디자인 시안 라이브러리: `designs/README.md`, `designs/_alias-contract.md`, `designs/_template.md`, `designs/wanted.md`, `designs/minimal-mono.md`, `designs/toss-like.md`, `designs/material-3.md`, `designs/linear-like.md`
 - 디자인 시안 selector: `.claude/plugins/select-design.sh`
-- 운영 아티팩트: `docs/codex-reading-order.md`, `docs/subagent-guide.md`, `docs/development-process.md`, `docs/development-process.html`, `docs/intake.html`, `docs/admin-fe-preview.html`
+- 운영 아티팩트: `docs/codex-reading-order.md`, `docs/subagent-guide.md`, `docs/development-process.md`, `docs/development-process.html`, `docs/intake.html`, `docs/admin-fe-preview.html`, `docs/user-fe-preview.html`, `docs/user-fe-mobile-preview.html`
 - 런타임 앱: `../riderapp-runtime/` (sibling 저장소)
 
 ## 주의 사항

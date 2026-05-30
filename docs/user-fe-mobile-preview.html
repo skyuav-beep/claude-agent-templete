@@ -980,8 +980,8 @@
       font-size: 13px; color: var(--fg-secondary);
     }
     .density-mini.spacious { --m-gap: 16px; --m-card-pad: 24px; --m-h: 40px; --m-row: 56px; }
-    .density-mini.compact  { --m-gap: 12px; --m-card-pad: 16px; --m-h: 36px; --m-row: 40px; }
-    .density-mini.minimum  { --m-gap: 8px;  --m-card-pad: 12px; --m-h: 32px; --m-row: 36px; }
+    .density-mini.compact  { --m-gap: 12px; --m-card-pad: 16px; --m-h: 36px; --m-row: 44px; }
+    .density-mini.minimum  { --m-gap: 8px;  --m-card-pad: 12px; --m-h: 32px; --m-row: 40px; }
     .density-mini.monitor  { --m-gap: 8px;  --m-card-pad: 8px;  --m-h: 32px; --m-row: 36px; }
 
     /* ============================================================
@@ -1325,11 +1325,16 @@
 
 <!-- ===== preview chrome ===== -->
 <div class="preview-bar">
-  <h1>Admin FE 디자인 프리뷰</h1>
-  <span class="source">designs/ 라이브러리 기반 · 단일 파일 · CDN 없음</span>
+  <h1>User FE 디자인 프리뷰 (모바일 전용판)</h1>
+  <span class="source">designs/ 라이브러리 기반 · viewport 360~430 고정 · 네이티브-like · CDN 없음</span>
   <div class="right">
     <select class="design-select" id="design-select" aria-label="디자인 시안">
       <option value="wanted">wanted</option>
+    </select>
+    <select class="design-select" id="viewport-select" aria-label="폰 모델">
+      <option value="se">iPhone SE 360</option>
+      <option value="pixel" selected>Pixel 7 390</option>
+      <option value="max">iPhone 14 Pro Max 430</option>
     </select>
     <div class="theme-toggle" role="tablist" aria-label="테마">
       <button id="btn-light" aria-pressed="true">라이트</button>
@@ -1351,19 +1356,22 @@
   <a href="#tokens">토큰 색</a>
   <a href="#atomic">atomic 7종</a>
   <a href="#signature">시안 시그너처</a>
-  <a href="#login">login-layout</a>
-  <a href="#sidebar">sidebar-nav</a>
-  <a href="#topbar">top-bar</a>
-  <a href="#stat">stat-card</a>
-  <a href="#table">data-table</a>
-  <a href="#widetable">wide table cases</a>
-  <a href="#toolbar">list toolbar cases</a>
-  <a href="#density">surface density</a>
-  <a href="#filterbar">filter bar cases</a>
-  <a href="#colfilter">column filter cases</a>
-  <a href="#tabs">tab page cases</a>
-  <a href="#dashboard">대시보드 조립</a>
-  <a href="#listpage">리스트 페이지 조립</a>
+  <a href="#appbar">app-bar</a>
+  <a href="#bottomnav">bottom-nav</a>
+  <a href="#feedcard">feed-card</a>
+  <a href="#searchbar">search-bar</a>
+  <a href="#bottomsheet">bottom-sheet</a>
+  <a href="#segmented">segmented-control</a>
+  <a href="#swipeaction">swipe-action</a>
+  <a href="#pull">pull-to-refresh</a>
+  <a href="#toast">native toast</a>
+  <a href="#splash">화면 1. splash</a>
+  <a href="#login">화면 2. login</a>
+  <a href="#home">화면 3. home</a>
+  <a href="#list">화면 4. list</a>
+  <a href="#detail">화면 5. detail</a>
+  <a href="#form">화면 6. form</a>
+  <a href="#mypage">화면 7. mypage</a>
 </div>
 
 <!-- ===================== Tokens ===================== -->
@@ -1685,1099 +1693,1095 @@
     </div>
     <p style="margin-top:var(--space-12);font-size:13px;color:var(--fg-secondary)">
       brand는 gradient pair(violet→teal). accent는 CTA·강조 텍스트·selection에 적극 사용. 다른 시안의 단색 brand와 직교.
-    </p>
+<!-- ===== user FE 전용 CSS (viewport simulator + user FE 컴포넌트 클래스) ===== -->
+<style>
+  /* viewport simulator — 모든 .uf-frame은 data-viewport에 따라 width가 바뀜 */
+  .uf-frame {
+    background: var(--bg-canvas);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-12);
+    overflow: hidden;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: width 220ms ease;
+  }
+  :root[data-viewport="se"]    .uf-frame { width: 360px; min-height: 640px; }
+  :root[data-viewport="pixel"] .uf-frame { width: 390px; min-height: 720px; }
+  :root[data-viewport="max"]   .uf-frame { width: 430px; min-height: 780px; }
+
+  /* phone bezel + notch — 7 화면 specimen에만 .phone-frame 추가 클래스로 적용 */
+  .phone-frame {
+    border: 8px solid #1a1a1a;
+    border-radius: 36px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    position: relative;
+    padding-top: 0;
+  }
+  .phone-frame::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 24px;
+    background: #1a1a1a;
+    border-radius: 0 0 16px 16px;
+    z-index: 100;
+    pointer-events: none;
+  }
+  .phone-frame .app-bar { padding-top: 24px; height: calc(52px + 24px); }
+
+  /* viewport hint */
+  :root[data-viewport="se"]    .uf-viewport-hint::after { content: 'iPhone SE · 360px'; }
+  :root[data-viewport="pixel"] .uf-viewport-hint::after { content: 'Pixel 7 · 390px'; }
+  :root[data-viewport="max"]   .uf-viewport-hint::after { content: 'iPhone 14 Pro Max · 430px'; }
+
+  /* segmented control */
+  .segmented {
+    display: inline-flex;
+    background: var(--bg-muted);
+    border-radius: var(--radius-full);
+    padding: 4px;
+    gap: 2px;
+  }
+  .segmented .seg-item {
+    padding: 0 var(--space-12); height: 28px;
+    border-radius: var(--radius-full);
+    font-size: 13px; font-weight: 500;
+    color: var(--fg-secondary);
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: none; background: transparent;
+  }
+  .segmented .seg-item.active {
+    background: var(--bg-surface);
+    color: var(--fg-strong);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  }
+
+  /* swipe-action list-row */
+  .swipe-row {
+    position: relative;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    overflow: hidden;
+  }
+  .swipe-row .swipe-content {
+    display: flex; align-items: center; gap: var(--space-12);
+    padding: var(--space-16);
+    background: var(--bg-surface);
+    transform: translateX(-144px);
+    transition: transform 200ms ease;
+  }
+  .swipe-row.collapsed .swipe-content { transform: translateX(0); }
+  .swipe-row .swipe-actions {
+    position: absolute; top: 0; right: 0; height: 100%;
+    display: flex;
+  }
+  .swipe-row .swipe-action {
+    width: 72px; height: 100%;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: white; font-size: 13px; font-weight: 600;
+    border: none; cursor: pointer;
+  }
+  .swipe-row .swipe-action.danger { background: var(--fg-danger); }
+  .swipe-row .swipe-action.brand { background: var(--bg-brand); }
+  .swipe-row .swipe-body { flex: 1; min-width: 0; }
+  .swipe-row .swipe-body .title { font-size: 14px; font-weight: 600; color: var(--fg-strong); }
+  .swipe-row .swipe-body .meta { font-size: 12px; color: var(--fg-tertiary); margin-top: 2px; }
+  .swipe-row .swipe-hint { color: var(--fg-tertiary); }
+
+  /* pull-to-refresh */
+  .pull-affordance {
+    height: 64px;
+    display: flex; align-items: center; justify-content: center;
+    gap: var(--space-8);
+    color: var(--fg-secondary);
+    font-size: 13px;
+    background: var(--bg-canvas);
+  }
+  .pull-spinner {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border-default);
+    border-top-color: var(--fg-brand);
+    border-radius: 50%;
+    animation: pull-spin 800ms linear infinite;
+  }
+  @keyframes pull-spin { to { transform: rotate(360deg); } }
+
+  /* native toast */
+  .toast-mobile {
+    background: var(--fg-strong);
+    color: var(--bg-surface);
+    padding: var(--space-12) var(--space-16);
+    border-radius: var(--radius-12);
+    font-size: 14px;
+    display: flex; align-items: center; gap: var(--space-12);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .toast-mobile .toast-action {
+    color: var(--bg-brand-subtle);
+    background: transparent; border: none;
+    font-weight: 600; font-size: 14px;
+    cursor: pointer;
+  }
+  :root[data-theme="dark"] .toast-mobile { background: var(--bg-surface); color: var(--fg-strong); border: 1px solid var(--border-subtle); }
+
+  /* app-bar */
+  .app-bar {
+    height: 52px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0 var(--space-16);
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    flex-shrink: 0;
+  }
+  .app-bar-left, .app-bar-right { display: flex; align-items: center; gap: var(--space-8); }
+  .app-bar-center { flex: 1; min-width: 0; }
+  .app-bar-title { font-size: 16px; font-weight: 600; color: var(--fg-strong); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .app-bar-logo {
+    width: 28px; height: 28px; border-radius: var(--radius-8);
+    background: var(--bg-brand); color: var(--fg-on-brand);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+  }
+
+  /* bottom-nav */
+  .bottom-nav {
+    height: 56px;
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: stretch;
+    flex-shrink: 0;
+  }
+  .bottom-nav .nav-tab {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: var(--space-4);
+    color: var(--fg-tertiary);
+    cursor: pointer;
+    transition: color 120ms ease;
+    text-decoration: none;
+  }
+  .bottom-nav .nav-tab.active { color: var(--fg-brand); }
+  .bottom-nav .nav-tab .icon { width: 24px; height: 24px; }
+  .bottom-nav .nav-tab .label { font-size: 11px; font-weight: 600; }
+  .bottom-nav.text-only .nav-tab .icon { display: none; }
+  .bottom-nav.text-only .nav-tab .label { font-size: 14px; }
+  .bottom-nav.fab-variant .nav-tab.fab {
+    position: relative;
+    overflow: visible;
+  }
+  .bottom-nav.fab-variant .fab-button {
+    position: absolute;
+    top: -16px; left: 50%; transform: translateX(-50%);
+    width: 52px; height: 52px;
+    border-radius: var(--radius-full);
+    background: var(--bg-brand); color: var(--fg-on-brand);
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-2, 0 4px 12px rgba(0,0,0,0.16));
+    border: none; cursor: pointer;
+  }
+
+  /* feed-card */
+  .feed-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-12);
+    overflow: hidden;
+    cursor: pointer;
+    transition: background 120ms ease;
+  }
+  .feed-card:hover { background: var(--bg-subtle); }
+  .feed-card.vertical .thumb { width: 100%; aspect-ratio: 16/9; background: var(--bg-muted); }
+  .feed-card.horizontal { display: flex; gap: var(--space-12); padding: var(--space-12); }
+  .feed-card.horizontal .thumb { width: 96px; height: 96px; flex-shrink: 0; border-radius: var(--radius-8); background: var(--bg-muted); }
+  .feed-card.compact { padding: var(--space-16); }
+  .feed-card .body { padding: var(--space-16); }
+  .feed-card.horizontal .body { padding: 0; }
+  .feed-card .title { font-size: 16px; font-weight: 700; color: var(--fg-strong); line-height: 1.4; }
+  .feed-card .desc { font-size: 14px; color: var(--fg-secondary); margin-top: var(--space-4); }
+  .feed-card .meta { font-size: 12px; color: var(--fg-tertiary); margin-top: var(--space-8); }
+  .feed-card .meta-sep { margin: 0 var(--space-8); }
+
+  /* search-bar */
+  .search-bar {
+    height: 48px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-12);
+    padding: 0 var(--space-12);
+    display: flex; align-items: center; gap: var(--space-8);
+  }
+  .search-bar.sunken { background: var(--bg-muted); border-color: transparent; border-radius: var(--radius-full); }
+  .search-bar input {
+    flex: 1; border: none; outline: none;
+    background: transparent;
+    font-size: 14px;
+    color: var(--fg-default);
+    font-family: inherit;
+  }
+  .search-bar input::placeholder { color: var(--fg-tertiary); }
+  .search-bar .icon { color: var(--fg-tertiary); }
+
+  /* bottom-sheet */
+  .bottom-sheet {
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-subtle);
+    border-radius: var(--radius-16) var(--radius-16) 0 0;
+    padding: var(--space-16);
+    padding-bottom: var(--space-24);
+  }
+  .bottom-sheet .handle {
+    width: 36px; height: 4px;
+    background: var(--border-strong);
+    border-radius: var(--radius-full);
+    margin: 0 auto var(--space-12);
+  }
+  .bottom-sheet .sheet-title { font-size: 16px; font-weight: 700; color: var(--fg-strong); margin-bottom: var(--space-12); }
+  .bottom-sheet .sheet-list { display: flex; flex-direction: column; gap: var(--space-4); }
+  .bottom-sheet .sheet-row {
+    padding: var(--space-12); border-radius: var(--radius-8);
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer;
+  }
+  .bottom-sheet .sheet-row:hover { background: var(--bg-subtle); }
+  .bottom-sheet .sheet-row.selected { background: var(--bg-brand-subtle); color: var(--fg-brand); }
+
+  /* content area in frame */
+  .uf-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-16);
+    background: var(--bg-canvas);
+    display: flex; flex-direction: column; gap: var(--space-16);
+  }
+  .uf-content-noscroll { padding: 0; overflow: visible; }
+
+  /* hero banner */
+  .hero-banner {
+    background: var(--bg-brand-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-12);
+    padding: var(--space-24);
+    color: var(--fg-default);
+  }
+  .hero-banner h3 { margin: 0 0 var(--space-8); font-size: 20px; font-weight: 700; color: var(--fg-strong); }
+  .hero-banner p { margin: 0; font-size: 14px; color: var(--fg-secondary); }
+
+  /* chip-row */
+  .chip-row { display: flex; gap: var(--space-8); overflow-x: auto; padding-bottom: var(--space-4); }
+  .chip-row::-webkit-scrollbar { display: none; }
+  .chip-pill {
+    flex-shrink: 0;
+    padding: 0 var(--space-12); height: 32px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    color: var(--fg-default);
+    font-size: 13px; font-weight: 500;
+    display: inline-flex; align-items: center; gap: var(--space-4);
+    cursor: pointer;
+  }
+  .chip-pill.active { background: var(--bg-brand-subtle); color: var(--fg-brand); border-color: transparent; }
+
+  /* feed grid (responsive) */
+  .feed-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-16); }
+  :root[data-viewport="tablet"] .feed-grid { grid-template-columns: repeat(2, 1fr); }
+  :root[data-viewport="desktop"] .feed-grid { grid-template-columns: repeat(3, 1fr); }
+
+  /* sticky CTA */
+  .sticky-cta {
+    padding: var(--space-12) var(--space-16);
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+  }
+  .sticky-cta .button { width: 100%; }
+
+  /* mypage list */
+  .my-profile {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-12);
+    padding: var(--space-16);
+    display: flex; align-items: center; gap: var(--space-12);
+  }
+  .my-profile .avatar { width: 56px; height: 56px; border-radius: var(--radius-full); background: var(--bg-brand-subtle); color: var(--fg-brand); display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; }
+  .my-profile .name { font-size: 16px; font-weight: 700; color: var(--fg-strong); }
+  .my-profile .email { font-size: 13px; color: var(--fg-secondary); margin-top: 2px; }
+  .menu-list {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-12);
+    overflow: hidden;
+  }
+  .menu-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--space-16);
+    border-top: 1px solid var(--border-subtle);
+    cursor: pointer;
+  }
+  .menu-row:first-child { border-top: none; }
+  .menu-row:hover { background: var(--bg-subtle); }
+  .menu-row .label { font-size: 14px; color: var(--fg-default); }
+  .menu-row .meta { font-size: 12px; color: var(--fg-tertiary); }
+
+  /* form field */
+  .form-field { display: flex; flex-direction: column; gap: var(--space-4); }
+  .form-field .label { font-size: 13px; font-weight: 600; color: var(--fg-default); }
+  .form-field .helper { font-size: 12px; color: var(--fg-secondary); }
+  .form-field .helper.error { color: var(--fg-danger); }
+
+  /* step indicator */
+  .step-indicator { display: flex; align-items: center; gap: var(--space-8); padding: var(--space-12) var(--space-16); }
+  .step-indicator .dot { width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--bg-muted); }
+  .step-indicator .dot.active { background: var(--bg-brand); }
+  .step-indicator .line { flex: 1; height: 1px; background: var(--border-subtle); }
+
+  /* media gallery */
+  .media-gallery { aspect-ratio: 4/3; background: var(--bg-muted); position: relative; display: flex; align-items: center; justify-content: center; color: var(--fg-tertiary); font-size: 12px; }
+  .media-gallery .dot-indicator { position: absolute; bottom: var(--space-12); left: 50%; transform: translateX(-50%); display: flex; gap: var(--space-4); }
+  .media-gallery .dot-indicator .dot { width: 6px; height: 6px; border-radius: var(--radius-full); background: rgba(255,255,255,0.5); }
+  .media-gallery .dot-indicator .dot.active { background: white; }
+
+  /* mobile frame visual cue */
+  .frame-caption { text-align: center; color: var(--fg-tertiary); font-size: 12px; margin-top: var(--space-8); }
+  .row-hint { color: var(--fg-tertiary); font-size: 12px; }
+</style>
+
+<!-- ===================== app-bar ===================== -->
+<section class="section" id="appbar">
+  <div class="section-head">
+    <h2>1. app-bar (mobile)</h2>
+    <p>sticky top + safe-area-inset-top. 좌측 cluster 변형 3종 (back-button / hamburger / logo) × 중앙 (page-title / search / none).</p>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">A — 홈/루트 (logo 좌측, search/notification 우측)</div>
+    <div class="uf-frame" style="min-height:auto">
+      <div class="app-bar">
+        <div class="app-bar-left"><span class="app-bar-logo">A</span></div>
+        <div class="app-bar-center"></div>
+        <div class="app-bar-right">
+          <button class="button tertiary" aria-label="검색"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></button>
+          <button class="button tertiary" aria-label="알림"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">B — 상세 (back-button + page-title 중앙)</div>
+    <div class="uf-frame" style="min-height:auto">
+      <div class="app-bar">
+        <div class="app-bar-left"><button class="button tertiary" aria-label="뒤로"><svg class="icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button></div>
+        <div class="app-bar-center"><span class="app-bar-title">주문 상세</span></div>
+        <div class="app-bar-right"><button class="button tertiary" aria-label="공유"><svg class="icon" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/></svg></button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">C — 검색 중심 (search-bar 중앙)</div>
+    <div class="uf-frame" style="min-height:auto">
+      <div class="app-bar">
+        <div class="app-bar-left"><button class="button tertiary" aria-label="뒤로"><svg class="icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button></div>
+        <div class="app-bar-center"><div class="search-bar sunken" style="height:36px"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input placeholder="검색어를 입력해 보세요" /></div></div>
+        <div class="app-bar-right"><button class="button tertiary" style="font-size:14px">취소</button></div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ===================== login-layout ===================== -->
+<!-- ===================== bottom-nav ===================== -->
+<section class="section" id="bottomnav">
+  <div class="section-head">
+    <h2>2. bottom-nav</h2>
+    <p>4 Cases: A 5탭 균등 / B 중앙 FAB+4탭 / C 라벨 only / D 아이콘 only. 시안별 디폴트는 우측 hint 참조.</p>
+    <p class="row-hint" id="bnav-hint">디폴트: —</p>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">A — 5탭 균등 (표준)</div>
+    <div class="uf-frame" style="min-height:auto">
+      <div class="bottom-nav">
+        <a class="nav-tab active" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg><span class="label">홈</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><span class="label">탐색</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span class="label">즐겨찾기</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span class="label">알림</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span class="label">마이</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">B — 중앙 FAB + 4탭</div>
+    <div class="uf-frame" style="min-height:auto">
+      <div class="bottom-nav fab-variant">
+        <a class="nav-tab active" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg><span class="label">홈</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><span class="label">탐색</span></a>
+        <div class="nav-tab fab"><button class="fab-button" aria-label="새 글"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span class="label">알림</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span class="label">마이</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">C — 라벨 only (텍스트 탭)</div>
+    <div class="uf-frame" style="min-height:auto">
+      <div class="bottom-nav text-only">
+        <a class="nav-tab active" href="#"><span class="label">홈</span></a>
+        <a class="nav-tab" href="#"><span class="label">탐색</span></a>
+        <a class="nav-tab" href="#"><span class="label">알림</span></a>
+        <a class="nav-tab" href="#"><span class="label">마이</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">D — 아이콘 only (compact)</div>
+    <div class="uf-frame" style="min-height:auto">
+      <div class="bottom-nav">
+        <a class="nav-tab active" href="#"><svg class="icon" viewBox="0 0 24 24" style="width:28px;height:28px"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24" style="width:28px;height:28px"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24" style="width:28px;height:28px"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24" style="width:28px;height:28px"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== feed-card ===================== -->
+<section class="section" id="feedcard">
+  <div class="section-head">
+    <h2>3. feed-card</h2>
+    <p>3 layout 변형 — vertical(상단 썸네일), horizontal(좌측 썸네일), compact(텍스트만).</p>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">vertical (mobile carousel / desktop grid)</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--space-16)">
+      <div class="feed-card vertical">
+        <div class="thumb"></div>
+        <div class="body">
+          <div class="title">제주 한 달 살기 패키지</div>
+          <div class="desc">바다 뷰 숙소 30박 · 자전거 무료 대여</div>
+          <div class="meta">여행 <span class="meta-sep">·</span> 2시간 전</div>
+        </div>
+      </div>
+      <div class="feed-card vertical">
+        <div class="thumb"></div>
+        <div class="body">
+          <div class="title">새벽 러닝 크루 모집</div>
+          <div class="desc">매주 화·목 5:30 한강공원 · 초보 환영</div>
+          <div class="meta">운동 <span class="meta-sep">·</span> 오늘 오전</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">horizontal (list)</div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-12)">
+      <div class="feed-card horizontal">
+        <div class="thumb"></div>
+        <div class="body">
+          <div class="title">홈 카페 원두 큐레이션 구독</div>
+          <div class="desc">매월 다른 산지의 원두 200g</div>
+          <div class="meta">월 19,900원</div>
+        </div>
+      </div>
+      <div class="feed-card horizontal">
+        <div class="thumb"></div>
+        <div class="body">
+          <div class="title">공유 사무실 1일 이용권</div>
+          <div class="desc">강남·홍대 등 5개 지점</div>
+          <div class="meta">12,000원 부터</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">compact (텍스트만)</div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-8)">
+      <div class="feed-card compact">
+        <div class="title">새로운 공지: 결제 시스템 점검 안내</div>
+        <div class="meta">관리자 <span class="meta-sep">·</span> 1일 전</div>
+      </div>
+      <div class="feed-card compact">
+        <div class="title">5월 적립금 사용 안내</div>
+        <div class="meta">이벤트 <span class="meta-sep">·</span> 3일 전</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== search-bar ===================== -->
+<section class="section" id="searchbar">
+  <div class="section-head">
+    <h2>4. search-bar</h2>
+    <p>4 Cases: A inline / B 풀스크린 overlay / C voice+filter combo / D sunken pill.</p>
+    <p class="row-hint" id="search-hint">디폴트: —</p>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">A — inline (표준)</div>
+    <div class="search-bar">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+      <input placeholder="검색어를 입력해 보세요" />
+    </div>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">B — 풀스크린 overlay (input focus 시)</div>
+    <div class="uf-frame" style="min-height:auto">
+      <div class="app-bar">
+        <div class="app-bar-left"><button class="button tertiary" aria-label="뒤로"><svg class="icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button></div>
+        <div class="app-bar-center"><div class="search-bar sunken" style="height:36px"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input placeholder="검색어를 입력해 보세요" /></div></div>
+        <div class="app-bar-right"><button class="button tertiary" style="font-size:14px">취소</button></div>
+      </div>
+      <div style="padding:var(--space-16);display:flex;flex-direction:column;gap:var(--space-8)">
+        <div style="font-size:12px;font-weight:600;color:var(--fg-tertiary)">최근 검색</div>
+        <div style="display:flex;gap:var(--space-8);flex-wrap:wrap">
+          <span class="chip-pill">제주</span>
+          <span class="chip-pill">공유 오피스</span>
+          <span class="chip-pill">원두 구독</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">C — voice + filter combo</div>
+    <div class="search-bar">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+      <input placeholder="검색어를 입력해 보세요" />
+      <button class="button tertiary" aria-label="음성 검색"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2a3 3 0 00-3 3v6a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></button>
+      <button class="button tertiary" aria-label="필터"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg></button>
+    </div>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">D — sunken pill</div>
+    <div class="search-bar sunken">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+      <input placeholder="검색어를 입력해 보세요" />
+    </div>
+  </div>
+</section>
+
+<!-- ===================== bottom-sheet ===================== -->
+<section class="section" id="bottomsheet">
+  <div class="section-head">
+    <h2>5. bottom-sheet</h2>
+    <p>모바일 modal·dropdown·picker 대체. drag handle + title + 리스트 + (옵션) sticky CTA. 닫힘/열림 상태 비교.</p>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">예: 정렬 선택 sheet (열린 상태)</div>
+    <div class="uf-frame" style="min-height:auto">
+      <div style="height:80px;background:var(--bg-muted);display:flex;align-items:center;justify-content:center;color:var(--fg-tertiary);font-size:12px">backdrop rgba(0,0,0,0.40) (시각화 생략)</div>
+      <div class="bottom-sheet">
+        <div class="handle"></div>
+        <div class="sheet-title">정렬</div>
+        <div class="sheet-list">
+          <div class="sheet-row selected"><span>인기순</span><svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></div>
+          <div class="sheet-row"><span>최신순</span></div>
+          <div class="sheet-row"><span>낮은 가격순</span></div>
+          <div class="sheet-row"><span>높은 가격순</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="specimen">
+    <div class="specimen-label">예: 필터 sheet (sticky CTA 포함)</div>
+    <div class="uf-frame" style="min-height:auto">
+      <div class="bottom-sheet">
+        <div class="handle"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-12)">
+          <div class="sheet-title" style="margin-bottom:0">필터</div>
+          <button class="button tertiary" style="font-size:13px;color:var(--fg-brand)">초기화</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:var(--space-16)">
+          <div class="form-field">
+            <span class="label">카테고리</span>
+            <div style="display:flex;gap:var(--space-8);flex-wrap:wrap">
+              <span class="chip-pill active">전체</span>
+              <span class="chip-pill">여행</span>
+              <span class="chip-pill">운동</span>
+              <span class="chip-pill">학습</span>
+            </div>
+          </div>
+          <div class="form-field">
+            <span class="label">가격 범위</span>
+            <span class="helper">10,000원 ~ 100,000원</span>
+          </div>
+        </div>
+      </div>
+      <div class="sticky-cta">
+        <button class="button primary">적용하기</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== segmented-control ===================== -->
+<section class="section" id="segmented">
+  <div class="section-head">
+    <h2>6. segmented-control (in-page tab)</h2>
+    <p>2~3개 토글 전용. height 36, radius-full 외곽 + active cell 색 분리. 4+는 admin Case A(line underline) 사용.</p>
+  </div>
+  <div class="specimen">
+    <div class="specimen-label">예: 일/월/연 단위 전환</div>
+    <div class="segmented">
+      <button class="seg-item active">일</button>
+      <button class="seg-item">월</button>
+      <button class="seg-item">연</button>
+    </div>
+  </div>
+  <div class="specimen">
+    <div class="specimen-label">예: 리스트/지도 토글</div>
+    <div class="segmented">
+      <button class="seg-item active">리스트</button>
+      <button class="seg-item">지도</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== swipe-action ===================== -->
+<section class="section" id="swipeaction">
+  <div class="section-head">
+    <h2>7. list-row swipe-action</h2>
+    <p>horizontal 스와이프로 행 우측 액션 노출. 시각 affordance(우측 chevron) 동반. 위험 액션은 swipe만으로 즉시 실행 금지 — confirm 단계 필수.</p>
+  </div>
+  <div class="specimen">
+    <div class="specimen-label">예: 알림 행 (좌측은 swipe 전, 우측은 swipe 후 — 클릭으로 토글)</div>
+    <div style="background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-12);overflow:hidden">
+      <div class="swipe-row collapsed">
+        <div class="swipe-content">
+          <div class="swipe-body">
+            <div class="title">새로운 주문이 들어왔어요</div>
+            <div class="meta">방금 전 · #1023</div>
+          </div>
+          <svg class="icon swipe-hint" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+        </div>
+        <div class="swipe-actions">
+          <button class="swipe-action brand">별표</button>
+          <button class="swipe-action danger">삭제</button>
+        </div>
+      </div>
+      <div class="swipe-row">
+        <div class="swipe-content">
+          <div class="swipe-body">
+            <div class="title">결제가 완료되었어요</div>
+            <div class="meta">2시간 전 · 24,000원</div>
+          </div>
+          <svg class="icon swipe-hint" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+        </div>
+        <div class="swipe-actions">
+          <button class="swipe-action brand">별표</button>
+          <button class="swipe-action danger">삭제</button>
+        </div>
+      </div>
+    </div>
+    <p class="row-hint" style="margin-top:var(--space-8)">행 좌측 빈 영역 클릭으로 swipe 상태 토글 — 시각화용 데모</p>
+  </div>
+</section>
+
+<!-- ===================== pull-to-refresh ===================== -->
+<section class="section" id="pull">
+  <div class="section-head">
+    <h2>8. pull-to-refresh</h2>
+    <p>홈/피드/리스트/알림/마이 적용. 80px 임계 이상 당기면 release-to-refresh 표기. refresh 중 sticky spinner 유지.</p>
+  </div>
+  <div class="specimen">
+    <div class="specimen-label">상태별 affordance 3종</div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-12);background:var(--bg-canvas);border:1px solid var(--border-subtle);border-radius:var(--radius-12);overflow:hidden">
+      <div class="pull-affordance">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        <span>당겨서 새로고침</span>
+      </div>
+      <div class="pull-affordance">
+        <svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg);color:var(--fg-brand)"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        <span style="color:var(--fg-brand);font-weight:600">놓으면 새로고침</span>
+      </div>
+      <div class="pull-affordance">
+        <div class="pull-spinner"></div>
+        <span>새 콘텐츠 불러오는 중...</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== native toast ===================== -->
+<section class="section" id="toast">
+  <div class="section-head">
+    <h2>9. native-like toast</h2>
+    <p>위치: 하단 표준(bottom-nav 위 offset). 단일 toast 정책. duration 3~4초, swipe-down-to-dismiss.</p>
+  </div>
+  <div class="specimen">
+    <div class="specimen-label">단순 알림</div>
+    <div style="padding:var(--space-16);background:var(--bg-muted);border-radius:var(--radius-12)">
+      <div class="toast-mobile">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+        <span style="flex:1">저장되었어요</span>
+      </div>
+    </div>
+  </div>
+  <div class="specimen">
+    <div class="specimen-label">액션 포함 (undo)</div>
+    <div style="padding:var(--space-16);background:var(--bg-muted);border-radius:var(--radius-12)">
+      <div class="toast-mobile">
+        <span style="flex:1">알림 1개를 삭제했어요</span>
+        <button class="toast-action">취소</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 화면 1. splash ===================== -->
+<section class="section" id="splash">
+  <div class="section-head">
+    <h2>화면 1. splash / onboarding</h2>
+    <p>3-step walkthrough + dot indicator + CTA. 카드 없이 캔버스 직접 사용.</p>
+  </div>
+  <div class="specimen">
+    <div class="uf-frame phone-frame">
+      <div class="uf-content uf-content-noscroll" style="justify-content:center;text-align:center;padding:var(--space-32) var(--space-24);gap:var(--space-24)">
+        <div style="width:64px;height:64px;margin:0 auto;border-radius:var(--radius-16);background:var(--bg-brand);color:var(--fg-on-brand);display:inline-flex;align-items:center;justify-content:center;font-size:28px;font-weight:700">A</div>
+        <div>
+          <div style="font-size:24px;font-weight:700;color:var(--fg-strong)">새로운 경험을<br />지금 시작해 보세요</div>
+          <p style="margin-top:var(--space-12);color:var(--fg-secondary);font-size:14px;line-height:1.5">일상의 작은 순간들을 더 풍부하게.<br />함께할 사람들을 발견하고 연결하세요.</p>
+        </div>
+        <div style="display:flex;gap:var(--space-8);justify-content:center;margin-top:var(--space-16)">
+          <span class="dot" style="width:8px;height:8px;border-radius:var(--radius-full);background:var(--bg-brand)"></span>
+          <span class="dot" style="width:8px;height:8px;border-radius:var(--radius-full);background:var(--bg-muted)"></span>
+          <span class="dot" style="width:8px;height:8px;border-radius:var(--radius-full);background:var(--bg-muted)"></span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:var(--space-12);margin-top:var(--space-24)">
+          <button class="button primary lg">시작하기</button>
+          <button class="button tertiary" style="font-size:14px">이미 계정이 있어요</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 화면 2. login ===================== -->
 <section class="section" id="login">
   <div class="section-head">
-    <h2>1. login-layout</h2>
-    <p>standalone auth surface. 카드 그림자 금지, 1px 헤어라인 + radius-12.</p>
+    <h2>화면 2. login (mobile 풀스크린 / desktop 카드)</h2>
+    <p>모바일은 카드 없이 풀스크린, 소셜 로그인 옵션 포함. desktop은 중앙 카드(admin login-layout과 동일).</p>
   </div>
   <div class="specimen">
-    <div class="login-stage">
-      <div class="login-card">
-        <div class="login-brand">
-          <span class="logo">A</span>
-          <span style="font-weight:700;color:var(--fg-strong);font-size:15px">Admin</span>
-          <span class="env">스테이징</span>
+    <div class="uf-frame phone-frame">
+      <div class="app-bar">
+        <div class="app-bar-left"><button class="button tertiary" aria-label="뒤로"><svg class="icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button></div>
+        <div class="app-bar-center"></div>
+        <div class="app-bar-right"></div>
+      </div>
+      <div class="uf-content uf-content-noscroll" style="padding:var(--space-24) var(--space-24) var(--space-32);gap:var(--space-16)">
+        <div style="margin-bottom:var(--space-16)">
+          <div style="font-size:22px;font-weight:700;color:var(--fg-strong)">로그인</div>
+          <div style="font-size:14px;color:var(--fg-secondary);margin-top:var(--space-4)">사용 중인 계정으로 들어가요</div>
         </div>
-        <div class="login-title">다시 만나서 반가워요</div>
-        <div class="login-sub">사용 중인 계정으로 로그인해 주세요</div>
-        <form class="login-form" onsubmit="event.preventDefault()">
-          <div>
-            <label class="label-form" for="login-email">이메일</label>
-            <input class="input" id="login-email" type="email" placeholder="name@company.com" />
-          </div>
-          <div>
-            <label class="label-form" for="login-pw">비밀번호</label>
-            <input class="input" id="login-pw" type="password" placeholder="비밀번호 입력" />
-          </div>
-          <button type="submit" class="button primary lg full">로그인하기</button>
-        </form>
-        <div class="login-secondary">
-          <a href="#">비밀번호 찾기</a>
-          <span class="dot">·</span>
-          <a href="#">회원가입</a>
+        <div class="form-field">
+          <label class="label">이메일</label>
+          <input class="input" type="email" placeholder="name@company.com" style="height:48px" />
         </div>
+        <div class="form-field">
+          <label class="label">비밀번호</label>
+          <input class="input" type="password" placeholder="비밀번호 입력" style="height:48px" />
+        </div>
+        <button class="button primary lg" style="margin-top:var(--space-8)">로그인하기</button>
+        <div style="display:flex;justify-content:center;gap:var(--space-16);font-size:13px;color:var(--fg-secondary);margin-top:var(--space-8)">
+          <button class="button tertiary" style="font-size:13px">비밀번호 찾기</button>
+          <span>·</span>
+          <button class="button tertiary" style="font-size:13px">회원가입</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-12);margin:var(--space-16) 0;color:var(--fg-tertiary);font-size:12px">
+          <div style="flex:1;height:1px;background:var(--border-subtle)"></div>
+          <span>또는</span>
+          <div style="flex:1;height:1px;background:var(--border-subtle)"></div>
+        </div>
+        <button class="button secondary lg">Apple로 시작하기</button>
+        <button class="button secondary lg">Google로 시작하기</button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===================== sidebar-nav ===================== -->
-<section class="section" id="sidebar">
+<!-- ===================== 화면 3. home / 피드 ===================== -->
+<section class="section" id="home">
   <div class="section-head">
-    <h2>2. sidebar-nav</h2>
-    <p>240(expand) / 64(collapse) 두 폭. active는 bg-brand-subtle + fg-brand. 좌측 컬러 rail 금지.</p>
+    <h2>화면 3. 홈 / 피드</h2>
+    <p>app-bar(logo + 우측 액션) + hero banner + 카테고리 chip-row + feed-card list + bottom-nav.</p>
   </div>
   <div class="specimen">
-    <div class="sidebar-stage">
-      <aside class="sidebar" id="demo-sidebar">
-        <div class="sidebar-brand">
-          <span class="logo">A</span>
-          <span class="word">Admin</span>
+    <div class="uf-frame phone-frame">
+      <div class="app-bar">
+        <div class="app-bar-left"><span class="app-bar-logo">A</span></div>
+        <div class="app-bar-center"></div>
+        <div class="app-bar-right">
+          <button class="button tertiary" aria-label="검색"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></button>
+          <button class="button tertiary" aria-label="알림"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></button>
         </div>
-
-        <div class="nav-section-label">개요</div>
-        <a class="nav-item active" href="#">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
-          <span>대시보드</span>
-        </a>
-        <a class="nav-item" href="#">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
-          <span>분석</span>
-          <span class="dot"></span>
-        </a>
-
-        <div class="nav-section-label">운영</div>
-        <a class="nav-item" href="#">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
-          <span>주문</span>
-        </a>
-        <a class="nav-item" href="#">
-          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
-          <span>회원</span>
-        </a>
-        <a class="nav-item" href="#">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/></svg>
-          <span>정산</span>
-        </a>
-
-        <div class="nav-section-label">설정</div>
-        <a class="nav-item" href="#">
-          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5"/></svg>
-          <span>환경 설정</span>
-        </a>
-
-        <button class="sidebar-toggle" id="btn-collapse">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-      </aside>
-      <div style="flex:1;background:var(--bg-subtle);padding:24px;color:var(--fg-secondary);font-size:13px">
-        <span class="annot">collapse 토글을 눌러보세요</span>
+      </div>
+      <div class="uf-content">
+        <div class="hero-banner">
+          <h3>이번 주 추천</h3>
+          <p>지금 가장 인기 있는 모임 5개를 골라봤어요</p>
+        </div>
+        <div class="chip-row">
+          <span class="chip-pill active">전체</span>
+          <span class="chip-pill">여행</span>
+          <span class="chip-pill">운동</span>
+          <span class="chip-pill">학습</span>
+          <span class="chip-pill">취미</span>
+          <span class="chip-pill">맛집</span>
+        </div>
+        <div class="feed-grid">
+          <div class="feed-card vertical">
+            <div class="thumb"></div>
+            <div class="body">
+              <div class="title">제주 한 달 살기 패키지</div>
+              <div class="desc">바다 뷰 숙소 30박</div>
+              <div class="meta">여행 <span class="meta-sep">·</span> 2시간 전</div>
+            </div>
+          </div>
+          <div class="feed-card vertical">
+            <div class="thumb"></div>
+            <div class="body">
+              <div class="title">새벽 러닝 크루 모집</div>
+              <div class="desc">화·목 5:30 한강공원</div>
+              <div class="meta">운동 <span class="meta-sep">·</span> 오늘 오전</div>
+            </div>
+          </div>
+          <div class="feed-card vertical">
+            <div class="thumb"></div>
+            <div class="body">
+              <div class="title">홈 카페 원두 구독</div>
+              <div class="desc">매월 다른 산지</div>
+              <div class="meta">취미 <span class="meta-sep">·</span> 어제</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <a class="nav-tab active" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg><span class="label">홈</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><span class="label">탐색</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span class="label">즐겨찾기</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span class="label">알림</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span class="label">마이</span></a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===================== top-bar ===================== -->
-<section class="section" id="topbar">
+<!-- ===================== 화면 4. list / 탐색 ===================== -->
+<section class="section" id="list">
   <div class="section-head">
-    <h2>3. top-bar (admin)</h2>
-    <p>56 height. 좌측 페이지 제목+breadcrumb, 우측 search/env/notification/avatar.</p>
+    <h2>화면 4. 탐색 / 리스트</h2>
+    <p>app-bar(back) + search-bar + filter chip + feed-card grid + 무한 스크롤 + bottom-nav(탐색 활성).</p>
   </div>
   <div class="specimen">
-    <div class="topbar-stage">
-      <div class="topbar">
-        <div class="topbar-left">
-          <span class="topbar-title">주문 #1023</span>
-          <span class="topbar-crumb"><span class="sep">/</span>주문<span class="sep">/</span>#1023</span>
+    <div class="uf-frame phone-frame">
+      <div class="app-bar">
+        <div class="app-bar-left"><button class="button tertiary" aria-label="뒤로"><svg class="icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button></div>
+        <div class="app-bar-center"><span class="app-bar-title">탐색</span></div>
+        <div class="app-bar-right"></div>
+      </div>
+      <div class="uf-content">
+        <div class="search-bar">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          <input placeholder="모임·장소·키워드 검색" />
         </div>
-        <div class="topbar-right">
-          <div class="topbar-search">
-            <svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-            <input class="input" placeholder="검색" />
-          </div>
-          <span class="badge pending">스테이징</span>
-          <button class="icon-btn" title="알림">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+        <div class="chip-row">
+          <span class="chip-pill active">전체</span>
+          <span class="chip-pill">여행</span>
+          <span class="chip-pill">운동</span>
+          <span class="chip-pill">학습</span>
+          <span class="chip-pill" style="display:inline-flex;align-items:center;gap:var(--space-4)">필터 <span class="badge" style="background:var(--bg-brand);color:var(--fg-on-brand);font-size:10px;padding:0 6px;border-radius:var(--radius-full);min-width:16px;text-align:center">2</span></span>
+        </div>
+        <div class="feed-grid">
+          <div class="feed-card vertical"><div class="thumb"></div><div class="body"><div class="title">제주 한 달 살기</div><div class="meta">여행 · 24,000원</div></div></div>
+          <div class="feed-card vertical"><div class="thumb"></div><div class="body"><div class="title">새벽 러닝 크루</div><div class="meta">운동 · 무료</div></div></div>
+          <div class="feed-card vertical"><div class="thumb"></div><div class="body"><div class="title">원두 구독</div><div class="meta">취미 · 월 19,900원</div></div></div>
+          <div class="feed-card vertical"><div class="thumb"></div><div class="body"><div class="title">공유 오피스</div><div class="meta">업무 · 12,000원</div></div></div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg><span class="label">홈</span></a>
+        <a class="nav-tab active" href="#"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><span class="label">탐색</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span class="label">즐겨찾기</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span class="label">알림</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span class="label">마이</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 화면 5. detail ===================== -->
+<section class="section" id="detail">
+  <div class="section-head">
+    <h2>화면 5. 상세</h2>
+    <p>media gallery (swipe) + title + 메타 + description + section card + sticky CTA.</p>
+  </div>
+  <div class="specimen">
+    <div class="uf-frame phone-frame">
+      <div class="app-bar">
+        <div class="app-bar-left"><button class="button tertiary" aria-label="뒤로"><svg class="icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button></div>
+        <div class="app-bar-center"></div>
+        <div class="app-bar-right">
+          <button class="button tertiary" aria-label="공유"><svg class="icon" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/></svg></button>
+          <button class="button tertiary" aria-label="저장"><svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+        </div>
+      </div>
+      <div class="uf-content" style="gap:var(--space-16);padding:0">
+        <div class="media-gallery">
+          이미지 슬라이드 (16:9)
+          <div class="dot-indicator">
+            <span class="dot active"></span>
             <span class="dot"></span>
-          </button>
-          <span class="avatar">홍</span>
+            <span class="dot"></span>
+          </div>
         </div>
+        <div style="padding:0 var(--space-16);display:flex;flex-direction:column;gap:var(--space-8)">
+          <div style="font-size:22px;font-weight:700;color:var(--fg-strong)">제주 한 달 살기 패키지</div>
+          <div style="font-size:13px;color:var(--fg-tertiary)">여행 <span style="margin:0 var(--space-8)">·</span> 조회 1,240 <span style="margin:0 var(--space-8)">·</span> 좋아요 89</div>
+          <div style="font-size:20px;font-weight:700;color:var(--fg-brand);margin-top:var(--space-8)">월 1,200,000원</div>
+        </div>
+        <div style="padding:0 var(--space-16);font-size:14px;color:var(--fg-default);line-height:1.6">
+          제주도 협재 해변 바로 앞 신축 빌라에서 30박을 보내실 수 있어요. 자전거·주방 도구·세탁기 모두 포함이고, 주변 카페·맛집 큐레이션도 함께 드려요.
+        </div>
+        <div style="padding:0 var(--space-16);display:flex;flex-direction:column;gap:var(--space-12)">
+          <div class="feed-card compact"><div class="title" style="font-size:14px;font-weight:600">포함 사항</div><div class="meta" style="margin-top:var(--space-4)">숙소 30박 · 자전거 2대 · 입실 환영 키트</div></div>
+          <div class="feed-card compact"><div class="title" style="font-size:14px;font-weight:600">취소 정책</div><div class="meta" style="margin-top:var(--space-4)">입실 14일 전까지 전액 환불</div></div>
+        </div>
+        <div style="padding:var(--space-16);font-size:14px;color:var(--fg-secondary);text-align:center">리뷰 32개 보기 →</div>
       </div>
-      <div style="background:var(--bg-subtle);padding:48px;color:var(--fg-tertiary);font-size:13px">page content area</div>
+      <div class="sticky-cta">
+        <button class="button primary lg">지금 신청하기</button>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ===================== stat-card ===================== -->
-<section class="section" id="stat">
+<!-- ===================== 화면 6. form ===================== -->
+<section class="section" id="form">
   <div class="section-head">
-    <h2>4. stat-card (KPI)</h2>
-    <p>대시보드 상단 1행. 4개 평행 배치, gap 16. 카드 그림자 없음.</p>
+    <h2>화면 6. 폼 / 신청</h2>
+    <p>step indicator + form fields + helper text + sticky bottom CTA. 3-step 중 2-step 진행 화면.</p>
   </div>
   <div class="specimen">
-    <div class="stat-grid">
-      <div class="stat-card">
-        <div class="stat-label">오늘 주문</div>
-        <div class="stat-value">1,284</div>
-        <div class="stat-delta pos">
-          <svg class="icon sm" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7"/></svg>
-          12.4% 어제 대비
-        </div>
-        <svg class="stat-spark" viewBox="0 0 100 32" preserveAspectRatio="none"><path d="M0 24 L10 20 L20 22 L30 16 L40 18 L50 12 L60 14 L70 10 L80 8 L90 6 L100 4" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--fg-success)"/></svg>
+    <div class="uf-frame phone-frame">
+      <div class="app-bar">
+        <div class="app-bar-left"><button class="button tertiary" aria-label="뒤로"><svg class="icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button></div>
+        <div class="app-bar-center"><span class="app-bar-title">신청</span></div>
+        <div class="app-bar-right"></div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">신규 회원</div>
-        <div class="stat-value">328</div>
-        <div class="stat-delta neg">
-          <svg class="icon sm" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
-          3.1% 어제 대비
-        </div>
-        <svg class="stat-spark" viewBox="0 0 100 32" preserveAspectRatio="none"><path d="M0 8 L10 12 L20 10 L30 16 L40 14 L50 20 L60 18 L70 22 L80 20 L90 24 L100 26" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--fg-danger)"/></svg>
+      <div class="step-indicator">
+        <span class="dot active"></span>
+        <div class="line"></div>
+        <span class="dot active"></span>
+        <div class="line"></div>
+        <span class="dot"></span>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">매출</div>
-        <div class="stat-value">₩48.2M</div>
-        <div class="stat-delta pos">
-          <svg class="icon sm" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7"/></svg>
-          8.7% 어제 대비
+      <div class="uf-content" style="padding-top:0">
+        <div>
+          <div style="font-size:20px;font-weight:700;color:var(--fg-strong)">결제 정보</div>
+          <div style="font-size:13px;color:var(--fg-secondary);margin-top:var(--space-4)">신청 확정을 위해 입력해 주세요</div>
         </div>
-        <svg class="stat-spark" viewBox="0 0 100 32" preserveAspectRatio="none"><path d="M0 22 L15 20 L30 18 L45 14 L60 16 L75 10 L90 8 L100 6" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--fg-brand)"/></svg>
+        <div class="form-field">
+          <label class="label">카드 번호</label>
+          <input class="input" placeholder="0000 0000 0000 0000" style="height:48px" />
+          <span class="helper">국내·해외 카드 모두 사용 가능해요</span>
+        </div>
+        <div style="display:flex;gap:var(--space-12)">
+          <div class="form-field" style="flex:1">
+            <label class="label">유효 기간</label>
+            <input class="input" placeholder="MM / YY" style="height:48px" />
+          </div>
+          <div class="form-field" style="flex:1">
+            <label class="label">CVC</label>
+            <input class="input" placeholder="3자리" style="height:48px" />
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="label">할부</label>
+          <input class="input" value="일시불" readonly style="height:48px" />
+        </div>
+        <label style="display:flex;align-items:center;gap:var(--space-8);font-size:13px;color:var(--fg-default);cursor:pointer">
+          <span style="width:20px;height:20px;border-radius:var(--radius-4);border:1.5px solid var(--border-strong);display:inline-flex;align-items:center;justify-content:center;background:var(--bg-brand);color:var(--fg-on-brand)"><svg class="icon sm" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span>
+          결제 약관에 동의해요
+        </label>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">취소율</div>
-        <div class="stat-value">2.4%</div>
-        <div class="stat-delta flat">
-          <svg class="icon sm" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
-          변동 없음
-        </div>
-        <svg class="stat-spark" viewBox="0 0 100 32" preserveAspectRatio="none"><path d="M0 16 L10 14 L20 18 L30 16 L40 14 L50 16 L60 18 L70 14 L80 16 L90 14 L100 16" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--fg-secondary)"/></svg>
+      <div class="sticky-cta">
+        <button class="button primary lg">다음 단계</button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===================== data-table ===================== -->
-<section class="section" id="table">
+<!-- ===================== 화면 7. mypage ===================== -->
+<section class="section" id="mypage">
   <div class="section-head">
-    <h2>5. data-table</h2>
-    <p>header bg-muted. 행 hover bg-subtle. 행 클릭으로 상세 진입. zebra striping 금지.</p>
+    <h2>화면 7. 마이 / 설정</h2>
+    <p>프로필 카드 + 메뉴 리스트 + 토글 리스트 + 위험 액션 분리.</p>
   </div>
   <div class="specimen">
-    <div class="table-frame">
-      <table class="table">
-        <thead>
-          <tr>
-            <th class="col-check"><span class="check"></span></th>
-            <th><span class="sort">주문번호 <svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></span></th>
-            <th>회원</th>
-            <th>상태</th>
-            <th class="right"><span class="sort">금액 <svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></span></th>
-            <th class="right">등록일</th>
-            <th class="col-action"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="selected">
-            <td class="col-check"><span class="check on"><svg class="icon sm" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span></td>
-            <td>#1023</td>
-            <td>홍길동</td>
-            <td><span class="badge pending">대기중</span></td>
-            <td class="right num">24,000</td>
-            <td class="right" style="color:var(--fg-secondary);font-size:13px">2026-05-15</td>
-            <td class="col-action"><button class="button tertiary sm">보기</button></td>
-          </tr>
-          <tr>
-            <td class="col-check"><span class="check"></span></td>
-            <td>#1022</td>
-            <td>김민지</td>
-            <td><span class="badge active">진행중</span></td>
-            <td class="right num">18,500</td>
-            <td class="right" style="color:var(--fg-secondary);font-size:13px">2026-05-15</td>
-            <td class="col-action"><button class="button tertiary sm">보기</button></td>
-          </tr>
-          <tr>
-            <td class="col-check"><span class="check"></span></td>
-            <td>#1021</td>
-            <td>이서연</td>
-            <td><span class="badge inactive">완료</span></td>
-            <td class="right num">9,200</td>
-            <td class="right" style="color:var(--fg-secondary);font-size:13px">2026-05-14</td>
-            <td class="col-action"><button class="button tertiary sm">보기</button></td>
-          </tr>
-          <tr>
-            <td class="col-check"><span class="check"></span></td>
-            <td>#1020</td>
-            <td>박지훈</td>
-            <td><span class="badge danger">취소</span></td>
-            <td class="right num">12,800</td>
-            <td class="right" style="color:var(--fg-secondary);font-size:13px">2026-05-14</td>
-            <td class="col-action"><button class="button tertiary sm">보기</button></td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="pagination">
-        <span class="info">1–4 / 320</span>
-        <div class="nav">
-          <button class="button ghost sm">이전</button>
-          <button class="button tertiary sm" style="min-width:32px">1</button>
-          <button class="button ghost sm" style="min-width:32px">2</button>
-          <button class="button ghost sm" style="min-width:32px">3</button>
-          <button class="button ghost sm">다음</button>
-        </div>
+    <div class="uf-frame phone-frame">
+      <div class="app-bar">
+        <div class="app-bar-left"></div>
+        <div class="app-bar-center"><span class="app-bar-title">마이</span></div>
+        <div class="app-bar-right"><button class="button tertiary" aria-label="설정"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 008 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H2a2 2 0 010-4h.09A1.65 1.65 0 004.6 8a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V2a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H22a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button></div>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== Wide Table Cases ===================== -->
-<section class="section" id="widetable">
-  <div class="section-head">
-    <h2>5b. Wide Table Cases (밀도 비교 — B 컴팩트 / C 와이드+sticky)</h2>
-    <p>컬럼 수와 밀도가 늘어날 때 임의로 padding을 줄이지 않고 4-케이스(`DESIGN.md ### data-table > #### Wide Table Cases`)에서 선택한다. 시안 선택에 따라 Case C의 스크롤 affordance 시각 단서가 달라진다.</p>
-  </div>
-
-  <!-- Case B — compact -->
-  <div class="case-card">
-    <div class="case-meta">
-      <span class="label">Case B</span>
-      <span>컬럼 9~12 · row 44 · padding <code>{spacing.space-12}</code> · 가로 스크롤 없음</span>
-    </div>
-    <div class="table-frame">
-      <table class="table compact">
-        <thead>
-          <tr>
-            <th class="col-check"><span class="check"></span></th>
-            <th>주문번호</th>
-            <th>주문일시</th>
-            <th>회원</th>
-            <th>상품</th>
-            <th class="right">수량</th>
-            <th class="right">금액</th>
-            <th>결제수단</th>
-            <th>상태</th>
-            <th>담당자</th>
-            <th class="col-action">액션</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="selected">
-            <td class="col-check"><span class="check on"><svg class="icon sm" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span></td>
-            <td>#1023</td>
-            <td style="color:var(--fg-secondary)">05-15 14:22</td>
-            <td>홍길동</td>
-            <td>아메리카노 외 2건</td>
-            <td class="right num">3</td>
-            <td class="right num">24,000</td>
-            <td>카드</td>
-            <td><span class="badge pending">대기중</span></td>
-            <td>김도현</td>
-            <td class="col-action"><button class="button tertiary sm">보기</button></td>
-          </tr>
-          <tr>
-            <td class="col-check"><span class="check"></span></td>
-            <td>#1022</td>
-            <td style="color:var(--fg-secondary)">05-15 14:08</td>
-            <td>김민지</td>
-            <td>샌드위치 세트</td>
-            <td class="right num">1</td>
-            <td class="right num">18,500</td>
-            <td>간편결제</td>
-            <td><span class="badge active">진행중</span></td>
-            <td>박서준</td>
-            <td class="col-action"><button class="button tertiary sm">보기</button></td>
-          </tr>
-          <tr>
-            <td class="col-check"><span class="check"></span></td>
-            <td>#1021</td>
-            <td style="color:var(--fg-secondary)">05-15 13:55</td>
-            <td>이서연</td>
-            <td>샐러드</td>
-            <td class="right num">2</td>
-            <td class="right num">9,200</td>
-            <td>카드</td>
-            <td><span class="badge inactive">완료</span></td>
-            <td>정민호</td>
-            <td class="col-action"><button class="button tertiary sm">보기</button></td>
-          </tr>
-          <tr>
-            <td class="col-check"><span class="check"></span></td>
-            <td>#1020</td>
-            <td style="color:var(--fg-secondary)">05-15 13:40</td>
-            <td>박지훈</td>
-            <td>버거 세트</td>
-            <td class="right num">1</td>
-            <td class="right num">12,800</td>
-            <td>현금</td>
-            <td><span class="badge danger">취소</span></td>
-            <td>—</td>
-            <td class="col-action"><button class="button tertiary sm">보기</button></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Case C — wide + sticky + scroll + 시안별 affordance -->
-  <div class="case-card" style="margin-top:var(--space-24)">
-    <div class="case-meta">
-      <span class="label">Case C</span>
-      <span>컬럼 13~18 · row 44 · padding <code>{spacing.space-12}</code> · 좌 2 + 우 1 sticky · 가로 스크롤 · 헤더 sticky</span>
-      <span style="margin-left:auto">스크롤 affordance는 활성 시안 정책으로 분기 → 좌/우 sticky 경계 관찰</span>
-    </div>
-    <div class="wide-frame">
-      <div class="wide-scroll">
-        <table class="table-wide">
-          <thead>
-            <tr>
-              <th class="sticky-l1"><span class="check"></span></th>
-              <th class="sticky-l2">주문번호</th>
-              <th>주문일시</th>
-              <th>고객명</th>
-              <th>상품</th>
-              <th class="right">수량</th>
-              <th class="right">금액</th>
-              <th>결제수단</th>
-              <th>배송상태</th>
-              <th>배송지</th>
-              <th>담당자</th>
-              <th>메모</th>
-              <th>등록자</th>
-              <th class="sticky-r1">액션</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="selected">
-              <td class="sticky-l1"><span class="check on"><svg class="icon sm" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span></td>
-              <td class="sticky-l2">#1023</td>
-              <td style="color:var(--fg-secondary)">2026-05-15 14:22</td>
-              <td>홍길동</td>
-              <td>아메리카노 외 2건</td>
-              <td class="right num">3</td>
-              <td class="right num">24,000</td>
-              <td>카드</td>
-              <td><span class="badge pending">대기중</span></td>
-              <td>서울 강남구 역삼동 822-3</td>
-              <td>김도현</td>
-              <td style="color:var(--fg-secondary)">문 앞에 두고 노크</td>
-              <td>운영자(김)</td>
-              <td class="sticky-r1"><button class="button tertiary sm">보기</button></td>
-            </tr>
-            <tr>
-              <td class="sticky-l1"><span class="check"></span></td>
-              <td class="sticky-l2">#1022</td>
-              <td style="color:var(--fg-secondary)">2026-05-15 14:08</td>
-              <td>김민지</td>
-              <td>샌드위치 세트</td>
-              <td class="right num">1</td>
-              <td class="right num">18,500</td>
-              <td>간편결제</td>
-              <td><span class="badge active">진행중</span></td>
-              <td>서울 마포구 합정동 411-9</td>
-              <td>박서준</td>
-              <td style="color:var(--fg-secondary)">—</td>
-              <td>운영자(이)</td>
-              <td class="sticky-r1"><button class="button tertiary sm">보기</button></td>
-            </tr>
-            <tr>
-              <td class="sticky-l1"><span class="check"></span></td>
-              <td class="sticky-l2">#1021</td>
-              <td style="color:var(--fg-secondary)">2026-05-15 13:55</td>
-              <td>이서연</td>
-              <td>샐러드</td>
-              <td class="right num">2</td>
-              <td class="right num">9,200</td>
-              <td>카드</td>
-              <td><span class="badge inactive">완료</span></td>
-              <td>서울 송파구 잠실동 30-1</td>
-              <td>정민호</td>
-              <td style="color:var(--fg-secondary)">드레싱 별도</td>
-              <td>운영자(박)</td>
-              <td class="sticky-r1"><button class="button tertiary sm">보기</button></td>
-            </tr>
-            <tr>
-              <td class="sticky-l1"><span class="check"></span></td>
-              <td class="sticky-l2">#1020</td>
-              <td style="color:var(--fg-secondary)">2026-05-15 13:40</td>
-              <td>박지훈</td>
-              <td>버거 세트</td>
-              <td class="right num">1</td>
-              <td class="right num">12,800</td>
-              <td>현금</td>
-              <td><span class="badge danger">취소</span></td>
-              <td>서울 영등포구 여의도동 23</td>
-              <td>—</td>
-              <td style="color:var(--fg-secondary)">고객 변심</td>
-              <td>운영자(김)</td>
-              <td class="sticky-r1"><button class="button tertiary sm">보기</button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="pagination">
-        <span class="info">1–4 / 320</span>
-        <div class="nav">
-          <button class="button ghost sm">이전</button>
-          <button class="button tertiary sm" style="min-width:32px">1</button>
-          <button class="button ghost sm" style="min-width:32px">2</button>
-          <button class="button ghost sm" style="min-width:32px">3</button>
-          <button class="button ghost sm">다음</button>
-        </div>
-      </div>
-    </div>
-    <div class="case-meta" style="margin-top:var(--space-8)">
-      <span>현재 시안의 affordance:</span>
-      <code id="case-c-affordance">—</code>
-      <span style="color:var(--fg-tertiary)">(시안 변경 시 자동 갱신)</span>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== List Toolbar Cases ===================== -->
-<section class="section" id="toolbar">
-  <div class="section-head">
-    <h2>5c. List Toolbar Cases (검색 X / 엑셀 다운로드 / 페이지 크기)</h2>
-    <p>리스트 페이지 보조 컨트롤 케이스 비교. 임의 디자인 대신 케이스를 선택해 합의한다. <code>DESIGN.md ### data-table > #### List Toolbar Cases</code>. 우측 hint가 활성 시안의 디폴트 케이스를 자동 표시.</p>
-  </div>
-
-  <!-- 1) Search Clear -->
-  <div class="case-card">
-    <div class="case-meta">
-      <span class="label">검색 X (Search Clear)</span>
-      <span>A 항상 / B 호버·포커스 시 / C 없음(키보드만)</span>
-      <span class="row-hint" id="toolbar-hint-search">디폴트: —</span>
-    </div>
-    <div class="toolbar-grid">
-      <div class="toolbar-row">
-        <span class="row-label">A — 항상</span>
-        <div class="search-input case-a">
-          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
-          <input value="홍길동" />
-          <button class="clear" aria-label="검색어 지우기"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-        </div>
-        <span class="row-hint">값이 있으면 즉시 노출</span>
-      </div>
-      <div class="toolbar-row">
-        <span class="row-label">B — 호버</span>
-        <div class="search-input case-b">
-          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
-          <input value="김민지" />
-          <button class="clear" aria-label="검색어 지우기"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-        </div>
-        <span class="row-hint">input hover/focus 시만 (행에 마우스를 올려보세요)</span>
-      </div>
-      <div class="toolbar-row">
-        <span class="row-label">C — 없음</span>
-        <div class="search-input case-c">
-          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
-          <input value="이서연" />
-          <button class="clear" aria-label="검색어 지우기"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-        </div>
-        <span class="row-hint">Esc 또는 ⌘+Backspace</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 2) Excel Export -->
-  <div class="case-card" style="margin-top:var(--space-24)">
-    <div class="case-meta">
-      <span class="label">엑셀 다운로드 (Export)</span>
-      <span>A 단일 버튼 / B 아이콘 only / C 옵션 dropdown / D 비동기 progress</span>
-      <span class="row-hint" id="toolbar-hint-export">디폴트: —</span>
-    </div>
-    <div class="toolbar-grid">
-      <div class="toolbar-row">
-        <span class="row-label">A — 버튼</span>
-        <button class="button secondary md">
-          <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
-          엑셀 다운로드
-        </button>
-        <span class="row-hint">즉시 다운로드 (.xlsx)</span>
-      </div>
-      <div class="toolbar-row">
-        <span class="row-label">B — 아이콘</span>
-        <button class="icon-btn" title="엑셀 다운로드" aria-label="엑셀 다운로드">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
-        </button>
-        <span class="row-hint">tooltip 의존, 공간 절약</span>
-      </div>
-      <div class="toolbar-row">
-        <span class="row-label">C — dropdown</span>
-        <button class="button secondary md">
-          <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
-          엑셀 다운로드
-          <svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
-        <span class="row-hint">옵션: 전체 / 필터 결과 / 선택한 항목 / 현재 페이지</span>
-      </div>
-      <div class="toolbar-row">
-        <span class="row-label">D — async</span>
-        <button class="button secondary md" disabled>
-          <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
-          엑셀 다운로드
-        </button>
-        <span class="export-progress">처리 중 — 2,481 / 12,000</span>
-        <span class="row-hint">서버 export 큐 + 완료 시 toast</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3) Page Size -->
-  <div class="case-card" style="margin-top:var(--space-24)">
-    <div class="case-meta">
-      <span class="label">페이지 크기 (Page Size)</span>
-      <span>A dropdown / B segmented / C auto-fit</span>
-      <span class="row-hint" id="toolbar-hint-pagesize">디폴트: —</span>
-    </div>
-    <div class="toolbar-grid">
-      <div class="toolbar-row">
-        <span class="row-label">A — dropdown</span>
-        <button class="button tertiary sm">
-          20개씩 보기
-          <svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
-        <span class="row-hint">10 / 20 / 50 / 100 popover</span>
-      </div>
-      <div class="toolbar-row">
-        <span class="row-label">B — segmented</span>
-        <div class="segmented" role="tablist">
-          <button type="button">10</button>
-          <button type="button" class="on">20</button>
-          <button type="button">50</button>
-        </div>
-        <span class="row-hint">즉시 비교, compact 시그너처</span>
-      </div>
-      <div class="toolbar-row">
-        <span class="row-label">C — auto-fit</span>
-        <span class="auto-fit-tag">
-          <svg class="icon sm" viewBox="0 0 24 24"><path d="M4 12h16M4 6h16M4 18h16"/></svg>
-          자동 (현재 24행)
-        </span>
-        <span class="row-hint">UI 미노출, 컨테이너 높이로 자동 계산</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== Surface Density Cases ===================== -->
-<section class="section" id="density">
-  <div class="section-head">
-    <h2>5d. Admin Surface Density Cases (대시보드/KPI/data-table 여백)</h2>
-    <p>화면 단위로 한 가지 케이스를 선택. 같은 화면에서 두 케이스 혼용 금지. 미니멈(C)·모니터링(D)은 4의 배수 ladder 유지하면서 정보 밀도 최대화. <code>DESIGN.md ### Admin / Dashboard surface > #### Admin Surface Density Cases</code>.</p>
-  </div>
-
-  <div class="case-card">
-    <div class="case-meta">
-      <span class="label">4 케이스 비교</span>
-      <span>content padding · card padding · KPI gap · button/input · row</span>
-      <span class="row-hint" id="density-hint">디폴트: —</span>
-    </div>
-    <div class="density-grid">
-      <div class="density-row">
-        <span class="row-label">A — 표준<br/>32 · 24 · 16<br/>btn 40 · row 56</span>
-        <div class="density-mini spacious">
-          <div class="kpi"><span class="kpi-label">오늘 주문</span><span class="kpi-val">1,284</span></div>
-          <div class="kpi"><span class="kpi-label">신규 회원</span><span class="kpi-val">328</span></div>
-          <div class="kpi"><span class="kpi-label">매출</span><span class="kpi-val">₩48.2M</span></div>
-          <input class="mini-input" value="주문번호 검색" />
-          <button class="mini-btn">엑셀 다운로드</button>
-          <div class="mini-row">#1023 · 홍길동</div>
-        </div>
-      </div>
-      <div class="density-row">
-        <span class="row-label">B — 컴팩트<br/>24 · 16 · 12<br/>btn 36 · row 40</span>
-        <div class="density-mini compact">
-          <div class="kpi"><span class="kpi-label">오늘 주문</span><span class="kpi-val">1,284</span></div>
-          <div class="kpi"><span class="kpi-label">신규 회원</span><span class="kpi-val">328</span></div>
-          <div class="kpi"><span class="kpi-label">매출</span><span class="kpi-val">₩48.2M</span></div>
-          <input class="mini-input" value="주문번호 검색" />
-          <button class="mini-btn">엑셀 다운로드</button>
-          <div class="mini-row">#1023 · 홍길동</div>
-        </div>
-      </div>
-      <div class="density-row">
-        <span class="row-label">C — 미니멈<br/>16 · 12 · 8<br/>btn 32 · row 36</span>
-        <div class="density-mini minimum">
-          <div class="kpi"><span class="kpi-label">오늘 주문</span><span class="kpi-val">1,284</span></div>
-          <div class="kpi"><span class="kpi-label">신규 회원</span><span class="kpi-val">328</span></div>
-          <div class="kpi"><span class="kpi-label">매출</span><span class="kpi-val">₩48.2M</span></div>
-          <input class="mini-input" value="주문번호 검색" />
-          <button class="mini-btn">엑셀 다운로드</button>
-          <div class="mini-row">#1023 · 홍길동</div>
-        </div>
-      </div>
-      <div class="density-row">
-        <span class="row-label">D — 모니터링<br/>8 · 8 · 8<br/>btn 32 · row 36</span>
-        <div class="density-mini monitor">
-          <div class="kpi"><span class="kpi-label">오늘 주문</span><span class="kpi-val">1,284</span></div>
-          <div class="kpi"><span class="kpi-label">신규 회원</span><span class="kpi-val">328</span></div>
-          <div class="kpi"><span class="kpi-label">매출</span><span class="kpi-val">₩48.2M</span></div>
-          <input class="mini-input" value="주문번호 검색" />
-          <button class="mini-btn">엑셀 다운로드</button>
-          <div class="mini-row">#1023 · 홍길동</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== Filter Bar Cases ===================== -->
-<section class="section" id="filterbar">
-  <div class="section-head">
-    <h2>5e. Filter Bar Cases (admin) — 일시 + 엑셀 포함</h2>
-    <p>리스트 페이지 상단 필터 바 케이스. 일시(date-range)는 단일 트리거로 통합, 엑셀 다운로드는 <code>List Toolbar §2</code> 케이스 호출. <code>DESIGN.md ### filter-bar (admin) > #### Filter Bar Cases</code>.</p>
-  </div>
-
-  <div class="case-card">
-    <div class="case-meta">
-      <span class="label">A — 기본 chip</span>
-      <span>상태/카테고리 chip + 검색 + reset</span>
-      <span class="row-hint" id="fbar-hint">디폴트: —</span>
-    </div>
-    <div class="fbar">
-      <button class="chip">상태: 전체</button>
-      <button class="chip">카테고리: 음식</button>
-      <button class="chip">매장: 전체</button>
-      <div class="grow">
-        <div class="search-input case-a">
-          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
-          <input value="" placeholder="주문번호, 회원명" />
-          <button class="clear" aria-label="검색어 지우기" style="display:none"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-        </div>
-      </div>
-      <button class="button ghost sm">필터 초기화</button>
-    </div>
-  </div>
-
-  <div class="case-card" style="margin-top:var(--space-24)">
-    <div class="case-meta">
-      <span class="label">B — 일시 + 엑셀</span>
-      <span>date-range 단일 트리거 + chip 1~3 + 우측 엑셀 다운로드</span>
-    </div>
-    <div class="fbar">
-      <button class="date-trigger" aria-haspopup="dialog">
-        <span class="cal"><svg class="icon sm" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
-        기간: 2026-05-11 — 2026-05-18
-        <svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-      <button class="chip">상태: 전체</button>
-      <button class="chip">매장: 강남점·홍대점</button>
-      <div class="grow">
-        <div class="search-input case-a">
-          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
-          <input value="홍길동" />
-          <button class="clear" aria-label="검색어 지우기"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-        </div>
-      </div>
-      <span class="fbar-counter">필터 (3)</span>
-      <button class="button ghost sm">필터 초기화</button>
-      <button class="button secondary md">
-        <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
-        엑셀 다운로드
-      </button>
-    </div>
-  </div>
-
-  <div class="case-card" style="margin-top:var(--space-24)">
-    <div class="case-meta">
-      <span class="label">C — 다중 패널</span>
-      <span>필터 토글 → 좌측 slide panel(320) + 저장된 뷰 + 엑셀 옵션 dropdown</span>
-    </div>
-    <div class="fbar">
-      <button class="panel-trigger" aria-expanded="false">
-        <svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
-        필터
-        <span class="pt-dot">5</span>
-      </button>
-      <button class="button tertiary sm">저장된 뷰: VIP 회원 ▾</button>
-      <div class="grow">
-        <div class="search-input case-a">
-          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
-          <input value="" placeholder="회원/주문 검색" />
-          <button class="clear" aria-label="검색어 지우기" style="display:none"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-        </div>
-      </div>
-      <button class="button secondary md">
-        <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
-        엑셀 다운로드
-        <svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <div class="case-card" style="margin-top:var(--space-24)">
-    <div class="case-meta">
-      <span class="label">D — 검색만</span>
-      <span>단일 검색 페이지(회원/주문 단건 조회), 정적 필터 없음</span>
-    </div>
-    <div class="fbar">
-      <div class="grow" style="max-width:600px">
-        <div class="search-input case-a" style="width:100%">
-          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
-          <input value="" placeholder="회원 ID 또는 주문번호 입력" />
-          <button class="clear" aria-label="검색어 지우기" style="display:none"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== Column Filter Cases ===================== -->
-<section class="section" id="colfilter">
-  <div class="section-head">
-    <h2>5f. Column Filter Cases (테이블 컬럼 필터)</h2>
-    <p>컬럼 헤더 안에서 정렬·필터를 어디까지 노출할지. 전역 Filter Bar와 듀얼(D) 운영 시 역할 분리를 PR 본문에 명시. <code>DESIGN.md ### data-table > #### Column Filter Cases</code>.</p>
-  </div>
-
-  <div class="case-card">
-    <div class="case-meta">
-      <span class="label">A — 정렬만</span>
-      <span>sort 3-state icon만 노출, 컬럼 필터 없음</span>
-      <span class="row-hint" id="colf-hint">디폴트: —</span>
-    </div>
-    <div class="colf-frame">
-      <table class="mini-table">
-        <thead>
-          <tr>
-            <th><span class="h-control">주문번호 <span class="ctrl-cluster"><button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button></span></span></th>
-            <th><span class="h-control">고객명 <span class="ctrl-cluster"><button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button></span></span></th>
-            <th><span class="h-control">상태 <span class="ctrl-cluster"><button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button></span></span></th>
-            <th><span class="h-control">금액 <span class="ctrl-cluster"><button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button></span></span></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>#1023</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td>24,000</td></tr>
-          <tr><td>#1022</td><td>김민지</td><td><span class="badge active">진행중</span></td><td>18,500</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="case-card" style="margin-top:var(--space-24)">
-    <div class="case-meta">
-      <span class="label">B — 헤더 popover</span>
-      <span>sort + funnel icon, 활성 시 brand dot. 헤더 클릭 → popover에서 검색/체크박스/날짜</span>
-    </div>
-    <div class="colf-frame">
-      <table class="mini-table">
-        <thead>
-          <tr>
-            <th><span class="h-control">주문번호 <span class="ctrl-cluster">
-              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
-              <button class="ctrl-btn" aria-label="필터"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
-            </span></span></th>
-            <th><span class="h-control">고객명 <span class="ctrl-cluster">
-              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
-              <button class="ctrl-btn on" aria-label="필터 적용됨"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
-            </span></span></th>
-            <th><span class="h-control">상태 <span class="ctrl-cluster">
-              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
-              <button class="ctrl-btn on" aria-label="필터 적용됨"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
-            </span></span></th>
-            <th><span class="h-control">금액 <span class="ctrl-cluster">
-              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
-              <button class="ctrl-btn" aria-label="필터"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
-            </span></span></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>#1023</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td>24,000</td></tr>
-          <tr><td>#1022</td><td>김민지</td><td><span class="badge active">진행중</span></td><td>18,500</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="case-meta" style="margin-top:var(--space-8)">
-      <span style="color:var(--fg-tertiary)">고객명·상태 컬럼 funnel에 brand dot — 활성 필터 표기 (텍스트 'filtered' 라벨 금지).</span>
-    </div>
-  </div>
-
-  <div class="case-card" style="margin-top:var(--space-24)">
-    <div class="case-meta">
-      <span class="label">C — 인라인 row</span>
-      <span>thead 다음 row에 컬럼별 input/select 영구 노출 (Excel 필터 패턴, 회계/정산)</span>
-    </div>
-    <div class="colf-frame">
-      <table class="mini-table">
-        <thead>
-          <tr>
-            <th>주문번호</th>
-            <th>고객명</th>
-            <th>상태</th>
-            <th>금액</th>
-          </tr>
-          <tr class="colf-inline-row">
-            <td><input placeholder="#1000-" /></td>
-            <td><input placeholder="홍길..." /></td>
-            <td>
-              <select>
-                <option>전체</option>
-                <option>대기중</option>
-                <option>진행중</option>
-                <option>완료</option>
-              </select>
-            </td>
-            <td><input placeholder="≥ 10,000" /></td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>#1023</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td>24,000</td></tr>
-          <tr><td>#1022</td><td>김민지</td><td><span class="badge active">진행중</span></td><td>18,500</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="case-card" style="margin-top:var(--space-24)">
-    <div class="case-meta">
-      <span class="label">D — 듀얼</span>
-      <span>전역 Filter Bar + 컬럼 popover/inline 동시. Case D(초과밀도) 테이블 + 운영자 전문 사용</span>
-    </div>
-    <div class="fbar" style="margin-bottom:var(--space-8)">
-      <button class="date-trigger">
-        <span class="cal"><svg class="icon sm" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
-        기간: 최근 30일
-        <svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-      <button class="chip">상태: 진행중·완료</button>
-      <span class="fbar-counter">전역 (2) +컬럼 (2)</span>
-      <button class="button ghost sm">전체 초기화</button>
-    </div>
-    <div class="colf-frame">
-      <table class="mini-table">
-        <thead>
-          <tr>
-            <th><span class="h-control">주문번호 <span class="ctrl-cluster">
-              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
-              <button class="ctrl-btn" aria-label="필터"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
-            </span></span></th>
-            <th><span class="h-control">고객명 <span class="ctrl-cluster">
-              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
-              <button class="ctrl-btn on" aria-label="필터 적용됨"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
-            </span></span></th>
-            <th><span class="h-control">상태 <span class="ctrl-cluster">
-              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
-              <button class="ctrl-btn" aria-label="필터"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
-            </span></span></th>
-            <th><span class="h-control">금액 <span class="ctrl-cluster">
-              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
-              <button class="ctrl-btn on" aria-label="필터 적용됨"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
-            </span></span></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>#1023</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td>24,000</td></tr>
-          <tr><td>#1022</td><td>김민지</td><td><span class="badge active">진행중</span></td><td>18,500</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== Tab Page Cases ===================== -->
-<section class="section" id="tabs">
-  <div class="section-head">
-    <h2>5g. Tab Page Cases (탭 페이지 패턴)</h2>
-    <p>in-page 탭(browser tab과 다른 콘텐츠 그룹 전환). 한 화면에 두 케이스 혼용 금지 — 섹션 탭은 A, 그 안 서브 토글은 C 식 위계 분리. <code>DESIGN.md ### tab (admin) > #### Tab Page Cases</code>.</p>
-  </div>
-
-  <div class="case-card">
-    <div class="case-meta">
-      <span class="label">A — line</span>
-      <span>하단 2px solid 강조 underline, 상세 페이지 안 섹션 전환 (주문 상세 &gt; 기본/배송/이력)</span>
-      <span class="row-hint" id="tab-hint">디폴트: —</span>
-    </div>
-    <div class="tab-group">
-      <div class="tab-line">
-        <button type="button" class="on">기본 정보</button>
-        <button type="button">배송 <span class="badge inactive" style="margin-left:6px">2</span></button>
-        <button type="button">결제</button>
-        <button type="button">이력</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="case-card" style="margin-top:var(--space-24)">
-    <div class="case-meta">
-      <span class="label">B — pill</span>
-      <span>brand-subtle 채움 pill, 카테고리/유형 전환 (상품 카테고리, 정산 유형)</span>
-    </div>
-    <div class="tab-group">
-      <div class="tab-pill">
-        <button type="button" class="on">음식</button>
-        <button type="button">생필품</button>
-        <button type="button">의약품</button>
-        <button type="button">반려동물</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="case-card" style="margin-top:var(--space-24)">
-    <div class="case-meta">
-      <span class="label">C — segmented</span>
-      <span>2~3개 분명한 토글 (테이블/보드 뷰, 일/월 단위)</span>
-    </div>
-    <div class="tab-group">
-      <div class="tab-segment" role="tablist">
-        <button type="button">일별</button>
-        <button type="button" class="on">월별</button>
-        <button type="button">연간</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="case-card" style="margin-top:var(--space-24)">
-    <div class="case-meta">
-      <span class="label">D — vertical</span>
-      <span>좌측 200~240 navigation 컬럼, 탭 5+ 또는 세부 페이지 다단 (설정 페이지)</span>
-    </div>
-    <div class="tab-vertical-frame">
-      <nav class="tab-vertical-nav" aria-label="설정 섹션">
-        <button type="button">일반</button>
-        <button type="button" class="on">알림</button>
-        <button type="button">권한</button>
-        <button type="button">보안</button>
-        <button type="button">결제</button>
-        <button type="button">통합</button>
-      </nav>
-      <div class="tab-vertical-body">
-        본문 영역 — 활성 탭(알림)의 콘텐츠가 우측에 표시됩니다.
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== Assembly: Dashboard ===================== -->
-<section class="section" id="dashboard">
-  <div class="section-head">
-    <h2>화면 조립 1. 대시보드</h2>
-    <p>sidebar + top-bar + stat-card row + 차트/테이블.</p>
-  </div>
-  <div class="specimen">
-    <div class="dashboard">
-      <aside class="sidebar">
-        <div class="sidebar-brand"><span class="logo">A</span><span class="word">Admin</span></div>
-        <div class="nav-section-label">개요</div>
-        <a class="nav-item active" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg><span>대시보드</span></a>
-        <a class="nav-item" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg><span>분석</span></a>
-        <div class="nav-section-label">운영</div>
-        <a class="nav-item" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/></svg><span>주문</span></a>
-        <a class="nav-item" href="#"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span>회원</span></a>
-      </aside>
-      <div style="display:flex;flex-direction:column;min-width:0">
-        <div class="topbar">
-          <div class="topbar-left">
-            <span class="topbar-title">대시보드</span>
-            <span class="topbar-crumb">오늘 · 2026-05-15</span>
+      <div class="uf-content">
+        <div class="my-profile">
+          <div class="avatar">홍</div>
+          <div style="flex:1">
+            <div class="name">홍길동</div>
+            <div class="email">hong@example.com</div>
           </div>
-          <div class="topbar-right">
-            <span class="badge pending">스테이징</span>
-            <button class="icon-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><span class="dot"></span></button>
-            <span class="avatar">홍</span>
-          </div>
+          <svg class="icon" viewBox="0 0 24 24" style="color:var(--fg-tertiary)"><path d="M9 6l6 6-6 6"/></svg>
         </div>
-        <div class="content">
-          <div class="stat-grid">
-            <div class="stat-card"><div class="stat-label">오늘 주문</div><div class="stat-value">1,284</div><div class="stat-delta pos"><svg class="icon sm" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7"/></svg>12.4%</div></div>
-            <div class="stat-card"><div class="stat-label">신규 회원</div><div class="stat-value">328</div><div class="stat-delta neg"><svg class="icon sm" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>3.1%</div></div>
-            <div class="stat-card"><div class="stat-label">매출</div><div class="stat-value">₩48.2M</div><div class="stat-delta pos"><svg class="icon sm" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7"/></svg>8.7%</div></div>
-            <div class="stat-card"><div class="stat-label">취소율</div><div class="stat-value">2.4%</div><div class="stat-delta flat"><svg class="icon sm" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>변동 없음</div></div>
-          </div>
-          <div class="table-frame">
-            <table class="table">
-              <thead><tr>
-                <th>최근 활동</th><th>회원</th><th>상태</th><th class="right">시각</th>
-              </tr></thead>
-              <tbody>
-                <tr><td>주문 등록</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td class="right" style="color:var(--fg-secondary)">10분 전</td></tr>
-                <tr><td>회원 가입</td><td>김민지</td><td><span class="badge active">활성</span></td><td class="right" style="color:var(--fg-secondary)">23분 전</td></tr>
-                <tr><td>정산 완료</td><td>이서연</td><td><span class="badge inactive">완료</span></td><td class="right" style="color:var(--fg-secondary)">1시간 전</td></tr>
-              </tbody>
-            </table>
-          </div>
+        <div class="menu-list">
+          <div class="menu-row"><span class="label">주문 내역</span><svg class="icon" viewBox="0 0 24 24" style="color:var(--fg-tertiary)"><path d="M9 6l6 6-6 6"/></svg></div>
+          <div class="menu-row"><span class="label">즐겨찾기</span><svg class="icon" viewBox="0 0 24 24" style="color:var(--fg-tertiary)"><path d="M9 6l6 6-6 6"/></svg></div>
+          <div class="menu-row"><span class="label">알림 설정</span><svg class="icon" viewBox="0 0 24 24" style="color:var(--fg-tertiary)"><path d="M9 6l6 6-6 6"/></svg></div>
+          <div class="menu-row"><span class="label">고객 지원</span><svg class="icon" viewBox="0 0 24 24" style="color:var(--fg-tertiary)"><path d="M9 6l6 6-6 6"/></svg></div>
         </div>
+        <div class="menu-list">
+          <div class="menu-row"><span class="label">다크 모드</span><span style="width:36px;height:20px;background:var(--bg-brand);border-radius:var(--radius-full);position:relative"><span style="position:absolute;right:2px;top:2px;width:16px;height:16px;background:white;border-radius:var(--radius-full)"></span></span></div>
+          <div class="menu-row"><span class="label">푸시 알림</span><span style="width:36px;height:20px;background:var(--bg-muted);border-radius:var(--radius-full);position:relative"><span style="position:absolute;left:2px;top:2px;width:16px;height:16px;background:white;border-radius:var(--radius-full)"></span></span></div>
+        </div>
+        <button class="button tertiary" style="color:var(--fg-danger);margin-top:var(--space-16)">로그아웃</button>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== Assembly: List page ===================== -->
-<section class="section" id="listpage">
-  <div class="section-head">
-    <h2>화면 조립 2. 리스트 페이지</h2>
-    <p>top-bar + filter row + data-table + pagination.</p>
-  </div>
-  <div class="specimen">
-    <div class="dashboard" style="grid-template-columns: 64px 1fr">
-      <aside class="sidebar collapsed">
-        <div class="sidebar-brand"><span class="logo">A</span></div>
-        <a class="nav-item" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg></a>
-        <a class="nav-item active" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/></svg></a>
-        <a class="nav-item" href="#"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></a>
-      </aside>
-      <div style="display:flex;flex-direction:column;min-width:0">
-        <div class="topbar">
-          <div class="topbar-left">
-            <span class="topbar-title">주문 목록</span>
-            <span class="topbar-crumb">총 320건</span>
-          </div>
-          <div class="topbar-right">
-            <button class="button primary">내보내기</button>
-            <span class="avatar">홍</span>
-          </div>
-        </div>
-        <div class="content">
-          <div class="filter-row">
-            <button class="chip">상태: 전체</button>
-            <button class="chip">기간: 최근 7일</button>
-            <button class="chip">매장: 전체</button>
-            <div class="grow">
-              <input class="input" placeholder="주문번호, 회원명으로 검색" />
-            </div>
-            <button class="button ghost sm">필터 초기화</button>
-          </div>
-          <div class="table-frame">
-            <table class="table">
-              <thead><tr>
-                <th class="col-check"><span class="check"></span></th>
-                <th>주문번호</th><th>회원</th><th>상태</th>
-                <th class="right">금액</th><th class="right">등록일</th>
-                <th class="col-action"></th>
-              </tr></thead>
-              <tbody>
-                <tr><td class="col-check"><span class="check"></span></td><td>#1023</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td class="right num">24,000</td><td class="right" style="color:var(--fg-secondary)">2026-05-15</td><td class="col-action"><button class="button tertiary sm">보기</button></td></tr>
-                <tr><td class="col-check"><span class="check"></span></td><td>#1022</td><td>김민지</td><td><span class="badge active">진행중</span></td><td class="right num">18,500</td><td class="right" style="color:var(--fg-secondary)">2026-05-15</td><td class="col-action"><button class="button tertiary sm">보기</button></td></tr>
-                <tr><td class="col-check"><span class="check"></span></td><td>#1021</td><td>이서연</td><td><span class="badge inactive">완료</span></td><td class="right num">9,200</td><td class="right" style="color:var(--fg-secondary)">2026-05-14</td><td class="col-action"><button class="button tertiary sm">보기</button></td></tr>
-                <tr><td class="col-check"><span class="check"></span></td><td>#1020</td><td>박지훈</td><td><span class="badge danger">취소</span></td><td class="right num">12,800</td><td class="right" style="color:var(--fg-secondary)">2026-05-14</td><td class="col-action"><button class="button tertiary sm">보기</button></td></tr>
-                <tr><td class="col-check"><span class="check"></span></td><td>#1019</td><td>최수아</td><td><span class="badge active">진행중</span></td><td class="right num">7,400</td><td class="right" style="color:var(--fg-secondary)">2026-05-14</td><td class="col-action"><button class="button tertiary sm">보기</button></td></tr>
-              </tbody>
-            </table>
-            <div class="pagination">
-              <span class="info">1–5 / 320</span>
-              <div class="nav">
-                <button class="button ghost sm">이전</button>
-                <button class="button tertiary sm" style="min-width:32px">1</button>
-                <button class="button ghost sm" style="min-width:32px">2</button>
-                <button class="button ghost sm" style="min-width:32px">3</button>
-                <button class="button ghost sm">다음</button>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="bottom-nav">
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg><span class="label">홈</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><span class="label">탐색</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span class="label">즐겨찾기</span></a>
+        <a class="nav-tab" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span class="label">알림</span></a>
+        <a class="nav-tab active" href="#"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span class="label">마이</span></a>
       </div>
     </div>
   </div>
 </section>
 
 <div style="text-align:center;color:var(--fg-tertiary);font-size:12px;padding:32px 0">
-  Admin FE 디자인 프리뷰 · DESIGN.md 토큰 직접 매핑 · 단일 HTML 파일
+  User FE 디자인 프리뷰 (모바일 전용판) · DESIGN.md 토큰 직접 매핑 · viewport 360~430 고정 · 단일 HTML 파일
 </div>
 
 </div>
-
 <script>
   /* ============================================================
      시안 카탈로그 — 시안 추가 시 이 객체에 한 항목 추가.
@@ -2844,8 +2848,9 @@
   const btnDark = document.getElementById('btn-dark');
   const selectDesign = document.getElementById('design-select');
   const policyStrip = document.getElementById('policy-strip');
-  const KEY_THEME = 'admin-fe-preview-theme';
-  const KEY_DESIGN = 'admin-fe-preview-design';
+  const KEY_THEME = 'user-fe-mobile-preview-theme';
+  const KEY_DESIGN = 'user-fe-mobile-preview-design';
+  const KEY_VIEWPORT = 'user-fe-mobile-preview-viewport';
 
   /* dropdown populate */
   function populateDesigns() {
@@ -2876,55 +2881,39 @@
     policyStrip.innerHTML = '<span class="policy-strip-label">POLICY</span>' + chips.join('');
   }
 
-  /* Case C affordance description per design */
-  const CASE_C_AFFORDANCE = {
-    'wanted': '1px border-default 라인 (chrome 외 grad 금지 정책)',
-    'minimal-mono': '1px border-strong + 4px inset shadow (전면 grad 금지)',
-    'toss-like': 'fade-edge 8px gradient mask (gradient_locations: table-fade-edge)',
-    'material-3': 'state-layer 8% brand alpha overlay (M3 state layer)',
-    'linear-like': 'fade-edge 8px gradient mask, 다크 친화 강 alpha (gradient_locations: table-fade-edge)',
+  /* Bottom Nav Cases — 시안별 디폴트 (모바일 전용판 — DESIGN.md ### bottom-nav > #### Bottom Nav Cases) */
+  const BNAV_DEFAULT = {
+    'wanted':       'A — 5탭 균등',
+    'minimal-mono': 'A 또는 C',
+    'toss-like':    'A — 5탭 + 활성 아이콘 강조',
+    'material-3':   'A — M3 navigation bar (활성 indicator pill)',
+    'linear-like':  'C — 텍스트 only (시그너처)',
   };
-  function renderCaseCAffordance(slug) {
-    const el = document.getElementById('case-c-affordance');
-    if (el) el.textContent = CASE_C_AFFORDANCE[slug] || '—';
+  function renderBnavDefault(slug) {
+    const el = document.getElementById('bnav-hint');
+    if (el) el.textContent = '디폴트: ' + (BNAV_DEFAULT[slug] || '—');
   }
 
-  /* List Toolbar Cases — 시안별 디폴트 표기 (DESIGN.md ### data-table > #### List Toolbar Cases) */
-  const TOOLBAR_DEFAULT = {
-    'wanted':       { search: 'A — 항상 표시', export: 'A — 단일 버튼',          pagesize: 'A — dropdown (20)' },
-    'minimal-mono': { search: 'B — 호버/포커스', export: 'B — 아이콘 only',       pagesize: 'A — dropdown (20)' },
-    'toss-like':    { search: 'A — 항상 표시', export: 'A — 단일 버튼',          pagesize: 'A — dropdown (20)' },
-    'material-3':   { search: 'B — 호버/포커스', export: 'A — 단일 버튼',          pagesize: 'A — dropdown (20)' },
-    'linear-like':  { search: 'C — 없음 (Esc/⌘+Backspace)', export: 'B — 아이콘 only (⌘E)', pagesize: 'B — segmented (20)' },
+  /* Search Cases — 시안별 디폴트 (모바일 전용판은 풀스크린 overlay 우선) */
+  const SEARCH_DEFAULT = {
+    'wanted':       'A — inline',
+    'minimal-mono': 'D — sunken pill (또는 A inline)',
+    'toss-like':    'B — 풀스크린 overlay (모바일 1차)',
+    'material-3':   'A — inline (M3 search bar)',
+    'linear-like':  'B — 풀스크린 (⌘K kbd는 모바일 전용에서 미표면)',
   };
-  function renderToolbarDefault(slug) {
-    const d = TOOLBAR_DEFAULT[slug] || {};
-    const hs = document.getElementById('toolbar-hint-search');
-    const he = document.getElementById('toolbar-hint-export');
-    const hp = document.getElementById('toolbar-hint-pagesize');
-    if (hs) hs.textContent = '디폴트: ' + (d.search || '—');
-    if (he) he.textContent = '디폴트: ' + (d.export || '—');
-    if (hp) hp.textContent = '디폴트: ' + (d.pagesize || '—');
+  function renderSearchDefault(slug) {
+    const el = document.getElementById('search-hint');
+    if (el) el.textContent = '디폴트: ' + (SEARCH_DEFAULT[slug] || '—');
   }
 
-  /* Surface Density / Filter Bar / Column Filter / Tab 시안별 디폴트 (DESIGN.md 각 케이스 매트릭스 정합) */
-  const ADMIN_DEFAULT = {
-    'wanted':       { density: 'A — 표준',   fbar: 'A 또는 B',     colf: 'A — 정렬만',  tab: 'A — line' },
-    'minimal-mono': { density: 'B — 컴팩트', fbar: 'A 또는 B',     colf: 'A or B',      tab: 'A — line' },
-    'toss-like':    { density: 'A — 표준',   fbar: 'A 또는 B',     colf: 'A — 정렬만',  tab: 'A — line (또는 B)' },
-    'material-3':   { density: 'A — 표준',   fbar: 'A 또는 B',     colf: 'A — 정렬만',  tab: 'A — line (M3 Primary)' },
-    'linear-like':  { density: 'C — 미니멈', fbar: 'C — 다중 패널', colf: 'B — popover (⌘F)', tab: 'C — segmented (설정은 D)' },
-  };
-  function renderAdminDefault(slug) {
-    const d = ADMIN_DEFAULT[slug] || {};
-    const setHint = (id, val) => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = '디폴트: ' + (val || '—');
-    };
-    setHint('density-hint', d.density);
-    setHint('fbar-hint',    d.fbar);
-    setHint('colf-hint',    d.colf);
-    setHint('tab-hint',     d.tab);
+  /* viewport switcher — 모바일 전용판: phone model 3종 (se/pixel/max) */
+  const selectViewport = document.getElementById('viewport-select');
+  function setViewport(v) {
+    if (!['se','pixel','max'].includes(v)) v = 'pixel';
+    root.setAttribute('data-viewport', v);
+    if (selectViewport) selectViewport.value = v;
+    try { localStorage.setItem(KEY_VIEWPORT, v); } catch (e) {}
   }
 
   function setTheme(t) {
@@ -2938,9 +2927,8 @@
     root.setAttribute('data-design', slug);
     selectDesign.value = slug;
     renderPolicy(slug);
-    renderCaseCAffordance(slug);
-    renderToolbarDefault(slug);
-    renderAdminDefault(slug);
+    renderBnavDefault(slug);
+    renderSearchDefault(slug);
     try { localStorage.setItem(KEY_DESIGN, slug); } catch (e) {}
   }
 
@@ -2948,34 +2936,58 @@
 
   let savedTheme = 'light';
   let savedDesign = 'wanted';
+  let savedViewport = 'pixel';
   try {
     savedTheme = localStorage.getItem(KEY_THEME) || 'light';
     savedDesign = localStorage.getItem(KEY_DESIGN) || 'wanted';
+    savedViewport = localStorage.getItem(KEY_VIEWPORT) || 'pixel';
   } catch (e) {}
   setDesign(savedDesign);
   setTheme(savedTheme);
+  setViewport(savedViewport);
 
   btnLight.addEventListener('click', () => setTheme('light'));
   btnDark.addEventListener('click', () => setTheme('dark'));
   selectDesign.addEventListener('change', e => setDesign(e.target.value));
+  if (selectViewport) selectViewport.addEventListener('change', e => setViewport(e.target.value));
 
-  /* sidebar collapse demo */
-  const demo = document.getElementById('demo-sidebar');
-  const btn = document.getElementById('btn-collapse');
-  if (btn && demo) {
-    btn.addEventListener('click', () => demo.classList.toggle('collapsed'));
-  }
+  /* bottom-nav active toggle demo */
+  document.querySelectorAll('.bottom-nav').forEach(nav => {
+    nav.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', e => {
+        e.preventDefault();
+        if (tab.classList.contains('fab')) return;
+        nav.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+  });
 
-  /* checkbox demo */
-  document.querySelectorAll('.table .check').forEach(c => {
-    c.addEventListener('click', e => {
-      e.stopPropagation();
-      c.classList.toggle('on');
-      if (c.classList.contains('on')) {
-        c.innerHTML = '<svg class="icon sm" viewBox="0 0 24 24" stroke-width="2.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>';
-      } else {
-        c.innerHTML = '';
-      }
+  /* chip-row active toggle demo */
+  document.querySelectorAll('.chip-row').forEach(row => {
+    row.querySelectorAll('.chip-pill').forEach(chip => {
+      chip.addEventListener('click', () => {
+        row.querySelectorAll('.chip-pill').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+  });
+
+  /* segmented control active toggle demo */
+  document.querySelectorAll('.segmented').forEach(seg => {
+    seg.querySelectorAll('.seg-item').forEach(item => {
+      item.addEventListener('click', () => {
+        seg.querySelectorAll('.seg-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
+  });
+
+  /* swipe-row toggle demo — 시각화용 (실제 gesture는 별도) */
+  document.querySelectorAll('.swipe-row .swipe-content').forEach(content => {
+    content.addEventListener('click', e => {
+      const row = content.closest('.swipe-row');
+      if (row) row.classList.toggle('collapsed');
     });
   });
 </script>

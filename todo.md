@@ -12,8 +12,7 @@
 
 ### A. 문서·디렉터리 보강
 
-- [ ] `docs/framework-structure-guide.md` 또는 `templates/framework-structure-intake.md`에 **실제 디렉터리 트리** 예시 추가 (feature-first hybrid 시나리오 + 각 폴더 역할 한 줄)
-- [ ] `riderapp-runtime/README.md`의 예전 `riderapp` 경로 설명을 현재 워크스페이스 구조(`claude-agent-template`, `riderapp-runtime`)에 맞게 갱신 (sibling 저장소 작업)
+- [ ] `docs/framework-structure-guide.md` 또는 `templates/framework-structure-intake.md` 작성 예시에 **실제 디렉터리 트리** 예시 추가 (feature-first hybrid 시나리오 기준 트리 + 각 폴더의 역할 한 줄)
 - [ ] 필요 시 `docs/template-usage.md` 또는 예시 프로젝트 문서 신설 (낮은 우선순위)
 
 ### B. UI/HTML 도구

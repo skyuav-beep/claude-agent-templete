@@ -47,7 +47,7 @@
 ```
 ## 프로젝트 형태
 - 단일 앱(Next.js).
-- 모노레포 불필요. 추후 라이더 모바일 앱 추가 시 재검토.
+- 모노레포 불필요. 추후 <엔티티B> 모바일 앱 추가 시 재검토.
 
 ## 초기 기술 구조
 - frontend / backend: Next.js 15 (App Router) 단일 프로젝트
@@ -55,7 +55,7 @@
 - build: `pnpm build`, test: Vitest + Playwright, lint: Biome
 
 ## 예상 주요 영역
-- 기능 영역: orders, riders, stores, dashboard
+- 기능 영역: <entity-a>, <entity-b>, <entity-c>, dashboard
 - 공용 UI: 디자인 시스템 컴포넌트 (button, table, modal 등)
 - 상태 관리: 서버 상태는 React Query, 클라이언트 상태는 zustand 최소 사용
 - 데이터 접근: Supabase 클라이언트는 server-only 모듈로 격리

@@ -113,7 +113,7 @@ head -20 DESIGN.md           # frontmatter 일치 확인
 - 기본 톤: 활성 시안 `policy.copy_tone` 따름 (`ko-friendly` / `ko-formal` / `en-sentence`).
 - 버튼 라벨 규칙: 동사형 (`저장하기`, `지원하기`) | sentence case (`Save`)
 - 도메인 특수 어휘:
-  - <원문/번역, 예: `라이더 → rider, 운영자 → operator`>
+  - <원문/번역, 예: `운영자 → operator, 관리자 → admin`>
 - 금기어/표현:
   - <예: `혁신적`, `최고의` 등 마케팅 과장 어휘 사용 금지>
 
@@ -142,8 +142,8 @@ head -20 DESIGN.md           # frontmatter 일치 확인
 
 ## 3. 핵심 사용자 흐름
 1. 주문 검색 → 필터 → 상세 (메인 워크플로)
-2. 주문 상세에서 상태 변경, 라이더 재배차
-3. 신규 라이더 등록 폼
+2. 주문 상세에서 상태 변경, 담당자 재배정
+3. 신규 담당자 등록 폼
 
 ## 4. 화면 상태 정책
 | 상태 | 처리 |
@@ -165,7 +165,7 @@ head -20 DESIGN.md           # frontmatter 일치 확인
 |---|---|---|---|---|---|---|---|
 | /admin/orders | C | 14 | 44 | space-12 | 좌 2/우 1 | 있음 | linear-like fade-edge mask |
 | /admin/orders/refunds | C | 14 | 44 | space-12 | 좌 2/우 1 | 있음 | orders와 컬럼 셋 재사용 |
-| /admin/riders | B | 10 | 44 | space-12 | — | 없음 | — |
+| /admin/staff | B | 10 | 44 | space-12 | — | 없음 | — |
 
 ## 변경 이력
 - 2026-05-16: 초기 작성 — PM(김OO), Design(박OO), FE(이OO)
