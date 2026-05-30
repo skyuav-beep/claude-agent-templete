@@ -60,6 +60,9 @@ for f in designs.get('files', []):
     print(f['path'])
 if 'selector' in designs:
     print(designs['selector'])
+codex = m.get('codex', {})
+for f in codex.get('files', []):
+    print(f['path'])
 sup = m.get('supporting', {})
 for a in sup.get('agents', []):
     print(a)

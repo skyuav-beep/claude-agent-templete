@@ -1,0 +1,18 @@
+# Safety Checklist
+
+Codex는 Claude Code hooks를 자동 실행하지 않으므로 작업 전에 아래 항목을 직접 확인한다.
+
+## 사용자 확인 필요
+
+- 파일 삭제, 대규모 이동, 구조 재편
+- `rm -rf`, `git reset --hard`, `git clean -f`, 강제 push
+- `docker compose down -v`처럼 로컬 데이터를 삭제하는 명령
+- GitHub Actions 배포/릴리스 실행
+- 원격 staging/prod migration 적용
+- 비밀 파일(`.env`, `*.pem`, `*.key`, `credentials.json`) 생성 또는 수정
+
+## 기본 방침
+
+- 의도가 불명확한 파괴적 명령은 실행하지 않는다.
+- Codex 승인 요청이 필요한 명령은 승인 절차를 사용한다.
+- 불필요한 우회 명령으로 sandbox를 피하지 않는다.

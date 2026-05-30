@@ -158,6 +158,9 @@
 - **[로컬/CI 실행 가이드](./docs/local-dev-ci-guide.md)** - agent 실행 경계(로컬 Docker Desktop·migration·commit·push·CI까지, 배포 Action·원격 migration은 수동), Docker 재빌드 2모드(증분/강력 no-cache) 판단, push 후 인계 요약을 확인할 때.
 - **[프레임워크 구조 가이드](./docs/framework-structure-guide.md)** - 디렉터리 분리, 파일 크기, 레포 구조 기준을 확인할 때.
 - **[Codex 읽기 순서](./docs/codex-reading-order.md)** - Codex가 어떤 순서로 문맥을 읽는지 참고할 때.
+- **[에이전트 런타임 매트릭스](./docs/agent-runtime-matrix.md)** - Claude Code와 Codex의 기능 대응 관계, 공통 정본, 런타임별 어댑터 경계를 확인할 때.
+- **[Claude 실행 가이드](./docs/claude-guide.md)** - Claude Code의 `.claude/*` 자동화 레이어 사용 기준을 확인할 때.
+- **[Codex 실행 가이드](./docs/codex-guide.md)** - Codex에서 `.codex/*` workflow/check로 동일 운영 절차를 수행할 때.
 - **[서브에이전트 가이드](./docs/subagent-guide.md)** - 역할 분리나 협업 흐름 예시를 확인할 때.
 - **[개발 프로세스 문서](./docs/development-process.md)** - 문서형 개발 프로세스 초안을 확인할 때.
 - **[개발 프로세스 시각화](./docs/development-process.html)** - 브라우저에서 시각 가이드, 단계별 체크리스트, STATE 미니 대시보드 확인 시.
@@ -167,6 +170,7 @@
 - **[Hooks Layer](./.claude/hooks/)** - 파괴적 명령 차단, 비밀 파일 쓰기 차단, STATE.md 갱신 리마인더. 설정은 `.claude/settings.local.json`.
 - **[서브에이전트 템플릿](./.claude/agents/)** - Agent 도구 호출 시 역할별 프롬프트 템플릿 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer). 디스패치 기준은 `docs/subagent-guide.md`.
 - **[Plugins Layer](./.claude/plugins/)** - manifest.json, VERSION, install.sh. 다른 프로젝트에 설치 시 `docs/plugin-guide.md` 참조.
+- **[Codex Layer](./.codex/)** - Codex용 workflow, safety/finish checklist, subagent prompt guide. Claude 전용 자동화와 분리된 보완 레이어.
 - **[Plugin 가이드](./docs/plugin-guide.md)** - 설치, 업데이트, 커스텀, 버전 관리 방법.
 - **[디자인 운영 가이드](./docs/design-guidelines.md)** - `DESIGN.md` 토큰 호출 규칙, alias/atomic 선택, 컴포넌트 추가 절차, dark alias 합성 표기.
 - **[Admin FE 디자인 가이드](./docs/admin-fe-design-guide.md)** - admin/dashboard 화면(로그인, 사이드바, top bar, KPI 카드, data table, 폼) 조립 패턴. DESIGN.md 토큰/컴포넌트 호출 기준.

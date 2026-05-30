@@ -7,6 +7,8 @@
 - `AGENTS.md`: 모든 에이전트가 따라야 하는 공통 운영 규칙
 - `STATE.md`: 현재 상태와 다음 작업 인계를 위한 기록 파일
 - `agents/`: 역할별 세부 지침
+- `.claude/`: Claude Code 자동화 레이어(skills, commands, hooks, subagents, plugin installer)
+- `.codex/`: Codex 실행 절차 레이어(workflows, checks, subagent prompt guides)
 - `templates/`: 기능 개발, 버그 수정, 리뷰 요청 템플릿
 - `docs/`: intake 답변을 바탕으로 작성할 프로젝트 가이드 템플릿
 - `templates/i18n-intake.md`, `docs/i18n-guidelines.md`: 다국어 프로젝트용 초기 설문과 기준 문서
@@ -23,17 +25,25 @@ bash /path/to/claude-agent-template/.claude/plugins/install.sh /path/to/my-proje
 
 미리보기: `--dry-run`, 덮어쓰기: `--force`. 자세한 내용은 `docs/plugin-guide.md` 참조.
 
+## 지원 런타임
+
+- Claude Code: `.claude/*` 자동화 레이어로 skills, commands, hooks, subagents를 사용한다.
+- Codex: `AGENTS.md`와 `.codex/*` workflow/check 문서로 같은 운영 절차를 재현한다.
+- 공통 정본: `AGENTS.md`, `STATE.md`, `templates/`, `docs/`, `DESIGN.md`.
+- 런타임별 대응 관계는 `docs/agent-runtime-matrix.md`, Codex 실행 기준은 `docs/codex-guide.md`, Claude 실행 기준은 `docs/claude-guide.md`를 따른다.
+
 ## 사용 방법
 
 1. 이 저장소를 새 프로젝트의 시작점으로 복제하거나, 위 install.sh로 설치한다.
 2. Claude Code에서 자연어로 "새 프로젝트 시작하자"고 말하면 `start` skill이 자동 활성화되어 초기 설정 QnA를 진행한다.
-3. 특정 영역(예: UI, API)을 더 깊이 수집하려면 자연어로 토픽을 언급하면 `intake` skill이 활성화된다. 또는 `/intake tech` 같은 슬래시 커맨드로 명시 호출 가능.
-4. 작업 요청 시 "기능 추가", "버그 수정" 같은 키워드를 쓰면 해당 개별 skill이 자동 활성화된다. 또는 `/feature`, `/bugfix` 등 슬래시 커맨드로 명시 호출 가능.
-5. 유형이 모호하면 `request` skill이 자동으로 분류한다. 또는 `/request`로 명시 호출.
-6. 프로젝트 성격에 맞게 `AGENTS.md`를 커스텀한다.
-7. `agents/*.md`에서 필요한 역할만 남기고 세부 규칙을 조정한다.
-8. `templates/*.md`를 팀 작업 방식에 맞게 수정한다.
-9. 작업이 끝날 때마다 `STATE.md`를 업데이트한다.
+3. Codex에서는 `.codex/README.md`를 진입점으로 삼고, 작업 유형에 맞는 `.codex/workflows/*.md`를 따라 같은 템플릿을 읽는다.
+4. 특정 영역(예: UI, API)을 더 깊이 수집하려면 자연어로 토픽을 언급하면 `intake` skill이 활성화된다. 또는 `/intake tech` 같은 슬래시 커맨드로 명시 호출 가능.
+5. 작업 요청 시 "기능 추가", "버그 수정" 같은 키워드를 쓰면 해당 개별 skill이 자동 활성화된다. 또는 `/feature`, `/bugfix` 등 슬래시 커맨드로 명시 호출 가능.
+6. 유형이 모호하면 `request` skill이 자동으로 분류한다. 또는 `/request`로 명시 호출.
+7. 프로젝트 성격에 맞게 `AGENTS.md`를 커스텀한다.
+8. `agents/*.md`에서 필요한 역할만 남기고 세부 규칙을 조정한다.
+9. `templates/*.md`를 팀 작업 방식에 맞게 수정한다.
+10. 작업이 끝날 때마다 `STATE.md`를 업데이트한다.
 
 ## Skills Layer (자동 활성화)
 
@@ -58,6 +68,16 @@ bash /path/to/claude-agent-template/.claude/plugins/install.sh /path/to/my-proje
 - `/start`, `/intake [토픽]`, `/request [설명]`, `/feature [설명]`, `/bugfix [설명]`, `/refactor [설명]`, `/review [대상]`, `/business-logic [설명]`
 
 `[설명]` 인수를 주면 가능한 항목을 미리 채운다. skills와 동일 templates를 참조한다.
+
+## Codex Workflows
+
+`.codex/workflows/`는 Claude skills를 Codex 실행 절차로 옮긴 레이어다.
+
+- `start` / `intake` — 초기 QnA와 토픽별 정보 수집
+- `feature` / `bugfix` / `refactor` / `review` / `business-logic` — 작업 요청 처리
+- `design` — UI/디자인 작업 시 `DESIGN.md`와 디자인 가이드 강제 참조
+
+Codex에서는 자동 hook이 없으므로 `.codex/checks/safety-checklist.md`와 `.codex/checks/finish-checklist.md`를 작업 전후 체크리스트로 사용한다.
 
 ## README 운영 규칙
 

@@ -31,6 +31,14 @@
 
 ## 이번 세션에서 완료한 작업
 
+- Claude Code + Codex dual runtime 기반 설계 추가. (2026-05-30)
+  - 공통 정본은 `AGENTS.md`/`STATE.md`/`templates/`/`docs/`/`DESIGN.md`로 유지하고, Claude 전용 자동화는 `.claude/*`, Codex 실행 절차는 `.codex/*`로 분리하는 보완형 구조를 채택.
+  - 신규 `docs/agent-runtime-matrix.md` — Claude Code 자동화 기능과 Codex workflow/check/subagent guide 대응 관계, 공통 정본, 변경 규칙 정의.
+  - 신규 `docs/claude-guide.md`, `docs/codex-guide.md` — 각 런타임의 진입점과 실행 기준 분리.
+  - 신규 `.codex/` 레이어 — `README.md`, `workflows/` 8종(start/intake/feature/bugfix/refactor/review/business-logic/design), `checks/` 2종(safety/finish), `agents/` 6종(explorer/reviewer/planner/test-runner/feature-dev/design-reviewer).
+  - `README.md`, `AGENTS.md`, `CLAUDE.md`, `docs/plugin-guide.md`, `docs/codex-reading-order.md`: Claude/Codex 지원 수준, Codex 진입점, 런타임별 어댑터 경계 반영.
+  - `.claude/plugins/manifest.json`: compatibility를 Claude full automation + Codex workflow compatible 구조로 확장하고 `.codex/*` 및 신규 런타임 문서 등록. `install.sh`도 manifest `codex.files`를 설치 대상으로 포함하도록 갱신.
+
 - 프로젝트 운영 점검 후 설치/디자인 동기화 리스크 수정. (2026-05-30)
   - `.claude/plugins/install.sh`: `--dry-run` 성공 출력 후 exit code가 1로 끝나던 문제를 `exit 0`으로 고정. 설치 시 `.claude/settings.local.json` 내부 hook 절대 경로를 템플릿 원본 경로에서 대상 프로젝트 경로로 자동 치환하도록 보강.
   - `docs/plugin-guide.md`: manifest 기준 설치 내용으로 갱신 — L1 `DESIGN.md`, L2 Skills 9개, L3 Hooks 4개, L4 Subagents 6개, design library/selector, `--design <slug>` 플래그, settings hook 경로 자동 치환 정책 반영.

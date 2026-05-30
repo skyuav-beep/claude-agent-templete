@@ -8,7 +8,7 @@ Codex는 항상 다음 순서의 상위 규칙 영향을 받는다.
 
 1. 시스템 수준 규칙
 2. 개발자 수준 규칙
-3. 저장소 로컬 가이드
+3. 저장소 로컬 가이드(`AGENTS.md`, `.codex/README.md`)
 4. 현재 프로젝트 문맥
 5. 사용자의 최신 요청
 6. 실제 코드와 구현 관례
@@ -33,11 +33,13 @@ Codex는 보통 다음 순서로 저장소 문서를 읽는다.
 
 1. `AGENTS.md`
 2. `STATE.md`
-3. `README.md`
-4. 작업 종류에 맞는 `agents/*.md`
-5. 요청 유형에 맞는 `templates/*.md`
-6. 기획/설계 단계라면 `docs/*.md`
-7. 마지막으로 실제 코드와 폴더 구조
+3. `.codex/README.md`
+4. 작업 종류에 맞는 `.codex/workflows/*.md`
+5. `README.md`
+6. 작업 종류에 맞는 `agents/*.md`
+7. 요청 유형에 맞는 `templates/*.md`
+8. 기획/설계 단계라면 `docs/*.md`
+9. 마지막으로 실제 코드와 폴더 구조
 
 ## 4. 작업 유형별 우선 참조 파일
 
@@ -45,57 +47,64 @@ Codex는 보통 다음 순서로 저장소 문서를 읽는다.
 
 1. `AGENTS.md`
 2. `STATE.md`
-3. `README.md`
+3. `.codex/README.md`
+4. `README.md`
 
 ### 기능 구현
 
 1. `AGENTS.md`
 2. `STATE.md`
-3. `agents/executor-agent.md`
-4. `templates/feature-request.md`
-5. 관련 코드 또는 문서
+3. `.codex/workflows/feature.md`
+4. `agents/executor-agent.md`
+5. `templates/feature-request.md`
+6. 관련 코드 또는 문서
 
 ### 버그 수정
 
 1. `AGENTS.md`
 2. `STATE.md`
-3. `agents/executor-agent.md`
-4. `templates/bugfix-request.md`
-5. 재현 경로와 관련 구현
+3. `.codex/workflows/bugfix.md`
+4. `agents/executor-agent.md`
+5. `templates/bugfix-request.md`
+6. 재현 경로와 관련 구현
 
 ### 코드 리뷰
 
 1. `AGENTS.md`
-2. `agents/reviewer-agent.md`
-3. `templates/review-request.md`
-4. 변경 파일
+2. `.codex/workflows/review.md`
+3. `agents/reviewer-agent.md`
+4. `templates/review-request.md`
+5. 변경 파일
 
 ### 리팩터링
 
 1. `AGENTS.md`
 2. `STATE.md`
-3. `agents/executor-agent.md`
-4. `templates/refactor-request.md`
-5. 영향 범위 코드
+3. `.codex/workflows/refactor.md`
+4. `agents/executor-agent.md`
+5. `templates/refactor-request.md`
+6. 영향 범위 코드
 
 ### 프로젝트 초기 설계
 
 1. `AGENTS.md`
 2. `README.md`
-3. `templates/project-intake.md`
-4. `templates/ui-intake.md`
-5. `templates/responsive-intake.md`
-6. `templates/tech-intake.md`
-7. `docs/project-guide-template.md`
+3. `.codex/workflows/start.md`
+4. `templates/project-intake.md`
+5. `templates/ui-intake.md`
+6. `templates/responsive-intake.md`
+7. `templates/tech-intake.md`
+8. `docs/project-guide-template.md`
 
 ### 다국어(i18n) 설계 또는 구현
 
 1. `AGENTS.md`
-2. `templates/i18n-intake.md`
-3. `docs/i18n-guidelines.md`
-4. `agents/executor-agent.md`
-5. `agents/reviewer-agent.md`
-6. 관련 코드 또는 화면
+2. `.codex/workflows/intake.md`
+3. `templates/i18n-intake.md`
+4. `docs/i18n-guidelines.md`
+5. `agents/executor-agent.md`
+6. `agents/reviewer-agent.md`
+7. 관련 코드 또는 화면
 
 ## 5. 역할별 참조 포인트
 
@@ -124,6 +133,7 @@ Codex는 보통 다음 순서로 저장소 문서를 읽는다.
 ## 6. 운영 메모
 
 - 루트 `AGENTS.md`는 공통 규칙과 라우팅만 유지한다.
+- `.codex/`는 Codex 전용 실행 절차이며 Claude Code의 `.claude/` 자동화와 경쟁하지 않는다.
 - 세부 구현 규칙은 `agents/`와 `docs/`로 위임한다.
 - intake 문서는 정보 수집용이고, 실제 개발 기준은 `docs/` 아래 guide 문서다.
 - 사용자의 최신 요청은 항상 중요하지만, 상위 규칙과 충돌하면 상위 규칙을 우선한다.

@@ -2,7 +2,10 @@
   "name": "claude-agent-templete",
   "version": "1.0.0",
   "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
-  "compatibility": "Claude Code CLI",
+  "compatibility": {
+    "claude_code": "full automation via .claude layers",
+    "codex": "equivalent workflow via AGENTS.md and .codex documents"
+  },
   "layers": {
     "L1_memory": {
       "description": "프로젝트 메모리 및 상태 관리 파일",
@@ -77,6 +80,28 @@
     ],
     "selector": ".claude/plugins/select-design.sh"
   },
+  "codex": {
+    "description": "Codex runtime adapter — mirrors Claude workflows as explicit Codex procedures",
+    "files": [
+      { "path": ".codex/README.md", "description": "Codex entrypoint and reading order" },
+      { "path": ".codex/checks/safety-checklist.md", "description": "Safety checks replacing Claude hooks in Codex" },
+      { "path": ".codex/checks/finish-checklist.md", "description": "Finish checks replacing state reminder hook in Codex" },
+      { "path": ".codex/workflows/start.md", "description": "Codex start workflow" },
+      { "path": ".codex/workflows/intake.md", "description": "Codex intake workflow" },
+      { "path": ".codex/workflows/feature.md", "description": "Codex feature workflow" },
+      { "path": ".codex/workflows/bugfix.md", "description": "Codex bugfix workflow" },
+      { "path": ".codex/workflows/refactor.md", "description": "Codex refactor workflow" },
+      { "path": ".codex/workflows/review.md", "description": "Codex review workflow" },
+      { "path": ".codex/workflows/business-logic.md", "description": "Codex business logic workflow" },
+      { "path": ".codex/workflows/design.md", "description": "Codex design workflow" },
+      { "path": ".codex/agents/explorer.md", "description": "Codex explorer subagent prompt guide" },
+      { "path": ".codex/agents/reviewer.md", "description": "Codex reviewer subagent prompt guide" },
+      { "path": ".codex/agents/planner.md", "description": "Codex planner subagent prompt guide" },
+      { "path": ".codex/agents/test-runner.md", "description": "Codex test runner subagent prompt guide" },
+      { "path": ".codex/agents/feature-dev.md", "description": "Codex feature implementation subagent prompt guide" },
+      { "path": ".codex/agents/design-reviewer.md", "description": "Codex design reviewer subagent prompt guide" }
+    ]
+  },
   "supporting": {
     "agents": [
       "agents/main-agent.md",
@@ -111,6 +136,9 @@
       "docs/local-dev-ci-guide.md",
       "docs/framework-structure-guide.md",
       "docs/i18n-guidelines.md",
+      "docs/agent-runtime-matrix.md",
+      "docs/claude-guide.md",
+      "docs/codex-guide.md",
       "docs/codex-reading-order.md",
       "docs/subagent-guide.md",
       "docs/development-process.md",
