@@ -92,6 +92,17 @@ for FILE in $FILES; do
   else
     mkdir -p "$(dirname "$DST")"
     cp "$SRC" "$DST"
+    if [ "$FILE" = ".claude/settings.local.json" ]; then
+      python3 - "$DST" "$TEMPLATE_ROOT" "$TARGET" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+template_root = sys.argv[2]
+target_root = sys.argv[3]
+path.write_text(path.read_text(encoding="utf-8").replace(template_root, target_root), encoding="utf-8")
+PY
+    fi
     # hook 스크립트는 실행 권한 부여
     if [[ "$FILE" == *.sh ]]; then
       chmod +x "$DST"
@@ -126,3 +137,4 @@ echo "설치: ${INSTALLED}개 | 건너뜀: ${SKIPPED}개 | active-design: ${DESI
 [ "$SKIPPED" -gt 0 ] && [ "$FORCE" != true ] && echo "기존 파일을 덮어쓰려면 --force 플래그를 사용하세요."
 echo "완료."
 [ "$DRY_RUN" != true ] && echo "활성 시안 변경: bash .claude/plugins/select-design.sh <slug>"
+exit 0

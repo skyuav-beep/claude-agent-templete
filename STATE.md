@@ -31,6 +31,11 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 프로젝트 운영 점검 후 설치/디자인 동기화 리스크 수정. (2026-05-30)
+  - `.claude/plugins/install.sh`: `--dry-run` 성공 출력 후 exit code가 1로 끝나던 문제를 `exit 0`으로 고정. 설치 시 `.claude/settings.local.json` 내부 hook 절대 경로를 템플릿 원본 경로에서 대상 프로젝트 경로로 자동 치환하도록 보강.
+  - `docs/plugin-guide.md`: manifest 기준 설치 내용으로 갱신 — L1 `DESIGN.md`, L2 Skills 9개, L3 Hooks 4개, L4 Subagents 6개, design library/selector, `--design <slug>` 플래그, settings hook 경로 자동 치환 정책 반영.
+  - `designs/wanted.md`: active `DESIGN.md`의 모달/scrim 및 wide table 정책 변경분을 wanted 라이브러리 원본에 동기화. active marker `wanted`와 라이브러리 원본 불일치 해소.
+
 - 로컬/CI 실행 경계 + Docker 재빌드 2모드 가이드 신설. (2026-05-30)
   - 배경: 사용자 워크플로 = 로컬 테스트는 Docker Desktop, agent는 commit→push→CI까지만, GitHub Actions 배포·릴리스와 원격 migration 적용은 사용자 수동. 로컬 개발 루프에서 캐시 없는 강력 재빌드 vs 빠른 증분 재빌드 판단을 agent에 가이드 필요.
   - 결정(사용자 확인): (1) 적용=신규 공통 문서 신설(전 작업 유형 공통) + 헌법 경계 규칙, (2) migration 경계=로컬 Docker Desktop까지 agent 적용 OK·"GitHub 이상" 원격은 수동, (3) 강력 재빌드=조건 자동 판단.

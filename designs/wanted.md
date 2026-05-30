@@ -162,6 +162,7 @@ bg-subtle:         oklch(0.972 0.002 286)    # neutral-50, page bg
 bg-muted:          oklch(0.961 0.002 286)    # neutral-75, hover fill
 bg-elevated:       oklch(1 0 0)              # dialog/popover
 bg-inverse:        oklch(0.148 0.004 277)    # neutral-960
+bg-scrim:          oklch(0 0 0 / 0.5)        # modal/sheet backdrop (flat, no blur; synthesized)
 bg-brand:          oklch(0.563 0.232 257)    # blue-800
 bg-brand-subtle:   oklch(0.954 0.022 250)    # blue-100
 bg-danger-subtle:  oklch(0.951 0.018 18)
@@ -199,6 +200,7 @@ bg-subtle:        oklch(0.135 0.002 286)      # neutral-970
 bg-muted:         oklch(0.196 0.008 273)      # neutral-925
 bg-elevated:      oklch(0.237 0.008 273)      # neutral-900
 bg-inverse:       oklch(1 0 0)
+bg-scrim:         oklch(0 0 0 / 0.6)          # modal/sheet backdrop (flat, no blur; synthesized)
 bg-brand-subtle:  oklch(0.149 0.069 257)      # blue-975
 bg-danger-subtle:  oklch(0.298 0.10 22 / 0.32)    # synthesized for dark contrast
 bg-success-subtle: oklch(0.298 0.10 144 / 0.28)   # synthesized
@@ -703,6 +705,37 @@ active filter는 brand-subtle 배경 + brand 텍스트로 표시되며, sort는 
 
 `{colors.bg-{danger|success|warning}-subtle}` 배경 + 시맨틱 fg 색 + 좌측 아이콘 [src:1]. 인라인 알림이며 toast와 달리 dismiss 없이 페이지 흐름에 남는다.
 
+### modal / dialog
+
+centered dialog 패턴. SSOT는 elevation에서 dropdown/popover와 함께 grouped된다 [src:1]. **항상 커스텀 표면**으로 구현한다 — 시각은 아래 토큰을 호출해 그리고, focus-trap·focus-restore·scroll-lock·ESC·`aria-modal` 같은 a11y 동작은 headless 라이브러리(Radix Primitives / Headless UI / React Aria 등)에 위임할 수 있다. `window.alert/confirm/prompt`, 브라우저 기본 `<dialog>` 기본 스킨, pre-styled 라이브러리 모달(MUI/AntD/기본 shadcn 스킨 등)은 product 모달로 쓰지 않는다.
+
+```yaml
+scrim:
+  bg:      {colors.bg-scrim}          # flat 반투명 — blur backdrop 금지 (Do's and Don'ts 위반)
+container:
+  bg:      {colors.bg-elevated}
+  border:  1px {colors.border-subtle}
+  radius:  {rounded.radius-12}
+  padding: {spacing.space-24}          # 24 24 24 24
+  shadow:  {elevation.shadow-4}        # 큰 모달; 소형은 {elevation.shadow-pop}
+  width:   min(560, 100vw - {spacing.space-32} 좌우 여백)
+header:
+  title:   {typography.title2} {colors.fg-strong}
+  close-x: {component.icon-button} 우상단 + aria-label="닫기"
+body:
+  text:    {typography.body1} {colors.fg-default}
+  scroll:  케이스별 (콘텐츠가 길면 body만 내부 스크롤)
+footer:
+  gap:     {spacing.space-8}
+  cancel:  {component.button-secondary} ("닫기" / "취소")
+  confirm: {component.button-primary} (위험 액션은 {component.button-danger})
+a11y:    role="dialog" + aria-modal + focus-trap + focus-restore + body scroll-lock
+```
+
+**닫기 방법은 세 가지로 고정**한다 — (1) 헤더 우상단 X, (2) 푸터 닫기/취소 버튼, (3) `ESC` 키. **배경(scrim) 클릭으로는 닫지 않는다** [policy]. 위험(파괴적) 액션은 body에 결과를 명시한 뒤 `{component.button-danger}`로 확정한다.
+
+**bottom-sheet 변형** — 모바일에서 모달을 시트로 전환할 때 하단 정렬 + 상단만 `{rounded.radius-16}` 라운드로 surface한다. 닫기 정책은 동일하다 — X/닫기 버튼/ESC만 허용하고, **배경 클릭·스와이프 다운으로는 닫지 않는다**.
+
 ### empty-state
 
 ```yaml
@@ -897,6 +930,45 @@ pagination:
 
 행 클릭으로 상세 진입하는 패턴을 쓸 때는 행 전체에 cursor:pointer + hover bg를 적용하고, 액션 셀의 버튼은 `event.stopPropagation()`로 분리한다. zebra striping(짝수행 배경 변화)은 사용하지 않는다 — 평면 표면 + 1px 라인이 행을 구분한다.
 
+#### Wide Table Cases
+
+위 명세는 표준 폭(컬럼 ≤8) 기준이다. 컬럼이 많아지거나 화면 폭이 부족할 때는 임의로 padding을 줄이지 않고 아래 4-케이스 매트릭스에서 한 가지를 선택해 합의한다. 요구사항 수집 양식은 `templates/data-table-density.md`.
+
+| 케이스 | 컬럼 수 | row height | cell padding | sticky | 가로 스크롤 | 추가 정책 |
+|---|---|---|---|---|---|---|
+| **A — 표준** | ≤8 | 56 (comfortable) | `{spacing.space-16}` | 없음 | 없음 | 디폴트. `{typography.body2}` |
+| **B — 컴팩트** | 9~12 | 44 (compact) | `{spacing.space-12}` | 없음 | 없음 | numeric 컬럼 right-align, checkbox-col 40으로 축소 가능 |
+| **C — 와이드 + sticky** | 13~18 | 44 | `{spacing.space-12}` | 좌 1~2 + 우 액션 | 있음 | 헤더 row sticky, 좌/우 스크롤 affordance(시안별 분기, 아래 표 참조), 키보드 ←→ 스크롤 |
+| **D — 초과밀도** | 19+ | 44 | `{spacing.space-12}` | 좌/우 + 헤더 | 있음 | column visibility toggle 필수, density toggle 사용자 노출, drag-reorder + resize 옵션, virtualization(행 30+), CSV export 항상 노출, 선택 상태 localStorage 저장 |
+
+운영 규칙:
+
+- cell padding을 `{spacing.space-8}` 이하로 내리지 않는다(hit area·가독성 위반). 비-4의 배수(6/10/14) 도입 금지.
+- compact에서 row를 36 이하로 내리지 않는다.
+- C/D 채택 시 좌측 sticky는 최소 한 컬럼(체크박스 또는 식별자)을 두어 가로 스크롤 중에도 행을 식별할 수 있어야 한다.
+- C/D 채택 시 스크롤 가능 시각 단서를 반드시 둔다 — 시안별 정책은 아래 매트릭스 참조.
+
+C/D 채택 시 시안별 스크롤 affordance 정책(`policy.gradient_locations`와 정합):
+
+| 시안 | affordance 방식 | gradient_locations |
+|---|---|---|
+| `wanted` | sticky 컬럼 경계 1px `{colors.border-default}` 강조 | `["symbol", "avatar", "thumbnail", "hero"]` (fade-edge 미포함) |
+| `minimal-mono` | sticky 컬럼 경계 1px `{colors.border-strong}` + 우측 inset shadow-1 4px | `[]` (전면 금지) |
+| `toss-like` | **fade-edge 4px 좌/우 gradient mask** (`bg-canvas` → transparent) | `["hero", "table-fade-edge"]` |
+| `material-3` | state-layer 8% brand alpha overlay 좌/우 4px 정적 | `[]` (전면 금지, M3 state layer로 대체) |
+| `linear-like` | **fade-edge 4px 좌/우 gradient mask** (다크 캔버스 친화) | `["accent", "hero", "table-fade-edge"]` |
+
+- 컬럼이 13개 이상이면 "다 보여주기" 대신 컬럼 가시성 토글 + 사용자 저장을 우선 검토한다(Case D 정책을 13~18 구간에도 선택적으로 적용 가능).
+
+시안별 디폴트 매핑(`docs/admin-fe-design-guide.md ## 시안별 화면 조립 차이 ### 3. 리스트 페이지`와 정합):
+
+| 시안 | 디폴트 케이스 | 비고 |
+|---|---|---|
+| `wanted` / `minimal-mono` | A | C/D 채택 시 fade-edge는 정책 합의 필요(gradient_locations 외 위치) |
+| `toss-like` | A | shadow는 컨테이너 카드에만, 표 자체는 평면 유지 |
+| `material-3` | A (row 52) | state-layer hover 유지, B/C/D 모두 가능 |
+| `linear-like` | **B** (디폴트) | row 44 시그너처. ⌘K 컬럼 토글, ⌘\ side panel 권장 |
+
 ### logo
 
 브랜드 마크는 두 형태 — **symbol** (3-stop 그라디언트가 적용된 둥근 사각형/마름모 형태)과 **logotype** (`Wanted` 워드마크) [src:1]. SSOT 번들 `assets/logos/`에 `wanted-symbol-fill.png`, `wanted-symbol-mask.svg`, `wanted-logotype.svg`로 ship되며, mask SVG는 `currentColor` 적용이 가능해 단색 표면 위에서 톤을 맞추는 용도다 [src:1].
@@ -919,6 +991,7 @@ pagination:
 - 태그 칩은 `#` + 단어 형태로 표기한다 — `#성장가능성`, `#스타트업` [src:1].
 - 아이콘은 `currentColor`를 상속하게 둔다 — 외부 컬러 직접 주입 금지 [src:1][src:5].
 - 포커스 링은 항상 visible 상태로 유지한다 — 2px `{colors.blue-800}` ring + 2px transparent offset이 표준이다 [src:1].
+- 모달/시트는 **닫기 버튼·헤더 X·`ESC` 세 가지로만 닫는다** — 시각 표면은 항상 커스텀으로 `{component.modal}` 토큰을 호출해 구현하고, focus-trap·scroll-lock 같은 a11y 동작만 headless 라이브러리에 위임한다 [policy].
 
 **Don't**
 
@@ -932,6 +1005,8 @@ pagination:
 - 6px·10px·14px·18px·22px 같은 비-4의 배수 spacing/radius를 도입하지 않는다 — `{spacing.*}`와 `{rounded.*}` 사다리만 사용한다 [src:1].
 - 텍스처·노이즈·grain을 표면에 사용하지 않는다 — 모든 표면은 평면 색이다 [src:1].
 - glassy 효과(blur backdrop, translucent toolbar)를 사용하지 않는다 — Wanted 시스템은 평면 색 + 헤어라인 보더로 깊이를 만든다 [src:1].
+- **배경(scrim/overlay) 클릭이나 시트 스와이프 다운으로 모달을 닫지 않는다** — 닫기는 닫기 버튼·헤더 X·`ESC`만 허용한다. scrim은 클릭 시 닫힘 트리거가 아니라 시각적 dimming + 배경 인터랙션 차단 용도다 [policy].
+- **`window.alert`/`confirm`/`prompt`·브라우저 기본 `<dialog>` 기본 스킨·pre-styled 라이브러리 모달(MUI/AntD/기본 shadcn 스킨 등)을 product 모달로 쓰지 않는다** — 항상 커스텀 표면으로 구현한다(headless 동작 레이어 위임은 예외) [policy].
 - 2px 장식용 보더, 컬러 left-rail accent 카드, color-shifted variant rim을 사용하지 않는다 — 기본은 1px `{colors.border-subtle}` / `{colors.border-default}` 헤어라인이다 [src:1].
 - spring·bounce·parallax·page slide 모션을 사용하지 않는다 — hover transition은 100–150ms ease, page transition은 ~200ms fade-in only가 표준이다 [src:1].
 - 아이콘 내부에 그라디언트·컬러를 적용하지 않는다 — 모든 아이콘은 monochrome이며 `currentColor`를 상속한다 [src:1][src:5].
@@ -972,9 +1047,9 @@ pagination:
 - **공식 motion 토큰** — duration·easing의 시스템 토큰은 명시되지 않았으며, hover transition은 100–150ms ease, page transition은 ~200ms fade-in이라는 정책만 README에 prose로 surface된다 [src:1]. 본 문서의 Motion 표는 SSOT의 정책 prose에서 추출한 권장값이며, 명시 토큰은 아니다.
 - **다크 모드 alias 완전성** — SSOT의 dark theme 토큰은 background(canvas, surface, subtle, muted, elevated, inverse, brand-subtle)·foreground(strong, default, secondary, tertiary, disabled, on-brand)·border(subtle, default, strong)까지 surface되어 있다 [src:1]. `bg-danger-subtle`/`bg-success-subtle`/`bg-warning-subtle`와 `fg-brand`/`fg-danger`/`fg-success`/`fg-warning`의 다크 alias는 SSOT가 surface하지 않았으며, 본 카탈로그의 preview 구현을 위해 위 `### Semantic alias — Dark` 블록에 적정 대비값으로 **합성(synthesized)**하여 수록했다 — 다운스트림이 동일 패턴(blue-400 brightened for fg-brand, semantic hue @ ↑ lightness for fg-*, low-alpha colored fill for bg-*-subtle)으로 host 토큰을 ship할 수 있게 한다.
 - **wanted-icons 토큰 인벤토리** — wanted-icons는 자체 npm 패키지로 ship되며 Figma `/Icon` 페이지에 ~340개 아이콘이 정의된다 [src:1][src:5]. SSOT 번들은 production용 wanted-icons의 stand-in으로 Lucide CDN을 link하므로, 본 catalog가 적용되는 host는 production에서 `wanted-icons` 패키지로 교체해야 한다. 개별 아이콘의 토큰 명세(이름 매핑, 16px filled 변형 ID)는 본 문서 범위 외다.
-- **wide data-table fade-edge 정책** — 본 시안은 `policy.gradient_locations: ["symbol", "avatar", "thumbnail", "hero"]` 4곳 한정이며 chrome 성격의 fade-edge mask는 도입하지 않는다. `DESIGN.md ### data-table > #### Wide Table Cases`의 Case C/D 채택 시 스크롤 가능 시각 단서는 **sticky 컬럼 경계 1px `{colors.border-default}` 강조**로 대체한다.
 - **catalog-only ladder 토큰** — 본 카탈로그는 alias 계약(`radius-2/4/8/12/16/full`) 외에 `radius-6`(button sm 로컬), `radius-10`(button lg 로컬), `radius-20`/`radius-24`/`radius-32`(일부 카드/hero)를 추가 ladder로 surface한다. 모두 4의 배수 또는 SSOT의 컴포넌트 로컬값에서 직접 가져온다. `_alias-contract.md ## 9b` fallback 표에 등재되어 다른 시안 활성 시 표준 `--radius-8` 또는 `--radius-16`으로 fallback된다.
 - **catalog-only color/border alias** — `fg-link`(인라인 링크 강조)와 `border-inverse`(dark surface 분리)는 alias 계약 외 추가 토큰. 다른 시안에서는 `fg-brand`, `border-strong`로 fallback된다.
+- **bg-scrim (modal/sheet backdrop)** — SSOT는 모달 scrim 색을 별도 토큰으로 surface하지 않는다. `### modal / dialog` 명세를 완성하기 위해 flat 반투명 흑색(light `oklch(0 0 0 / 0.5)` · dark `oklch(0 0 0 / 0.6)`, **blur 없음**)으로 **합성(synthesized)**했다. alias 계약 외 catalog-only 토큰이며, 다른 시안에서는 동일 flat 반투명 흑색으로 fallback한다(`_alias-contract.md ## 9b` 등재).
 - **shadow-3 / shadow-4** — Wanted SSOT가 elevation을 5단까지 surface하지는 않지만, 본 catalog는 합성된 `shadow-3`/`shadow-4`를 popover/dropdown/modal/toast 외 카드 surface에 사용하지 않는 정책으로 ship한다. CSS Variables 블록에는 fallback 대상으로만 명시(`var(--shadow-3, var(--shadow-2))`).
 
 ## References
@@ -998,6 +1073,7 @@ pagination:
   --bg-muted:          oklch(0.961 0.002 286);
   --bg-elevated:       oklch(1 0 0);
   --bg-inverse:        oklch(0.148 0.004 277);
+  --bg-scrim:          oklch(0 0 0 / 0.5);                        /* catalog-only: modal/sheet backdrop */
   --bg-brand:          oklch(0.563 0.232 257);
   --bg-brand-subtle:   oklch(0.954 0.022 250);
   --bg-danger-subtle:  oklch(0.951 0.018 18);
@@ -1052,6 +1128,7 @@ pagination:
   --bg-muted:         oklch(0.196 0.008 273);
   --bg-elevated:      oklch(0.237 0.008 273);
   --bg-inverse:       oklch(1 0 0);
+  --bg-scrim:         oklch(0 0 0 / 0.6);                         /* catalog-only: modal/sheet backdrop */
   --bg-brand:         oklch(0.563 0.232 257);
   --bg-brand-subtle:  oklch(0.149 0.069 257);
   --bg-danger-subtle: oklch(0.298 0.10 22 / 0.32);
