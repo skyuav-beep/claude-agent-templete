@@ -1,4 +1,4 @@
-# Reviewer Agent
+# Code Reviewer Agent
 
 Codex subagent로 리뷰 작업을 위임할 때 사용한다.
 

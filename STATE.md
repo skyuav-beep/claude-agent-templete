@@ -31,11 +31,17 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 템플릿 전체 검토 후 정합성 수정 3건. (2026-05-30)
+  - 배경: 사용자 요청으로 5-Layer 템플릿 전체 점검(카운트·링크·hook 동작·런타임 parity·최신성). 레이어 카운트(skills 9/commands 8/hooks 4/claude·codex agents 6/templates 19/docs 19/designs 8/codex wf 8/checks 2)·루트 깨진 링크 0·hook 동작·manifest/install 동기화는 모두 정합 확인. 실질 이슈는 노후 `todo.md` 1건 + parity/버전 2건.
+  - `todo.md`: 상단 라이브 섹션을 STATE.md `## 다음 작업` 기준으로 갱신(05-16→05-30 종료 시점). stale 참조 정리 — 삭제된 `rider-platform-docs`, 오타 `claude-agent-templete`→`claude-agent-template`, 옛 `riderapp` 경로. 05-16 "즉시 활용 산출물" 블록은 STATE 이력에 이미 있어 제거. 하단 archived 블록은 보존.
+  - 런타임 parity: `.codex/agents/reviewer.md` → `.codex/agents/code-reviewer.md`로 rename(`.claude/agents/code-reviewer.md`와 1:1 정합). `manifest.json codex.files` 경로/설명 + 파일 heading(`# Code Reviewer Agent`) 동기화. 참조처는 manifest 1곳뿐이라 영향 최소.
+  - 버전: `.claude/plugins/VERSION` + `manifest.json version` `1.0.0` → `1.1.0`(codex 어댑터 레이어 추가 반영, semver minor).
+
 - Claude Code + Codex dual runtime 기반 설계 추가. (2026-05-30)
   - 공통 정본은 `AGENTS.md`/`STATE.md`/`templates/`/`docs/`/`DESIGN.md`로 유지하고, Claude 전용 자동화는 `.claude/*`, Codex 실행 절차는 `.codex/*`로 분리하는 보완형 구조를 채택.
   - 신규 `docs/agent-runtime-matrix.md` — Claude Code 자동화 기능과 Codex workflow/check/subagent guide 대응 관계, 공통 정본, 변경 규칙 정의.
   - 신규 `docs/claude-guide.md`, `docs/codex-guide.md` — 각 런타임의 진입점과 실행 기준 분리.
-  - 신규 `.codex/` 레이어 — `README.md`, `workflows/` 8종(start/intake/feature/bugfix/refactor/review/business-logic/design), `checks/` 2종(safety/finish), `agents/` 6종(explorer/reviewer/planner/test-runner/feature-dev/design-reviewer).
+  - 신규 `.codex/` 레이어 — `README.md`, `workflows/` 8종(start/intake/feature/bugfix/refactor/review/business-logic/design), `checks/` 2종(safety/finish), `agents/` 6종(explorer/code-reviewer/planner/test-runner/feature-dev/design-reviewer).
   - `README.md`, `AGENTS.md`, `CLAUDE.md`, `docs/plugin-guide.md`, `docs/codex-reading-order.md`: Claude/Codex 지원 수준, Codex 진입점, 런타임별 어댑터 경계 반영.
   - `.claude/plugins/manifest.json`: compatibility를 Claude full automation + Codex workflow compatible 구조로 확장하고 `.codex/*` 및 신규 런타임 문서 등록. `install.sh`도 manifest `codex.files`를 설치 대상으로 포함하도록 갱신.
 

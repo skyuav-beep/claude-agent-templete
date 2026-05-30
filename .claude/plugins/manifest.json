@@ -1,6 +1,6 @@
 {
   "name": "claude-agent-templete",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
   "compatibility": {
     "claude_code": "full automation via .claude layers",
@@ -95,7 +95,7 @@
       { "path": ".codex/workflows/business-logic.md", "description": "Codex business logic workflow" },
       { "path": ".codex/workflows/design.md", "description": "Codex design workflow" },
       { "path": ".codex/agents/explorer.md", "description": "Codex explorer subagent prompt guide" },
-      { "path": ".codex/agents/reviewer.md", "description": "Codex reviewer subagent prompt guide" },
+      { "path": ".codex/agents/code-reviewer.md", "description": "Codex code reviewer subagent prompt guide" },
       { "path": ".codex/agents/planner.md", "description": "Codex planner subagent prompt guide" },
       { "path": ".codex/agents/test-runner.md", "description": "Codex test runner subagent prompt guide" },
       { "path": ".codex/agents/feature-dev.md", "description": "Codex feature implementation subagent prompt guide" },

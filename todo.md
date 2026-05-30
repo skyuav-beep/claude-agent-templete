@@ -1,19 +1,19 @@
-# 다음 세션 해야 할 일 (2026-05-16 종료 시점 기준)
+# 다음 세션 해야 할 일 (2026-05-30 종료 시점 기준)
 
-상세 컨텍스트와 결정 사유는 `STATE.md ## 다음 작업` 섹션과 `## 이번 세션에서 완료한 작업` 섹션 참조. 본 파일은 빠른 체크리스트 용도.
+상세 컨텍스트와 결정 사유는 `STATE.md ## 다음 작업` 섹션 참조. 본 파일은 STATE.md `## 다음 작업`의 빠른 체크리스트 사본이다.
 
 ## 사용자 액션 대기 (가장 오래된 미완)
 
 - [ ] `docs/admin-fe-preview.html` 브라우저 시각 검수 — dropdown으로 5개 시안(`wanted`/`minimal-mono`/`toss-like`/`material-3`/`linear-like`) × light/dark 토글하며 의도와 다른 부분 점검. 활성 시안 기본값은 `wanted`.
-  - 특히 점검할 신규 섹션: `#widetable` Case B(컴팩트 11컬럼) + Case C(와이드 13컬럼 + sticky + 시안별 affordance)
   - 검수 결과 받으면 해당 카탈로그(토큰/컴포넌트 spec/fallback) 갱신 + STATE 변경 이력 기록
+- [ ] preview HTML fetch 모델 마이그레이션 — 시안 5종 단계에서 보류, 시안 10+ 시점에 재검토 (현재 inline 모델은 충분히 가벼움)
 
 ## 기존 보류 항목 (우선순위 순)
 
 ### A. 문서·디렉터리 보강
 
-- [ ] `docs/framework-structure-guide.md` 또는 `templates/framework-structure-intake.md` 작성 예시에 **실제 디렉터리 트리** 예시 추가 (feature-first hybrid 시나리오 기준 트리 + 각 폴더의 역할 한 줄)
-- [ ] `riderapp-runtime/README.md`의 예전 `riderapp` 경로 설명을 현재 워크스페이스 구조(`claude-agent-templete`, `rider-platform-docs`, `riderapp-runtime`)에 맞게 갱신 (sibling 저장소 작업)
+- [ ] `docs/framework-structure-guide.md` 또는 `templates/framework-structure-intake.md`에 **실제 디렉터리 트리** 예시 추가 (feature-first hybrid 시나리오 + 각 폴더 역할 한 줄)
+- [ ] `riderapp-runtime/README.md`의 예전 `riderapp` 경로 설명을 현재 워크스페이스 구조(`claude-agent-template`, `riderapp-runtime`)에 맞게 갱신 (sibling 저장소 작업)
 - [ ] 필요 시 `docs/template-usage.md` 또는 예시 프로젝트 문서 신설 (낮은 우선순위)
 
 ### B. UI/HTML 도구
@@ -25,22 +25,11 @@
 
 - [ ] `docs/codex-reading-order.md`와 `AGENTS.md`의 빠른 읽기 순서 중복을 더 줄인다 (한쪽을 다른 쪽 참조로 약화)
 
-## 즉시 활용 가능한 신규 산출물 (이번 세션 추가)
-
-다음 세션에서 사용자 또는 후속 에이전트가 바로 호출 가능:
-
-- `templates/data-table-density.md` — admin 테이블 컬럼 수/밀도 합의 양식 (Case A/B/C/D 선택)
-- `docs/ui-decisions.md` — UI 결정 사항 11개 섹션 통합 기록처 (startup-checklist 섹션 3~5 + data-table-density 통합)
-- `DESIGN.md ### data-table > #### Wide Table Cases` — 4-케이스 매트릭스 + 시안별 스크롤 affordance 정책
-- `docs/i18n-guidelines.md §10~§13` — 디렉터리 배치 / 키 네이밍 / fallback 코드 샘플 / CI 체크리스트
-- `docs/business-logic-playbook.md §5.1~§5.4` — 단계별 실행 흐름 / Docker rebuild 판단 / Git 흐름 / 실패 대응
-- `.claude/agents/design-reviewer.md A-6, B-6` — Wide Table 위반 + fade-edge 정책 정합 자동 검출
-- `docs/admin-fe-preview.html #widetable` — Case B/C 비교 specimen, 시안 변경 시 affordance 자동 갱신
-
 ## 운영 메모
 
 - 이 파일은 다음 세션 첫 진입 시 STATE.md와 함께 읽는 가벼운 체크리스트다. 완료한 항목은 `[x]`로 마킹하지 않고 바로 STATE.md에 "완료한 작업" 이력으로 옮기고 본 파일에서 제거한다.
 - 새 보류 항목이 생기면 STATE.md `## 다음 작업`에 먼저 기록하고, 본 파일에 한 줄로 반영한다.
+- 하단 `완료 이력 (archived)` 이하 블록은 과거 세션의 todo 보존본이다. 상세 이력은 STATE.md `## 이번 세션에서 완료한 작업` 참조.
 
 ---
 
