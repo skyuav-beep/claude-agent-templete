@@ -31,6 +31,16 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 로컬/CI 실행 경계 + Docker 재빌드 2모드 가이드 신설. (2026-05-30)
+  - 배경: 사용자 워크플로 = 로컬 테스트는 Docker Desktop, agent는 commit→push→CI까지만, GitHub Actions 배포·릴리스와 원격 migration 적용은 사용자 수동. 로컬 개발 루프에서 캐시 없는 강력 재빌드 vs 빠른 증분 재빌드 판단을 agent에 가이드 필요.
+  - 결정(사용자 확인): (1) 적용=신규 공통 문서 신설(전 작업 유형 공통) + 헌법 경계 규칙, (2) migration 경계=로컬 Docker Desktop까지 agent 적용 OK·"GitHub 이상" 원격은 수동, (3) 강력 재빌드=조건 자동 판단.
+  - 신규 `docs/local-dev-ci-guide.md` — §1 agent 실행 경계 표(로컬·migration(로컬)·commit·push·CI=agent / 배포 Action·원격 migration=수동), §2 Docker 2모드(증분 기본 / 강력 no-cache 자동 판단 조건)+결정 트리, §3 인계 흐름(9+경계+수동), §4 push 후 인계 요약, §5 금지 사항(원격 dispatch·원격 migration·`down -v`·force push).
+  - `CLAUDE.md`: Golden Rules에 경계 규칙 1줄 + Repo Map docs에 신규 doc.
+  - `AGENTS.md`: Operational Commands에 "로컬=Docker Desktop+경계" 1줄, 사용자 확인 상황에 "GitHub 이상 원격 작업·`down -v`" 2항목, Context Map에 라우팅.
+  - `docs/business-logic-playbook.md §5`: 상단 정본 참조, §5.1 흐름을 9단계+경계선+수동 인계로 확장, §5.2 2모드 결정 트리 참조 + migration 행을 "로컬=agent·원격=수동"으로 보정, §5.3 끝에 agent 종료/인계 한 단락.
+  - `templates/business-logic-request.md`: 검증 계획에 재빌드 모드+사유·로컬 migration 여부, Git 계획에 agent 종료=push/CI 항목.
+  - `.claude/plugins/manifest.json supporting.docs`에 신규 doc 등록.
+
 - 모달 닫기 정책 + 커스텀 모달 강제 코딩 가이드 신설. (2026-05-29)
   - 배경: 모달 SSOT 명세 부재(`docs/admin-fe-design-guide.md`가 `{component.modal}`을 호출하나 `DESIGN.md`에 정의 없음 = dangling reference) + 닫기/구현 방식이 intake·decision 템플릿마다 열린 옵션. 사용자 요구 = 배경 클릭 닫기 금지(닫기 버튼·X·ESC만) + 항상 커스텀 모달. bottom-sheet 동일 적용.
   - "항상 커스텀" 범위 분석 → **Headless 허용** 채택: 시각 표면은 항상 `DESIGN.md` 토큰으로 커스텀 구현, a11y 동작(focus-trap·scroll-lock·ESC·`aria-modal`)만 headless 라이브러리(Radix/Headless UI/React Aria) 위임 허용. native(`alert/confirm/prompt`)·pre-styled 라이브러리 모달 금지. (완전 직접 구현=a11y 버그·비용 과다, native만 금지=디자인 일관성 훼손이라 중간안 채택)

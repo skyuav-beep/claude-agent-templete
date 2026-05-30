@@ -34,7 +34,8 @@
 
 - 필요한 테스트
 - 필요한 빌드 확인
-- Docker rebuild 필요 여부
+- Docker 재빌드 모드 + 사유 (증분 / 강력 no-cache — `docs/local-dev-ci-guide.md §2`)
+- DB migration: 로컬 Docker Desktop 적용 여부 (원격 적용은 사용자 수동)
 - 배포 전 확인 항목
 
 ## Git 작업 계획
@@ -42,6 +43,7 @@
 - `git pull` 필요 여부
 - commit 메시지 방향
 - push 전 확인할 점
+- agent 종료 지점 = push/CI까지. 이후 수동 인계 항목(배포 Action / 원격 migration) 명시
 
 ## 작성 예시
 

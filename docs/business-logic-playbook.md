@@ -115,6 +115,8 @@
 
 ## 5. 명령 실행 가이드
 
+agent 실행 경계(로컬 Docker Desktop·migration·commit·push·CI까지, 배포 Action·원격 migration은 사용자 수동)와 Docker 재빌드 2모드(증분/강력 no-cache) 판단 기준은 `docs/local-dev-ci-guide.md`를 정본으로 따른다. 본 §5는 비즈니스 로직 변경의 단계별 흐름을 다룬다.
+
 실제 명령은 프로젝트별 `AGENTS.md` 또는 guide 문서에 맞게 적되, 아래 항목은 항상 확인한다.
 
 - 개발 서버 실행 명령
@@ -143,7 +145,13 @@
 3) unit test (변경 모듈 + 인접)           → red면 코드 수정, green이면 다음
 4) build                                 → 타입 오류·번들 실패 차단
 5) e2e (선택, happy path 1~2개)          → 가능한 경우만, 환경 미구성이면 사유 기록
-6) docker rebuild 판단 (5.2)             → 필요하면 rebuild + smoke
+6) docker rebuild 판단 (5.2)             → 증분/강력 판단 후 rebuild + smoke
+7) DB migration (해당 시)                → 로컬 Docker Desktop에만 적용·검증 (원격은 수동)
+8) git commit → push                     → 본인 작업 브랜치
+9) CI 결과 확인                          → 실패 시 원인 수정 후 재push
+──────────────── agent 종료 / 사용자 수동 인계 ────────────────
+10) [수동] GitHub Actions 배포·릴리스 실행
+11) [수동] 원격(staging/prod) migration 적용
 ```
 
 각 단계의 통과 기준:
@@ -155,7 +163,7 @@
 
 ### 5.2. Docker rebuild 판단 기준
 
-Docker를 쓰는 프로젝트에서 코드 변경 후 rebuild가 필요한지는 변경 파일 종류로 판단한다.
+Docker를 쓰는 프로젝트에서 코드 변경 후 rebuild가 필요한지는 변경 파일 종류로 판단한다. 모드(빠른 증분 vs 캐시 없는 강력 재빌드) 선택의 정본 결정 트리는 `docs/local-dev-ci-guide.md §2`를 따른다 — 의존성/이미지 정의 변경·캐시 꼬임은 강력(`--no-cache`), `src/**`만 변경은 증분.
 
 | 변경 위치 | rebuild 필요? | 명령 |
 |---|---|---|
@@ -163,7 +171,7 @@ Docker를 쓰는 프로젝트에서 코드 변경 후 rebuild가 필요한지는
 | `package.json` / `pnpm-lock.yaml` / `requirements.txt` 의존성 | **필요**. 이미지 레이어가 의존성 설치 단계에서 시작 | `docker compose build --no-cache <service>` |
 | `Dockerfile` / `docker-compose.yml` / `.dockerignore` | **필요**. 이미지 정의 자체 변경 | `docker compose build <service>` |
 | 환경 변수(`.env`, `compose` env) | rebuild 불필요. 컨테이너만 재시작 | `docker compose up -d <service>` |
-| migration SQL · seed 데이터 | rebuild 불필요. 별도 migration 명령 실행 | `docker compose exec <service> <migration cmd>` |
+| migration SQL · seed 데이터 | rebuild 불필요. **로컬 Docker Desktop에만 적용**(agent), 원격(staging/prod)은 사용자 수동 | `docker compose exec <service> <migration cmd>` (로컬 한정) |
 | nginx/reverse-proxy 설정 | proxy 컨테이너만 rebuild + restart | `docker compose build proxy && docker compose up -d proxy` |
 
 판단 후 PR 본문 `## 검증 계획`에 "Docker rebuild: 불필요 (src/만 변경)" 또는 "필요 (pnpm-lock.yaml 갱신 → `docker compose build --no-cache api`)" 같이 사유를 명시한다.
@@ -216,6 +224,8 @@ git rebase origin/main              # main이 앞서갔다면
 ```
 
 `git push --force`는 본인 작업 브랜치에서 `--force-with-lease`로만 허용. `main`/`master`/`develop`에는 절대 금지(`block-destructive.sh` hook이 차단).
+
+push/PR과 CI 결과 확인까지가 agent 범위다. 이후 GitHub Actions 배포·릴리스 실행과 원격 migration 적용은 사용자가 수동으로 진행하며, agent는 `docs/local-dev-ci-guide.md §4` 인계 요약을 남기고 종료한다.
 
 ### 5.4. 실패 케이스 대응
 

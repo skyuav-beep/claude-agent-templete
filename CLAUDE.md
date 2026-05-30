@@ -13,6 +13,7 @@
 ## Golden Rules
 
 - 사용자 요청 없이 파괴적 명령을 실행하지 않는다.
+- agent 자동 실행 범위는 로컬 검증(Docker Desktop)·로컬 migration·commit·push·CI까지다. GitHub Actions 배포/릴리스와 원격(staging/prod) migration 적용은 사용자가 수동으로 진행하며 agent는 트리거하지 않는다. (상세: `docs/local-dev-ci-guide.md`)
 - 확인하지 않은 외부 의존성, 비밀값, API 키를 임의로 추가하지 않는다.
 - 관련 없는 파일 수정이나 목적과 무관한 구조 확장을 하지 않는다.
 - 확인되지 않은 사항을 사실처럼 단정하지 않는다.
@@ -79,7 +80,7 @@
 - `designs/` — 디자인 시안 라이브러리. 시안 선택은 `bash .claude/plugins/select-design.sh <slug>`
 - `agents/` — 역할별 에이전트 행동 규칙 (main, executor, researcher, reviewer)
 - `templates/` — 작업 요청 5종 + intake 양식 14종 (`data-table-density.md` 포함)
-- `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타: `docs/design-guidelines.md`, admin FE: `docs/admin-fe-design-guide.md`, UI 결정 기록: `docs/ui-decisions.md`)
+- `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타: `docs/design-guidelines.md`, admin FE: `docs/admin-fe-design-guide.md`, UI 결정 기록: `docs/ui-decisions.md`, 로컬/CI 실행 경계+Docker 재빌드: `docs/local-dev-ci-guide.md`)
 - `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 9종)
 - `.claude/commands/` — L2 보조 (명시적 slash command 8종, skills와 병존)
 - `.claude/hooks/` — L3 Guardrails (가드레일 스크립트 4종, opt-in 1종 포함)

@@ -108,6 +108,7 @@
     "docs": [
       "docs/project-guide-template.md",
       "docs/business-logic-playbook.md",
+      "docs/local-dev-ci-guide.md",
       "docs/framework-structure-guide.md",
       "docs/i18n-guidelines.md",
       "docs/codex-reading-order.md",
