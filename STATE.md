@@ -100,7 +100,7 @@
   - **`docs/admin-fe-preview.html`** (협의 7파일 밖이나 동일 rider 데모라 함께 정리): 주문 데모 테이블 2종의 `라이더` 컬럼 헤더→`담당자`, 샘플명 김/박/이라이더→김도현/박서준/정민호. 나머지 커머스 데모 데이터 유지.
   - **의도적 미변경**: `STATE.md`의 rider 언급은 실제 sibling 저장소(`../riderapp-runtime/`, `../rider-platform-docs/`) 인계 기록이라 유지. "매칭"이 든 `CLAUDE.md`/`manifest.json`/`plugin-guide.md`는 "키워드 매칭" 기술 용어 오탐(미변경).
   - 검증: 전체 저장소 sweep(`라이더|배차|재배차|헬멧|매칭|매장 매니저|riders.json|/admin/riders`)에서 rider 식별 토큰은 STATE.md/todo.md에만 잔존, 나머지는 오탐임을 확인.
-  - 후속(같은 세션, 사용자 요청): `todo.md` §A의 `riderapp-runtime/README.md` 경로 갱신 태스크(sibling 저장소 cross-repo 작업)를 제거. 템플릿 저장소가 특정 소비 프로젝트의 태스크를 추적하지 않도록 정리 — 해당 작업이 여전히 필요하면 `riderapp-runtime` 저장소에서 관리. 이로써 rider 식별 토큰은 `STATE.md`(인계 기록)에만 잔존.
+  - 후속(같은 세션, 사용자 요청): `todo.md` §A의 `riderapp-runtime/README.md` 경로 갱신 태스크(sibling 저장소 cross-repo 작업)를 제거하고, `STATE.md ## 다음 작업 > 기존 보류 항목`의 동일 태스크 미러도 함께 제거(두 파일 정합). 템플릿 저장소가 특정 소비 프로젝트의 태스크를 추적하지 않도록 정리 — 해당 작업이 여전히 필요하면 `riderapp-runtime` 저장소에서 관리. `STATE.md`의 나머지 rider 언급(`현재 상태`/`현재 기준 파일`의 sibling 저장소 경로·실행 명령)은 인계 사실이라 유지.
 
 - STATE.md 커밋 정책 명문화 + `rider-platform-docs` 잔재 정리. (2026-05-25)
   - `CLAUDE.md`, `AGENTS.md`, `agents/main-agent.md` 3곳의 "`STATE.md` 갱신" 문구를 "갱신하고 커밋"으로 동기화. `AGENTS.md`에 커밋 순서 한 줄(STATE.md 갱신 → 스테이징 → commit, 미포함 시 hook 경고) 추가.
@@ -447,7 +447,6 @@
 - 프레임워크 구조 intake 답변을 받아 만든 실제 디렉터리 트리 예시를 추가한다.
 - 필요하면 `docs/template-usage.md` 또는 예시 프로젝트 문서를 추가한다.
 - 필요하면 `docs/codex-reading-order.md`와 루트 `AGENTS.md`의 빠른 읽기 순서 중복을 더 줄인다.
-- `riderapp-runtime/README.md`의 예전 `riderapp` 경로 설명을 현재 워크스페이스 구조(`claude-agent-template`, `riderapp-runtime`)에 맞게 갱신한다.
 - intake.html에 나머지 intake 템플릿(project/ui/responsive/tech/i18n/format/api/error/routing/form/qa/framework-structure)도 폼으로 추가한다.
 - md → HTML 자동 동기화 스크립트 또는 단일 진입점(`docs/index.html`) 도입을 검토한다.
 
