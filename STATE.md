@@ -31,6 +31,12 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 브랜치 정리 — `origin/master` → `main` 머지 후 원격/로컬 추적 참조 삭제. (2026-05-31)
+  - `origin/master` 6개 커밋(User FE 시안 인프라, admin density, rider 중립화 등)을 `main`에 머지 (`cd34770`).
+  - `STATE.md`/`todo.md` 충돌 해결: 날짜순 통합 / `riderapp-runtime` 태스크 제거(master 버전 채택).
+  - `origin/master` 원격 브랜치 삭제 + `git remote prune origin`으로 로컬 추적 참조 정리.
+  - `origin/main` push 완료. 브랜치는 `main` 단일 구조로 정리됨.
+
 - 템플릿 전체 검토 후 정합성 수정 3건. (2026-05-30)
   - 배경: 사용자 요청으로 5-Layer 템플릿 전체 점검(카운트·링크·hook 동작·런타임 parity·최신성). 레이어 카운트(skills 9/commands 8/hooks 4/claude·codex agents 6/templates 19/docs 19/designs 8/codex wf 8/checks 2)·루트 깨진 링크 0·hook 동작·manifest/install 동기화는 모두 정합 확인. 실질 이슈는 노후 `todo.md` 1건 + parity/버전 2건.
   - `todo.md`: 상단 라이브 섹션을 STATE.md `## 다음 작업` 기준으로 갱신(05-16→05-30 종료 시점). stale 참조 정리 — 삭제된 `rider-platform-docs`, 오타 `claude-agent-templete`→`claude-agent-template`, 옛 `riderapp` 경로. 05-16 "즉시 활용 산출물" 블록은 STATE 이력에 이미 있어 제거. 하단 archived 블록은 보존.
