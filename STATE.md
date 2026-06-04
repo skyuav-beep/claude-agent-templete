@@ -31,6 +31,12 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 개발 전략 매뉴얼 신설. (2026-06-04)
+  - 신규 `docs/development-strategy.md`: UI Mock First 기본 경로와 Logic/DB First 예외 경로의 선택 기준, 진행 순서, 전환 조건, commit slice를 문서화.
+  - 신규 `docs/development-strategy.html`: 사람이 보는 보조 HTML 매뉴얼 추가. 기본값은 UI Mock First, 결제/정산/권한/재고/토큰/지갑/migration 위험 작업은 Logic/DB First 예외로 분리.
+  - `docs/development-process.md`, `docs/development-process.html`: Phase 4 개발 전략 선택 기준과 HTML 상단 CTA/Context Map 링크 추가.
+  - `AGENTS.md`, `README.md`: 신규 개발 전략 문서와 HTML 진입점 라우팅 반영.
+
 - 브랜치 정리 — `origin/master` → `main` 머지 후 원격/로컬 추적 참조 삭제. (2026-05-31)
   - `origin/master` 6개 커밋(User FE 시안 인프라, admin density, rider 중립화 등)을 `main`에 머지 (`cd34770`).
   - `STATE.md`/`todo.md` 충돌 해결: 날짜순 통합 / `riderapp-runtime` 태스크 제거(master 버전 채택).

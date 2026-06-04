@@ -163,7 +163,9 @@
 - **[Codex 실행 가이드](./docs/codex-guide.md)** - Codex에서 `.codex/*` workflow/check로 동일 운영 절차를 수행할 때.
 - **[서브에이전트 가이드](./docs/subagent-guide.md)** - 역할 분리나 협업 흐름 예시를 확인할 때.
 - **[개발 프로세스 문서](./docs/development-process.md)** - 문서형 개발 프로세스 초안을 확인할 때.
+- **[개발 전략 가이드](./docs/development-strategy.md)** - UI Mock First와 Logic/DB First 중 개발 진행 방식을 선택할 때.
 - **[개발 프로세스 시각화](./docs/development-process.html)** - 브라우저에서 시각 가이드, 단계별 체크리스트, STATE 미니 대시보드 확인 시.
+- **[개발 전략 매뉴얼](./docs/development-strategy.html)** - 브라우저에서 UI-first 기본 경로와 DB/로직 우선 예외 경로를 비교할 때.
 - **[Intake 폼 UI](./docs/intake.html)** - 브라우저에서 Startup QnA 위저드 또는 요청 템플릿(feature/bugfix/refactor/review/business-logic) 입력 후 Markdown으로 내보낼 때.
 - **[Skills Layer](./.claude/skills/)** - 자연어 트리거 기반 자동 활성화 SKILL.md 9종. `start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`. 우선순위와 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
 - **[Slash Commands](./.claude/commands/)** - skills와 동일 이름의 명시적 slash command 8종. `/start`, `/intake`, `/request`, `/feature`, `/bugfix`, `/refactor`, `/review`, `/business-logic`. 사용자가 직접 호출할 때만 동작.

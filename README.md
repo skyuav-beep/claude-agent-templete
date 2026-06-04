@@ -91,6 +91,7 @@ Codex에서는 자동 hook이 없으므로 `.codex/checks/safety-checklist.md`�
 문서 기반 운영을 보조하는 정적 HTML UI를 `docs/` 아래에 둔다. 모두 외부 의존성 없는 단일 파일이며, `file://` 또는 임의의 정적 서버에서 동작한다.
 
 - `docs/development-process.html` — 개발 프로세스 시각 가이드 + 단계별 체크리스트(`localStorage` 저장) + STATE 미니 대시보드.
+- `docs/development-strategy.html` — UI Mock First 기본 경로와 Logic/DB First 예외 경로를 비교하는 개발 전략 매뉴얼.
 - `docs/intake.html` — Startup QnA 11섹션 위저드 + 핵심 요청 템플릿 폼. 입력값을 Markdown으로 내보낸다.
 
 ### 1차 소스 규칙
@@ -119,7 +120,7 @@ http.server.test(HandlerClass=H, port=8765, bind='127.0.0.1')
 "
 ```
 
-접속 주소는 `http://localhost:8765/docs/development-process.html`, `http://localhost:8765/docs/intake.html`.
+접속 주소는 `http://localhost:8765/docs/development-process.html`, `http://localhost:8765/docs/development-strategy.html`, `http://localhost:8765/docs/intake.html`.
 
 ## 권장 다음 단계
 

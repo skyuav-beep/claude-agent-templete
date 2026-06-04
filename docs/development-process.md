@@ -133,7 +133,10 @@ QnA 답변을 바탕으로 이 프로젝트에만 적용되는 기준 문서를 
 1. 요청에서 `목표 / 산출물 / 제약 / 우선순위`를 분리한다.
 2. 어떤 파일을 읽고 어떤 파일을 수정할지 먼저 밝힌다.
 3. 파괴적 변경이나 범위가 큰 리팩터링은 수행 전 사용자에게 재확인한다.
-4. 작은 단위로 작업을 분리해서 실행 순서를 정한다.
+4. `docs/development-strategy.md` 기준으로 개발 전략을 선택한다.
+   - 일반 신규 기능, admin/dashboard, CRUD, 모바일 화면: `UI Mock First`를 기본값으로 한다.
+   - 결제, 정산, 포인트, 재고, 권한, 감사 로그, 토큰/지갑, migration 위험 작업: `Logic/DB First` 예외 경로를 사용한다.
+5. 작은 단위로 작업을 분리해서 실행 순서를 정한다.
 
 ---
 
@@ -233,3 +236,4 @@ reviewer-agent  → 리스크 점검, 회귀 확인, 테스트 누락 검토
 - **다국어 가이드** → [docs/i18n-guidelines.md](./i18n-guidelines.md)
 - **구조 설계 가이드** → [docs/framework-structure-guide.md](./framework-structure-guide.md)
 - **비즈니스 로직 플레이북** → [docs/business-logic-playbook.md](./business-logic-playbook.md)
+- **개발 전략 가이드** → [docs/development-strategy.md](./development-strategy.md)
