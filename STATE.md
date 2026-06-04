@@ -31,6 +31,14 @@
 
 ## 이번 세션에서 완료한 작업
 
+- push/CI 사용자 요청 기반 정책 신설 — 커밋/푸시/PR/CI 과다 반복 통제. (2026-06-04)
+  - 배경: 매 commit·매 사이클마다 push→CI→PR이 반복돼 개발 속도가 지체. 사용자가 "CI를 요청할 때만 돌리고 싶다"로 정책 확정.
+  - 정본 `docs/local-dev-ci-guide.md §1.1`: 로컬 commit은 자유 누적·로컬 검증(lint/test/build/smoke)만으로 완료 보고. **push·PR·CI는 사용자 명시 지시(`push`/`올려`/`CI 돌려`) 시에만** 수행, agent는 스스로 push 안 함. CI 전용 검증이 필요하면 사용자에게 물어 요청받음.
+  - 세션 종료 예외: 유실 방지 백업 push 1회 허용하되 commit 메시지 `[skip ci]`(GitHub Actions 등 인식)로 **CI는 트리거하지 않음**. skip 미지원 CI는 백업 생략/사용자 확인.
+  - 원리: push 1회 = CI 1회로 커플링 → push를 요청 시에만 하면 CI도 요청 시에만. 머지는 agent 범위 밖 재확인.
+  - 정합 반영: `docs/local-dev-ci-guide.md`(§1 표·§1.1·§3 흐름·§4 인계), `CLAUDE.md` Golden Rules, `AGENTS.md` 문서화 원칙, `docs/business-logic-playbook.md §5.1·5.3`, `templates/business-logic-request.md`, `docs/development-strategy.md`, `docs/development-process.md` Phase 5.
+  - Codex 레이어(`.codex/`)는 정본 문서를 참조하므로 별도 수정 없음(parity 유지).
+
 - 개발 전략 매뉴얼 신설. (2026-06-04)
   - 신규 `docs/development-strategy.md`: UI Mock First 기본 경로와 Logic/DB First 예외 경로의 선택 기준, 진행 순서, 전환 조건, commit slice를 문서화.
   - 신규 `docs/development-strategy.html`: 사람이 보는 보조 HTML 매뉴얼 추가. 기본값은 UI Mock First, 결제/정산/권한/재고/토큰/지갑/migration 위험 작업은 Logic/DB First 예외로 분리.

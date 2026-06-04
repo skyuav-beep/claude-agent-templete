@@ -147,8 +147,9 @@ agent 실행 경계(로컬 Docker Desktop·migration·commit·push·CI까지, �
 5) e2e (선택, happy path 1~2개)          → 가능한 경우만, 환경 미구성이면 사유 기록
 6) docker rebuild 판단 (5.2)             → 증분/강력 판단 후 rebuild + smoke
 7) DB migration (해당 시)                → 로컬 Docker Desktop에만 적용·검증 (원격은 수동)
-8) git commit → push                     → 본인 작업 브랜치
-9) CI 결과 확인                          → 실패 시 원인 수정 후 재push
+8) git commit (로컬 누적)                → 1~7 반복하며 commit만 쌓는다 (push 아님)
+9) 사용자 요청 시 push + PR 1개          → 누적 commit 일괄 (`docs/local-dev-ci-guide.md §1.1`). 그 전엔 로컬 검증만으로 완료 보고
+   CI 결과 확인 (push로 트리거됨)         → 실패 시 원인 수정 후 재push
 ──────────────── agent 종료 / 사용자 수동 인계 ────────────────
 10) [수동] GitHub Actions 배포·릴리스 실행
 11) [수동] 원격(staging/prod) migration 적용
@@ -189,7 +190,7 @@ git pull --rebase origin main
 # 2) 작업 브랜치 생성 (Conventional Commits + scope)
 git checkout -b feat/orders-cancel-window
 
-# 3) 작업 진행 — 자주 작은 commit
+# 3) 작업 진행 — 로컬 commit 누적 (push 아님, 사용자 요청까지 쌓기. §1.1)
 git add src/server/orders/cancelService.ts
 git add src/server/orders/__tests__/cancelService.test.ts
 git commit -m "feat(orders): extend self-cancel window to 60m"
@@ -200,7 +201,8 @@ git diff --staged --check           # whitespace/trailing 검출
 grep -nE "console\.(log|debug)|TODO\(self\)" -r src/  # 디버그 잔재
 git log --oneline main..HEAD        # 본 브랜치 commit 개수와 순서 확인
 
-# 5) push 및 PR
+# 5) 사용자 요청 시 (§1.1) — 누적 commit 일괄 push + PR 1개
+#    (매 commit/slice가 아니라 사용자가 push/CI를 지시할 때. 세션 종료 백업은 [skip ci])
 git push -u origin feat/orders-cancel-window
 # gh pr create --title ... --body ... (또는 웹 UI)
 ```

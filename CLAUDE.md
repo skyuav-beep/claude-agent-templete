@@ -14,6 +14,7 @@
 
 - 사용자 요청 없이 파괴적 명령을 실행하지 않는다.
 - agent 자동 실행 범위는 로컬 검증(Docker Desktop)·로컬 migration·commit·push·CI까지다. GitHub Actions 배포/릴리스와 원격(staging/prod) migration 적용은 사용자가 수동으로 진행하며 agent는 트리거하지 않는다. (상세: `docs/local-dev-ci-guide.md`)
+- 로컬 commit은 자주 누적해도 되지만, `git push`·`PR 생성`·CI는 **사용자가 명시 지시할 때만** 수행한다(완료 판단·검증은 로컬에서). 예외: 세션 종료 시 유실 방지 백업 push 1회는 commit 메시지 `[skip ci]`로 CI 없이 허용. 머지는 agent가 하지 않는다. (정의: `docs/local-dev-ci-guide.md §1.1`)
 - 확인하지 않은 외부 의존성, 비밀값, API 키를 임의로 추가하지 않는다.
 - 관련 없는 파일 수정이나 목적과 무관한 구조 확장을 하지 않는다.
 - 확인되지 않은 사항을 사실처럼 단정하지 않는다.

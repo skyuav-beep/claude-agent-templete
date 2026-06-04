@@ -102,6 +102,6 @@
   - `grep -rnE "console\.(log|debug)" src/server/orders` (디버그 잔재 0건)
   - `.env`/`*.key`/`*.pem` staged 여부 재확인
   - 단위 + 통합 + e2e 통과 증거를 PR 본문 `## Test plan`에 붙임
-- push: `git push -u origin feat/orders-cancel-window` → `gh pr create`
+- push (사용자 요청 시 1회): `git push -u origin feat/orders-cancel-window` → `gh pr create` — 매 commit이 아니라 사용자가 push/CI를 지시할 때 누적 commit 일괄. 세션 종료 백업은 `[skip ci]` (`docs/local-dev-ci-guide.md §1.1`)
 - PR 본문 필수 항목: 변경 요약 / 검증 통과 결과 / Docker rebuild 여부 + 사유 / rollback 방법(코드 상수만 되돌리면 즉시 복귀 가능)
 ```
