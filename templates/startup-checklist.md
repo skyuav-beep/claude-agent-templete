@@ -38,6 +38,7 @@ Q4. 패키지 매니저는? (예: npm, pnpm, yarn, bun)
 Q5. 테스트 도구는? (예: Vitest, Jest, Playwright, 없음)
 Q6. 린트/포맷 도구는? (예: ESLint + Prettier, Biome, 없음)
 Q7. 배포 환경은? (예: Vercel, AWS, Docker, 미정)
+Q8. 로컬 개발은 Docker Desktop으로 하는가? (dev 컨테이너 상시 기동 + 소스 bind mount + hot reload 구조 — `docs/local-dev-ci-guide.md §2.1`)
 ```
 
 ---
@@ -263,6 +264,7 @@ Q3. 프로젝트에 반영 후 즉각적으로 실행되는 CI/CD(린트 점검,
 - 핵심 기능: <엔티티A> 목록/상세, <엔티티B> 현황, 수동 <핵심 액션>, 일별 KPI
 - 스택: Next.js 15 + TypeScript + Supabase + pnpm + Biome + Vitest/Playwright
 - 배포: Vercel preview + production
+- 로컬 개발: Docker Desktop, dev 컨테이너 상시 기동 + bind mount + hot reload (WSL2 폴링)
 - UI 톤: Linear/Stripe 참고. 정보 밀도 높음, 미니멀
 - 우선 디바이스: PC 우선 (운영자 대상)
 - 인증: Supabase Auth, 권한 3등급 (운영자/<2차 사용자>/일반)

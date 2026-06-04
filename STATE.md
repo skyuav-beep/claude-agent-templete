@@ -31,6 +31,16 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 로컬 Docker Desktop 개발 정책을 전 작업유형·전 레이어에 배선. (2026-06-04)
+  - 배경: 정본 `local-dev-ci-guide.md`는 "전 작업유형 공통"을 선언하나 실제로는 business-logic 흐름만 정본을 참조 → feature/bugfix/refactor/review 흐름은 로컬 한정·개발 컨테이너 모델 안내 누락(감사로 확인).
+  - 원칙: 정본은 1곳 유지, 나머지는 1줄 포인터만 추가(중복 금지). 14개 지점 배선:
+    - Tier A codex workflows: `feature`/`bugfix`/`refactor`/`review`.md에 로컬 검증·재빌드·push/CI 경계 step 추가(business-logic.md step 5-6 미러).
+    - Tier B 템플릿: `feature`/`bugfix`/`refactor-request.md` `## 검증 기준`에 "로컬 Docker Desktop(§2.1) + push/CI 사용자 요청 시" 포인터.
+    - Tier C 공통 에이전트: `executor-agent.md`(로컬 검증·hot reload·push/CI 체크), `reviewer-agent.md`(로컬 한정 경계 체크) 공통 체크리스트에 추가.
+    - Tier D skills: `feature`/`bugfix`/`refactor` SKILL `## 완료 후`에 구현·검증 단계 정본 포인터.
+    - Tier E 보강: `development-process.md` Phase 4-4(executor) 로컬 검증 항목, `startup-checklist.md` 섹션2 Q8(로컬 Docker 개발 여부)+결과 예시.
+  - review-request.md 템플릿은 build/deploy 비대상이라 제외.
+
 - 개발 컨테이너 모델 정책 신설 — 로컬 Docker 빠른 반복(리빌드 최소화). (2026-06-04)
   - 배경: 매번 이미지 rebuild하지 말고 컨테이너 상시 기동 + 소스 bind mount + watch/hot reload로 즉시 반영되게 정책화 요청.
   - 정본 `docs/local-dev-ci-guide.md §2` 재구성: §2를 "개발 루프 전략"으로 개편하고 **§2.1 개발 컨테이너 모델(기본값)** 신설 — 상시 기동 / bind mount / hot reload / rebuild는 예외. compose 구성 패턴(`./:/app` + `/app/node_modules` 익명 볼륨 + `command` watch override + `compose watch`), WSL2/Docker Desktop 파일감지 폴링(`CHOKIDAR_USEPOLLING`/`WATCHPACK_POLLING`/vite usePolling/nodemon `-L`/uvicorn `--reload`), 반영 방법 결정표, 검증(logs로 HMR 확인). 기존 증분/강력은 §2.2/§2.3, 결정 트리는 §2.4(hot reload 0순위 분기 추가).

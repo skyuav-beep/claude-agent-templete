@@ -24,6 +24,7 @@
 ## 검증 기준
 
 - 어떤 조건이면 완료로 볼지 적는다.
+- 실행·검증은 로컬 Docker Desktop에서 한다(개발 컨테이너 모델 — `docs/local-dev-ci-guide.md §2.1`). push·CI는 사용자 요청 시, 원격 배포/migration은 사용자 수동.
 
 ## 디자인 토큰 참조 (UI 변경 시)
 

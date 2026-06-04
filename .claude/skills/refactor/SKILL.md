@@ -26,7 +26,7 @@ description: "사용자가 리팩터링, 구조 개선, 코드 정리, 동작 �
 
 ## 완료 후
 
-구조화된 refactor-request 마크다운 블록을 출력하고, 바로 구현을 시작할지 사용자에게 확인한다.
+구조화된 refactor-request 마크다운 블록을 출력하고, 바로 구현을 시작할지 사용자에게 확인한다. 구현·검증 단계는 `docs/local-dev-ci-guide.md`를 따른다 — 로컬 Docker Desktop 검증, push·CI는 사용자 요청 시.
 
 ## 다른 skill과의 연계
 
