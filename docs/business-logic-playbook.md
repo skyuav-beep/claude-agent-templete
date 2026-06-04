@@ -164,7 +164,9 @@ agent 실행 경계(로컬 Docker Desktop·migration·commit·push·CI까지, �
 
 ### 5.2. Docker rebuild 판단 기준
 
-Docker를 쓰는 프로젝트에서 코드 변경 후 rebuild가 필요한지는 변경 파일 종류로 판단한다. 모드(빠른 증분 vs 캐시 없는 강력 재빌드) 선택의 정본 결정 트리는 `docs/local-dev-ci-guide.md §2`를 따른다 — 의존성/이미지 정의 변경·캐시 꼬임은 강력(`--no-cache`), `src/**`만 변경은 증분.
+0순위: dev 컨테이너가 bind mount + hot reload 구조(`docs/local-dev-ci-guide.md §2.1`)면 코드 수정은 rebuild 자체가 불필요하다 — 즉시 반영된다. 아래 표·증분/강력 판단은 그 구조가 아니거나 의존성·이미지가 바뀐 경우에 적용한다.
+
+Docker를 쓰는 프로젝트에서 (hot reload로 해결되지 않는) 변경의 rebuild 필요 여부는 변경 파일 종류로 판단한다. 모드(빠른 증분 vs 캐시 없는 강력 재빌드) 선택의 정본 결정 트리는 `docs/local-dev-ci-guide.md §2.4`를 따른다 — 의존성/이미지 정의 변경·캐시 꼬임은 강력(`--no-cache`), 그 외 rebuild는 증분.
 
 | 변경 위치 | rebuild 필요? | 명령 |
 |---|---|---|

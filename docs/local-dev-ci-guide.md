@@ -44,13 +44,63 @@ agent가 로컬 개발 루프에서 Docker Desktop을 다루는 방식과, **age
 
 머지는 agent 범위 밖이다(§1 경계선). 사용자가 별도 정책(작업당 PR, trunk-based 직접 push 등)을 지정하면 그 정책을 우선한다.
 
-## 2. Docker Desktop 재빌드 전략 (2모드)
+## 2. Docker Desktop 개발 루프 전략
 
-로컬 개발이 계속 진행될 때, 변경 내용에 따라 두 모드 중 하나를 택한다. **기본은 증분**이며, 아래 자동 판단 조건에 걸리면 강력 재빌드로 전환한다.
+로컬 개발의 **기본 구조**는 개발 컨테이너를 상시 띄워두고, 소스를 bind mount로 연결하고, 앱 서버를 watch/hot reload로 실행하는 것이다(§2.1). 이 구조에서는 **코드 수정에 이미지 rebuild가 필요 없다** — 호스트 파일 수정이 컨테이너에 즉시 반영되고 hot reload가 다시 로드한다. rebuild는 의존성·이미지 정의가 바뀐 예외에서만 하며, 그때 증분(§2.2)과 강력 재빌드(§2.3) 중 §2.4 결정 트리로 모드를 택한다.
 
-### 2.1. 빠른 증분 (기본)
+### 2.1. 개발 컨테이너 모델 (기본값)
 
-- 언제: `src/**` 애플리케이션 코드만 변경한 일상 반복 루프.
+원칙:
+
+- dev 컨테이너는 `docker compose up -d`로 한 번 띄우고 **상시 기동**한다. 매 변경마다 끄거나 rebuild하지 않는다.
+- 소스는 이미지에 COPY하지 않고 **bind mount**로 연결한다 → 호스트 수정이 컨테이너에 즉시 반영.
+- 앱 서버는 **watch/hot reload** 모드로 실행한다(개발용 `command` override).
+- 이미지 rebuild는 코드 수정 대상이 아니다 — 의존성·이미지 정의 변경 시에만(§2.2 / §2.3).
+
+구성 패턴 (stack-agnostic 예시 — 명령·경로·포트는 프로젝트에 맞게 치환):
+
+```yaml
+services:
+  api:
+    build:
+      context: .
+      target: dev            # 멀티스테이지면 dev 타깃
+    command: pnpm dev        # watch 실행 (예: vite/next dev, nodemon, uvicorn --reload)
+    volumes:
+      - ./:/app              # 소스 bind mount → 즉시 반영
+      - /app/node_modules    # 익명 볼륨: 호스트가 컨테이너 의존성 디렉터리를 덮어쓰지 않게
+    environment:
+      - CHOKIDAR_USEPOLLING=true   # WSL2/Docker Desktop 파일 감지 (아래 주의)
+    ports:
+      - "3000:3000"
+```
+
+- Compose 2.22+는 `docker compose watch` + `develop.watch`(`action: sync` 코드 동기화 / `action: rebuild` 의존성 변경 시 자동 rebuild)로 더 정밀하게 운용할 수 있다.
+
+파일 감지 신뢰성 (WSL2 + Docker Desktop 주의):
+
+- bind mount는 inotify 이벤트가 컨테이너로 전달되지 않을 수 있어 watcher가 변경을 못 본다. 이때 **폴링**을 켠다:
+  - Node 일반 `CHOKIDAR_USEPOLLING=true` / webpack `WATCHPACK_POLLING=true`
+  - Vite `server.watch.usePolling=true` / nodemon `--legacy-watch`(`-L`) / Python `uvicorn --reload`(필요 시 `--reload-dir`)
+- 소스는 WSL2 네이티브 파일시스템(`~/projects/...`)에 둔다. Windows 마운트(`/mnt/c/...`)는 I/O가 느리고 inotify가 약하다.
+
+반영 방법 결정 (rebuild보다 먼저 판단):
+
+| 변경 종류 | 반영 방법 | rebuild |
+|---|---|---|
+| 소스 코드(`src/**`) | hot reload 자동 반영 — 아무것도 안 함 | 불필요 |
+| hot reload가 안 먹음 | 폴링 env 추가 후 컨테이너 `restart` | 불필요 |
+| 환경변수(`.env`/compose env) | 컨테이너 재시작 `up -d <svc>` | 불필요 |
+| 의존성·`Dockerfile`·`compose` | §2.2 / §2.3 rebuild | 필요 |
+
+검증 (hot reload 작동 확인):
+
+- `docker compose logs -f <svc>`에서 watcher 기동 + 변경 시 recompiled/HMR/reload 로그를 확인한다.
+- 주석 1줄 등 트리비얼 변경 후 반영되는지 본다. 안 되면 위 폴링 env를 추가하고 재시작한다.
+
+### 2.2. 빠른 증분 (rebuild가 필요한 경우의 기본 모드)
+
+- 언제: hot reload가 동작하지 않는 서비스이거나, 코드가 이미지에 빌드돼야 반영되는 경우(컴파일 산출물 등). 의존성·이미지 정의는 그대로. (hot reload가 되는 서비스면 §2.1로 rebuild 자체가 불필요)
 - 명령:
   ```bash
   # (a) volume mount + 핫리로드 환경이면 rebuild 불필요 — 저장 시 자동 반영
@@ -61,7 +111,7 @@ agent가 로컬 개발 루프에서 Docker Desktop을 다루는 방식과, **age
   ```
 - 특징: 빌드 캐시를 최대한 활용하고 변경된 서비스만 재생성한다. 빠르다.
 
-### 2.2. 캐시 없는 강력 재빌드 (조건 자동 판단)
+### 2.3. 캐시 없는 강력 재빌드 (조건 자동 판단)
 
 - 언제 (아래 중 하나라도 해당하면 agent가 자동 전환):
   - 의존성 변경 — `package.json` / `pnpm-lock.yaml` / `yarn.lock` / `requirements.txt` / `go.mod` 등
@@ -79,11 +129,12 @@ agent가 로컬 개발 루프에서 Docker Desktop을 다루는 방식과, **age
 - 주의: `docker compose down -v`(볼륨 삭제)는 **로컬 DB 데이터가 소실**되므로 자동 실행하지 않는다. 필요 시 사용자 확인을 받는다.
 - 특징: 캐시를 무시한 전체 재빌드. 느리지만 결정적이다.
 
-### 2.3. 결정 트리
+### 2.4. 결정 트리
 
 ```
 변경 내용 판단:
-├─ src/** 애플리케이션 코드만        → [증분] 핫리로드 자동반영 / 또는 up -d --build <svc>
+├─ src/** 코드 + hot reload 동작      → [rebuild 불필요] 즉시 반영 (§2.1)
+├─ src/** 코드 + hot reload 미동작    → [증분] up -d --build <svc> (§2.2)
 ├─ package.json·lock / requirements  → [강력] build --no-cache <svc> + up -d --force-recreate
 ├─ Dockerfile·compose·.dockerignore  → [강력] build --no-cache <svc>
 ├─ base image 갱신                   → [강력] (해당 svc) build --no-cache + force-recreate
@@ -101,7 +152,7 @@ agent가 로컬 개발 루프에서 Docker Desktop을 다루는 방식과, **age
   2) lint
   3) unit test (변경 모듈 + 인접)
   4) build
-  5) Docker 재빌드 (2모드 판단) + smoke
+  5) 반영 — 코드는 hot reload 자동(§2.1) / 의존성·이미지 변경 시만 rebuild(§2.4 판단) + smoke
   6) DB migration — 로컬 Docker Desktop 적용 + 검증 (해당 시)
   7) git commit (로컬 누적 — 1~6을 여러 번 반복하며 commit만 쌓는다)
 ─────────── 사용자가 push/CI를 요청할 때만 (§1.1) ───────────

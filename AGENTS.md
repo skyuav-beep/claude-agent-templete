@@ -39,7 +39,7 @@
 - 현재 저장소는 문서 템플릿 저장소이므로 필수 빌드 명령은 없다.
 - 새 프로젝트로 복제된 뒤에는 루트 `AGENTS.md`에 반드시 실제 실행 명령을 명시한다.
 - 예시: `npm run dev`, `npm test`, `pnpm lint`, `python -m pytest`, `uv run pytest`
-- 로컬 검증은 Docker Desktop으로 진행한다. agent 자동 실행 경계와 Docker 재빌드 2모드(증분/강력 no-cache) 판단 기준은 `docs/local-dev-ci-guide.md`를 따른다 — agent는 로컬·commit·push·CI까지, 배포 Action·원격 migration은 사용자 수동.
+- 로컬 검증은 Docker Desktop으로 진행한다. 개발 컨테이너 모델(상시 기동+bind mount+hot reload, 코드 수정은 rebuild 불필요)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단 기준은 `docs/local-dev-ci-guide.md §2`를 따른다 — agent는 로컬·commit까지 상시, push·CI는 사용자 요청 시, 배포 Action·원격 migration은 사용자 수동.
 
 ## 요청 해석 규칙
 
@@ -156,7 +156,7 @@
 - **[프로젝트 가이드 템플릿](./docs/project-guide-template.md)** - intake 답변을 바탕으로 실제 개발 기준 문서를 작성할 때.
 - **[다국어 가이드](./docs/i18n-guidelines.md)** - i18n 구조, key 규칙, formatting, fallback 기준을 정리할 때.
 - **[비즈니스 로직 플레이북](./docs/business-logic-playbook.md)** - 요구사항, 시나리오, 구현, 검증, 빌드, Git 작업 기준을 확인할 때.
-- **[로컬/CI 실행 가이드](./docs/local-dev-ci-guide.md)** - agent 실행 경계(로컬 Docker Desktop·migration·commit·push·CI까지, 배포 Action·원격 migration은 수동), Docker 재빌드 2모드(증분/강력 no-cache) 판단, push 후 인계 요약을 확인할 때.
+- **[로컬/CI 실행 가이드](./docs/local-dev-ci-guide.md)** - agent 실행 경계(로컬 Docker Desktop·migration·commit까지 상시, push·CI는 사용자 요청 시), 개발 컨테이너 모델(상시 기동+bind mount+hot reload, §2.1)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단, push 후 인계 요약을 확인할 때.
 - **[프레임워크 구조 가이드](./docs/framework-structure-guide.md)** - 디렉터리 분리, 파일 크기, 레포 구조 기준을 확인할 때.
 - **[Codex 읽기 순서](./docs/codex-reading-order.md)** - Codex가 어떤 순서로 문맥을 읽는지 참고할 때.
 - **[에이전트 런타임 매트릭스](./docs/agent-runtime-matrix.md)** - Claude Code와 Codex의 기능 대응 관계, 공통 정본, 런타임별 어댑터 경계를 확인할 때.

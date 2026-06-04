@@ -31,6 +31,12 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 개발 컨테이너 모델 정책 신설 — 로컬 Docker 빠른 반복(리빌드 최소화). (2026-06-04)
+  - 배경: 매번 이미지 rebuild하지 말고 컨테이너 상시 기동 + 소스 bind mount + watch/hot reload로 즉시 반영되게 정책화 요청.
+  - 정본 `docs/local-dev-ci-guide.md §2` 재구성: §2를 "개발 루프 전략"으로 개편하고 **§2.1 개발 컨테이너 모델(기본값)** 신설 — 상시 기동 / bind mount / hot reload / rebuild는 예외. compose 구성 패턴(`./:/app` + `/app/node_modules` 익명 볼륨 + `command` watch override + `compose watch`), WSL2/Docker Desktop 파일감지 폴링(`CHOKIDAR_USEPOLLING`/`WATCHPACK_POLLING`/vite usePolling/nodemon `-L`/uvicorn `--reload`), 반영 방법 결정표, 검증(logs로 HMR 확인). 기존 증분/강력은 §2.2/§2.3, 결정 트리는 §2.4(hot reload 0순위 분기 추가).
+  - 정합 반영: `docs/business-logic-playbook.md §5.2`(rebuild 표 위 0순위 hot reload + §2.4 참조), `templates/tech-intake.md`(로컬 Docker 개발 루프 수집 항목 + 작성 예시), `AGENTS.md`(Operational Commands + Context Map 라우팅 설명), `docs/local-dev-ci-guide.md §3`(반영 단계 hot reload 우선).
+  - 외부 §2 참조는 모두 bare "§2"라 하위 번호 재정렬에도 깨지지 않음(확인 완료).
+
 - push/CI 사용자 요청 기반 정책 신설 — 커밋/푸시/PR/CI 과다 반복 통제. (2026-06-04)
   - 배경: 매 commit·매 사이클마다 push→CI→PR이 반복돼 개발 속도가 지체. 사용자가 "CI를 요청할 때만 돌리고 싶다"로 정책 확정.
   - 정본 `docs/local-dev-ci-guide.md §1.1`: 로컬 commit은 자유 누적·로컬 검증(lint/test/build/smoke)만으로 완료 보고. **push·PR·CI는 사용자 명시 지시(`push`/`올려`/`CI 돌려`) 시에만** 수행, agent는 스스로 push 안 함. CI 전용 검증이 필요하면 사용자에게 물어 요청받음.

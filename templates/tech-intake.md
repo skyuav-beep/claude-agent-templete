@@ -15,10 +15,16 @@
 
 ## 실행 명령
 
-- 개발 서버 실행 명령
+- 개발 서버 실행 명령 (hot reload/watch 모드 여부 포함)
 - 테스트 실행 명령
 - 빌드 명령
 - 린트 명령
+
+## 로컬 Docker 개발 루프
+
+- Docker Desktop 사용 여부 / dev 컨테이너 구성
+- 소스 bind mount 경로 (이미지 COPY 대신 즉시 반영 구조인지)
+- 파일 감지 폴링 필요 여부 (WSL2/Docker Desktop에서 hot reload가 동작하려면 폴링 env가 필요할 수 있음 — `docs/local-dev-ci-guide.md §2.1`)
 
 ## 아키텍처 선호
 
@@ -50,10 +56,15 @@
 - test: Vitest (단위), Playwright (e2e)
 
 ## 실행 명령
-- 개발 서버: `pnpm dev` (port 3000)
+- 개발 서버: `pnpm dev` (port 3000, HMR/watch)
 - 테스트: `pnpm test`, `pnpm test:e2e`
 - 빌드: `pnpm build`
 - 린트: `pnpm lint`, `pnpm format`
+
+## 로컬 Docker 개발 루프
+- Docker Desktop 사용. dev 컨테이너 상시 기동(`docker compose up -d`).
+- bind mount: `./:/app` + `/app/node_modules` 익명 볼륨. 코드 수정 즉시 반영.
+- 폴링: WSL2라 `CHOKIDAR_USEPOLLING=true` 설정.
 
 ## 아키텍처 선호
 - feature-first 디렉터리 구조.
