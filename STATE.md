@@ -31,6 +31,13 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 레포 업데이트 상태 점검 및 전체 운영 문서 리뷰. (2026-06-05)
+  - 상태: `main`은 `origin/main`과 일치했고, 점검 시작 시 미커밋 변경은 없었다.
+  - 확인: 최근 HEAD는 `c8cd469`(개발 세션 부트스트랩 `dev-start` 흐름 신설). manifest 등록 파일 누락 없음, `.claude/plugins/manifest.json` JSON 유효성 통과, `install.sh --dry-run` 정상, hooks/plugin shell 스크립트 `bash -n` 통과.
+  - 리뷰 결과: README 최신 구조 반영 누락(`dev-start`/`design`/preview HTML), 저장소명 표기 충돌(`claude-agent-template` vs `claude-agent-templete`), `STATE.md ## 현재 기준 파일`의 `dev-start` 누락, `todo.md` 헤더 날짜 노후화를 확인했다.
+  - 추가 개선 후보: `.claude/commands/dev-start.md`에 push/CI 경계 보강, `docs/codex-reading-order.md`에 `dev-start`/`design` 라우팅 추가, HTML 내부 script 검증용 로컬 스크립트 도입, templates 카운트 표현 통일.
+  - 검증 주의: 현재 Node 22에서는 `node --check docs/*.html`이 `.html` 확장자 문제로 바로 실패하므로, HTML 검증은 script 추출 방식으로 별도 정리 필요.
+
 - 개발 세션 부트스트랩(PC 켜고 개발 재개) 흐름 신설 — "개발 시작" 트리거로 상태 브리핑 + dev 컨테이너 기동 + hot reload·UI/로직 점검을 자동 부팅. (2026-06-05)
   - 배경: PC 켜고 개발 시작 시 매번 STATE 상태 확인 + Docker hot reload 환경 기동 + UI/로직 점검을 한 번에 부팅하고 싶다는 요청. 트리거 표현과 자동 진행 정책을 함께 요구.
   - 결정(사용자 확인): (1) 트리거 대표 "개발 시작" + 동의어("이어서 개발"/"세션 시작"/"환경 셋팅해"/"다음 작업은"), (2) 세션 시작 시 컨테이너 기동은 항상 `docker compose up -d`(멱등), (3) Codex parity 포함.
@@ -482,6 +489,11 @@
 
 ### 기존 보류 항목
 
+- README의 Skills/Commands/Codex Workflows/브라우저 UI 설명을 최신 구조(`dev-start`, `design`, preview HTML 3종 포함)에 맞춘다.
+- 저장소명 표기를 `claude-agent-template` 또는 `claude-agent-templete` 중 하나로 결정하고 README, plugin-guide, manifest, 예시 경로를 통일한다.
+- `.claude/commands/dev-start.md`와 `docs/codex-reading-order.md`에 최신 `dev-start`/`design` 라우팅 및 push/CI 경계를 보강한다.
+- HTML 내부 `<script>` 추출 후 구문 검사하는 로컬 검증 스크립트(예: `scripts/check-docs.sh`) 도입을 검토한다.
+- `todo.md` 헤더 날짜를 최신 세션 기준으로 갱신한다.
 - 프레임워크 구조 intake 답변을 받아 만든 실제 디렉터리 트리 예시를 추가한다.
 - 필요하면 `docs/template-usage.md` 또는 예시 프로젝트 문서를 추가한다.
 - 필요하면 `docs/codex-reading-order.md`와 루트 `AGENTS.md`의 빠른 읽기 순서 중복을 더 줄인다.
@@ -495,8 +507,8 @@
 - 상태 인계: `STATE.md`
 - Claude Code 운영 설정: `CLAUDE.md`
 - 역할별 지침: `agents/main-agent.md`, `agents/executor-agent.md`, `agents/reviewer-agent.md`, `agents/researcher-agent.md`
-- Skills (자동 활성화): `.claude/skills/start/SKILL.md`, `.claude/skills/intake/SKILL.md`, `.claude/skills/request/SKILL.md`, `.claude/skills/feature/SKILL.md`, `.claude/skills/bugfix/SKILL.md`, `.claude/skills/refactor/SKILL.md`, `.claude/skills/review/SKILL.md`, `.claude/skills/business-logic/SKILL.md`, `.claude/skills/design/SKILL.md`
-- Slash Commands (명시적 호출): `.claude/commands/start.md`, `.claude/commands/intake.md`, `.claude/commands/request.md`, `.claude/commands/feature.md`, `.claude/commands/bugfix.md`, `.claude/commands/refactor.md`, `.claude/commands/review.md`, `.claude/commands/business-logic.md`
+- Skills (자동 활성화): `.claude/skills/start/SKILL.md`, `.claude/skills/dev-start/SKILL.md`, `.claude/skills/intake/SKILL.md`, `.claude/skills/request/SKILL.md`, `.claude/skills/feature/SKILL.md`, `.claude/skills/bugfix/SKILL.md`, `.claude/skills/refactor/SKILL.md`, `.claude/skills/review/SKILL.md`, `.claude/skills/business-logic/SKILL.md`, `.claude/skills/design/SKILL.md`
+- Slash Commands (명시적 호출): `.claude/commands/start.md`, `.claude/commands/dev-start.md`, `.claude/commands/intake.md`, `.claude/commands/request.md`, `.claude/commands/feature.md`, `.claude/commands/bugfix.md`, `.claude/commands/refactor.md`, `.claude/commands/review.md`, `.claude/commands/business-logic.md`
 - 가드레일 hooks: `.claude/hooks/block-destructive.sh`, `.claude/hooks/block-secret-files.sh`, `.claude/hooks/state-reminder.sh`, `.claude/hooks/warn-design-tokens.sh` (opt-in)
 - hooks 설정: `.claude/settings.local.json`
 - 서브에이전트 템플릿: `.claude/agents/explorer.md`, `.claude/agents/code-reviewer.md`, `.claude/agents/planner.md`, `.claude/agents/test-runner.md`, `.claude/agents/feature-dev.md`, `.claude/agents/design-reviewer.md`
@@ -509,6 +521,7 @@
 - 디자인 시안 라이브러리: `designs/README.md`, `designs/_alias-contract.md`, `designs/_template.md`, `designs/wanted.md`, `designs/minimal-mono.md`, `designs/toss-like.md`, `designs/material-3.md`, `designs/linear-like.md`
 - 디자인 시안 selector: `.claude/plugins/select-design.sh`
 - 운영 아티팩트: `docs/codex-reading-order.md`, `docs/subagent-guide.md`, `docs/development-process.md`, `docs/development-process.html`, `docs/intake.html`, `docs/admin-fe-preview.html`, `docs/user-fe-preview.html`, `docs/user-fe-mobile-preview.html`
+- Codex 레이어: `.codex/README.md`, `.codex/workflows/start.md`, `.codex/workflows/dev-start.md`, `.codex/workflows/intake.md`, `.codex/workflows/feature.md`, `.codex/workflows/bugfix.md`, `.codex/workflows/refactor.md`, `.codex/workflows/review.md`, `.codex/workflows/business-logic.md`, `.codex/workflows/design.md`, `.codex/checks/safety-checklist.md`, `.codex/checks/finish-checklist.md`
 - 런타임 앱: `../riderapp-runtime/` (sibling 저장소)
 
 ## 주의 사항
