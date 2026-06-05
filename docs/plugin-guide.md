@@ -17,12 +17,12 @@ bash /path/to/claude-agent-templete/.claude/plugins/install.sh /path/to/my-proje
 install.sh는 `manifest.json`에 등록된 파일을 대상 프로젝트에 복사한다.
 
 - L1 Memory: `CLAUDE.md`, `AGENTS.md`, `STATE.md`, `DESIGN.md`
-- L2 Skills: `.claude/skills/` (9개 `SKILL.md` — 자연어 키워드로 자동 활성화)
-- L2 Commands: `.claude/commands/` (8개 slash command — 사용자가 직접 호출)
+- L2 Skills: `.claude/skills/` (10개 `SKILL.md` — 자연어 키워드로 자동 활성화)
+- L2 Commands: `.claude/commands/` (9개 slash command — 사용자가 직접 호출)
 - L3 Hooks: `.claude/hooks/` (4개 가드레일 스크립트, opt-in 1개 포함) + `settings.local.json`
 - L4 Subagents: `.claude/agents/` (6개 프롬프트 템플릿 — explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - Design library: `designs/` (5개 시안 + alias contract + template) + `.claude/plugins/select-design.sh`
-- Codex Layer: `.codex/` (workflow 8종 + checks 2종 + subagent prompt guide 6종)
+- Codex Layer: `.codex/` (workflow 9종 + checks 2종 + subagent prompt guide 6종)
 - Supporting: `agents/` (4개 역할 지침), `templates/` (요청 5종 + intake 13종 + data-table density), `docs/` (가이드/플레이북/HTML UI/런타임 매트릭스)
 
 L2의 skills와 commands는 병존한다. skills는 자연어 키워드 매칭으로 자동 활성화되고, commands는 사용자가 슬래시 입력으로 명시 호출한다.

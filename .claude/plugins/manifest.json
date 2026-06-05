@@ -20,6 +20,7 @@
       "description": "자연어 트리거 기반 자동 활성화 SKILL.md (description 키워드 매칭)",
       "files": [
         { "path": ".claude/skills/start/SKILL.md", "description": "New project setup QnA" },
+        { "path": ".claude/skills/dev-start/SKILL.md", "description": "Dev session bootstrap — state briefing + dev container up + hot reload/UI·logic check" },
         { "path": ".claude/skills/intake/SKILL.md", "description": "Topic intake router (12 types)" },
         { "path": ".claude/skills/request/SKILL.md", "description": "Auto-classify work request type (activates only when ambiguous)" },
         { "path": ".claude/skills/feature/SKILL.md", "description": "Feature request form" },
@@ -34,6 +35,7 @@
       "description": "skills와 병존하는 명시적 slash command (사용자가 직접 호출)",
       "files": [
         { "path": ".claude/commands/start.md", "description": "/start — explicit invocation" },
+        { "path": ".claude/commands/dev-start.md", "description": "/dev-start — explicit invocation" },
         { "path": ".claude/commands/intake.md", "description": "/intake [topic] — explicit invocation" },
         { "path": ".claude/commands/request.md", "description": "/request [desc] — explicit invocation" },
         { "path": ".claude/commands/feature.md", "description": "/feature [desc] — explicit invocation" },
@@ -87,6 +89,7 @@
       { "path": ".codex/checks/safety-checklist.md", "description": "Safety checks replacing Claude hooks in Codex" },
       { "path": ".codex/checks/finish-checklist.md", "description": "Finish checks replacing state reminder hook in Codex" },
       { "path": ".codex/workflows/start.md", "description": "Codex start workflow" },
+      { "path": ".codex/workflows/dev-start.md", "description": "Codex dev session bootstrap workflow" },
       { "path": ".codex/workflows/intake.md", "description": "Codex intake workflow" },
       { "path": ".codex/workflows/feature.md", "description": "Codex feature workflow" },
       { "path": ".codex/workflows/bugfix.md", "description": "Codex bugfix workflow" },

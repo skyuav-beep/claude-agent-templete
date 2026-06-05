@@ -16,6 +16,7 @@
 |---|---|---|---|
 | 운영 규칙 | `CLAUDE.md` + `AGENTS.md` | `AGENTS.md` + `.codex/README.md` | `AGENTS.md` |
 | 새 프로젝트 QnA | `.claude/skills/start/SKILL.md` 자동 활성화 | `.codex/workflows/start.md` 절차 실행 | `templates/startup-checklist.md` |
+| 개발 세션 부트스트랩 | `.claude/skills/dev-start/SKILL.md` 자동 활성화 | `.codex/workflows/dev-start.md` 절차 실행 | `docs/local-dev-ci-guide.md §2.0` |
 | 토픽 intake | `.claude/skills/intake/SKILL.md` | `.codex/workflows/intake.md` | `templates/*-intake.md` |
 | 작업 요청 구조화 | `.claude/skills/{feature,bugfix,refactor,review,business-logic}` | `.codex/workflows/{feature,bugfix,refactor,review,business-logic}` | `templates/*-request.md` |
 | 디자인 규칙 | `.claude/skills/design/SKILL.md` 자동 로드 | `.codex/workflows/design.md` 강제 참조 | `DESIGN.md`, `docs/design-guidelines.md` |

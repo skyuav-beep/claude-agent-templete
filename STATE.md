@@ -31,6 +31,14 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 개발 세션 부트스트랩(PC 켜고 개발 재개) 흐름 신설 — "개발 시작" 트리거로 상태 브리핑 + dev 컨테이너 기동 + hot reload·UI/로직 점검을 자동 부팅. (2026-06-05)
+  - 배경: PC 켜고 개발 시작 시 매번 STATE 상태 확인 + Docker hot reload 환경 기동 + UI/로직 점검을 한 번에 부팅하고 싶다는 요청. 트리거 표현과 자동 진행 정책을 함께 요구.
+  - 결정(사용자 확인): (1) 트리거 대표 "개발 시작" + 동의어("이어서 개발"/"세션 시작"/"환경 셋팅해"/"다음 작업은"), (2) 세션 시작 시 컨테이너 기동은 항상 `docker compose up -d`(멱등), (3) Codex parity 포함.
+  - 정본 `docs/local-dev-ci-guide.md §2.0` 신설(§2 도입과 §2.1 사이, 하위 번호 §2.1~2.4 무손상) — 3단계 절차(상태 브리핑 → `up -d` 기동+watcher 확인 → URL/preview 안내+hot reload 반영 확인) + 항상 `up -d` 정책 + 세션 시작 이유만으로 rebuild 금지(§2.4 결정 트리 위임).
+  - 신규: skill `.claude/skills/dev-start/SKILL.md` + command `.claude/commands/dev-start.md` + Codex `.codex/workflows/dev-start.md`(parity).
+  - 배선: `CLAUDE.md`(Skills Layer 목록 + 우선순위 규칙 dev-start vs feature 경계 + Repo Map skills 9→10·commands 8→9·codex workflow 8→9), `AGENTS.md`(Operational Commands + "개발 세션 재개 시" 프로토콜 분기 신설 + Context Map 로컬/CI 가이드 §2.0·Skills/Commands 카운트·목록), `.claude/plugins/manifest.json`(skills/commands/codex 등록), `docs/plugin-guide.md`(Skills 9→10·Commands 8→9·codex workflow 8→9종), `docs/agent-runtime-matrix.md`(대응표 행 추가), `.codex/README.md`(작업 라우팅 추가).
+  - 검증: manifest JSON 유효성 통과, 신규 파일 3종 생성 확인, 현재형 문서 카운트 잔재 0.
+
 - 로컬 Docker Desktop 개발 정책을 전 작업유형·전 레이어에 배선. (2026-06-04)
   - 배경: 정본 `local-dev-ci-guide.md`는 "전 작업유형 공통"을 선언하나 실제로는 business-logic 흐름만 정본을 참조 → feature/bugfix/refactor/review 흐름은 로컬 한정·개발 컨테이너 모델 안내 누락(감사로 확인).
   - 원칙: 정본은 1곳 유지, 나머지는 1줄 포인터만 추가(중복 금지). 14개 지점 배선:

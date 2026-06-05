@@ -40,6 +40,7 @@
 - 새 프로젝트로 복제된 뒤에는 루트 `AGENTS.md`에 반드시 실제 실행 명령을 명시한다.
 - 예시: `npm run dev`, `npm test`, `pnpm lint`, `python -m pytest`, `uv run pytest`
 - 로컬 검증은 Docker Desktop으로 진행한다. 개발 컨테이너 모델(상시 기동+bind mount+hot reload, 코드 수정은 rebuild 불필요)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단 기준은 `docs/local-dev-ci-guide.md §2`를 따른다 — agent는 로컬·commit까지 상시, push·CI는 사용자 요청 시, 배포 Action·원격 migration은 사용자 수동.
+- 개발 세션 시작(PC 켜고 재개) 시 `docs/local-dev-ci-guide.md §2.0` 부트스트랩을 따른다 — 상태 브리핑 → `docker compose up -d`(항상, 멱등) → hot reload·UI/로직 점검. `dev-start` skill 또는 `/dev-start`로 호출.
 
 ## 요청 해석 규칙
 
@@ -76,6 +77,10 @@
 3. 전체 QnA가 끝나면 결과 요약을 작성하고 다음 액션을 제안한다.
 4. 확정된 기술 스택은 이 파일의 `Operational Commands` 섹션에 반영한다.
 5. 수집된 내용 전체는 `docs/project-guide-template.md` 기준으로 프로젝트 가이드 문서를 작성한다.
+
+### 개발 세션 재개 시 (PC 켜고 시작)
+
+사용자가 "개발 시작 / 이어서 개발 / 세션 시작 / 환경 셋팅해 / 다음 작업은" 류로 개발을 재개하면 `dev-start` skill이 활성화된다. `docs/local-dev-ci-guide.md §2.0` 부트스트랩 절차(상태 브리핑 → dev 컨테이너 `up -d` 기동 → hot reload·UI/로직 점검)를 수행한 뒤, `STATE.md ## 다음 작업`부터 이어간다.
 
 ### 기존 프로젝트 작업 시
 
@@ -156,7 +161,7 @@
 - **[프로젝트 가이드 템플릿](./docs/project-guide-template.md)** - intake 답변을 바탕으로 실제 개발 기준 문서를 작성할 때.
 - **[다국어 가이드](./docs/i18n-guidelines.md)** - i18n 구조, key 규칙, formatting, fallback 기준을 정리할 때.
 - **[비즈니스 로직 플레이북](./docs/business-logic-playbook.md)** - 요구사항, 시나리오, 구현, 검증, 빌드, Git 작업 기준을 확인할 때.
-- **[로컬/CI 실행 가이드](./docs/local-dev-ci-guide.md)** - agent 실행 경계(로컬 Docker Desktop·migration·commit까지 상시, push·CI는 사용자 요청 시), 개발 컨테이너 모델(상시 기동+bind mount+hot reload, §2.1)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단, push 후 인계 요약을 확인할 때.
+- **[로컬/CI 실행 가이드](./docs/local-dev-ci-guide.md)** - agent 실행 경계(로컬 Docker Desktop·migration·commit까지 상시, push·CI는 사용자 요청 시), 개발 세션 부트스트랩(상태 브리핑+dev 컨테이너 기동+UI/로직 점검, §2.0), 개발 컨테이너 모델(상시 기동+bind mount+hot reload, §2.1)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단, push 후 인계 요약을 확인할 때.
 - **[프레임워크 구조 가이드](./docs/framework-structure-guide.md)** - 디렉터리 분리, 파일 크기, 레포 구조 기준을 확인할 때.
 - **[Codex 읽기 순서](./docs/codex-reading-order.md)** - Codex가 어떤 순서로 문맥을 읽는지 참고할 때.
 - **[에이전트 런타임 매트릭스](./docs/agent-runtime-matrix.md)** - Claude Code와 Codex의 기능 대응 관계, 공통 정본, 런타임별 어댑터 경계를 확인할 때.
@@ -168,8 +173,8 @@
 - **[개발 프로세스 시각화](./docs/development-process.html)** - 브라우저에서 시각 가이드, 단계별 체크리스트, STATE 미니 대시보드 확인 시.
 - **[개발 전략 매뉴얼](./docs/development-strategy.html)** - 브라우저에서 UI-first 기본 경로와 DB/로직 우선 예외 경로를 비교할 때.
 - **[Intake 폼 UI](./docs/intake.html)** - 브라우저에서 Startup QnA 위저드 또는 요청 템플릿(feature/bugfix/refactor/review/business-logic) 입력 후 Markdown으로 내보낼 때.
-- **[Skills Layer](./.claude/skills/)** - 자연어 트리거 기반 자동 활성화 SKILL.md 9종. `start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`. 우선순위와 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
-- **[Slash Commands](./.claude/commands/)** - skills와 동일 이름의 명시적 slash command 8종. `/start`, `/intake`, `/request`, `/feature`, `/bugfix`, `/refactor`, `/review`, `/business-logic`. 사용자가 직접 호출할 때만 동작.
+- **[Skills Layer](./.claude/skills/)** - 자연어 트리거 기반 자동 활성화 SKILL.md 10종. `start`, `dev-start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`. 우선순위와 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
+- **[Slash Commands](./.claude/commands/)** - skills와 동일 이름의 명시적 slash command 9종. `/start`, `/dev-start`, `/intake`, `/request`, `/feature`, `/bugfix`, `/refactor`, `/review`, `/business-logic`. 사용자가 직접 호출할 때만 동작.
 - **[Hooks Layer](./.claude/hooks/)** - 파괴적 명령 차단, 비밀 파일 쓰기 차단, STATE.md 갱신 리마인더. 설정은 `.claude/settings.local.json`.
 - **[서브에이전트 템플릿](./.claude/agents/)** - Agent 도구 호출 시 역할별 프롬프트 템플릿 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer). 디스패치 기준은 `docs/subagent-guide.md`.
 - **[Plugins Layer](./.claude/plugins/)** - manifest.json, VERSION, install.sh. 다른 프로젝트에 설치 시 `docs/plugin-guide.md` 참조.

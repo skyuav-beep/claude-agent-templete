@@ -82,12 +82,12 @@
 - `agents/` — 역할별 에이전트 행동 규칙 (main, executor, researcher, reviewer)
 - `templates/` — 작업 요청 5종 + intake 양식 14종 (`data-table-density.md` 포함)
 - `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타: `docs/design-guidelines.md`, admin FE: `docs/admin-fe-design-guide.md`, UI 결정 기록: `docs/ui-decisions.md`, 로컬/CI 실행 경계+Docker 재빌드: `docs/local-dev-ci-guide.md`)
-- `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 9종)
-- `.claude/commands/` — L2 보조 (명시적 slash command 8종, skills와 병존)
+- `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 10종)
+- `.claude/commands/` — L2 보조 (명시적 slash command 9종, skills와 병존)
 - `.claude/hooks/` — L3 Guardrails (가드레일 스크립트 4종, opt-in 1종 포함)
 - `.claude/agents/` — L4 서브에이전트 프롬프트 템플릿 6종 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - `.claude/plugins/` — L5 배포 도구 (manifest, install)
-- `.codex/` — Codex runtime adapter (workflow 8종, checks 2종, subagent prompt guide 6종). Claude 자동화와 분리된 보완 레이어
+- `.codex/` — Codex runtime adapter (workflow 9종, checks 2종, subagent prompt guide 6종). Claude 자동화와 분리된 보완 레이어
 
 ## Design System
 
@@ -109,6 +109,7 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 각 skill은 `templates/`의 원본을 읽어서 사용하며, 템플릿 내용을 중복하지 않는다.
 
 - 프로젝트 시작: `start` (startup-checklist QnA)
+- 개발 세션 부트스트랩: `dev-start` (PC 켜고 개발 재개 — 상태 브리핑 + dev 컨테이너 기동 + hot reload/UI·로직 점검)
 - 개별 토픽 수집: `intake` (12종 intake 라우터)
 - 작업 요청 라우터: `request` (유형 자동 판별, 키워드가 모호할 때만 활성화)
 - 개별 요청: `feature`, `bugfix`, `refactor`, `review`, `business-logic`
@@ -118,6 +119,7 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 - 사용자 메시지에 명확한 유형 키워드(`기능`, `버그`, `리팩터링`, `리뷰`, `로직 변경`)가 있으면 해당 개별 skill이 우선 활성화된다.
 - 유형이 모호하거나 복합적일 때만 `request` skill이 활성화된다.
 - 동일 입력에서 두 skill이 동시에 매칭되면 더 구체적인 개별 skill을 선택한다.
+- `dev-start`(개발 시작/이어서 개발/세션 시작/환경 셋팅해/다음 작업은)는 **환경 부팅·상태 재개** 맥락에만 활성화한다. "개발 시작"이 무엇을 만들지(기능/버그/로직)를 설명하는 맥락이면 `feature`/`bugfix`/`business-logic`을 우선한다.
 
 ### Skill 연계 흐름
 

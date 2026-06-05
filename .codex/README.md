@@ -13,6 +13,7 @@
 ## 작업 라우팅
 
 - 새 프로젝트 시작: `workflows/start.md`
+- 개발 세션 재개(PC 켜고 시작): `workflows/dev-start.md`
 - 토픽별 intake: `workflows/intake.md`
 - 기능 개발: `workflows/feature.md`
 - 버그 수정: `workflows/bugfix.md`
