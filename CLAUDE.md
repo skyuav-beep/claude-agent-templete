@@ -13,7 +13,7 @@
 ## Golden Rules
 
 - 사용자 요청 없이 파괴적 명령을 실행하지 않는다.
-- agent 자동 실행 범위는 로컬 검증(Docker Desktop)·로컬 migration·commit·push·CI까지다. GitHub Actions 배포/릴리스와 원격(staging/prod) migration 적용은 사용자가 수동으로 진행하며 agent는 트리거하지 않는다. (상세: `docs/local-dev-ci-guide.md`)
+- agent 자동 실행 범위는 로컬 검증(Docker Desktop)·`local` migration·commit·push·CI까지다. 환경은 `local`(내 PC Docker) / `develop`(원격 개발서버) / `production`(원격 운영서버) 3-tier로 호칭하고 "dev" 단독 표기는 쓰지 않는다. migration은 `local`에만 자동 적용하고 `develop`·`production`은 사용자가 수동 진행하며, 판단은 명령명이 아니라 `DATABASE_URL` 연결 대상으로 한다. GitHub Actions 배포/릴리스도 agent는 트리거하지 않는다. (상세: `docs/local-dev-ci-guide.md §0`)
 - 로컬 commit은 자주 누적해도 되지만, `git push`·`PR 생성`·CI는 **사용자가 명시 지시할 때만** 수행한다(완료 판단·검증은 로컬에서). 예외: 세션 종료 시 유실 방지 백업 push 1회는 commit 메시지 `[skip ci]`로 CI 없이 허용. 머지는 agent가 하지 않는다. (정의: `docs/local-dev-ci-guide.md §1.1`)
 - 확인하지 않은 외부 의존성, 비밀값, API 키를 임의로 추가하지 않는다.
 - 관련 없는 파일 수정이나 목적과 무관한 구조 확장을 하지 않는다.

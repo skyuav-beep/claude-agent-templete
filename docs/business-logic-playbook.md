@@ -146,13 +146,13 @@ agent 실행 경계(로컬 Docker Desktop·migration·commit·push·CI까지, �
 4) build                                 → 타입 오류·번들 실패 차단
 5) e2e (선택, happy path 1~2개)          → 가능한 경우만, 환경 미구성이면 사유 기록
 6) docker rebuild 판단 (5.2)             → 증분/강력 판단 후 rebuild + smoke
-7) DB migration (해당 시)                → 로컬 Docker Desktop에만 적용·검증 (원격은 수동)
+7) DB migration (해당 시)                → `local`(Docker Desktop)에만 적용·검증 (`develop`/`production`은 수동, §0)
 8) git commit (로컬 누적)                → 1~7 반복하며 commit만 쌓는다 (push 아님)
 9) 사용자 요청 시 push + PR 1개          → 누적 commit 일괄 (`docs/local-dev-ci-guide.md §1.1`). 그 전엔 로컬 검증만으로 완료 보고
    CI 결과 확인 (push로 트리거됨)         → 실패 시 원인 수정 후 재push
 ──────────────── agent 종료 / 사용자 수동 인계 ────────────────
 10) [수동] GitHub Actions 배포·릴리스 실행
-11) [수동] 원격(staging/prod) migration 적용
+11) [수동] 원격(`develop`/`production`) migration 적용
 ```
 
 각 단계의 통과 기준:
@@ -174,7 +174,7 @@ Docker를 쓰는 프로젝트에서 (hot reload로 해결되지 않는) 변경�
 | `package.json` / `pnpm-lock.yaml` / `requirements.txt` 의존성 | **필요**. 이미지 레이어가 의존성 설치 단계에서 시작 | `docker compose build --no-cache <service>` |
 | `Dockerfile` / `docker-compose.yml` / `.dockerignore` | **필요**. 이미지 정의 자체 변경 | `docker compose build <service>` |
 | 환경 변수(`.env`, `compose` env) | rebuild 불필요. 컨테이너만 재시작 | `docker compose up -d <service>` |
-| migration SQL · seed 데이터 | rebuild 불필요. **로컬 Docker Desktop에만 적용**(agent), 원격(staging/prod)은 사용자 수동 | `docker compose exec <service> <migration cmd>` (로컬 한정) |
+| migration SQL · seed 데이터 | rebuild 불필요. **`local`(Docker Desktop)에만 적용**(agent), `develop`/`production`은 사용자 수동 (§0) | `docker compose exec <service> <migration cmd>` (`local` 한정) |
 | nginx/reverse-proxy 설정 | proxy 컨테이너만 rebuild + restart | `docker compose build proxy && docker compose up -d proxy` |
 
 판단 후 PR 본문 `## 검증 계획`에 "Docker rebuild: 불필요 (src/만 변경)" 또는 "필요 (pnpm-lock.yaml 갱신 → `docker compose build --no-cache api`)" 같이 사유를 명시한다.

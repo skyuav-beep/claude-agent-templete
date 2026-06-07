@@ -39,7 +39,8 @@
 - 현재 저장소는 문서 템플릿 저장소이므로 필수 빌드 명령은 없다.
 - 새 프로젝트로 복제된 뒤에는 루트 `AGENTS.md`에 반드시 실제 실행 명령을 명시한다.
 - 예시: `npm run dev`, `npm test`, `pnpm lint`, `python -m pytest`, `uv run pytest`
-- 로컬 검증은 Docker Desktop으로 진행한다. 개발 컨테이너 모델(상시 기동+bind mount+hot reload, 코드 수정은 rebuild 불필요)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단 기준은 `docs/local-dev-ci-guide.md §2`를 따른다 — agent는 로컬·commit까지 상시, push·CI는 사용자 요청 시, 배포 Action·원격 migration은 사용자 수동.
+- 로컬 검증은 Docker Desktop으로 진행한다. 개발 컨테이너 모델(상시 기동+bind mount+hot reload, 코드 수정은 rebuild 불필요)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단 기준은 `docs/local-dev-ci-guide.md §2`를 따른다 — agent는 로컬·commit까지 상시, push·CI는 사용자 요청 시, 배포 Action·`develop`/`production` migration은 사용자 수동.
+- 환경 호칭은 `local`(내 PC Docker Desktop) / `develop`(원격 개발서버) / `production`(원격 운영서버) 3-tier로 통일한다(정의: `docs/local-dev-ci-guide.md §0`). migration은 `local`에만 자동 적용(명령명이 아니라 `DATABASE_URL` 연결 대상으로 판단)하고, "dev" 단독 표기는 쓰지 않는다.
 - 개발 세션 시작(PC 켜고 재개) 시 `docs/local-dev-ci-guide.md §2.0` 부트스트랩을 따른다 — 상태 브리핑 → `docker compose up -d`(항상, 멱등) → hot reload·UI/로직 점검. `dev-start` skill 또는 `/dev-start`로 호출.
 
 ## 요청 해석 규칙
@@ -161,7 +162,7 @@
 - **[프로젝트 가이드 템플릿](./docs/project-guide-template.md)** - intake 답변을 바탕으로 실제 개발 기준 문서를 작성할 때.
 - **[다국어 가이드](./docs/i18n-guidelines.md)** - i18n 구조, key 규칙, formatting, fallback 기준을 정리할 때.
 - **[비즈니스 로직 플레이북](./docs/business-logic-playbook.md)** - 요구사항, 시나리오, 구현, 검증, 빌드, Git 작업 기준을 확인할 때.
-- **[로컬/CI 실행 가이드](./docs/local-dev-ci-guide.md)** - agent 실행 경계(로컬 Docker Desktop·migration·commit까지 상시, push·CI는 사용자 요청 시), 개발 세션 부트스트랩(상태 브리핑+dev 컨테이너 기동+UI/로직 점검, §2.0), 개발 컨테이너 모델(상시 기동+bind mount+hot reload, §2.1)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단, push 후 인계 요약을 확인할 때.
+- **[로컬/CI 실행 가이드](./docs/local-dev-ci-guide.md)** - 환경 호칭 3-tier(`local`/`develop`/`production`, §0), agent 실행 경계(`local` Docker Desktop·migration·commit까지 상시, push·CI는 사용자 요청 시), 개발 세션 부트스트랩(상태 브리핑+dev 컨테이너 기동+UI/로직 점검, §2.0), 개발 컨테이너 모델(상시 기동+bind mount+hot reload, §2.1)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단, push 후 인계 요약을 확인할 때.
 - **[프레임워크 구조 가이드](./docs/framework-structure-guide.md)** - 디렉터리 분리, 파일 크기, 레포 구조 기준을 확인할 때.
 - **[Codex 읽기 순서](./docs/codex-reading-order.md)** - Codex가 어떤 순서로 문맥을 읽는지 참고할 때.
 - **[에이전트 런타임 매트릭스](./docs/agent-runtime-matrix.md)** - Claude Code와 Codex의 기능 대응 관계, 공통 정본, 런타임별 어댑터 경계를 확인할 때.
@@ -190,7 +191,7 @@
 - 기존 구현을 뒤집는 리팩터링이 필요한 경우
 - 요구사항 해석에 따라 결과가 크게 달라질 수 있는 경우
 - 테스트 실패 원인이 코드인지 환경인지 불분명한 경우
-- GitHub Actions 배포/릴리스 실행, 원격(staging/prod) migration 적용 등 "GitHub 이상"의 원격 작업이 필요한 경우 — agent는 실행하지 않고 사용자에게 인계한다 (`docs/local-dev-ci-guide.md`)
+- GitHub Actions 배포/릴리스 실행, 원격(`develop`/`production`) migration 적용 등 "GitHub 이상"의 원격 작업이 필요한 경우 — agent는 실행하지 않고 사용자에게 인계한다 (`docs/local-dev-ci-guide.md §0`)
 - `docker compose down -v` 등 로컬 DB 데이터를 삭제하는 재빌드가 필요한 경우
 
 ## 초기 프로젝트 기본 가정

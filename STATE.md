@@ -31,6 +31,15 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 환경 호칭 3-tier 정책 신설 — `local`/`develop`/`production` 호칭 통일 + 마이그레이션 자동화 경계 명문화. (2026-06-07)
+  - 배경: 마이그레이션 시 "dev"라는 표현이 (a) Prisma `migrate dev` 명령 모드와 (b) 원격 개발서버 환경을 동시에 가리켜 혼란. 사용자가 3개 환경(로컬 내 PC Docker / 개발서버 / 운영서버)의 호칭 정의 + "로컬만 자동, 개발·운영은 수동" 경계 명확화를 요청.
+  - 결정: (1) 환경 호칭 `local`(내 PC Docker Desktop) / `develop`(원격 개발서버) / `production`(`prod`, 원격 운영서버) 3-tier, (2) "어디에(환경)"와 "어떻게(명령 모드)" 축 분리 — "dev" 단독 표기 금지·명령은 풀표기(`migrate dev`/`migrate deploy`), 개발서버 약어 `dev` 금지(`develop` 풀네임), (3) 자동화 경계는 명령명이 아니라 `DATABASE_URL` 연결 대상으로 판단 — `local`만 agent 자동, `develop`/`production`은 사용자 수동.
+  - 정본 `docs/local-dev-ci-guide.md §0` 신설(§1 앞, 하위 번호 §1~§5 무손상) — 3-tier 호칭 표 + 용어 규칙 + 자동화 경계. §1 경계 표 2행(migration 로컬/원격)·§3 인계 흐름 11)·§5 금지사항을 호칭으로 정합(`DATABASE_URL` 대상 확인 한 줄 추가).
+  - 루트 배선: `CLAUDE.md` Golden Rules migration 경계 줄에 3-tier 호칭+`DATABASE_URL` 판단+"dev 단독 금지" 반영(`§0` 포인터). `AGENTS.md` Operational Commands에 환경 호칭 1줄 신설 + 기존 경계 줄/사용자 확인 상황/Context Map 설명을 호칭으로 정합.
+  - 하위 정합: `docs/business-logic-playbook.md` §5.1 흐름 7)·11), §5.2 migration 표행을 `local`/`develop`/`production`으로 통일. `.codex/checks/safety-checklist.md` 원격 migration 항목에 호칭+§0 포인터.
+  - 전파: 정본+루트 갱신으로 9개 linked project가 `rules/` symlink로 자동 참조. 저장소 전체 `staging/prod` 리터럴 잔존 0 확인.
+  - 후속 보강 후보(미반영, 사용자 판단 대기): `block-destructive.sh`에 `migrate reset`/`--force-reset`/`db push --accept-data-loss` 등 로컬 데이터 삭제 패턴 추가(현재 hook 미등록, 정책 문서만 커버).
+
 - 레포 업데이트 상태 점검 및 전체 운영 문서 리뷰. (2026-06-05)
   - 상태: `main`은 `origin/main`과 일치했고, 점검 시작 시 미커밋 변경은 없었다.
   - 확인: 최근 HEAD는 `c8cd469`(개발 세션 부트스트랩 `dev-start` 흐름 신설). manifest 등록 파일 누락 없음, `.claude/plugins/manifest.json` JSON 유효성 통과, `install.sh --dry-run` 정상, hooks/plugin shell 스크립트 `bash -n` 통과.
