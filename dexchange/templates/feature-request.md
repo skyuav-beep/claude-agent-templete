@@ -1,0 +1,61 @@
+# Feature Request Template
+
+## 목표
+
+- 무엇을 만들고 싶은지 한 문장으로 적는다.
+
+## 배경
+
+- 왜 필요한지 적는다.
+- 현재 어떤 문제가 있는지 적는다.
+
+## 원하는 산출물
+
+- 수정 또는 생성이 필요한 파일
+- 기대하는 사용자 동작
+- 필요한 문서 업데이트 여부
+
+## 제약사항
+
+- 기술 스택 제약
+- 수정하면 안 되는 범위
+- 일정 또는 우선순위
+
+## 검증 기준
+
+- 어떤 조건이면 완료로 볼지 적는다.
+- 실행·검증은 로컬 Docker Desktop에서 한다(개발 컨테이너 모델 — `docs/local-dev-ci-guide.md §2.1`). push·CI는 사용자 요청 시, 원격 배포/migration은 사용자 수동.
+
+## 디자인 토큰 참조 (UI 변경 시)
+
+- 사용할 컴포넌트: `DESIGN.md ## Components`에서 해당하는 항목 (예: `button-primary md`, `job-card`, `chip brand variant`)
+- 사용할 토큰: alias 또는 atomic (예: `{colors.bg-brand}`, `{spacing.space-16}`, `{rounded.radius-8}`)
+- variant/state: 기본/hover/focus/active/disabled/error 중 필요한 것
+- 다크 모드 대응 필요 여부: yes / no / 둘 다
+- `DESIGN.md`에 정의되지 않은 새 컴포넌트가 필요하면 그 사실을 적고, 추가 시 카탈로그 갱신 의무를 인지한다.
+
+UI 변경이 없으면 이 섹션은 생략한다.
+
+## 작성 예시
+
+```
+## 목표
+- 주문 목록 화면에 "최근 7일" 빠른 필터 버튼을 추가한다.
+
+## 배경
+- 사용자가 매번 캘린더에서 날짜를 두 번 찍는 불편이 누적 문의로 들어왔다.
+
+## 원하는 산출물
+- `src/features/orders/components/OrderListFilter.tsx` 수정
+- 버튼 클릭 시 URL `?range=7d`로 동기화
+- README의 필터 기능 항목 업데이트
+
+## 제약사항
+- 기존 캘린더 필터 동작은 유지한다.
+- 백엔드 API 변경 금지. 프론트에서 from/to 계산 후 그대로 전달한다.
+
+## 검증 기준
+- 버튼 클릭 시 목록이 7일치로 좁혀진다.
+- URL을 직접 `?range=7d`로 열어도 동일 상태로 복원된다.
+- 캘린더 필터와 동시 사용 시 마지막 조작이 우선한다.
+```

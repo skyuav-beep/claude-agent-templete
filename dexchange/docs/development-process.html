@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AGENTS 개발 프로세스</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3348;
+      --accent: #5b6af5;
+      --accent2: #7c3aed;
+      --accent3: #0ea5e9;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+      --text-faint: #475569;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ── Layout ── */
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 60px 24px 120px;
+    }
+
+    /* ── Header ── */
+    .header {
+      margin-bottom: 64px;
+    }
+
+    .header-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header p {
+      color: var(--text-dim);
+      font-size: 16px;
+      max-width: 600px;
+    }
+
+    /* ── Flow diagram ── */
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 32px;
+      margin-bottom: 64px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .flow::-webkit-scrollbar { display: none; }
+
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .flow-step:hover { opacity: 0.75; }
+
+    .flow-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .flow-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .flow-arrow {
+      color: var(--text-faint);
+      font-size: 18px;
+      padding: 0 12px;
+      margin-bottom: 24px;
+      flex-shrink: 0;
+    }
+
+    /* ── Phases ── */
+    .phases { display: flex; flex-direction: column; gap: 32px; }
+
+    .phase {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 28px 32px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .phase-header:hover { background: var(--surface2); }
+
+    .phase-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .phase-1 .phase-num { background: linear-gradient(135deg, #5b6af5, #7c3aed); }
+    .phase-2 .phase-num { background: linear-gradient(135deg, #0ea5e9, #2563eb); }
+    .phase-3 .phase-num { background: linear-gradient(135deg, #10b981, #059669); }
+    .phase-4 .phase-num { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .phase-5 .phase-num { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+    .phase-title-wrap { flex: 1; }
+
+    .phase-tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 4px;
+    }
+
+    .phase-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .phase-subtitle {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    .phase-toggle {
+      color: var(--text-faint);
+      font-size: 20px;
+      transition: transform 0.25s;
+    }
+
+    .phase.open .phase-toggle { transform: rotate(180deg); }
+
+    .phase-body {
+      padding: 0 32px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.25s ease;
+    }
+
+    .phase.open .phase-body {
+      max-height: 9999px;
+      padding: 32px 32px;
+    }
+
+    /* ── Checklist ── */
+    .checklist { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+
+    .check-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .check-icon.checked {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .check-icon.checked::after {
+      content: '✓';
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .check-text { color: var(--text-dim); font-size: 14px; line-height: 1.6; }
+
+    .check-item.checked-row .check-text { text-decoration: line-through; color: var(--text-faint); }
+
+    /* ── QnA Sections table ── */
+    .qna-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    .qna-table th {
+      background: var(--surface2);
+      color: var(--text-dim);
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 10px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .qna-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-dim);
+      vertical-align: top;
+    }
+
+    .qna-table tr:last-child td { border-bottom: none; }
+    .qna-table tr:hover td { background: var(--surface2); }
+
+    .section-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ── Steps (4단계 역할별) ── */
+    .steps { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+
+    .step {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      background: var(--bg);
+    }
+
+    .step-badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      flex-shrink: 0;
+    }
+
+    .badge-main    { background: rgba(91,106,245,0.15); color: #818cf8; }
+    .badge-researcher { background: rgba(14,165,233,0.15); color: #38bdf8; }
+    .badge-executor { background: rgba(16,185,129,0.15); color: #34d399; }
+    .badge-reviewer { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .badge-user    { background: rgba(139,92,246,0.15); color: #c084fc; }
+
+    .step-title { font-size: 15px; font-weight: 600; color: var(--text); }
+    .step-agent { font-size: 12px; color: var(--text-faint); margin-left: auto; }
+
+    .step-items {
+      padding: 12px 20px 16px 52px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+
+    .step-items li {
+      color: var(--text-dim);
+      font-size: 13px;
+      margin-bottom: 6px;
+      list-style: disc;
+    }
+
+    /* ── Ref links ── */
+    .ref-section { margin-top: 24px; }
+    .ref-label { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 10px; }
+    .ref-links { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .ref-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .ref-link:hover { border-color: var(--accent); color: var(--accent); }
+    .ref-link::before { content: '↗'; font-size: 11px; }
+
+    /* ── Warning box ── */
+    .warn-box {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: var(--radius-sm);
+      padding: 18px 20px;
+      margin-bottom: 24px;
+    }
+
+    .warn-box .warn-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fca5a5;
+      margin-bottom: 10px;
+    }
+
+    .warn-box ul { padding-left: 18px; }
+    .warn-box li { font-size: 13px; color: var(--text-dim); margin-bottom: 5px; }
+
+    /* ── Role summary ── */
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .role-card {
+      padding: 16px 18px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+
+    .role-name { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+    .role-desc { font-size: 12px; color: var(--text-faint); line-height: 1.5; }
+
+    .role-main    { border-left: 3px solid #818cf8; }
+    .role-researcher { border-left: 3px solid #38bdf8; }
+    .role-executor { border-left: 3px solid #34d399; }
+    .role-reviewer { border-left: 3px solid #fbbf24; }
+    .role-user    { border-left: 3px solid #c084fc; }
+
+    /* ── Context map ── */
+    .map-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 10px;
+    }
+
+    .map-card {
+      padding: 14px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+
+    .map-card-label { font-size: 11px; color: var(--text-faint); margin-bottom: 4px; }
+    .map-card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+    .map-card-path { font-size: 11px; color: var(--accent); margin-top: 4px; font-family: monospace; }
+
+    /* ── Section divider ── */
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Notice banner ── */
+    .notice {
+      background: linear-gradient(135deg, rgba(91,106,245,0.12), rgba(124,58,237,0.12));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin-bottom: 28px;
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .notice strong { color: var(--text); font-weight: 600; }
+
+    /* ── Progress bar ── */
+    .progress-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .progress-info { flex: 1; min-width: 200px; }
+
+    .progress-label {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 6px;
+    }
+
+    .progress-stats {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .progress-stats .progress-percent { color: var(--accent); margin-left: 8px; font-variant-numeric: tabular-nums; }
+
+    .progress-bar {
+      height: 6px;
+      background: var(--surface2);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.35s ease;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, border-color 0.15s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover { background: var(--border); border-color: var(--accent); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .btn-primary:hover { filter: brightness(1.1); }
+
+    .btn-ghost { background: transparent; }
+
+    /* ── STATE panel ── */
+    .state-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .state-panel h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .state-panel-desc { font-size: 13px; color: var(--text-dim); margin-bottom: 18px; }
+
+    .state-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .state-status {
+      font-size: 12px;
+      color: var(--text-faint);
+      margin-bottom: 16px;
+    }
+
+    .state-status.ok { color: var(--green); }
+    .state-status.warn { color: var(--yellow); }
+    .state-status.err { color: var(--red); }
+
+    .state-textarea {
+      width: 100%;
+      min-height: 120px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      padding: 12px 14px;
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.55;
+      resize: vertical;
+      margin-bottom: 16px;
+    }
+
+    .state-textarea:focus { outline: 1px solid var(--accent); }
+
+    .state-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .state-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+    }
+
+    .state-card-title {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .state-card-count {
+      background: var(--surface2);
+      color: var(--text);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      letter-spacing: 0;
+    }
+
+    .state-card.done .state-card-title { color: var(--green); }
+    .state-card.next .state-card-title { color: var(--accent3); }
+    .state-card.todo .state-card-title { color: var(--yellow); }
+
+    .state-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .state-list li {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.5;
+      padding-left: 10px;
+      position: relative;
+    }
+
+    .state-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 4px;
+      height: 4px;
+      background: var(--text-faint);
+      border-radius: 50%;
+    }
+
+    .state-empty {
+      font-size: 12px;
+      color: var(--text-faint);
+      font-style: italic;
+    }
+
+    /* ── Intake CTA ── */
+    .intake-cta {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .intake-cta-text { flex: 1; min-width: 220px; }
+    .intake-cta-text h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .intake-cta-text p { font-size: 12px; color: var(--text-dim); }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .page { padding: 40px 16px 80px; }
+      .header h1 { font-size: 28px; }
+      .phase-header { padding: 20px; }
+      .phase.open .phase-body { padding: 20px; }
+      .flow { padding: 20px; }
+      .qna-table { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-badge">AGENTS Template</div>
+    <h1>개발 프로세스 가이드</h1>
+    <p>AGENTS 템플릿을 활용해 새 프로젝트를 시작하고 반복 개발 작업을 진행하는 전체 흐름과 각 단계별 수행 항목을 정리한 페이지다.</p>
+  </div>
+
+  <!-- Notice -->
+  <div class="notice">
+    <strong>운영 규칙</strong> · 에이전트가 읽는 1차 소스는 <code>development-process.md</code>다. 이 페이지는 사람이 보는 보조 화면이며, 체크 상태와 STATE 입력값은 사용자의 브라우저 <code>localStorage</code>에만 저장되고 저장소에는 반영되지 않는다.
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-card">
+    <div class="progress-info">
+      <div class="progress-label">전체 진행률</div>
+      <div class="progress-stats"><span id="progress-text">0 / 0</span><span class="progress-percent" id="progress-percent">0%</span></div>
+      <div class="progress-bar"><div class="progress-bar-fill" id="progress-fill"></div></div>
+    </div>
+    <button class="btn btn-ghost" onclick="resetProgress()">진행률 초기화</button>
+    <button class="btn" onclick="expandAll(true)">모두 펼치기</button>
+    <button class="btn" onclick="expandAll(false)">모두 접기</button>
+  </div>
+
+  <!-- Intake CTA -->
+  <div class="intake-cta">
+    <div class="intake-cta-text">
+      <h3>입력 폼이 필요한가요?</h3>
+      <p>Startup QnA 11섹션 위저드와 feature/bugfix/refactor/review/business-logic 요청 템플릿을 폼으로 채우고 Markdown으로 내보낼 수 있다.</p>
+    </div>
+    <a class="btn" href="./development-strategy.html">개발 전략 보기</a>
+    <a class="btn btn-primary" href="./intake.html">Intake 폼 열기 →</a>
+  </div>
+
+  <!-- Flow Diagram -->
+  <div class="flow">
+    <div class="flow-step" onclick="openPhase(0)">
+      <div class="flow-num">1</div>
+      <div class="flow-label">저장소 준비</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" onclick="openPhase(1)">
+      <div class="flow-num">2</div>
+      <div class="flow-label">Startup QnA</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" onclick="openPhase(2)">
+      <div class="flow-num">3</div>
+      <div class="flow-label">가이드 문서 생성</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" onclick="openPhase(3)">
+      <div class="flow-num">4</div>
+      <div class="flow-label">요청 → 구현 → 검증</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" onclick="openPhase(4)">
+      <div class="flow-num">5</div>
+      <div class="flow-label">STATE 업데이트</div>
+    </div>
+  </div>
+
+  <!-- Phases -->
+  <div class="phases" id="phases">
+
+    <!-- Phase 1 -->
+    <div class="phase phase-1" id="phase-0">
+      <div class="phase-header" onclick="togglePhase(0)">
+        <div class="phase-num">P1</div>
+        <div class="phase-title-wrap">
+          <div class="phase-tag">Phase 1 — 시작 전</div>
+          <div class="phase-title">저장소 준비</div>
+          <div class="phase-subtitle">템플릿 복제 → 실행 명령 채우기 → STATE 초기화</div>
+        </div>
+        <div class="phase-toggle">⌄</div>
+      </div>
+      <div class="phase-body">
+        <div class="section-label">수행 항목</div>
+        <div class="checklist">
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text">이 템플릿 저장소를 새 프로젝트 디렉터리로 복제한다.</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text"><code>README.md</code>를 프로젝트 소개·실행 방법 중심으로 재작성한다.</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text"><code>AGENTS.md</code>의 <code>Operational Commands</code> 섹션에 실제 실행 명령을 채운다. (예: <code>npm run dev</code>, <code>pnpm test</code>)</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text"><code>agents/*.md</code> 중 이 프로젝트에 불필요한 역할 파일을 제거하거나 비워둔다.</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text"><code>STATE.md</code>를 초기 상태로 리셋한다.</div>
+          </div>
+        </div>
+        <div class="ref-section">
+          <div class="ref-label">참조 문서</div>
+          <div class="ref-links">
+            <a class="ref-link" href="../AGENTS.md">AGENTS.md</a>
+            <a class="ref-link" href="../README.md">README.md</a>
+            <a class="ref-link" href="../STATE.md">STATE.md</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="phase phase-2" id="phase-1">
+      <div class="phase-header" onclick="togglePhase(1)">
+        <div class="phase-num">P2</div>
+        <div class="phase-title-wrap">
+          <div class="phase-tag">Phase 2 — 정보 수집</div>
+          <div class="phase-title">Startup QnA</div>
+          <div class="phase-subtitle">에이전트 × 사용자 QnA → 확정 / 미정 / 제외 분류</div>
+        </div>
+        <div class="phase-toggle">⌄</div>
+      </div>
+      <div class="phase-body">
+        <div class="section-label">진행 방식</div>
+        <div class="checklist" style="margin-bottom:28px">
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text">에이전트가 아래 11개 섹션을 순서대로 질문한다. 섹션 하나가 끝날 때마다 <strong>확정 / 미정 / 제외</strong>로 분류해서 요약한다.</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text">전체 완료 후 결과 요약과 다음 액션을 제안한다.</div>
+          </div>
+        </div>
+
+        <div class="section-label">11개 섹션</div>
+        <table class="qna-table">
+          <thead>
+            <tr>
+              <th style="width:48px">#</th>
+              <th>주제</th>
+              <th>핵심 수집 항목</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="section-num">1</span></td><td>프로젝트 기본 정보</td><td>목적, 필수 기능, 제외 기능, 일정, 제약</td></tr>
+            <tr><td><span class="section-num">2</span></td><td>기술 스택</td><td>프레임워크, DB, 패키지 매니저, 테스트, 배포 환경</td></tr>
+            <tr><td><span class="section-num">3</span></td><td>UI 및 디자인 기준</td><td>스타일 방향, 주요 사용자 흐름, 화면 상태, 접근성</td></tr>
+            <tr><td><span class="section-num">4</span></td><td>모달 방식</td><td>구현 방식, 애니메이션, 닫기 방법, 스크롤 처리</td></tr>
+            <tr><td><span class="section-num">5</span></td><td>반응형 및 레이아웃</td><td>PC/모바일 우선순위, 브레이크포인트, 모바일 모달</td></tr>
+            <tr><td><span class="section-num">6</span></td><td>다국어(i18n)</td><td>지원 언어, 기본 locale, 번역 범위</td></tr>
+            <tr><td><span class="section-num">7</span></td><td>상태 관리</td><td>전역 상태, 서버 상태, 인증/권한</td></tr>
+            <tr><td><span class="section-num">8</span></td><td>포맷 및 현지화</td><td>UTC 기준, 화폐, 숫자 표기</td></tr>
+            <tr><td><span class="section-num">9</span></td><td>API 및 예외 처리</td><td>통신 방식, Mocking, Error Boundary</td></tr>
+            <tr><td><span class="section-num">10</span></td><td>라우팅 및 폼 검증</td><td>URL 상태 동기화, Protected Route, 폼 검증 전략</td></tr>
+            <tr><td><span class="section-num">11</span></td><td>협업 및 배포 환경</td><td>테스트 강제 여부, 커밋 컨벤션, CI/CD</td></tr>
+          </tbody>
+        </table>
+
+        <div class="ref-section">
+          <div class="ref-label">참조 문서</div>
+          <div class="ref-links">
+            <a class="ref-link" href="../templates/startup-checklist.md">startup-checklist.md</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="phase phase-3" id="phase-2">
+      <div class="phase-header" onclick="togglePhase(2)">
+        <div class="phase-num">P3</div>
+        <div class="phase-title-wrap">
+          <div class="phase-tag">Phase 3 — 기준 문서</div>
+          <div class="phase-title">프로젝트 가이드 문서 생성</div>
+          <div class="phase-subtitle">QnA 답변 → 프로젝트 전용 개발 기준 문서 작성</div>
+        </div>
+        <div class="phase-toggle">⌄</div>
+      </div>
+      <div class="phase-body">
+        <div class="section-label">수행 항목</div>
+        <div class="checklist">
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text"><code>docs/project-guide-template.md</code>를 복사해 프로젝트 전용 가이드를 작성한다.</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text">기술 스택이 확정되면 <code>AGENTS.md</code>의 <code>Operational Commands</code>를 갱신한다.</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text">다국어 지원이 확정되면 <code>docs/i18n-guidelines.md</code>를 작성한다.</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text">디렉터리 구조 설계가 필요하면 <code>docs/framework-structure-guide.md</code>를 작성한다.</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text">비즈니스 로직이 복잡하면 <code>docs/business-logic-playbook.md</code>를 작성한다.</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text">모달 설정 결과는 <code>docs/ui-decisions.md</code>로 별도 저장한다.</div>
+          </div>
+        </div>
+        <div class="warn-box" style="margin-top:8px">
+          <div class="warn-title">작성 기준</div>
+          <ul>
+            <li>확정 사항만 문서에 반영하고, 미정 사항은 <code>[미정]</code> 태그로 표시한다.</li>
+            <li>초안은 짧고 명확하게 유지하고, 실제 개발 중에 갱신한다.</li>
+          </ul>
+        </div>
+        <div class="ref-section">
+          <div class="ref-label">참조 문서</div>
+          <div class="ref-links">
+            <a class="ref-link" href="./project-guide-template.md">project-guide-template.md</a>
+            <a class="ref-link" href="./i18n-guidelines.md">i18n-guidelines.md</a>
+            <a class="ref-link" href="./framework-structure-guide.md">framework-structure-guide.md</a>
+            <a class="ref-link" href="./business-logic-playbook.md">business-logic-playbook.md</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="phase phase-4" id="phase-3">
+      <div class="phase-header" onclick="togglePhase(3)">
+        <div class="phase-num">P4</div>
+        <div class="phase-title-wrap">
+          <div class="phase-tag">Phase 4 — 반복 수행</div>
+          <div class="phase-title">작업 요청 → 구현 → 검증</div>
+          <div class="phase-subtitle">요청 템플릿 선택 → 4개 역할 순서대로 수행</div>
+        </div>
+        <div class="phase-toggle">⌄</div>
+      </div>
+      <div class="phase-body">
+
+        <!-- Step 4-1 -->
+        <div class="section-label">Step 4-1 — 작업 요청 (사용자)</div>
+        <p style="color:var(--text-dim);font-size:14px;margin-bottom:14px">목적에 맞는 요청 템플릿을 선택해 작업을 구조화한다.</p>
+        <div class="role-grid" style="margin-bottom:28px">
+          <div class="role-card role-user">
+            <div class="role-name" style="color:#c084fc">신규 기능</div>
+            <div class="role-desc">feature-request.md</div>
+          </div>
+          <div class="role-card role-user">
+            <div class="role-name" style="color:#c084fc">버그 수정</div>
+            <div class="role-desc">bugfix-request.md</div>
+          </div>
+          <div class="role-card role-user">
+            <div class="role-name" style="color:#c084fc">리팩터링</div>
+            <div class="role-desc">refactor-request.md</div>
+          </div>
+          <div class="role-card role-user">
+            <div class="role-name" style="color:#c084fc">비즈니스 로직</div>
+            <div class="role-desc">business-logic-request.md</div>
+          </div>
+          <div class="role-card role-user">
+            <div class="role-name" style="color:#c084fc">코드 리뷰</div>
+            <div class="role-desc">review-request.md</div>
+          </div>
+        </div>
+
+        <!-- Step 4-2 -->
+        <div class="section-label">Step 4-2 ~ 4-5 — 에이전트 역할별 수행</div>
+        <div class="steps">
+
+          <div class="step">
+            <div class="step-header">
+              <span class="step-badge badge-main">Main Agent</span>
+              <span class="step-title">요청 해석 및 범위 설정</span>
+              <span class="step-agent">agents/main-agent.md</span>
+            </div>
+            <div class="step-items">
+              <ul>
+                <li>요청에서 <strong>목표 / 산출물 / 제약 / 우선순위</strong>를 분리한다.</li>
+                <li>어떤 파일을 읽고 어떤 파일을 수정할지 먼저 밝힌다.</li>
+                <li>파괴적 변경이나 범위가 큰 리팩터링은 수행 전 사용자에게 재확인한다.</li>
+                <li>작은 단위로 작업을 분리해서 실행 순서를 정한다.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <span class="step-badge badge-researcher">Researcher Agent</span>
+              <span class="step-title">기존 구조 조사</span>
+              <span class="step-agent">agents/researcher-agent.md</span>
+            </div>
+            <div class="step-items">
+              <ul>
+                <li>관련 파일, 기존 구현, 중복 코드 존재 여부를 검색한다.</li>
+                <li><code>rg</code>, <code>rg --files</code> 등 도구로 패턴 탐색을 먼저 수행한다.</li>
+                <li>조사 결과를 근거로 구현 전 영향 범위를 정리한다.</li>
+                <li>외부 의존성이나 새 라이브러리 필요 여부를 확인한다.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <span class="step-badge badge-executor">Executor Agent</span>
+              <span class="step-title">구현</span>
+              <span class="step-agent">agents/executor-agent.md</span>
+            </div>
+            <div class="step-items">
+              <ul>
+                <li>기존 패턴, 네이밍 컨벤션, 디렉터리 구조를 먼저 파악하고 따른다.</li>
+                <li>한 번에 큰 리라이트보다 작은 단위로 변경한다.</li>
+                <li>기능 추가, 버그 수정, 리팩터링 목적을 섞지 않고 분리해서 처리한다.</li>
+                <li>테스트를 추가할 수 있으면 기능 코드와 함께 추가한다.</li>
+                <li>테스트를 못 추가했다면 이유와 남은 위험을 기록한다.</li>
+                <li>다국어 프로젝트에서는 UI 문자열을 하드코딩하지 않는다.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <span class="step-badge badge-reviewer">Reviewer Agent</span>
+              <span class="step-title">검증</span>
+              <span class="step-agent">agents/reviewer-agent.md</span>
+            </div>
+            <div class="step-items">
+              <ul>
+                <li>구현이 요청 범위를 벗어나지 않았는지 확인한다.</li>
+                <li>기존 기능의 회귀(regression)가 없는지 점검한다.</li>
+                <li>테스트 누락 여부와 예외 처리 누락 여부를 확인한다.</li>
+                <li>리스크가 남아 있다면 명확하게 기록한다.</li>
+                <li>동작 검증 없이 완료로 단정하지 않는다.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="warn-box">
+          <div class="warn-title">사용자 확인이 필요한 상황 — 에이전트가 자체 판단으로 진행하지 않는다</div>
+          <ul>
+            <li>파일 삭제, 디렉터리 대이동, 대규모 의존성 추가</li>
+            <li>기존 구현을 뒤집는 리팩터링</li>
+            <li>요구사항 해석에 따라 결과가 크게 달라지는 경우</li>
+            <li>테스트 실패 원인이 코드인지 환경인지 불분명한 경우</li>
+          </ul>
+        </div>
+
+        <div class="ref-section">
+          <div class="ref-label">참조 문서</div>
+          <div class="ref-links">
+            <a class="ref-link" href="../agents/main-agent.md">main-agent.md</a>
+            <a class="ref-link" href="../agents/researcher-agent.md">researcher-agent.md</a>
+            <a class="ref-link" href="../agents/executor-agent.md">executor-agent.md</a>
+            <a class="ref-link" href="../agents/reviewer-agent.md">reviewer-agent.md</a>
+            <a class="ref-link" href="../templates/feature-request.md">feature-request.md</a>
+            <a class="ref-link" href="../templates/bugfix-request.md">bugfix-request.md</a>
+            <a class="ref-link" href="../templates/refactor-request.md">refactor-request.md</a>
+            <a class="ref-link" href="../templates/business-logic-request.md">business-logic-request.md</a>
+            <a class="ref-link" href="../templates/review-request.md">review-request.md</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 5 -->
+    <div class="phase phase-5" id="phase-4">
+      <div class="phase-header" onclick="togglePhase(4)">
+        <div class="phase-num">P5</div>
+        <div class="phase-title-wrap">
+          <div class="phase-tag">Phase 5 — 마무리</div>
+          <div class="phase-title">STATE.md 업데이트 및 인계</div>
+          <div class="phase-subtitle">작업 완료마다 상태 기록 → 다음 작업자가 이어받을 수 있게</div>
+        </div>
+        <div class="phase-toggle">⌄</div>
+      </div>
+      <div class="phase-body">
+        <div class="section-label">수행 항목</div>
+        <div class="checklist">
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text"><code>STATE.md</code>의 <code>이번 세션에서 완료한 작업</code> 섹션에 변경 내용을 추가한다.</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text"><code>다음 작업</code> 섹션을 실행 가능한 문장으로 갱신한다.</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text">미해결 리스크나 알려진 TODO를 <code>알려진 TODO</code> 섹션에 기록한다.</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-icon"></div>
+            <div class="check-text">현재 기준 파일 목록이 바뀌었으면 함께 갱신한다.</div>
+          </div>
+        </div>
+        <div class="ref-section">
+          <div class="ref-label">참조 문서</div>
+          <div class="ref-links">
+            <a class="ref-link" href="../STATE.md">STATE.md</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /phases -->
+
+  <!-- Role Summary -->
+  <div style="margin-top:64px">
+    <div style="font-size:22px;font-weight:700;margin-bottom:8px;color:var(--text)">역할별 책임 요약</div>
+    <p style="color:var(--text-dim);font-size:14px;margin-bottom:24px">각 역할이 담당하는 범위를 명확히 분리해서 운영한다.</p>
+    <div class="role-grid">
+      <div class="role-card role-user">
+        <div class="role-name" style="color:#c084fc">사용자</div>
+        <div class="role-desc">요청 템플릿 작성, QnA 답변, 확인 응답</div>
+      </div>
+      <div class="role-card role-main">
+        <div class="role-name" style="color:#818cf8">main-agent</div>
+        <div class="role-desc">요청 해석, 범위 통제, 우선순위 결정</div>
+      </div>
+      <div class="role-card role-researcher">
+        <div class="role-name" style="color:#38bdf8">researcher-agent</div>
+        <div class="role-desc">기존 구조 조사, 중복 확인, 근거 수집</div>
+      </div>
+      <div class="role-card role-executor">
+        <div class="role-name" style="color:#34d399">executor-agent</div>
+        <div class="role-desc">실제 구현 (코드/문서)</div>
+      </div>
+      <div class="role-card role-reviewer">
+        <div class="role-name" style="color:#fbbf24">reviewer-agent</div>
+        <div class="role-desc">리스크 점검, 회귀 확인, 테스트 누락 검토</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATE Mini Dashboard -->
+  <div class="state-panel" style="margin-top:48px" id="state-panel">
+    <h2>STATE 미니 대시보드</h2>
+    <p class="state-panel-desc">현재 세션의 완료/다음 작업/알려진 TODO를 시각화한다. <code>file://</code>로 연 경우엔 <code>STATE.md</code>를 fetch할 수 없으므로 아래 텍스트 영역에 직접 붙여넣는다.</p>
+    <div class="state-actions">
+      <button class="btn" onclick="fetchState()">../STATE.md 가져오기</button>
+      <button class="btn btn-ghost" onclick="parseStateFromTextarea()">붙여넣은 내용 파싱</button>
+      <button class="btn btn-ghost" onclick="clearState()">초기화</button>
+    </div>
+    <div class="state-status" id="state-status">붙여넣거나 fetch를 시도하세요.</div>
+    <textarea class="state-textarea" id="state-input" placeholder="STATE.md 본문을 여기에 붙여넣으면 자동으로 파싱한다."></textarea>
+    <div class="state-grid" id="state-grid">
+      <div class="state-card done">
+        <div class="state-card-title">이번 세션 완료 <span class="state-card-count" id="state-count-done">0</span></div>
+        <ul class="state-list" id="state-list-done"><li class="state-empty">아직 데이터가 없다.</li></ul>
+      </div>
+      <div class="state-card next">
+        <div class="state-card-title">다음 작업 <span class="state-card-count" id="state-count-next">0</span></div>
+        <ul class="state-list" id="state-list-next"><li class="state-empty">아직 데이터가 없다.</li></ul>
+      </div>
+      <div class="state-card todo">
+        <div class="state-card-title">알려진 TODO <span class="state-card-count" id="state-count-todo">0</span></div>
+        <ul class="state-list" id="state-list-todo"><li class="state-empty">아직 데이터가 없다.</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context Map -->
+  <div style="margin-top:48px">
+    <div style="font-size:22px;font-weight:700;margin-bottom:8px;color:var(--text)">Context Map — 빠른 참조</div>
+    <p style="color:var(--text-dim);font-size:14px;margin-bottom:24px">작업 유형별로 어떤 문서를 참조해야 하는지 한눈에 확인한다.</p>
+    <div class="map-grid">
+      <div class="map-card"><div class="map-card-label">공통 원칙</div><div class="map-card-title">AGENTS.md</div><div class="map-card-path">../AGENTS.md</div></div>
+      <div class="map-card"><div class="map-card-label">상태 인계</div><div class="map-card-title">STATE.md</div><div class="map-card-path">../STATE.md</div></div>
+      <div class="map-card"><div class="map-card-label">새 프로젝트 QnA</div><div class="map-card-title">startup-checklist</div><div class="map-card-path">templates/startup-checklist.md</div></div>
+      <div class="map-card"><div class="map-card-label">프로젝트 가이드</div><div class="map-card-title">project-guide-template</div><div class="map-card-path">docs/project-guide-template.md</div></div>
+      <div class="map-card"><div class="map-card-label">기능 요청</div><div class="map-card-title">feature-request</div><div class="map-card-path">templates/feature-request.md</div></div>
+      <div class="map-card"><div class="map-card-label">버그 수정</div><div class="map-card-title">bugfix-request</div><div class="map-card-path">templates/bugfix-request.md</div></div>
+      <div class="map-card"><div class="map-card-label">리팩터링</div><div class="map-card-title">refactor-request</div><div class="map-card-path">templates/refactor-request.md</div></div>
+      <div class="map-card"><div class="map-card-label">비즈니스 로직</div><div class="map-card-title">business-logic-request</div><div class="map-card-path">templates/business-logic-request.md</div></div>
+      <div class="map-card"><div class="map-card-label">코드 리뷰</div><div class="map-card-title">review-request</div><div class="map-card-path">templates/review-request.md</div></div>
+      <div class="map-card"><div class="map-card-label">다국어 가이드</div><div class="map-card-title">i18n-guidelines</div><div class="map-card-path">docs/i18n-guidelines.md</div></div>
+      <div class="map-card"><div class="map-card-label">구조 설계</div><div class="map-card-title">framework-structure-guide</div><div class="map-card-path">docs/framework-structure-guide.md</div></div>
+      <div class="map-card"><div class="map-card-label">비즈니스 로직 플레이북</div><div class="map-card-title">business-logic-playbook</div><div class="map-card-path">docs/business-logic-playbook.md</div></div>
+      <a class="map-card" href="./development-strategy.html" style="text-decoration:none"><div class="map-card-label">개발 전략 매뉴얼</div><div class="map-card-title">development-strategy.html</div><div class="map-card-path">docs/development-strategy.html</div></a>
+      <a class="map-card" href="./intake.html" style="text-decoration:none"><div class="map-card-label">Intake 폼 UI</div><div class="map-card-title">intake.html</div><div class="map-card-path">docs/intake.html</div></a>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+  const STORAGE_CHECKS = 'agents-template:dev-process:checks:v1';
+  const STORAGE_PHASES = 'agents-template:dev-process:phases:v1';
+  const STORAGE_STATE  = 'agents-template:dev-process:state-text:v1';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    assignCheckIds();
+    restoreChecks();
+    restorePhases();
+    updateProgress();
+    restoreStateText();
+  });
+
+  // ── Check items ─────────────────────────────────────────────
+  function assignCheckIds() {
+    const items = document.querySelectorAll('.check-item');
+    items.forEach((el, i) => {
+      const phase = el.closest('.phase');
+      const phaseId = phase ? phase.id : 'free';
+      el.dataset.checkId = phaseId + ':' + i;
+    });
+  }
+
+  function loadChecks() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_CHECKS) || '{}'); }
+    catch { return {}; }
+  }
+
+  function saveChecks(state) {
+    localStorage.setItem(STORAGE_CHECKS, JSON.stringify(state));
+  }
+
+  function restoreChecks() {
+    const state = loadChecks();
+    document.querySelectorAll('.check-item').forEach((el) => {
+      const id = el.dataset.checkId;
+      if (state[id]) {
+        el.querySelector('.check-icon').classList.add('checked');
+        el.classList.add('checked-row');
+      }
+    });
+  }
+
+  function toggleCheck(item) {
+    const icon = item.querySelector('.check-icon');
+    icon.classList.toggle('checked');
+    item.classList.toggle('checked-row');
+    const state = loadChecks();
+    const id = item.dataset.checkId;
+    if (icon.classList.contains('checked')) state[id] = true;
+    else delete state[id];
+    saveChecks(state);
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const items = document.querySelectorAll('.check-item');
+    const total = items.length;
+    const done = document.querySelectorAll('.check-item .check-icon.checked').length;
+    const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+    document.getElementById('progress-text').textContent = done + ' / ' + total;
+    document.getElementById('progress-percent').textContent = pct + '%';
+    document.getElementById('progress-fill').style.width = pct + '%';
+  }
+
+  function resetProgress() {
+    if (!confirm('체크 상태와 Phase 펼침 상태를 모두 초기화하시겠습니까?')) return;
+    localStorage.removeItem(STORAGE_CHECKS);
+    localStorage.removeItem(STORAGE_PHASES);
+    document.querySelectorAll('.check-item').forEach((el) => {
+      el.querySelector('.check-icon').classList.remove('checked');
+      el.classList.remove('checked-row');
+    });
+    document.querySelectorAll('.phase').forEach((p) => p.classList.remove('open'));
+    openPhase(0);
+    updateProgress();
+  }
+
+  // ── Phase open/close ────────────────────────────────────────
+  function loadPhases() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_PHASES) || '{}'); }
+    catch { return {}; }
+  }
+
+  function savePhases(state) {
+    localStorage.setItem(STORAGE_PHASES, JSON.stringify(state));
+  }
+
+  function restorePhases() {
+    const state = loadPhases();
+    const keys = Object.keys(state);
+    if (keys.length === 0) {
+      openPhase(0);
+      return;
+    }
+    keys.forEach((id) => {
+      if (state[id]) {
+        const phase = document.getElementById(id);
+        if (phase) phase.classList.add('open');
+      }
+    });
+  }
+
+  function togglePhase(index) {
+    const phase = document.getElementById('phase-' + index);
+    phase.classList.toggle('open');
+    const state = loadPhases();
+    if (phase.classList.contains('open')) state[phase.id] = true;
+    else delete state[phase.id];
+    savePhases(state);
+  }
+
+  function openPhase(index) {
+    const phase = document.getElementById('phase-' + index);
+    if (!phase) return;
+    if (!phase.classList.contains('open')) {
+      phase.classList.add('open');
+      const state = loadPhases();
+      state[phase.id] = true;
+      savePhases(state);
+    }
+    phase.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function expandAll(open) {
+    const state = loadPhases();
+    document.querySelectorAll('.phase').forEach((p) => {
+      if (open) {
+        p.classList.add('open');
+        state[p.id] = true;
+      } else {
+        p.classList.remove('open');
+        delete state[p.id];
+      }
+    });
+    savePhases(state);
+  }
+
+  // ── STATE.md mini dashboard ─────────────────────────────────
+  function setStateStatus(msg, kind) {
+    const el = document.getElementById('state-status');
+    el.textContent = msg;
+    el.className = 'state-status' + (kind ? ' ' + kind : '');
+  }
+
+  async function fetchState() {
+    setStateStatus('../STATE.md 요청 중…');
+    try {
+      const res = await fetch('../STATE.md', { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      document.getElementById('state-input').value = text;
+      localStorage.setItem(STORAGE_STATE, text);
+      parseStateMd(text);
+      setStateStatus('fetch 성공 · ' + new Date().toLocaleTimeString(), 'ok');
+    } catch (err) {
+      setStateStatus('fetch 실패 (file:// 또는 네트워크 차단). 텍스트 영역에 직접 붙여넣으세요.', 'warn');
+    }
+  }
+
+  function parseStateFromTextarea() {
+    const text = document.getElementById('state-input').value;
+    if (!text.trim()) {
+      setStateStatus('텍스트가 비어 있다.', 'warn');
+      return;
+    }
+    localStorage.setItem(STORAGE_STATE, text);
+    parseStateMd(text);
+    setStateStatus('파싱 완료 · ' + new Date().toLocaleTimeString(), 'ok');
+  }
+
+  function clearState() {
+    document.getElementById('state-input').value = '';
+    localStorage.removeItem(STORAGE_STATE);
+    renderStateSection('done', []);
+    renderStateSection('next', []);
+    renderStateSection('todo', []);
+    setStateStatus('초기화됨.');
+  }
+
+  function restoreStateText() {
+    const saved = localStorage.getItem(STORAGE_STATE);
+    if (!saved) return;
+    document.getElementById('state-input').value = saved;
+    parseStateMd(saved);
+    setStateStatus('localStorage에서 복원함.');
+  }
+
+  function parseStateMd(text) {
+    const sections = splitH2Sections(text);
+    const done = extractListItems(sections['이번 세션에서 완료한 작업'] || sections['이번 세션 완료한 작업'] || '');
+    const next = extractListItems(sections['다음 작업'] || '');
+    const todo = extractListItems(sections['알려진 TODO'] || sections['알려진 todo'] || '');
+    renderStateSection('done', done);
+    renderStateSection('next', next);
+    renderStateSection('todo', todo);
+  }
+
+  function splitH2Sections(text) {
+    const out = {};
+    const lines = text.split(/\r?\n/);
+    let current = null;
+    let buffer = [];
+    for (const line of lines) {
+      const m = line.match(/^##\s+(.+?)\s*$/);
+      if (m) {
+        if (current) out[current] = buffer.join('\n');
+        current = m[1].trim();
+        buffer = [];
+      } else if (current) {
+        buffer.push(line);
+      }
+    }
+    if (current) out[current] = buffer.join('\n');
+    return out;
+  }
+
+  function extractListItems(body) {
+    if (!body) return [];
+    const items = [];
+    const lines = body.split(/\r?\n/);
+    for (const raw of lines) {
+      const m = raw.match(/^\s*[-*]\s+(.+?)\s*$/);
+      if (m) items.push(m[1]);
+    }
+    return items;
+  }
+
+  function renderStateSection(key, items) {
+    document.getElementById('state-count-' + key).textContent = items.length;
+    const list = document.getElementById('state-list-' + key);
+    list.innerHTML = '';
+    if (items.length === 0) {
+      const li = document.createElement('li');
+      li.className = 'state-empty';
+      li.textContent = '아직 데이터가 없다.';
+      list.appendChild(li);
+      return;
+    }
+    items.forEach((it) => {
+      const li = document.createElement('li');
+      li.textContent = it;
+      list.appendChild(li);
+    });
+  }
+</script>
+</body>
+</html>

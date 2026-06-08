@@ -31,6 +31,14 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 신규 DEX 거래소 개발용 `dexchange/` 프로젝트 초기화. (2026-06-08)
+  - `/home/skyua/projects/claude-agent-template/dexchange` 디렉터리 생성 후 Claude/Codex 에이전트 템플릿 v1.1.0 설치.
+  - 프로젝트 전용 `AGENTS.md`, `CLAUDE.md`, `README.md`, `STATE.md` 작성 — DEX 보안 경계(private key/seed phrase/mainnet/실자금/contract deploy 자동 실행 금지), `local`/`develop`/`production` 환경 호칭, pnpm/Docker 기본 명령 반영.
+  - DEX 초기 기준 문서 `docs/project-guide.md`, `docs/architecture.md`, `docs/security-model.md` 작성.
+  - 기본 모노레포 골격 추가: `apps/web`, `apps/indexer`, `packages/contracts`, `packages/sdk`, `packages/shared`, `infra`.
+  - 기본 설정 추가: `package.json`, `pnpm-workspace.yaml`, `.gitignore`, `.env.example`, `docker-compose.yml`, `scripts/check-docs.mjs`, `scripts/not-configured.mjs`.
+  - 검증: `cd dexchange && pnpm check`, `node scripts/check-docs.mjs`, `docker compose config --quiet` 통과.
+
 - 환경 호칭 3-tier 정책 신설 — `local`/`develop`/`production` 호칭 통일 + 마이그레이션 자동화 경계 명문화. (2026-06-07)
   - 배경: 마이그레이션 시 "dev"라는 표현이 (a) Prisma `migrate dev` 명령 모드와 (b) 원격 개발서버 환경을 동시에 가리켜 혼란. 사용자가 3개 환경(로컬 내 PC Docker / 개발서버 / 운영서버)의 호칭 정의 + "로컬만 자동, 개발·운영은 수동" 경계 명확화를 요청.
   - 결정: (1) 환경 호칭 `local`(내 PC Docker Desktop) / `develop`(원격 개발서버) / `production`(`prod`, 원격 운영서버) 3-tier, (2) "어디에(환경)"와 "어떻게(명령 모드)" 축 분리 — "dev" 단독 표기 금지·명령은 풀표기(`migrate dev`/`migrate deploy`), 개발서버 약어 `dev` 금지(`develop` 풀네임), (3) 자동화 경계는 명령명이 아니라 `DATABASE_URL` 연결 대상으로 판단 — `local`만 agent 자동, `develop`/`production`은 사용자 수동.

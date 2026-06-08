@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AGENTS Intake 폼</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3348;
+      --accent: #5b6af5;
+      --accent2: #7c3aed;
+      --accent3: #0ea5e9;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+      --text-faint: #475569;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+    code { background: var(--surface2); padding: 1px 6px; border-radius: 4px; font-size: 12.5px; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 32px 20px;
+      position: sticky;
+      top: 0;
+      max-height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+
+    .sidebar h1 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .sidebar p {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 20px;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin: 18px 0 8px;
+    }
+
+    .nav-item {
+      display: block;
+      padding: 9px 12px;
+      font-size: 13px;
+      color: var(--text-dim);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      margin-bottom: 4px;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .nav-item:hover { background: var(--surface2); color: var(--text); }
+    .nav-item.active {
+      background: var(--surface2);
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    .nav-item .nav-meta {
+      display: block;
+      font-size: 10px;
+      color: var(--text-faint);
+      margin-top: 2px;
+      font-family: monospace;
+    }
+
+    /* ── Main ── */
+    .main {
+      padding: 48px 56px 96px;
+      max-width: 980px;
+      width: 100%;
+    }
+
+    .main-header { margin-bottom: 32px; }
+    .main-header h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .main-header p { color: var(--text-dim); font-size: 14px; }
+
+    .notice {
+      background: linear-gradient(135deg, rgba(91,106,245,0.12), rgba(124,58,237,0.12));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin-bottom: 28px;
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+    .notice strong { color: var(--text); font-weight: 600; }
+
+    /* ── Wizard progress ── */
+    .wizard-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 22px;
+      margin-bottom: 24px;
+    }
+
+    .wizard-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+
+    .wizard-meta strong { color: var(--text); font-size: 14px; }
+
+    .wizard-progress {
+      height: 6px;
+      background: var(--surface2);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .wizard-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.3s ease;
+    }
+
+    .wizard-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 12px;
+    }
+
+    .wizard-tab {
+      padding: 4px 10px;
+      font-size: 11px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface2);
+      color: var(--text-faint);
+      cursor: pointer;
+    }
+
+    .wizard-tab.active { color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-color: transparent; }
+    .wizard-tab.filled { color: var(--green); border-color: var(--green); }
+
+    /* ── Form ── */
+    .form-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 30px;
+      margin-bottom: 22px;
+    }
+
+    .form-section h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .form-section .section-hint { font-size: 12px; color: var(--text-faint); margin-bottom: 20px; }
+
+    .field { margin-bottom: 20px; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .field .hint {
+      font-size: 12px;
+      color: var(--text-faint);
+      margin-bottom: 8px;
+    }
+
+    .field input[type="text"],
+    .field textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .field textarea { min-height: 80px; resize: vertical; }
+    .field input:focus, .field textarea:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .choices label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 400;
+      font-size: 13px;
+      margin-bottom: 0;
+    }
+
+    .choices label:hover { border-color: var(--accent); }
+    .choices input { margin-top: 4px; }
+    .choices label.checked { border-color: var(--accent); background: rgba(91,106,245,0.08); }
+
+    /* ── Action bar ── */
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding: 16px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .actions .spacer { flex: 1; }
+
+    .btn {
+      padding: 9px 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, border-color 0.15s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:hover { background: var(--border); border-color: var(--accent); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-color: transparent;
+      color: #fff;
+    }
+    .btn-primary:hover { filter: brightness(1.1); }
+    .btn-ghost { background: transparent; }
+
+    /* ── Preview ── */
+    .preview {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .preview-header h3 { font-size: 14px; font-weight: 700; }
+    .preview-header .copy-status { font-size: 11px; color: var(--green); opacity: 0; transition: opacity 0.3s; }
+    .preview-header .copy-status.show { opacity: 1; }
+
+    .preview pre {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      font-size: 12.5px;
+      line-height: 1.6;
+      max-height: 480px;
+      overflow: auto;
+      white-space: pre-wrap;
+      color: var(--text-dim);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: relative; max-height: none; border-right: none; border-bottom: 1px solid var(--border); }
+      .main { padding: 32px 20px 80px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-badge">AGENTS Template</div>
+    <h1>Intake 폼</h1>
+    <p>위저드와 요청 템플릿을 폼으로 채우고 Markdown으로 내보낸다.</p>
+
+    <div class="nav-label">위저드</div>
+    <nav id="nav-wizard"></nav>
+
+    <div class="nav-label">요청 템플릿</div>
+    <nav id="nav-forms"></nav>
+
+    <div class="nav-label">참고</div>
+    <a class="nav-item" href="./development-process.html">← 개발 프로세스 가이드</a>
+    <a class="nav-item" href="../AGENTS.md">AGENTS.md<span class="nav-meta">../AGENTS.md</span></a>
+    <a class="nav-item" href="../STATE.md">STATE.md<span class="nav-meta">../STATE.md</span></a>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="main-header">
+      <h2 id="main-title">Intake 폼</h2>
+      <p id="main-desc">왼쪽 사이드바에서 폼을 선택한다.</p>
+    </div>
+
+    <div class="notice">
+      <strong>운영 규칙</strong> · 1차 소스는 <code>templates/*.md</code>다. 이 페이지의 입력값은 사용자의 브라우저 <code>localStorage</code>에만 저장되며, 결과를 저장소에 반영하려면 Markdown으로 내보내 직접 커밋한다.
+    </div>
+
+    <div id="wizard-bar"></div>
+    <div id="form-area"></div>
+    <div id="actions" class="actions" style="display:none">
+      <button class="btn btn-ghost" onclick="prevSection()" id="btn-prev">← 이전</button>
+      <button class="btn btn-ghost" onclick="nextSection()" id="btn-next">다음 →</button>
+      <div class="spacer"></div>
+      <button class="btn" onclick="resetForm()">입력 초기화</button>
+      <button class="btn" onclick="copyMarkdown()">Markdown 복사</button>
+      <button class="btn btn-primary" onclick="downloadMarkdown()">Markdown 다운로드</button>
+    </div>
+
+    <div id="preview" class="preview" style="display:none">
+      <div class="preview-header">
+        <h3>Markdown 미리보기</h3>
+        <span class="copy-status" id="copy-status">복사됨</span>
+      </div>
+      <pre id="preview-md"></pre>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // ── Form definitions ────────────────────────────────────────
+  // Field types: 'text', 'textarea', 'radio', 'checkbox'
+  // For radio/checkbox: choices = [{ value, label }]
+
+  const FORMS = {
+    'feature-request': {
+      title: 'Feature Request',
+      file: 'templates/feature-request.md',
+      desc: '신규 기능 작업 요청을 구조화한다.',
+      sections: [
+        { heading: '목표', fields: [
+          { id: 'goal', type: 'textarea', label: '무엇을 만들고 싶은지 한 문장으로 적는다.' }
+        ]},
+        { heading: '배경', fields: [
+          { id: 'why', type: 'textarea', label: '왜 필요한가?' },
+          { id: 'problem', type: 'textarea', label: '현재 어떤 문제가 있는가?' }
+        ]},
+        { heading: '원하는 산출물', fields: [
+          { id: 'files', type: 'textarea', label: '수정 또는 생성이 필요한 파일' },
+          { id: 'behavior', type: 'textarea', label: '기대하는 사용자 동작' },
+          { id: 'docs', type: 'textarea', label: '필요한 문서 업데이트 여부' }
+        ]},
+        { heading: '제약사항', fields: [
+          { id: 'tech', type: 'textarea', label: '기술 스택 제약' },
+          { id: 'no_touch', type: 'textarea', label: '수정하면 안 되는 범위' },
+          { id: 'priority', type: 'textarea', label: '일정 또는 우선순위' }
+        ]},
+        { heading: '검증 기준', fields: [
+          { id: 'verify', type: 'textarea', label: '어떤 조건이면 완료로 볼지 적는다.' }
+        ]}
+      ]
+    },
+    'bugfix-request': {
+      title: 'Bugfix Request',
+      file: 'templates/bugfix-request.md',
+      desc: '버그 재현 경로와 기대 동작을 정리한다.',
+      sections: [
+        { heading: '문제 요약', fields: [
+          { id: 'summary', type: 'textarea', label: '어떤 버그인지 한 문장으로 적는다.' }
+        ]},
+        { heading: '재현 방법', fields: [
+          { id: 'env', type: 'textarea', label: '어떤 환경에서' },
+          { id: 'action', type: 'textarea', label: '어떤 동작을 했을 때' },
+          { id: 'issue', type: 'textarea', label: '어떤 문제가 발생하는가?' }
+        ]},
+        { heading: '기대 동작', fields: [
+          { id: 'expected', type: 'textarea', label: '원래 어떻게 동작해야 하는가?' }
+        ]},
+        { heading: '영향 범위', fields: [
+          { id: 'scope', type: 'textarea', label: '관련 화면, API, 파일, 모듈' }
+        ]},
+        { heading: '검증 기준', fields: [
+          { id: 'verify', type: 'textarea', label: '수정 후 어떤 테스트나 확인이 필요한가?' }
+        ]}
+      ]
+    },
+    'refactor-request': {
+      title: 'Refactor Request',
+      file: 'templates/refactor-request.md',
+      desc: '구조 개선 범위와 유지 조건을 명시한다.',
+      sections: [
+        { heading: '리팩터링 목표', fields: [
+          { id: 'goal', type: 'textarea', label: '무엇을 왜 정리하려는지 한 문장으로 적는다.' }
+        ]},
+        { heading: '현재 문제', fields: [
+          { id: 'problem', type: 'textarea', label: '중복, 복잡도, 가독성, 구조 문제 등 현재 불편한 점' }
+        ]},
+        { heading: '리팩터링 범위', fields: [
+          { id: 'targets', type: 'textarea', label: '수정 대상 파일 또는 모듈' },
+          { id: 'no_touch', type: 'textarea', label: '건드리면 안 되는 범위' }
+        ]},
+        { heading: '유지해야 할 조건', fields: [
+          { id: 'behavior', type: 'textarea', label: '바뀌면 안 되는 동작' },
+          { id: 'api', type: 'textarea', label: '유지해야 할 API 또는 인터페이스' },
+          { id: 'perf', type: 'textarea', label: '성능이나 호환성 관련 조건' }
+        ]},
+        { heading: '검증 기준', fields: [
+          { id: 'verify', type: 'textarea', label: '리팩터링 후 어떤 테스트나 확인이 필요한가?' }
+        ]}
+      ]
+    },
+    'review-request': {
+      title: 'Review Request',
+      file: 'templates/review-request.md',
+      desc: '코드 리뷰 범위와 중점 항목을 지정한다.',
+      sections: [
+        { heading: '리뷰 대상', fields: [
+          { id: 'targets', type: 'textarea', label: '어떤 파일 또는 변경사항을 리뷰할지 적는다.' }
+        ]},
+        { heading: '중점 확인 항목', fields: [
+          { id: 'focus', type: 'checkbox', label: '특히 신경 써서 확인해야 할 항목', choices: [
+            { value: '버그 가능성', label: '버그 가능성' },
+            { value: '회귀 위험', label: '회귀 위험' },
+            { value: '테스트 누락', label: '테스트 누락' },
+            { value: '구조 과잉 여부', label: '구조 과잉 여부' }
+          ]}
+        ]},
+        { heading: '배경 문맥', fields: [
+          { id: 'why', type: 'textarea', label: '왜 이 변경이 들어갔는지 적는다.' }
+        ]},
+        { heading: '원하는 리뷰 결과', fields: [
+          { id: 'critical', type: 'textarea', label: '치명적 문제' },
+          { id: 'suggestions', type: 'textarea', label: '개선 제안' },
+          { id: 'tests', type: 'textarea', label: '추가 테스트 필요 여부' }
+        ]}
+      ]
+    },
+    'business-logic-request': {
+      title: 'Business Logic Request',
+      file: 'templates/business-logic-request.md',
+      desc: '로직 변경의 요구사항, 시나리오, 영향, Git 작업 계획을 정리한다.',
+      sections: [
+        { heading: '변경 목표', fields: [
+          { id: 'goal', type: 'textarea', label: '어떤 비즈니스 로직을 왜 바꾸려는가?' }
+        ]},
+        { heading: '현재 문제', fields: [
+          { id: 'problem', type: 'textarea', label: '현재 어떤 문제가 있는가?' },
+          { id: 'biz_impact', type: 'textarea', label: '비즈니스적으로 어떤 영향이 있는가?' }
+        ]},
+        { heading: '요구사항', fields: [
+          { id: 'inputs', type: 'textarea', label: '입력 조건' },
+          { id: 'outputs', type: 'textarea', label: '기대 결과' },
+          { id: 'constraints', type: 'textarea', label: '제약 사항' },
+          { id: 'excluded', type: 'textarea', label: '제외 범위' }
+        ]},
+        { heading: '시나리오', fields: [
+          { id: 'normal', type: 'textarea', label: '정상 시나리오' },
+          { id: 'fail', type: 'textarea', label: '실패 시나리오' },
+          { id: 'edge', type: 'textarea', label: '경계값 시나리오' },
+          { id: 'auth', type: 'textarea', label: '권한 또는 상태별 시나리오' }
+        ]},
+        { heading: '영향 범위', fields: [
+          { id: 'apis', type: 'textarea', label: '관련 API' },
+          { id: 'screens', type: 'textarea', label: '관련 화면' },
+          { id: 'modules', type: 'textarea', label: '관련 서비스 또는 모듈' },
+          { id: 'data', type: 'textarea', label: '관련 데이터 구조' }
+        ]},
+        { heading: '검증 계획', fields: [
+          { id: 'tests', type: 'textarea', label: '필요한 테스트' },
+          { id: 'build', type: 'textarea', label: '필요한 빌드 확인' },
+          { id: 'docker', type: 'textarea', label: 'Docker rebuild 필요 여부' },
+          { id: 'predeploy', type: 'textarea', label: '배포 전 확인 항목' }
+        ]},
+        { heading: 'Git 작업 계획', fields: [
+          { id: 'pull', type: 'textarea', label: 'git pull 필요 여부' },
+          { id: 'commit', type: 'textarea', label: 'commit 메시지 방향' },
+          { id: 'push', type: 'textarea', label: 'push 전 확인할 점' }
+        ]}
+      ]
+    }
+  };
+
+  // ── Startup QnA wizard ──────────────────────────────────────
+  const STARTUP = {
+    title: 'Startup QnA',
+    file: 'templates/startup-checklist.md',
+    desc: '에이전트가 새 프로젝트 시작 시 사용자에게 진행하는 11섹션 QnA 위저드.',
+    isWizard: true,
+    sections: [
+      { heading: '섹션 1 — 프로젝트 기본 정보', fields: [
+        { id: 's1q1', type: 'textarea', label: 'Q1. 이 프로젝트를 한 문장으로 설명하면?' },
+        { id: 's1q2', type: 'textarea', label: 'Q2. 이번 단계에서 반드시 구현해야 하는 기능은?' },
+        { id: 's1q3', type: 'textarea', label: 'Q3. 이번 단계에서 제외하거나 나중으로 미룰 기능은?' },
+        { id: 's1q4', type: 'textarea', label: 'Q4. 일정 제약이 있다면?' },
+        { id: 's1q5', type: 'textarea', label: 'Q5. 수정하거나 교체하면 안 되는 기존 코드 또는 시스템이 있다면?' }
+      ]},
+      { heading: '섹션 2 — 기술 스택', fields: [
+        { id: 's2q1', type: 'text', label: 'Q1. 프론트엔드 프레임워크', hint: '예: Next.js, React, Vue, Svelte' },
+        { id: 's2q2', type: 'text', label: 'Q2. 백엔드 또는 API 방식', hint: '예: REST, GraphQL, tRPC, 없음' },
+        { id: 's2q3', type: 'text', label: 'Q3. 데이터베이스', hint: '예: PostgreSQL, MySQL, SQLite, 없음' },
+        { id: 's2q4', type: 'text', label: 'Q4. 패키지 매니저', hint: '예: npm, pnpm, yarn, bun' },
+        { id: 's2q5', type: 'text', label: 'Q5. 테스트 도구', hint: '예: Vitest, Jest, Playwright, 없음' },
+        { id: 's2q6', type: 'text', label: 'Q6. 린트/포맷 도구', hint: '예: ESLint + Prettier, Biome, 없음' },
+        { id: 's2q7', type: 'text', label: 'Q7. 배포 환경', hint: '예: Vercel, AWS, Docker, 미정' }
+      ]},
+      { heading: '섹션 3 — UI 및 디자인 기준', fields: [
+        { id: 's3q1', type: 'text', label: 'Q1. UI 톤 또는 스타일 방향', hint: '예: 미니멀, 다크, 기업형, 없음' },
+        { id: 's3q2', type: 'textarea', label: 'Q2. 참고하고 싶은 서비스나 디자인이 있다면?' },
+        { id: 's3q3', type: 'textarea', label: 'Q3. 가장 중요한 사용자 흐름 1~3개는?' },
+        { id: 's3q4', type: 'checkbox', label: 'Q4. 반드시 고려해야 할 화면 상태', choices: [
+          { value: 'loading', label: 'loading' },
+          { value: 'empty', label: 'empty' },
+          { value: 'error', label: 'error' },
+          { value: 'disabled', label: 'disabled' }
+        ]},
+        { id: 's3q5', type: 'textarea', label: 'Q5. 접근성 대응 수준', hint: '예: 키보드 탐색, 스크린 리더, 색상 대비 기준' }
+      ]},
+      { heading: '섹션 4 — 모달 방식 설정', fields: [
+        { id: 's4q1', type: 'radio', label: 'Q1. 모달 구현 방식', choices: [
+          { value: 'A. 커스텀 모달 (직접 구현)', label: 'A. 커스텀 모달 (직접 구현)' },
+          { value: 'B. 시스템/라이브러리 모달 (Radix, Headless UI, shadcn 등)', label: 'B. 시스템/라이브러리 모달 (Radix, Headless UI, shadcn 등)' },
+          { value: 'C. 미정', label: 'C. 미정' }
+        ]},
+        { id: 's4q2', type: 'radio', label: 'Q2. 모달 열기/닫기 애니메이션', choices: [
+          { value: 'A. 페이드', label: 'A. 페이드 (Fade)' },
+          { value: 'B. 슬라이드', label: 'B. 슬라이드 (Slide)' },
+          { value: 'C. 스케일', label: 'C. 스케일 (Scale)' },
+          { value: 'D. 없음', label: 'D. 애니메이션 없음' },
+          { value: 'E. 미정', label: 'E. 미정' }
+        ]},
+        { id: 's4q3', type: 'checkbox', label: 'Q3. 모달을 닫는 방법 (복수 선택)', choices: [
+          { value: 'A. 닫기 버튼 (X)', label: 'A. 닫기 버튼 (X)' },
+          { value: 'B. 배경 클릭', label: 'B. 배경(Overlay) 클릭' },
+          { value: 'C. ESC 키', label: 'C. ESC 키' },
+          { value: 'D. 특정 조건에서만', label: 'D. 특정 조건에서만 (예: 폼 제출 후)' },
+          { value: 'E. 미정', label: 'E. 미정' }
+        ]},
+        { id: 's4q4', type: 'radio', label: 'Q4. 모달 스택(중첩) 허용', choices: [
+          { value: 'A. 허용', label: 'A. 허용 (최대 N단계)' },
+          { value: 'B. 불허', label: 'B. 불허 (항상 단일 모달)' },
+          { value: 'C. 미정', label: 'C. 미정' }
+        ]},
+        { id: 's4q5', type: 'radio', label: 'Q5. 모달 외부 스크롤 처리', choices: [
+          { value: 'A. 배경 스크롤 잠금', label: 'A. 배경 스크롤 잠금 (body scroll lock)' },
+          { value: 'B. 배경 스크롤 허용', label: 'B. 배경 스크롤 허용' },
+          { value: 'C. 미정', label: 'C. 미정' }
+        ]},
+        { id: 's4q6', type: 'radio', label: 'Q6. 모달 내부 스크롤', choices: [
+          { value: 'A. 필요', label: 'A. 필요 (콘텐츠가 길어질 수 있음)' },
+          { value: 'B. 불필요', label: 'B. 불필요 (항상 짧음)' },
+          { value: 'C. 케이스별', label: 'C. 케이스별 상이' }
+        ]},
+        { id: 's4q7', type: 'radio', label: 'Q7. 모달 접근성 대응 수준', choices: [
+          { value: 'A. 최소', label: 'A. 최소 (aria-label 정도)' },
+          { value: 'B. 표준', label: 'B. 표준 (focus trap, role="dialog")' },
+          { value: 'C. 높음', label: 'C. 높음 (스크린 리더 완전 대응)' },
+          { value: 'D. 미정', label: 'D. 미정' }
+        ]}
+      ]},
+      { heading: '섹션 5 — 반응형 및 레이아웃', fields: [
+        { id: 's5q1', type: 'radio', label: 'Q1. PC/모바일 우선순위', choices: [
+          { value: 'A. PC 우선', label: 'A. PC 우선' },
+          { value: 'B. 모바일 우선', label: 'B. 모바일 우선' },
+          { value: 'C. 동일', label: 'C. 동일 우선' }
+        ]},
+        { id: 's5q2', type: 'text', label: 'Q2. 브레이크포인트 기준', hint: '예: sm(640), md(768), lg(1024), xl(1280)' },
+        { id: 's5q3', type: 'radio', label: 'Q3. 반응형에서 모달 처리', choices: [
+          { value: 'A. 바텀 시트로 전환', label: 'A. 모바일에서는 바텀 시트(Bottom Sheet)' },
+          { value: 'B. 동일 모달 유지', label: 'B. 모바일에서도 동일한 모달 유지' },
+          { value: 'C. 미정', label: 'C. 미정' }
+        ]}
+      ]},
+      { heading: '섹션 6 — 다국어(i18n) 여부', fields: [
+        { id: 's6q1', type: 'radio', label: 'Q1. 다국어 지원 필요', choices: [
+          { value: 'A. 필요', label: 'A. 필요' },
+          { value: 'B. 불필요', label: 'B. 불필요' },
+          { value: 'C. 미정', label: 'C. 미정' }
+        ]},
+        { id: 's6q1_langs', type: 'text', label: '지원 언어 (필요한 경우)', hint: '예: ko, en, ja' },
+        { id: 's6q2', type: 'text', label: 'Q2. 기본 locale', hint: '예: ko, en, ja' },
+        { id: 's6q3', type: 'radio', label: 'Q3. 번역 범위', choices: [
+          { value: 'A. UI 전체', label: 'A. UI 전체 (버튼/레이블/에러/모달 포함)' },
+          { value: 'B. 일부만', label: 'B. 일부만 (핵심 화면만)' },
+          { value: 'C. 미정', label: 'C. 미정' }
+        ]}
+      ]},
+      { heading: '섹션 7 — 비즈니스 로직 및 상태 관리', fields: [
+        { id: 's7q1', type: 'radio', label: 'Q1. 전역 상태 관리', choices: [
+          { value: 'A. 필요', label: 'A. 필요' },
+          { value: 'B. 불필요', label: 'B. 불필요 (로컬 상태만)' },
+          { value: 'C. 미정', label: 'C. 미정' }
+        ]},
+        { id: 's7q1_tool', type: 'text', label: '도구 (필요한 경우)', hint: 'Zustand / Redux / Jotai / Context API / 미정' },
+        { id: 's7q2', type: 'radio', label: 'Q2. 서버 상태 관리(캐시, 패칭)', choices: [
+          { value: 'A. 필요', label: 'A. 필요' },
+          { value: 'B. 불필요', label: 'B. 불필요' },
+          { value: 'C. 미정', label: 'C. 미정' }
+        ]},
+        { id: 's7q2_tool', type: 'text', label: '도구 (필요한 경우)', hint: 'React Query / SWR / tRPC / 미정' },
+        { id: 's7q3', type: 'radio', label: 'Q3. 인증/권한 처리', choices: [
+          { value: 'A. 필요', label: 'A. 필요' },
+          { value: 'B. 불필요', label: 'B. 불필요' },
+          { value: 'C. 미정', label: 'C. 미정' }
+        ]},
+        { id: 's7q3_method', type: 'text', label: '방식 (필요한 경우)', hint: '세션, JWT, OAuth, 미정' }
+      ]},
+      { heading: '섹션 8 — 포맷 및 현지화', fields: [
+        { id: 's8q1', type: 'radio', label: 'Q1. 세계시 및 타임존', choices: [
+          { value: 'A. UTC 통신/저장, 클라이언트 변환', label: 'A. UTC 통신·저장, 클라이언트에서만 Local Time' },
+          { value: 'B. 특정 타임존 고정', label: 'B. 특정 타임존 고정 (예: Asia/Seoul)' },
+          { value: 'C. 미정', label: 'C. 미정' }
+        ]},
+        { id: 's8q2', type: 'textarea', label: 'Q2. 화폐 단위 설정', hint: 'A. 단일 통화 / B. 다중 통화 / C. 기호 위치·소수점 우선순위' },
+        { id: 's8q3', type: 'textarea', label: 'Q3. 숫자 표기', hint: '천 단위 구분자, 축약(1M, 10K) 적용 여부' }
+      ]},
+      { heading: '섹션 9 — API 및 예외 처리', fields: [
+        { id: 's9q1', type: 'textarea', label: 'Q1. API 통신 방식과 타입 자동화', hint: 'REST/GraphQL, Swagger 기반 타입 생성 유무' },
+        { id: 's9q2', type: 'textarea', label: 'Q2. Mocking 설정 (MSW 등)' },
+        { id: 's9q3', type: 'textarea', label: 'Q3. Error Boundary 전략 및 에러 로깅', hint: 'Sentry 등 연동 계획' }
+      ]},
+      { heading: '섹션 10 — 라우팅 및 폼 검증', fields: [
+        { id: 's10q1', type: 'textarea', label: 'Q1. 파라미터 상태 동기화', hint: '탭/검색어/페이지네이션을 URL 쿼리에 강제할지' },
+        { id: 's10q2', type: 'textarea', label: 'Q2. Protected Route 권한 수준', hint: '비로그인 제한 vs 직군별 권한' },
+        { id: 's10q3', type: 'textarea', label: 'Q3. 폼 상태/검증 전략', hint: 'React Hook Form + Zod 등' }
+      ]},
+      { heading: '섹션 11 — 협업 및 배포 환경', fields: [
+        { id: 's11q1', type: 'textarea', label: 'Q1. 테스트 코드 작성을 필수로 강제할지' },
+        { id: 's11q2', type: 'textarea', label: 'Q2. 커밋 메시지 컨벤션', hint: '예: feat:, fix:' },
+        { id: 's11q3', type: 'textarea', label: 'Q3. CI/CD 파이프라인 유무' }
+      ]}
+    ]
+  };
+
+  // ── App state ───────────────────────────────────────────────
+  let currentFormId = null;
+  let currentSectionIdx = 0;
+
+  function storageKey(formId) {
+    return 'agents-template:intake:' + formId + ':v1';
+  }
+
+  function getForm(id) {
+    if (id === 'startup-checklist') return STARTUP;
+    return FORMS[id];
+  }
+
+  function load(id) { try { return JSON.parse(localStorage.getItem(storageKey(id)) || '{}'); } catch { return {}; } }
+  function save(id, data) { localStorage.setItem(storageKey(id), JSON.stringify(data)); }
+
+  // ── Sidebar render ──────────────────────────────────────────
+  function renderSidebar() {
+    const wizardNav = document.getElementById('nav-wizard');
+    const formsNav = document.getElementById('nav-forms');
+    wizardNav.innerHTML = '';
+    formsNav.innerHTML = '';
+
+    const wizardEl = document.createElement('a');
+    wizardEl.className = 'nav-item';
+    wizardEl.dataset.id = 'startup-checklist';
+    wizardEl.innerHTML = STARTUP.title + '<span class="nav-meta">' + STARTUP.file + '</span>';
+    wizardEl.onclick = (e) => { e.preventDefault(); selectForm('startup-checklist'); };
+    wizardEl.href = '#startup-checklist';
+    wizardNav.appendChild(wizardEl);
+
+    Object.entries(FORMS).forEach(([id, form]) => {
+      const el = document.createElement('a');
+      el.className = 'nav-item';
+      el.dataset.id = id;
+      el.innerHTML = form.title + '<span class="nav-meta">' + form.file + '</span>';
+      el.onclick = (e) => { e.preventDefault(); selectForm(id); };
+      el.href = '#' + id;
+      formsNav.appendChild(el);
+    });
+  }
+
+  function highlightActive() {
+    document.querySelectorAll('.nav-item').forEach((el) => {
+      el.classList.toggle('active', el.dataset.id === currentFormId);
+    });
+  }
+
+  // ── Form rendering ──────────────────────────────────────────
+  function selectForm(id) {
+    currentFormId = id;
+    currentSectionIdx = 0;
+    highlightActive();
+    renderHeader();
+    renderForm();
+    document.getElementById('actions').style.display = 'flex';
+    document.getElementById('preview').style.display = 'block';
+    history.replaceState(null, '', '#' + id);
+  }
+
+  function renderHeader() {
+    const f = getForm(currentFormId);
+    document.getElementById('main-title').textContent = f.title;
+    document.getElementById('main-desc').textContent = f.desc + ' · 1차 소스: ' + f.file;
+  }
+
+  function renderForm() {
+    const f = getForm(currentFormId);
+    const data = load(currentFormId);
+    const wizardBar = document.getElementById('wizard-bar');
+    const formArea = document.getElementById('form-area');
+
+    if (f.isWizard) {
+      const total = f.sections.length;
+      const idx = currentSectionIdx;
+      const filled = f.sections.map((s) => s.fields.some((field) => isFilled(data[field.id])));
+      const filledCount = filled.filter(Boolean).length;
+      const pct = Math.round((filledCount / total) * 100);
+
+      wizardBar.innerHTML = '';
+      const bar = document.createElement('div');
+      bar.className = 'wizard-bar';
+      bar.innerHTML = '\n        <div class="wizard-meta"><span>위저드 진행 · 섹션 ' + (idx + 1) + ' / ' + total + '</span><strong>' + pct + '%</strong></div>\n        <div class="wizard-progress"><div class="wizard-progress-fill" style="width:' + pct + '%"></div></div>\n        <div class="wizard-tabs" id="wizard-tabs"></div>';
+      wizardBar.appendChild(bar);
+
+      const tabs = bar.querySelector('#wizard-tabs');
+      f.sections.forEach((s, i) => {
+        const t = document.createElement('button');
+        t.className = 'wizard-tab' + (i === idx ? ' active' : '') + (filled[i] ? ' filled' : '');
+        t.textContent = (i + 1);
+        t.title = s.heading;
+        t.onclick = () => { currentSectionIdx = i; renderForm(); };
+        tabs.appendChild(t);
+      });
+
+      formArea.innerHTML = '';
+      formArea.appendChild(renderSection(f.sections[idx], data));
+
+      document.getElementById('btn-prev').disabled = idx === 0;
+      document.getElementById('btn-next').disabled = idx === total - 1;
+      document.getElementById('btn-prev').style.display = '';
+      document.getElementById('btn-next').style.display = '';
+    } else {
+      wizardBar.innerHTML = '';
+      formArea.innerHTML = '';
+      f.sections.forEach((s) => formArea.appendChild(renderSection(s, data)));
+      document.getElementById('btn-prev').style.display = 'none';
+      document.getElementById('btn-next').style.display = 'none';
+    }
+    updatePreview();
+  }
+
+  function renderSection(section, data) {
+    const wrap = document.createElement('section');
+    wrap.className = 'form-section';
+    const h = document.createElement('h3');
+    h.textContent = section.heading;
+    wrap.appendChild(h);
+    section.fields.forEach((field) => wrap.appendChild(renderField(field, data)));
+    return wrap;
+  }
+
+  function renderField(field, data) {
+    const wrap = document.createElement('div');
+    wrap.className = 'field';
+    const label = document.createElement('label');
+    label.textContent = field.label;
+    wrap.appendChild(label);
+    if (field.hint) {
+      const hint = document.createElement('div');
+      hint.className = 'hint';
+      hint.textContent = field.hint;
+      wrap.appendChild(hint);
+    }
+
+    const value = data[field.id];
+
+    if (field.type === 'text') {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = value || '';
+      input.oninput = () => onFieldChange(field.id, input.value);
+      wrap.appendChild(input);
+    } else if (field.type === 'textarea') {
+      const ta = document.createElement('textarea');
+      ta.value = value || '';
+      ta.oninput = () => onFieldChange(field.id, ta.value);
+      wrap.appendChild(ta);
+    } else if (field.type === 'radio') {
+      const grp = document.createElement('div');
+      grp.className = 'choices';
+      field.choices.forEach((c) => {
+        const lab = document.createElement('label');
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = currentFormId + ':' + field.id;
+        input.value = c.value;
+        if (value === c.value) { input.checked = true; lab.classList.add('checked'); }
+        input.onchange = () => {
+          onFieldChange(field.id, c.value);
+          grp.querySelectorAll('label').forEach((l) => l.classList.remove('checked'));
+          lab.classList.add('checked');
+        };
+        const span = document.createElement('span');
+        span.textContent = c.label;
+        lab.appendChild(input);
+        lab.appendChild(span);
+        grp.appendChild(lab);
+      });
+      wrap.appendChild(grp);
+    } else if (field.type === 'checkbox') {
+      const grp = document.createElement('div');
+      grp.className = 'choices';
+      const arr = Array.isArray(value) ? value.slice() : [];
+      field.choices.forEach((c) => {
+        const lab = document.createElement('label');
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.value = c.value;
+        if (arr.includes(c.value)) { input.checked = true; lab.classList.add('checked'); }
+        input.onchange = () => {
+          const data2 = load(currentFormId);
+          const cur = Array.isArray(data2[field.id]) ? data2[field.id] : [];
+          if (input.checked) { if (!cur.includes(c.value)) cur.push(c.value); lab.classList.add('checked'); }
+          else { const i = cur.indexOf(c.value); if (i >= 0) cur.splice(i, 1); lab.classList.remove('checked'); }
+          data2[field.id] = cur;
+          save(currentFormId, data2);
+          updatePreview();
+          if (getForm(currentFormId).isWizard) renderForm();
+        };
+        const span = document.createElement('span');
+        span.textContent = c.label;
+        lab.appendChild(input);
+        lab.appendChild(span);
+        grp.appendChild(lab);
+      });
+      wrap.appendChild(grp);
+    }
+    return wrap;
+  }
+
+  function onFieldChange(id, value) {
+    const data = load(currentFormId);
+    data[id] = value;
+    save(currentFormId, data);
+    updatePreview();
+    if (getForm(currentFormId).isWizard) {
+      const fill = document.querySelector('.wizard-progress-fill');
+      if (fill) {
+        const f = getForm(currentFormId);
+        const total = f.sections.length;
+        const filled = f.sections.filter((s) => s.fields.some((field) => isFilled(data[field.id]))).length;
+        fill.style.width = Math.round((filled / total) * 100) + '%';
+      }
+    }
+  }
+
+  function isFilled(v) {
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === 'string') return v.trim().length > 0;
+    return false;
+  }
+
+  function prevSection() {
+    if (currentSectionIdx > 0) { currentSectionIdx--; renderForm(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  }
+
+  function nextSection() {
+    const f = getForm(currentFormId);
+    if (currentSectionIdx < f.sections.length - 1) { currentSectionIdx++; renderForm(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  }
+
+  function resetForm() {
+    if (!confirm(getForm(currentFormId).title + ' 입력을 초기화하시겠습니까?')) return;
+    localStorage.removeItem(storageKey(currentFormId));
+    currentSectionIdx = 0;
+    renderForm();
+  }
+
+  // ── Markdown export ─────────────────────────────────────────
+  function buildMarkdown() {
+    const f = getForm(currentFormId);
+    const data = load(currentFormId);
+    const lines = [];
+    lines.push('# ' + f.title);
+    lines.push('');
+    if (f.desc) { lines.push('> ' + f.desc); lines.push(''); }
+    f.sections.forEach((s) => {
+      lines.push('## ' + s.heading);
+      lines.push('');
+      s.fields.forEach((field) => {
+        lines.push('### ' + field.label);
+        lines.push('');
+        const v = data[field.id];
+        if (Array.isArray(v) && v.length > 0) {
+          v.forEach((item) => lines.push('- ' + item));
+        } else if (typeof v === 'string' && v.trim()) {
+          v.split(/\r?\n/).forEach((line) => lines.push(line));
+        } else {
+          lines.push('_(미입력)_');
+        }
+        lines.push('');
+      });
+    });
+    return lines.join('\n');
+  }
+
+  function updatePreview() {
+    document.getElementById('preview-md').textContent = buildMarkdown();
+  }
+
+  function copyMarkdown() {
+    const md = buildMarkdown();
+    navigator.clipboard.writeText(md).then(() => {
+      const status = document.getElementById('copy-status');
+      status.classList.add('show');
+      setTimeout(() => status.classList.remove('show'), 1500);
+    }).catch(() => alert('클립보드 복사 실패. 미리보기에서 직접 복사해 주세요.'));
+  }
+
+  function downloadMarkdown() {
+    const md = buildMarkdown();
+    const blob = new Blob([md], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = currentFormId + '.md';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ── Init ────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    renderSidebar();
+    const hash = location.hash.replace('#', '');
+    const initial = (hash && (hash === 'startup-checklist' || FORMS[hash])) ? hash : 'startup-checklist';
+    selectForm(initial);
+  });
+</script>
+
+</body>
+</html>

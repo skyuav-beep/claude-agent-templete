@@ -1,0 +1,2983 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin FE 디자인 프리뷰 — DESIGN.md 토큰 기반</title>
+  <style>
+    /* ============================================================
+       시안별 CSS 변수 블록 (designs/<slug>.md의 ## CSS Variables 와 동일)
+       data-design + data-theme 두 속성 cascade
+       시안 추가 시: 해당 시안의 두 블록을 아래에 그대로 inline 한다.
+       ============================================================ */
+
+    /* ----- wanted (light) ----- */
+    :root[data-design="wanted"][data-theme="light"] {
+      --bg-canvas:        oklch(1 0 0);
+      --bg-surface:       oklch(1 0 0);
+      --bg-subtle:        oklch(0.972 0.002 286);
+      --bg-muted:         oklch(0.961 0.002 286);
+      --bg-elevated:      oklch(1 0 0);
+      --bg-inverse:       oklch(0.148 0.004 277);
+      --bg-brand:         oklch(0.563 0.232 257);
+      --bg-brand-subtle:  oklch(0.954 0.022 250);
+      --bg-danger-subtle: oklch(0.951 0.018 18);
+      --bg-success-subtle:oklch(0.968 0.052 154);
+      --bg-warning-subtle:oklch(0.967 0.030 81);
+      --fg-strong:    oklch(0.148 0.004 277);
+      --fg-default:   oklch(0.259 0.010 273 / 0.88);
+      --fg-secondary: oklch(0.298 0.010 273 / 0.61);
+      --fg-tertiary:  oklch(0.298 0.010 273 / 0.43);
+      --fg-disabled:  oklch(0.298 0.010 273 / 0.28);
+      --fg-on-brand:  oklch(1 0 0);
+      --fg-brand:     oklch(0.563 0.232 257);
+      --fg-success:   oklch(0.673 0.211 144);
+      --fg-warning:   oklch(0.625 0.148 56);
+      --fg-danger:    oklch(0.546 0.220 27);
+      --border-subtle:  oklch(0.521 0.018 273 / 0.08);
+      --border-default: oklch(0.521 0.018 273 / 0.22);
+      --border-strong:  oklch(0.521 0.018 273 / 0.35);
+      --border-brand:   oklch(0.563 0.232 257);
+      --shadow-1:   0 1px 2px oklch(0 0 0 / 0.04);
+      --shadow-2:   0 4px 8px oklch(0 0 0 / 0.06);
+      --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.10);
+    }
+
+    /* ----- linear-like (light) ----- */
+    :root[data-design="linear-like"][data-theme="light"] {
+      --bg-canvas:        oklch(0.985 0.005 270);
+      --bg-surface:       oklch(1 0 0);
+      --bg-subtle:        oklch(0.972 0.008 270);
+      --bg-muted:         oklch(0.952 0.012 270);
+      --bg-elevated:      oklch(1 0 0);
+      --bg-inverse:       oklch(0.160 0.020 270);
+      --bg-brand:         oklch(0.620 0.180 268);
+      --bg-brand-subtle:  oklch(0.952 0.025 268);
+      --bg-danger-subtle: oklch(0.952 0.022 22);
+      --bg-success-subtle:oklch(0.952 0.045 152);
+      --bg-warning-subtle:oklch(0.958 0.032 81);
+      --fg-strong:    oklch(0.160 0.020 270);
+      --fg-default:   oklch(0.200 0.018 270 / 0.90);
+      --fg-secondary: oklch(0.280 0.015 270 / 0.60);
+      --fg-tertiary:  oklch(0.280 0.015 270 / 0.42);
+      --fg-disabled:  oklch(0.280 0.015 270 / 0.28);
+      --fg-on-brand:  oklch(1 0 0);
+      --fg-brand:     oklch(0.500 0.180 268);
+      --fg-success:   oklch(0.520 0.180 144);
+      --fg-warning:   oklch(0.580 0.140 56);
+      --fg-danger:    oklch(0.540 0.200 27);
+      --border-subtle:  oklch(0.520 0.020 270 / 0.10);
+      --border-default: oklch(0.520 0.020 270 / 0.22);
+      --border-strong:  oklch(0.520 0.020 270 / 0.34);
+      --border-brand:   oklch(0.620 0.180 268);
+      --shadow-1:   0 1px 2px oklch(0 0 0 / 0.06);
+      --shadow-2:   0 4px 12px oklch(0 0 0 / 0.08);
+      --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.14);
+    }
+
+    /* ----- linear-like (dark) ----- */
+    :root[data-design="linear-like"][data-theme="dark"] {
+      --bg-canvas:        oklch(0.140 0.018 270);
+      --bg-surface:       oklch(0.170 0.020 270);
+      --bg-subtle:        oklch(0.120 0.015 270);
+      --bg-muted:         oklch(0.205 0.022 270);
+      --bg-elevated:      oklch(0.240 0.025 270);
+      --bg-inverse:       oklch(1 0 0);
+      --bg-brand:         oklch(0.620 0.180 268);
+      --bg-brand-subtle:  oklch(0.220 0.080 268);
+      --bg-danger-subtle: oklch(0.298 0.10 22 / 0.34);
+      --bg-success-subtle:oklch(0.298 0.10 144 / 0.30);
+      --bg-warning-subtle:oklch(0.298 0.10 56 / 0.34);
+      --fg-strong:    oklch(0.985 0.005 270);
+      --fg-default:   oklch(0.985 0.005 270 / 0.90);
+      --fg-secondary: oklch(0.985 0.005 270 / 0.60);
+      --fg-tertiary:  oklch(0.985 0.005 270 / 0.42);
+      --fg-disabled:  oklch(0.985 0.005 270 / 0.28);
+      --fg-on-brand:  oklch(1 0 0);
+      --fg-brand:     oklch(0.740 0.155 268);
+      --fg-success:   oklch(0.740 0.165 144);
+      --fg-warning:   oklch(0.770 0.150 64);
+      --fg-danger:    oklch(0.720 0.215 27);
+      --border-subtle:  oklch(0.985 0.005 270 / 0.08);
+      --border-default: oklch(0.985 0.005 270 / 0.18);
+      --border-strong:  oklch(0.985 0.005 270 / 0.30);
+      --border-brand:   oklch(0.740 0.155 268);
+      --shadow-1:   0 1px 2px oklch(0 0 0 / 0.16);
+      --shadow-2:   0 4px 12px oklch(0 0 0 / 0.24);
+      --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.40);
+    }
+
+    /* ----- material-3 (light) ----- */
+    :root[data-design="material-3"][data-theme="light"] {
+      --bg-canvas:        oklch(0.992 0.005 295);
+      --bg-surface:       oklch(0.992 0.005 295);
+      --bg-subtle:        oklch(0.965 0.012 295);
+      --bg-muted:         oklch(0.945 0.018 295);
+      --bg-elevated:      oklch(0.925 0.025 295);
+      --bg-inverse:       oklch(0.250 0.018 295);
+      --bg-brand:         oklch(0.460 0.155 295);
+      --bg-brand-subtle:  oklch(0.920 0.045 295);
+      --bg-danger-subtle: oklch(0.935 0.040 22);
+      --bg-success-subtle:oklch(0.935 0.060 152);
+      --bg-warning-subtle:oklch(0.940 0.060 81);
+      --fg-strong:    oklch(0.180 0.015 295);
+      --fg-default:   oklch(0.220 0.012 295 / 0.95);
+      --fg-secondary: oklch(0.300 0.010 295 / 0.70);
+      --fg-tertiary:  oklch(0.300 0.010 295 / 0.48);
+      --fg-disabled:  oklch(0.300 0.010 295 / 0.32);
+      --fg-on-brand:  oklch(0.998 0 0);
+      --fg-brand:     oklch(0.460 0.155 295);
+      --fg-success:   oklch(0.500 0.175 144);
+      --fg-warning:   oklch(0.560 0.140 56);
+      --fg-danger:    oklch(0.495 0.205 27);
+      --border-subtle:  oklch(0.520 0.020 295 / 0.12);
+      --border-default: oklch(0.520 0.020 295 / 0.25);
+      --border-strong:  oklch(0.520 0.020 295 / 0.40);
+      --border-brand:   oklch(0.460 0.155 295);
+      --shadow-1: 0 1px 2px oklch(0 0 0 / 0.30), 0 1px 3px 1px oklch(0 0 0 / 0.15);
+      --shadow-2: 0 1px 2px oklch(0 0 0 / 0.30), 0 2px 6px 2px oklch(0 0 0 / 0.15);
+      --shadow-pop: 0 8px 12px 6px oklch(0 0 0 / 0.15), 0 4px 4px oklch(0 0 0 / 0.30);
+    }
+
+    /* ----- material-3 (dark) ----- */
+    :root[data-design="material-3"][data-theme="dark"] {
+      --bg-canvas:        oklch(0.155 0.015 295);
+      --bg-surface:       oklch(0.155 0.015 295);
+      --bg-subtle:        oklch(0.135 0.013 295);
+      --bg-muted:         oklch(0.195 0.020 295);
+      --bg-elevated:      oklch(0.235 0.025 295);
+      --bg-inverse:       oklch(0.920 0.010 295);
+      --bg-brand:         oklch(0.795 0.130 295);
+      --bg-brand-subtle:  oklch(0.330 0.080 295);
+      --bg-danger-subtle: oklch(0.298 0.10 22 / 0.40);
+      --bg-success-subtle:oklch(0.298 0.10 144 / 0.34);
+      --bg-warning-subtle:oklch(0.298 0.10 56 / 0.40);
+      --fg-strong:    oklch(0.965 0.005 295);
+      --fg-default:   oklch(0.965 0.005 295 / 0.95);
+      --fg-secondary: oklch(0.965 0.005 295 / 0.70);
+      --fg-tertiary:  oklch(0.965 0.005 295 / 0.48);
+      --fg-disabled:  oklch(0.965 0.005 295 / 0.32);
+      --fg-on-brand:  oklch(0.220 0.020 295);
+      --fg-brand:     oklch(0.795 0.130 295);
+      --fg-success:   oklch(0.760 0.165 144);
+      --fg-warning:   oklch(0.785 0.150 64);
+      --fg-danger:    oklch(0.720 0.215 27);
+      --border-subtle:  oklch(0.965 0.005 295 / 0.12);
+      --border-default: oklch(0.965 0.005 295 / 0.25);
+      --border-strong:  oklch(0.965 0.005 295 / 0.40);
+      --border-brand:   oklch(0.795 0.130 295);
+      --shadow-1: 0 1px 2px oklch(0 0 0 / 0.50), 0 1px 3px 1px oklch(0 0 0 / 0.30);
+      --shadow-2: 0 1px 2px oklch(0 0 0 / 0.50), 0 2px 6px 2px oklch(0 0 0 / 0.30);
+      --shadow-pop: 0 8px 12px 6px oklch(0 0 0 / 0.30), 0 4px 4px oklch(0 0 0 / 0.50);
+    }
+
+    /* ----- toss-like (light) ----- */
+    :root[data-design="toss-like"][data-theme="light"] {
+      --bg-canvas:        oklch(0.985 0.002 245);
+      --bg-surface:       oklch(1 0 0);
+      --bg-subtle:        oklch(0.975 0.005 245);
+      --bg-muted:         oklch(0.955 0.008 245);
+      --bg-elevated:      oklch(1 0 0);
+      --bg-inverse:       oklch(0.180 0.020 245);
+      --bg-brand:         oklch(0.620 0.180 245);
+      --bg-brand-subtle:  oklch(0.955 0.020 245);
+      --bg-danger-subtle: oklch(0.962 0.020 22);
+      --bg-success-subtle:oklch(0.965 0.045 152);
+      --bg-warning-subtle:oklch(0.968 0.030 81);
+      --fg-strong:    oklch(0.180 0.020 245);
+      --fg-default:   oklch(0.220 0.018 245 / 0.92);
+      --fg-secondary: oklch(0.280 0.015 245 / 0.62);
+      --fg-tertiary:  oklch(0.280 0.015 245 / 0.44);
+      --fg-disabled:  oklch(0.280 0.015 245 / 0.28);
+      --fg-on-brand:  oklch(1 0 0);
+      --fg-brand:     oklch(0.540 0.180 245);
+      --fg-success:   oklch(0.520 0.180 144);
+      --fg-warning:   oklch(0.580 0.140 56);
+      --fg-danger:    oklch(0.540 0.200 27);
+      --border-subtle:  oklch(0.520 0.020 245 / 0.10);
+      --border-default: oklch(0.520 0.020 245 / 0.22);
+      --border-strong:  oklch(0.520 0.020 245 / 0.34);
+      --border-brand:   oklch(0.620 0.180 245);
+      --shadow-1:   0 1px 3px oklch(0 0 0 / 0.06);
+      --shadow-2:   0 4px 12px oklch(0 0 0 / 0.08);
+      --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.12);
+    }
+
+    /* ----- toss-like (dark) ----- */
+    :root[data-design="toss-like"][data-theme="dark"] {
+      --bg-canvas:        oklch(0.145 0.020 245);
+      --bg-surface:       oklch(0.180 0.025 245);
+      --bg-subtle:        oklch(0.125 0.020 245);
+      --bg-muted:         oklch(0.215 0.025 245);
+      --bg-elevated:      oklch(0.250 0.025 245);
+      --bg-inverse:       oklch(1 0 0);
+      --bg-brand:         oklch(0.620 0.180 245);
+      --bg-brand-subtle:  oklch(0.180 0.085 245);
+      --bg-danger-subtle: oklch(0.298 0.10 22 / 0.34);
+      --bg-success-subtle:oklch(0.298 0.10 144 / 0.30);
+      --bg-warning-subtle:oklch(0.298 0.10 56 / 0.34);
+      --fg-strong:    oklch(1 0 0);
+      --fg-default:   oklch(1 0 0 / 0.92);
+      --fg-secondary: oklch(1 0 0 / 0.62);
+      --fg-tertiary:  oklch(1 0 0 / 0.44);
+      --fg-disabled:  oklch(1 0 0 / 0.28);
+      --fg-on-brand:  oklch(1 0 0);
+      --fg-brand:     oklch(0.730 0.155 245);
+      --fg-success:   oklch(0.740 0.165 144);
+      --fg-warning:   oklch(0.770 0.150 64);
+      --fg-danger:    oklch(0.720 0.215 27);
+      --border-subtle:  oklch(1 0 0 / 0.10);
+      --border-default: oklch(1 0 0 / 0.22);
+      --border-strong:  oklch(1 0 0 / 0.34);
+      --border-brand:   oklch(0.730 0.155 245);
+      --shadow-1:   0 1px 3px oklch(0 0 0 / 0.24);
+      --shadow-2:   0 4px 12px oklch(0 0 0 / 0.36);
+      --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.50);
+    }
+
+    /* ----- minimal-mono (light) ----- */
+    :root[data-design="minimal-mono"][data-theme="light"] {
+      --bg-canvas:        oklch(1 0 0);
+      --bg-surface:       oklch(1 0 0);
+      --bg-subtle:        oklch(0.975 0 0);
+      --bg-muted:         oklch(0.955 0 0);
+      --bg-elevated:      oklch(1 0 0);
+      --bg-inverse:       oklch(0.145 0 0);
+      --bg-brand:         oklch(0.145 0 0);
+      --bg-brand-subtle:  oklch(0.940 0 0);
+      --bg-danger-subtle: oklch(0.965 0.020 18);
+      --bg-success-subtle:oklch(0.965 0.025 152);
+      --bg-warning-subtle:oklch(0.965 0.025 81);
+      --fg-strong:    oklch(0.145 0 0);
+      --fg-default:   oklch(0.145 0 0 / 0.88);
+      --fg-secondary: oklch(0.145 0 0 / 0.60);
+      --fg-tertiary:  oklch(0.145 0 0 / 0.42);
+      --fg-disabled:  oklch(0.145 0 0 / 0.28);
+      --fg-on-brand:  oklch(1 0 0);
+      --fg-brand:     oklch(0.145 0 0);
+      --fg-success:   oklch(0.520 0.180 144);
+      --fg-warning:   oklch(0.580 0.140 56);
+      --fg-danger:    oklch(0.540 0.200 27);
+      --border-subtle:  oklch(0.145 0 0 / 0.08);
+      --border-default: oklch(0.145 0 0 / 0.20);
+      --border-strong:  oklch(0.145 0 0 / 0.32);
+      --border-brand:   oklch(0.145 0 0);
+      --shadow-1:   0 1px 2px oklch(0 0 0 / 0.04);
+      --shadow-2:   0 4px 8px oklch(0 0 0 / 0.06);
+      --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.10);
+    }
+
+    /* ----- minimal-mono (dark) ----- */
+    :root[data-design="minimal-mono"][data-theme="dark"] {
+      --bg-canvas:        oklch(0.145 0 0);
+      --bg-surface:       oklch(0.175 0 0);
+      --bg-subtle:        oklch(0.125 0 0);
+      --bg-muted:         oklch(0.205 0 0);
+      --bg-elevated:      oklch(0.235 0 0);
+      --bg-inverse:       oklch(1 0 0);
+      --bg-brand:         oklch(0.940 0 0);
+      --bg-brand-subtle:  oklch(0.235 0 0);
+      --bg-danger-subtle: oklch(0.298 0.10 22 / 0.32);
+      --bg-success-subtle:oklch(0.298 0.10 144 / 0.28);
+      --bg-warning-subtle:oklch(0.298 0.10 56 / 0.32);
+      --fg-strong:    oklch(1 0 0);
+      --fg-default:   oklch(1 0 0 / 0.88);
+      --fg-secondary: oklch(1 0 0 / 0.60);
+      --fg-tertiary:  oklch(1 0 0 / 0.42);
+      --fg-disabled:  oklch(1 0 0 / 0.28);
+      --fg-on-brand:  oklch(0.145 0 0);
+      --fg-brand:     oklch(1 0 0);
+      --fg-success:   oklch(0.740 0.165 144);
+      --fg-warning:   oklch(0.770 0.150 64);
+      --fg-danger:    oklch(0.720 0.215 27);
+      --border-subtle:  oklch(1 0 0 / 0.08);
+      --border-default: oklch(1 0 0 / 0.20);
+      --border-strong:  oklch(1 0 0 / 0.32);
+      --border-brand:   oklch(1 0 0);
+      --shadow-1:   0 1px 2px oklch(0 0 0 / 0.20);
+      --shadow-2:   0 4px 8px oklch(0 0 0 / 0.32);
+      --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.48);
+    }
+
+    /* ----- wanted (dark) ----- */
+    :root[data-design="wanted"][data-theme="dark"] {
+      --bg-canvas:        oklch(0.148 0.004 277);
+      --bg-surface:       oklch(0.166 0.005 271);
+      --bg-subtle:        oklch(0.135 0.002 286);
+      --bg-muted:         oklch(0.196 0.008 273);
+      --bg-elevated:      oklch(0.237 0.008 273);
+      --bg-inverse:       oklch(1 0 0);
+      --bg-brand:         oklch(0.563 0.232 257);
+      --bg-brand-subtle:  oklch(0.149 0.069 257);
+      --bg-danger-subtle: oklch(0.298 0.10 22 / 0.32);
+      --bg-success-subtle:oklch(0.298 0.10 144 / 0.28);
+      --bg-warning-subtle:oklch(0.298 0.10 56 / 0.32);
+      --fg-strong:    oklch(1 0 0);
+      --fg-default:   oklch(1 0 0 / 0.88);
+      --fg-secondary: oklch(1 0 0 / 0.61);
+      --fg-tertiary:  oklch(1 0 0 / 0.43);
+      --fg-disabled:  oklch(1 0 0 / 0.28);
+      --fg-on-brand:  oklch(1 0 0);
+      --fg-brand:     oklch(0.715 0.155 255);
+      --fg-success:   oklch(0.760 0.180 144);
+      --fg-warning:   oklch(0.778 0.158 64);
+      --fg-danger:    oklch(0.715 0.220 27);
+      --border-subtle:  oklch(1 0 0 / 0.08);
+      --border-default: oklch(1 0 0 / 0.22);
+      --border-strong:  oklch(1 0 0 / 0.35);
+      --border-brand:   oklch(0.715 0.155 255);
+      --shadow-1:   0 1px 2px oklch(0 0 0 / 0.20);
+      --shadow-2:   0 4px 8px oklch(0 0 0 / 0.32);
+      --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.48);
+    }
+
+    /* spacing/radius/typography 토큰 (시안·테마 무관, 모든 시안 공통) */
+    :root {
+      --space-4: 4px;  --space-8: 8px;   --space-12: 12px; --space-16: 16px;
+      --space-20: 20px;--space-24: 24px; --space-32: 32px; --space-40: 40px;
+      --space-48: 48px;--space-56: 56px; --space-64: 64px; --space-80: 80px;
+
+      --radius-2: 2px; --radius-4: 4px; --radius-8: 8px; --radius-12: 12px;
+      --radius-16: 16px; --radius-full: 9999px;
+
+      --font-ui: "Pretendard JP", "Pretendard", "Apple SD Gothic Neo",
+                 "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+
+      /* 시안 전용 토큰의 표준 fallback (designs/_alias-contract.md ## 9b 참조)
+         특정 시안만 정의하는 추가 토큰을 미정의 시안 활성 시 표준 ladder로 fallback.
+         시안 전용 시그너처 변수(--font-mono 등)는 시안 활성 블록에서 override 한다. */
+      --radius-6: 6px;       /* linear-like 시그너처, 다른 시안에서는 표준 위치는 radius-8 */
+      --radius-20: 20px;     /* toss-like xl 카드/modal */
+      --radius-28: 28px;     /* material-3 FAB, bottom sheet */
+      --shadow-3: 0 4px 8px 3px oklch(0 0 0 / 0.10), 0 1px 3px oklch(0 0 0 / 0.20);   /* M3 level 3 */
+      --shadow-4: 0 6px 10px 4px oklch(0 0 0 / 0.10), 0 2px 3px oklch(0 0 0 / 0.20);  /* M3 level 4 */
+      --shadow-cta: var(--shadow-1);  /* toss-like brand glow → 기본 shadow-1 fallback */
+      --font-mono: ui-monospace, "JetBrains Mono", "SF Mono", monospace;
+      --font-size-mono: 13px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      background: var(--bg-subtle);
+      color: var(--fg-default);
+      font-family: var(--font-ui);
+      font-size: 14px;
+      line-height: 1.5;
+      letter-spacing: -0.01em;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== 페이지 chrome (preview 자체 UI) ===== */
+    .preview-bar {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; gap: var(--space-16);
+      padding: var(--space-12) var(--space-24);
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .preview-bar h1 {
+      font-size: 14px; font-weight: 600; color: var(--fg-strong);
+    }
+    .preview-bar .source { font-size: 12px; color: var(--fg-secondary); }
+    .preview-bar .right { margin-left: auto; display: flex; gap: var(--space-8); align-items: center; }
+    .design-select {
+      padding: 6px 28px 6px 10px; font-size: 12px; font-weight: 500;
+      background: var(--bg-muted); color: var(--fg-strong);
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-8);
+      font-family: inherit; cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca0aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
+    .theme-toggle {
+      display: inline-flex; padding: 2px;
+      background: var(--bg-muted); border-radius: var(--radius-8);
+    }
+    .theme-toggle button {
+      padding: 6px 12px; font-size: 12px; font-weight: 500;
+      background: transparent; color: var(--fg-secondary);
+      border: 0; border-radius: var(--radius-4); cursor: pointer;
+      font-family: inherit;
+    }
+    .theme-toggle button[aria-pressed="true"] {
+      background: var(--bg-surface); color: var(--fg-strong);
+    }
+
+    /* policy chip strip */
+    .policy-strip {
+      display: flex; flex-wrap: wrap; gap: var(--space-8);
+      padding: var(--space-12) var(--space-24);
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      align-items: center;
+    }
+    .policy-strip-label {
+      font-size: 11px; font-weight: 600; color: var(--fg-tertiary); letter-spacing: 0.04em;
+    }
+    .policy-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 2px 10px; height: 24px;
+      border-radius: var(--radius-full);
+      background: var(--bg-muted); color: var(--fg-default);
+      font-size: 11px; font-weight: 500;
+      border: 1px solid var(--border-subtle);
+    }
+    .policy-pill.on { background: var(--bg-success-subtle); color: var(--fg-success); border-color: transparent; }
+    .policy-pill.off { background: var(--bg-danger-subtle); color: var(--fg-danger); border-color: transparent; }
+    .policy-pill.info { background: var(--bg-brand-subtle); color: var(--fg-brand); border-color: transparent; }
+
+    .container {
+      max-width: 1280px; margin: 0 auto;
+      padding: var(--space-32) var(--space-24);
+    }
+    .section { margin-bottom: var(--space-64); }
+    .section-head { margin-bottom: var(--space-16); }
+    .section-head h2 { font-size: 22px; font-weight: 700; color: var(--fg-strong); letter-spacing: -0.02em; }
+    .section-head p { color: var(--fg-secondary); margin-top: 4px; font-size: 13px; }
+
+    .specimen {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-12);
+      padding: var(--space-32);
+      margin-bottom: var(--space-24);
+    }
+    .specimen-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+      color: var(--fg-tertiary); margin-bottom: var(--space-16);
+    }
+
+    /* ===== Color swatch 카드 ===== */
+    .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space-12); }
+    .swatch {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-8);
+      overflow: hidden; background: var(--bg-surface);
+    }
+    .swatch-fill { height: 64px; }
+    .swatch-meta { padding: var(--space-12); }
+    .swatch-name { font-size: 12px; font-weight: 600; color: var(--fg-strong); }
+    .swatch-token { font-size: 11px; color: var(--fg-secondary); margin-top: 2px; font-family: ui-monospace, "SF Mono", monospace; }
+
+    /* ===== atomic (button/input/badge) ===== */
+    .button {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: var(--space-8);
+      padding: 0 var(--space-16); height: 40px;
+      border-radius: var(--radius-8);
+      font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1;
+      border: 1px solid transparent; cursor: pointer;
+      transition: background 120ms ease;
+    }
+    .button.lg { height: 48px; padding: 0 var(--space-20); border-radius: 10px; font-size: 16px; }
+    .button.sm { height: 32px; padding: 0 var(--space-12); border-radius: 6px; font-size: 13px; font-weight: 500; }
+    .button.full { width: 100%; }
+    .button.primary { background: var(--bg-brand); color: var(--fg-on-brand); }
+    .button.primary:hover { background: oklch(0.484 0.205 258); }
+    .button.secondary { background: transparent; color: var(--fg-strong); border-color: var(--border-default); }
+    .button.secondary:hover { background: var(--bg-muted); }
+    .button.tertiary { background: var(--bg-muted); color: var(--fg-strong); }
+    .button.ghost { background: transparent; color: var(--fg-brand); }
+    .button.ghost:hover { background: var(--bg-brand-subtle); }
+    .button.danger { background: var(--fg-danger); color: var(--fg-on-brand); }
+
+    .input {
+      width: 100%; height: 44px; padding: 0 14px;
+      background: var(--bg-surface);
+      color: var(--fg-default);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-8);
+      font-family: inherit; font-size: 14px;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+    .input::placeholder { color: var(--fg-tertiary); }
+    .input:focus {
+      outline: none;
+      border-color: var(--border-brand);
+      box-shadow: 0 0 0 3px oklch(0.563 0.232 257 / 0.16);
+    }
+
+    .badge {
+      display: inline-flex; align-items: center;
+      padding: 2px var(--space-8); height: 22px;
+      border-radius: var(--radius-full);
+      font-size: 12px; font-weight: 600; line-height: 1;
+    }
+    .badge.active { background: var(--bg-success-subtle); color: var(--fg-success); }
+    .badge.pending { background: var(--bg-warning-subtle); color: var(--fg-warning); }
+    .badge.inactive { background: var(--bg-muted); color: var(--fg-secondary); }
+    .badge.danger { background: var(--bg-danger-subtle); color: var(--fg-danger); }
+
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0 var(--space-12); height: 28px;
+      border-radius: var(--radius-full);
+      background: var(--bg-muted); color: var(--fg-default);
+      font-size: 12px; font-weight: 500;
+      border: 0;
+    }
+
+    .label-form {
+      font-size: 13px; font-weight: 600; color: var(--fg-strong);
+      display: block; margin-bottom: 6px;
+    }
+    .helper-form { font-size: 12px; color: var(--fg-secondary); margin-top: 4px; }
+
+    /* ===== icon (inline svg currentColor) ===== */
+    .icon { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2;
+            fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+    .icon.sm { width: 16px; height: 16px; }
+    .icon.lg { width: 24px; height: 24px; }
+
+    /* ============================================================
+       1) login-layout
+       ============================================================ */
+    .login-stage {
+      background: var(--bg-canvas);
+      padding: var(--space-64) var(--space-24);
+      border-radius: var(--radius-12);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .login-card {
+      width: 400px; max-width: 100%;
+      padding: var(--space-32);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-12);
+    }
+    .login-brand { display: flex; align-items: center; gap: var(--space-8); margin-bottom: var(--space-24); }
+    .login-brand .logo {
+      width: 32px; height: 32px; border-radius: var(--radius-8);
+      background: var(--bg-brand); color: var(--fg-on-brand);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px;
+    }
+    .login-brand .env {
+      margin-left: auto;
+      font-size: 11px; padding: 2px 8px; border-radius: var(--radius-full);
+      background: var(--bg-warning-subtle); color: var(--fg-warning);
+      font-weight: 600;
+    }
+    .login-title { font-size: 20px; font-weight: 700; color: var(--fg-strong); margin-bottom: 4px; letter-spacing: -0.02em; }
+    .login-sub { font-size: 13px; color: var(--fg-secondary); margin-bottom: var(--space-24); }
+    .login-form { display: flex; flex-direction: column; gap: var(--space-16); }
+    .login-secondary {
+      margin-top: var(--space-20); display: flex; justify-content: center;
+      gap: var(--space-8); align-items: center;
+    }
+    .login-secondary a {
+      color: var(--fg-secondary); text-decoration: none; font-size: 13px;
+    }
+    .login-secondary a:hover { color: var(--fg-brand); }
+    .login-secondary .dot { color: var(--fg-tertiary); }
+
+    /* ============================================================
+       2) sidebar-nav
+       ============================================================ */
+    .sidebar-stage { display: flex; min-height: 480px; background: var(--bg-canvas); border-radius: var(--radius-12); overflow: hidden; }
+    .sidebar {
+      width: 240px; flex-shrink: 0;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-subtle);
+      padding: var(--space-16) var(--space-12);
+      display: flex; flex-direction: column;
+    }
+    .sidebar.collapsed { width: 64px; }
+    .sidebar-brand {
+      height: 56px; display: flex; align-items: center; gap: var(--space-8);
+      padding: 0 var(--space-12); margin-bottom: var(--space-8);
+    }
+    .sidebar-brand .logo {
+      width: 24px; height: 24px; border-radius: 6px;
+      background: var(--bg-brand); color: var(--fg-on-brand);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 12px; flex-shrink: 0;
+    }
+    .sidebar-brand .word { font-size: 16px; font-weight: 700; color: var(--fg-strong); }
+    .sidebar.collapsed .word { display: none; }
+
+    .nav-section-label {
+      font-size: 12px; font-weight: 600; color: var(--fg-tertiary);
+      padding: 0 var(--space-12); margin: var(--space-16) 0 var(--space-8);
+    }
+    .sidebar.collapsed .nav-section-label { display: none; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: var(--space-12);
+      height: 40px; padding: 0 var(--space-12);
+      border-radius: var(--radius-8);
+      color: var(--fg-default); text-decoration: none;
+      font-size: 14px; font-weight: 500;
+      transition: background 120ms ease, color 120ms ease;
+      cursor: pointer; position: relative;
+    }
+    .nav-item:hover { background: var(--bg-muted); }
+    .nav-item.active { background: var(--bg-brand-subtle); color: var(--fg-brand); }
+    .nav-item .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--fg-danger); margin-left: auto;
+    }
+    .sidebar.collapsed .nav-item span:not(.dot) { display: none; }
+    .sidebar.collapsed .nav-item { justify-content: center; padding: 0; }
+
+    .sidebar-toggle {
+      margin-top: auto;
+      display: flex; align-items: center; justify-content: center;
+      height: 40px; padding: 0 var(--space-12);
+      background: transparent; border: 0; border-radius: var(--radius-8);
+      color: var(--fg-secondary); cursor: pointer;
+      font-family: inherit;
+    }
+    .sidebar-toggle:hover { background: var(--bg-muted); color: var(--fg-strong); }
+
+    /* ============================================================
+       3) top-bar (admin)
+       ============================================================ */
+    .topbar-stage { background: var(--bg-canvas); border-radius: var(--radius-12); overflow: hidden; }
+    .topbar {
+      height: 56px; padding: 0 var(--space-24);
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex; align-items: center; gap: var(--space-16);
+    }
+    .topbar-left { display: flex; align-items: baseline; gap: var(--space-8); min-width: 0; }
+    .topbar-title { font-size: 18px; font-weight: 700; color: var(--fg-strong); letter-spacing: -0.02em; }
+    .topbar-crumb { font-size: 12px; color: var(--fg-secondary); }
+    .topbar-crumb .sep { margin: 0 6px; color: var(--fg-tertiary); }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: var(--space-12); }
+    .topbar-search {
+      position: relative; width: 280px;
+    }
+    .topbar-search .input { padding-left: 36px; height: 36px; border-radius: var(--radius-full); background: var(--bg-muted); border-color: transparent; }
+    .topbar-search .icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--fg-secondary); }
+    .icon-btn {
+      width: 36px; height: 36px; display: inline-flex;
+      align-items: center; justify-content: center;
+      border-radius: var(--radius-full); border: 0;
+      background: transparent; color: var(--fg-secondary); cursor: pointer;
+      position: relative;
+    }
+    .icon-btn:hover { background: var(--bg-muted); color: var(--fg-strong); }
+    .icon-btn .dot {
+      position: absolute; top: 8px; right: 8px;
+      width: 6px; height: 6px; border-radius: 50%; background: var(--fg-danger);
+    }
+    .avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, oklch(0.563 0.232 257), oklch(0.668 0.260 354), oklch(0.736 0.183 53));
+      color: white; font-size: 13px; font-weight: 600;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+
+    /* ============================================================
+       4) stat-card (KPI)
+       ============================================================ */
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-16); }
+    @media (max-width: 720px) { .stat-grid { grid-template-columns: 1fr; } }
+    .stat-card {
+      padding: var(--space-24);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-12);
+      display: flex; flex-direction: column; gap: var(--space-8);
+    }
+    .stat-label { font-size: 12px; font-weight: 600; color: var(--fg-secondary); }
+    .stat-value { font-size: 32px; font-weight: 700; color: var(--fg-strong); letter-spacing: -0.025em; line-height: 1.1; }
+    .stat-delta { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 500; }
+    .stat-delta.pos { color: var(--fg-success); }
+    .stat-delta.neg { color: var(--fg-danger); }
+    .stat-delta.flat { color: var(--fg-secondary); }
+    .stat-spark { margin-top: var(--space-8); height: 32px; width: 100%; }
+
+    /* ============================================================
+       5) data-table
+       ============================================================ */
+    .table-frame {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-8);
+      overflow: hidden;
+    }
+    .table {
+      width: 100%; border-collapse: collapse;
+      font-size: 14px;
+    }
+    .table thead th {
+      background: var(--bg-muted);
+      height: 44px; padding: 0 var(--space-16);
+      font-size: 12px; font-weight: 600; color: var(--fg-secondary);
+      text-align: left; letter-spacing: -0.005em;
+    }
+    .table thead th.right { text-align: right; }
+    .table thead th .sort {
+      display: inline-flex; align-items: center; gap: 4px;
+      cursor: pointer; user-select: none;
+    }
+    .table tbody td {
+      height: 56px; padding: 0 var(--space-16);
+      border-top: 1px solid var(--border-subtle);
+      color: var(--fg-default);
+      vertical-align: middle;
+    }
+    .table tbody td.right { text-align: right; }
+    .table tbody td.num { font-variant-numeric: tabular-nums; color: var(--fg-strong); font-weight: 600; }
+    .table tbody tr { background: var(--bg-surface); cursor: pointer; transition: background 120ms ease; }
+    .table tbody tr:hover { background: var(--bg-subtle); }
+    .table tbody tr.selected { background: var(--bg-brand-subtle); }
+    .table .check {
+      width: 16px; height: 16px;
+      border: 1.5px solid var(--border-default); border-radius: 4px;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .table .check.on { background: var(--bg-brand); border-color: var(--bg-brand); color: var(--fg-on-brand); }
+    .table .col-check { width: 44px; text-align: center; }
+    .table .col-action { width: 80px; text-align: right; }
+
+    .pagination {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-16); height: 52px;
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+    }
+    .pagination .info { font-size: 12px; color: var(--fg-secondary); }
+    .pagination .nav { display: flex; align-items: center; gap: 4px; }
+
+    /* ============================================================
+       5b) Wide Table Cases (B 컴팩트 / C 와이드+sticky)
+       ============================================================ */
+    .case-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-24);
+    }
+    .case-card { display: flex; flex-direction: column; gap: var(--space-12); }
+    .case-card .case-meta {
+      display: flex; align-items: center; gap: var(--space-12); flex-wrap: wrap;
+      font-size: 12px; color: var(--fg-secondary);
+    }
+    .case-card .case-meta .label {
+      font-size: 11px; font-weight: 600; padding: 2px 8px;
+      border-radius: var(--radius-full); background: var(--bg-muted); color: var(--fg-strong);
+    }
+    .case-card .case-meta code {
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 11px; color: var(--fg-strong);
+    }
+
+    /* Case B — compact density (no sticky, no scroll) */
+    .table.compact thead th { height: 44px; padding: 0 var(--space-12); }
+    .table.compact tbody td { height: 44px; padding: 0 var(--space-12); font-size: 13px; }
+    .table.compact .col-check { width: 40px; }
+
+    /* Case C — wide frame + horizontal scroll + sticky columns */
+    .wide-frame {
+      position: relative;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-8);
+      overflow: hidden;
+    }
+    .wide-scroll { overflow-x: auto; overflow-y: hidden; max-height: 280px; }
+    .table-wide { width: max-content; min-width: 1280px; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+    .table-wide thead th {
+      position: sticky; top: 0; z-index: 2;
+      background: var(--bg-muted);
+      height: 44px; padding: 0 var(--space-12);
+      font-size: 12px; font-weight: 600; color: var(--fg-secondary);
+      text-align: left; letter-spacing: -0.005em; white-space: nowrap;
+    }
+    .table-wide thead th.right { text-align: right; }
+    .table-wide tbody td {
+      height: 44px; padding: 0 var(--space-12);
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      color: var(--fg-default); vertical-align: middle;
+      white-space: nowrap;
+    }
+    .table-wide tbody td.right { text-align: right; }
+    .table-wide tbody td.num { font-variant-numeric: tabular-nums; color: var(--fg-strong); font-weight: 600; }
+    .table-wide tbody tr:hover td { background: var(--bg-subtle); }
+    .table-wide tbody tr.selected td { background: var(--bg-brand-subtle); }
+
+    .table-wide .sticky-l1 { position: sticky; left: 0; z-index: 3; width: 40px; text-align: center; }
+    .table-wide .sticky-l2 { position: sticky; left: 40px; z-index: 3; min-width: 100px; }
+    .table-wide .sticky-r1 { position: sticky; right: 0; z-index: 3; width: 80px; text-align: right; }
+    .table-wide thead .sticky-l1,
+    .table-wide thead .sticky-l2,
+    .table-wide thead .sticky-r1 { z-index: 4; background: var(--bg-muted); }
+    .table-wide tbody tr.selected .sticky-l1,
+    .table-wide tbody tr.selected .sticky-l2,
+    .table-wide tbody tr.selected .sticky-r1 { background: var(--bg-brand-subtle); }
+    .table-wide tbody tr:hover .sticky-l1,
+    .table-wide tbody tr:hover .sticky-l2,
+    .table-wide tbody tr:hover .sticky-r1 { background: var(--bg-subtle); }
+
+    /* 시안별 스크롤 affordance (좌 sticky 우측 경계 + 우 sticky 좌측 경계) */
+    /* wanted: 1px border-default 단순 라인 */
+    [data-design="wanted"] .table-wide .sticky-l2 { box-shadow: 1px 0 0 0 var(--border-default); }
+    [data-design="wanted"] .table-wide .sticky-r1 { box-shadow: -1px 0 0 0 var(--border-default); }
+    /* minimal-mono: 1px border-strong + 4px inset shadow */
+    [data-design="minimal-mono"] .table-wide .sticky-l2 { box-shadow: 1px 0 0 0 var(--border-strong), 4px 0 6px -4px oklch(0 0 0 / 0.16); }
+    [data-design="minimal-mono"] .table-wide .sticky-r1 { box-shadow: -1px 0 0 0 var(--border-strong), -4px 0 6px -4px oklch(0 0 0 / 0.16); }
+    /* toss-like: fade-edge gradient mask 8px */
+    [data-design="toss-like"] .table-wide .sticky-l2::after,
+    [data-design="toss-like"] .table-wide .sticky-r1::after {
+      content: ""; position: absolute; top: 0; bottom: 0; width: 8px; pointer-events: none;
+    }
+    [data-design="toss-like"] .table-wide .sticky-l2::after { right: 0; transform: translateX(100%); background: linear-gradient(to right, oklch(0 0 0 / 0.12), transparent); }
+    [data-design="toss-like"] .table-wide .sticky-r1::after { left: 0; transform: translateX(-100%); background: linear-gradient(to left, oklch(0 0 0 / 0.12), transparent); }
+    /* material-3: state-layer 8~12% brand alpha overlay */
+    [data-design="material-3"] .table-wide .sticky-l2::after,
+    [data-design="material-3"] .table-wide .sticky-r1::after {
+      content: ""; position: absolute; top: 0; bottom: 0; width: 4px; pointer-events: none;
+      background: oklch(0.460 0.155 295 / 0.12);
+    }
+    [data-design="material-3"] .table-wide .sticky-l2::after { right: 0; transform: translateX(100%); }
+    [data-design="material-3"] .table-wide .sticky-r1::after { left: 0; transform: translateX(-100%); }
+    /* linear-like: fade-edge gradient mask, 다크 친화 */
+    [data-design="linear-like"] .table-wide .sticky-l2::after,
+    [data-design="linear-like"] .table-wide .sticky-r1::after {
+      content: ""; position: absolute; top: 0; bottom: 0; width: 8px; pointer-events: none;
+    }
+    [data-design="linear-like"] .table-wide .sticky-l2::after { right: 0; transform: translateX(100%); background: linear-gradient(to right, oklch(0 0 0 / 0.28), transparent); }
+    [data-design="linear-like"] .table-wide .sticky-r1::after { left: 0; transform: translateX(-100%); background: linear-gradient(to left, oklch(0 0 0 / 0.28), transparent); }
+    [data-design="linear-like"][data-theme="dark"] .table-wide .sticky-l2::after { background: linear-gradient(to right, oklch(1 0 0 / 0.20), transparent); }
+    [data-design="linear-like"][data-theme="dark"] .table-wide .sticky-r1::after { background: linear-gradient(to left, oklch(1 0 0 / 0.20), transparent); }
+
+    /* ============================================================
+       List Toolbar Cases — search clear / excel export / page size
+       ============================================================ */
+    .toolbar-grid { display: grid; gap: var(--space-12); }
+    .toolbar-row {
+      display: flex; align-items: center; gap: var(--space-12); flex-wrap: wrap;
+      padding: var(--space-12) var(--space-16);
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-8);
+      background: var(--bg-surface);
+    }
+    .toolbar-row .row-label {
+      font-size: 11px; font-weight: 600; padding: 2px 8px;
+      border-radius: var(--radius-full); background: var(--bg-muted); color: var(--fg-strong);
+      min-width: 80px; text-align: center;
+    }
+    .toolbar-row .row-hint { font-size: 12px; color: var(--fg-tertiary); margin-left: auto; }
+
+    /* search input with trailing clear */
+    .search-input {
+      position: relative; display: inline-flex; align-items: center;
+      width: 320px; max-width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-8);
+      padding: 0 4px 0 12px;
+      height: 40px; gap: 8px;
+    }
+    .search-input .leading { color: var(--fg-tertiary); display: inline-flex; }
+    .search-input input {
+      flex: 1; min-width: 0; border: none; outline: none; background: transparent;
+      color: var(--fg-default); font-size: 14px;
+    }
+    .search-input .clear {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; border-radius: var(--radius-full);
+      border: none; background: transparent; color: var(--fg-tertiary); cursor: pointer; padding: 0;
+    }
+    .search-input .clear:hover { color: var(--fg-default); background: var(--bg-muted); }
+    .search-input .clear:focus-visible { outline: 2px solid var(--border-brand); outline-offset: 1px; }
+    /* Case B — hover/focus 시만 */
+    .search-input.case-b .clear { opacity: 0; transition: opacity 0.12s ease; }
+    .search-input.case-b:hover .clear,
+    .search-input.case-b:focus-within .clear { opacity: 1; }
+    /* Case C — 미노출 */
+    .search-input.case-c .clear { display: none; }
+
+    /* segmented control (page-size B) */
+    .segmented {
+      display: inline-flex; background: var(--bg-muted);
+      border-radius: var(--radius-full); padding: 3px; gap: 2px;
+    }
+    .segmented button {
+      border: none; background: transparent;
+      padding: 4px 12px; font-size: 13px;
+      color: var(--fg-secondary); border-radius: var(--radius-full);
+      cursor: pointer; font-family: inherit;
+    }
+    .segmented button.on {
+      background: var(--bg-surface); color: var(--fg-strong);
+      box-shadow: var(--shadow-1); font-weight: 600;
+    }
+
+    /* auto-fit tag (page-size C) */
+    .auto-fit-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: var(--radius-full);
+      background: var(--bg-muted); color: var(--fg-secondary); font-size: 12px;
+    }
+
+    /* async export progress (excel D) */
+    .export-progress {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 4px 10px; border-radius: var(--radius-full);
+      background: var(--bg-brand-subtle); color: var(--fg-brand);
+      font-size: 12px; font-weight: 600;
+    }
+    .export-progress::before {
+      content: ""; width: 10px; height: 10px; border-radius: 50%;
+      border: 2px solid currentColor; border-top-color: transparent;
+      animation: toolbar-spin 0.8s linear infinite;
+    }
+    @keyframes toolbar-spin { to { transform: rotate(360deg); } }
+
+    /* ============================================================
+       Surface Density Cases — content/card padding, gap, row, height
+       ============================================================ */
+    .density-grid { display: grid; gap: var(--space-12); }
+    .density-row {
+      display: grid; grid-template-columns: 100px 1fr;
+      gap: var(--space-12); align-items: center;
+      padding: var(--space-12); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-8); background: var(--bg-surface);
+    }
+    .density-row .row-label {
+      font-size: 11px; font-weight: 600;
+      padding: 4px 8px; border-radius: var(--radius-full);
+      background: var(--bg-muted); color: var(--fg-strong); text-align: center;
+    }
+    .density-mini {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto auto auto;
+      gap: var(--m-gap, 16px); align-items: stretch;
+    }
+    .density-mini .kpi {
+      padding: var(--m-card-pad, 24px);
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-8);
+      background: var(--bg-surface);
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .density-mini .kpi-label { font-size: 11px; color: var(--fg-secondary); }
+    .density-mini .kpi-val { font-size: 18px; font-weight: 700; color: var(--fg-strong); }
+    .density-mini .mini-btn {
+      align-self: center;
+      height: var(--m-h, 40px); padding: 0 12px;
+      background: var(--bg-brand); color: var(--fg-on-brand);
+      border: none; border-radius: var(--radius-8); font-size: 13px;
+      font-family: inherit; white-space: nowrap; cursor: pointer;
+    }
+    .density-mini .mini-input {
+      align-self: center;
+      height: var(--m-h, 40px); padding: 0 12px;
+      border: 1px solid var(--border-default); border-radius: var(--radius-8);
+      background: var(--bg-surface); color: var(--fg-default); font-size: 13px;
+      font-family: inherit; width: 140px;
+    }
+    .density-mini .mini-row {
+      align-self: center;
+      height: var(--m-row, 56px); width: 160px;
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-8);
+      display: flex; align-items: center; padding: 0 var(--m-card-pad, 16px);
+      font-size: 13px; color: var(--fg-secondary);
+    }
+    .density-mini.spacious { --m-gap: 16px; --m-card-pad: 24px; --m-h: 40px; --m-row: 56px; }
+    .density-mini.compact  { --m-gap: 12px; --m-card-pad: 16px; --m-h: 36px; --m-row: 40px; }
+    .density-mini.minimum  { --m-gap: 8px;  --m-card-pad: 12px; --m-h: 32px; --m-row: 36px; }
+    .density-mini.monitor  { --m-gap: 8px;  --m-card-pad: 8px;  --m-h: 32px; --m-row: 36px; }
+
+    /* ============================================================
+       Filter Bar Cases — chip / date-range / panel / search-only
+       ============================================================ */
+    .fbar {
+      display: flex; align-items: center; gap: var(--space-8); flex-wrap: wrap;
+      padding: var(--space-12); border-radius: var(--radius-8);
+      background: var(--bg-surface); border: 1px solid var(--border-subtle);
+    }
+    .fbar .grow { flex: 1; min-width: 0; }
+    .fbar .grow .search-input { width: 100%; max-width: 100%; }
+    .date-trigger {
+      display: inline-flex; align-items: center; gap: 8px;
+      height: 36px; padding: 0 12px;
+      background: var(--bg-surface); border: 1px solid var(--border-default);
+      border-radius: var(--radius-8); font-size: 13px; color: var(--fg-default);
+      cursor: pointer; font-family: inherit;
+    }
+    .date-trigger .cal { color: var(--fg-tertiary); display: inline-flex; }
+    .fbar-counter {
+      font-size: 12px; font-weight: 600; color: var(--fg-strong);
+      padding: 2px 8px; border-radius: var(--radius-full);
+      background: var(--bg-muted);
+    }
+    .panel-trigger {
+      display: inline-flex; align-items: center; gap: 8px;
+      height: 36px; padding: 0 12px;
+      background: var(--bg-muted); color: var(--fg-strong);
+      border-radius: var(--radius-8); border: none; font-size: 13px;
+      font-family: inherit; cursor: pointer;
+    }
+    .panel-trigger .pt-dot {
+      width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center;
+      background: var(--bg-brand); color: var(--fg-on-brand);
+      border-radius: var(--radius-full); font-size: 11px; font-weight: 700;
+    }
+
+    /* ============================================================
+       Column Filter Cases — header sort/funnel/inline row
+       ============================================================ */
+    .colf-frame {
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-8);
+      background: var(--bg-surface); overflow: hidden;
+    }
+    .mini-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+    .mini-table thead th {
+      height: 40px; padding: 0 12px; background: var(--bg-muted);
+      color: var(--fg-secondary); font-size: 12px; font-weight: 600;
+      text-align: left; border-bottom: 1px solid var(--border-subtle);
+    }
+    .mini-table tbody td {
+      height: 44px; padding: 0 12px; color: var(--fg-default);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .mini-table tbody tr:last-child td { border-bottom: none; }
+    .h-control {
+      display: inline-flex; align-items: center; gap: 6px;
+      width: 100%; justify-content: space-between;
+    }
+    .h-control .ctrl-cluster { display: inline-flex; gap: 2px; }
+    .h-control .ctrl-btn {
+      width: 22px; height: 22px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: none; background: transparent; color: var(--fg-tertiary);
+      border-radius: 4px; cursor: pointer; padding: 0; position: relative;
+    }
+    .h-control .ctrl-btn:hover { color: var(--fg-default); background: var(--bg-surface); }
+    .h-control .ctrl-btn.on { color: var(--fg-brand); }
+    .h-control .ctrl-btn.on::after {
+      content: ""; position: absolute; right: 2px; top: 2px;
+      width: 4px; height: 4px; border-radius: 50%; background: currentColor;
+    }
+    .colf-inline-row td {
+      background: var(--bg-subtle); height: 40px; padding: 4px 8px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .colf-inline-row input,
+    .colf-inline-row select {
+      width: 100%; height: 30px; padding: 0 8px; font-size: 12px;
+      background: var(--bg-surface); border: 1px solid var(--border-default);
+      border-radius: var(--radius-4); color: var(--fg-default); font-family: inherit;
+    }
+
+    /* ============================================================
+       Tab Page Cases — line / pill / segmented / vertical
+       ============================================================ */
+    .tab-group {
+      padding: var(--space-12);
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-8);
+      background: var(--bg-surface);
+    }
+    .tab-line { display: flex; gap: var(--space-8); border-bottom: 1px solid var(--border-subtle); }
+    .tab-line button {
+      position: relative; height: 40px; padding: 0 12px;
+      background: transparent; border: none; cursor: pointer;
+      font-size: 14px; font-weight: 500; color: var(--fg-secondary); font-family: inherit;
+    }
+    .tab-line button.on { color: var(--fg-strong); font-weight: 600; }
+    .tab-line button.on::after {
+      content: ""; position: absolute; left: 12px; right: 12px; bottom: -1px;
+      height: 2px; background: var(--fg-strong);
+    }
+    .tab-pill { display: flex; gap: var(--space-8); }
+    .tab-pill button {
+      height: 32px; padding: 0 14px; border-radius: var(--radius-full);
+      background: transparent; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 500; color: var(--fg-secondary); font-family: inherit;
+    }
+    .tab-pill button.on {
+      background: var(--bg-brand-subtle); color: var(--fg-brand); font-weight: 600;
+    }
+    .tab-segment {
+      display: inline-flex; background: var(--bg-muted);
+      border-radius: var(--radius-full); padding: 3px; gap: 2px;
+    }
+    .tab-segment button {
+      height: 30px; padding: 0 14px; border-radius: var(--radius-full);
+      background: transparent; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 500; color: var(--fg-secondary); font-family: inherit;
+    }
+    .tab-segment button.on {
+      background: var(--bg-surface); color: var(--fg-strong);
+      box-shadow: var(--shadow-1); font-weight: 600;
+    }
+    .tab-vertical-frame {
+      display: grid; grid-template-columns: 200px 1fr;
+      min-height: 200px;
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-8);
+      overflow: hidden;
+    }
+    .tab-vertical-nav {
+      border-right: 1px solid var(--border-subtle);
+      padding: var(--space-8);
+      display: flex; flex-direction: column; gap: 2px;
+      background: var(--bg-surface);
+    }
+    .tab-vertical-nav button {
+      position: relative; height: 36px; padding: 0 12px;
+      background: transparent; border: none; cursor: pointer; text-align: left;
+      font-size: 13px; font-weight: 500; color: var(--fg-secondary); font-family: inherit;
+      border-radius: var(--radius-8);
+    }
+    .tab-vertical-nav button:hover { background: var(--bg-muted); color: var(--fg-default); }
+    .tab-vertical-nav button.on {
+      background: var(--bg-brand-subtle); color: var(--fg-brand); font-weight: 600;
+    }
+    .tab-vertical-nav button.on::before {
+      content: ""; position: absolute; left: -1px; top: 8px; bottom: 8px;
+      width: 3px; background: var(--fg-strong); border-radius: 0 2px 2px 0;
+    }
+    .tab-vertical-body {
+      padding: var(--space-16);
+      color: var(--fg-secondary); font-size: 13px;
+      background: var(--bg-surface);
+    }
+
+    /* ============================================================
+       Assembly views
+       ============================================================ */
+    .dashboard {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 640px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-12);
+      overflow: hidden;
+    }
+    .dashboard .content {
+      padding: var(--space-24);
+      background: var(--bg-subtle);
+      display: flex; flex-direction: column; gap: var(--space-24);
+      overflow: auto;
+    }
+    .filter-row {
+      display: flex; align-items: center; gap: var(--space-8); flex-wrap: wrap;
+    }
+    .filter-row .grow { flex: 1; min-width: 220px; }
+
+    /* code annotation */
+    .annot {
+      font-family: ui-monospace, "SF Mono", monospace;
+      font-size: 12px; color: var(--fg-secondary);
+      background: var(--bg-muted); padding: 2px 6px; border-radius: 4px;
+    }
+
+    .toc {
+      display: flex; flex-wrap: wrap; gap: var(--space-8);
+      padding: var(--space-12); margin-bottom: var(--space-24);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-8);
+    }
+    .toc a {
+      font-size: 13px; padding: 4px 10px; border-radius: var(--radius-full);
+      background: var(--bg-muted); color: var(--fg-default);
+      text-decoration: none; font-weight: 500;
+    }
+    .toc a:hover { background: var(--bg-brand-subtle); color: var(--fg-brand); }
+
+    /* ============================================================
+       시안별 시그너처 specimen — [data-design] 속성으로 가시성 제어
+       기본: 모두 .signature 자식들이 보임. 각 시안 활성 시 해당 시안 전용
+       시그너처가 강조 chip으로 표시되어 시안 차별화를 즉시 확인.
+       ============================================================ */
+    .signature-meta {
+      display: inline-block; padding: 2px 8px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+      border-radius: var(--radius-full);
+      background: var(--bg-brand-subtle); color: var(--fg-brand);
+      margin-bottom: var(--space-12);
+    }
+
+    /* kbd (linear-like 시그너처) */
+    .kbd {
+      display: inline-flex; align-items: center; gap: 2px;
+      height: 20px; padding: 0 6px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-4);
+      color: var(--fg-secondary);
+      font-family: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
+      font-size: 11px; font-weight: 500;
+    }
+    .kbd-row { display: inline-flex; align-items: center; gap: var(--space-8); }
+    .kbd-row .desc { font-size: 13px; color: var(--fg-default); }
+
+    /* amount input (toss-like 시그너처) */
+    .amount-input {
+      display: flex; align-items: baseline; gap: var(--space-8);
+      padding: var(--space-16) var(--space-20);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: 12px;
+    }
+    .amount-input .amount {
+      font-size: 32px; font-weight: 700; line-height: 1;
+      color: var(--fg-strong);
+      letter-spacing: -0.020em;
+      font-variant-numeric: tabular-nums;
+      flex: 1; text-align: right;
+      background: transparent; border: 0; outline: none;
+      font-family: inherit;
+    }
+    .amount-input .currency { font-size: 16px; font-weight: 600; color: var(--fg-secondary); }
+
+    /* M3 button radius-full (material-3 시그너처) */
+    .button.m3-pill { border-radius: var(--radius-full); padding: 0 24px; height: 40px; font-weight: 500; letter-spacing: 0.10em; }
+
+    /* 채도 0 강조 (minimal-mono 시그너처) */
+    .mono-emphasis {
+      display: flex; flex-direction: column; gap: var(--space-4);
+    }
+    .mono-emphasis .h1 { font-size: 32px; font-weight: 700; color: var(--fg-strong); letter-spacing: -0.020em; }
+    .mono-emphasis .h2 { font-size: 22px; font-weight: 700; color: var(--fg-strong); letter-spacing: -0.015em; }
+    .mono-emphasis .h3 { font-size: 16px; font-weight: 600; color: var(--fg-default); }
+    .mono-emphasis .h4 { font-size: 14px; font-weight: 500; color: var(--fg-secondary); }
+    .mono-emphasis .underline { border-bottom: 2px solid var(--fg-strong); padding-bottom: 2px; }
+
+    /* gradient accent (linear-like 시그너처) */
+    .gradient-accent {
+      display: inline-block; padding: var(--space-8) var(--space-16);
+      background: linear-gradient(135deg, oklch(0.620 0.180 268) 0%, oklch(0.700 0.170 200) 100%);
+      color: white; font-size: 14px; font-weight: 600;
+      border-radius: var(--radius-8);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, oklch(0.620 0.180 268) 0%, oklch(0.700 0.170 200) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: 28px; font-weight: 700; letter-spacing: -0.020em;
+    }
+
+    /* 채용보상금 시그너처 (wanted) */
+    .reward-card {
+      padding: var(--space-20);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-12);
+      max-width: 280px;
+    }
+    .reward-card .company { font-size: 13px; color: var(--fg-secondary); }
+    .reward-card .role { font-size: 16px; font-weight: 700; color: var(--fg-strong); margin-top: 4px; }
+    .reward-card .reward {
+      margin-top: var(--space-12); display: flex; align-items: baseline; gap: 4px;
+      color: var(--fg-brand); font-size: 14px; font-weight: 700;
+    }
+    .reward-card .reward-amount { font-size: 18px; font-weight: 700; color: var(--fg-brand); }
+
+    /* hero gradient (toss-like 시그너처) */
+    .hero-banner {
+      padding: var(--space-32);
+      background: linear-gradient(135deg, oklch(0.620 0.180 245) 0%, oklch(0.680 0.160 268) 100%);
+      color: white; border-radius: var(--radius-12);
+      display: flex; flex-direction: column; gap: var(--space-12);
+    }
+    .hero-banner .title { font-size: 24px; font-weight: 700; letter-spacing: -0.018em; }
+    .hero-banner .sub { font-size: 14px; opacity: 0.85; }
+    .hero-banner .cta {
+      align-self: start; padding: 8px 16px;
+      background: white; color: oklch(0.540 0.180 245);
+      border-radius: var(--radius-12);
+      font-size: 14px; font-weight: 700;
+    }
+
+    /* M3 elevated card (material-3 시그너처) */
+    .m3-elevated-card {
+      padding: var(--space-24);
+      background: var(--bg-surface);
+      border-radius: var(--radius-12);
+      box-shadow: var(--shadow-2);
+      max-width: 280px;
+    }
+    .m3-elevated-card .label { font-size: 11px; font-weight: 500; letter-spacing: 0.05em; color: var(--fg-secondary); text-transform: none; }
+    .m3-elevated-card .title { font-size: 22px; font-weight: 400; color: var(--fg-strong); margin-top: 4px; }
+
+    /* 시안별 specimen 가시성 — 활성 시안만 표시 */
+    .signature-only { display: none; }
+    :root[data-design="wanted"] .signature-only.wanted,
+    :root[data-design="minimal-mono"] .signature-only.minimal-mono,
+    :root[data-design="toss-like"] .signature-only.toss-like,
+    :root[data-design="material-3"] .signature-only.material-3,
+    :root[data-design="linear-like"] .signature-only.linear-like {
+      display: block;
+    }
+    .signature-only.inline {
+      display: none;
+    }
+    :root[data-design="wanted"] .signature-only.inline.wanted,
+    :root[data-design="minimal-mono"] .signature-only.inline.minimal-mono,
+    :root[data-design="toss-like"] .signature-only.inline.toss-like,
+    :root[data-design="material-3"] .signature-only.inline.material-3,
+    :root[data-design="linear-like"] .signature-only.inline.linear-like {
+      display: inline-flex;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== preview chrome ===== -->
+<div class="preview-bar">
+  <h1>Admin FE 디자인 프리뷰</h1>
+  <span class="source">designs/ 라이브러리 기반 · 단일 파일 · CDN 없음</span>
+  <div class="right">
+    <select class="design-select" id="design-select" aria-label="디자인 시안">
+      <option value="wanted">wanted</option>
+    </select>
+    <div class="theme-toggle" role="tablist" aria-label="테마">
+      <button id="btn-light" aria-pressed="true">라이트</button>
+      <button id="btn-dark" aria-pressed="false">다크</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== policy strip ===== -->
+<div class="policy-strip" id="policy-strip">
+  <span class="policy-strip-label">POLICY</span>
+  <!-- JS가 활성 시안 frontmatter policy 블록을 chip으로 렌더링 -->
+</div>
+
+<div class="container">
+
+<!-- TOC -->
+<div class="toc">
+  <a href="#tokens">토큰 색</a>
+  <a href="#atomic">atomic 7종</a>
+  <a href="#signature">시안 시그너처</a>
+  <a href="#login">login-layout</a>
+  <a href="#sidebar">sidebar-nav</a>
+  <a href="#topbar">top-bar</a>
+  <a href="#stat">stat-card</a>
+  <a href="#table">data-table</a>
+  <a href="#widetable">wide table cases</a>
+  <a href="#toolbar">list toolbar cases</a>
+  <a href="#density">surface density</a>
+  <a href="#filterbar">filter bar cases</a>
+  <a href="#colfilter">column filter cases</a>
+  <a href="#tabs">tab page cases</a>
+  <a href="#dashboard">대시보드 조립</a>
+  <a href="#listpage">리스트 페이지 조립</a>
+</div>
+
+<!-- ===================== Tokens ===================== -->
+<section class="section" id="tokens">
+  <div class="section-head">
+    <h2>색 토큰 (시맨틱 alias)</h2>
+    <p>product surface는 항상 alias로 호출. atomic ramp는 새 alias 정의 시에만.</p>
+  </div>
+  <div class="specimen">
+    <div class="specimen-label">BACKGROUND</div>
+    <div class="swatches">
+      <div class="swatch"><div class="swatch-fill" style="background:var(--bg-canvas);border-bottom:1px solid var(--border-subtle)"></div><div class="swatch-meta"><div class="swatch-name">bg-canvas</div><div class="swatch-token">{colors.bg-canvas}</div></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:var(--bg-surface);border-bottom:1px solid var(--border-subtle)"></div><div class="swatch-meta"><div class="swatch-name">bg-surface</div><div class="swatch-token">{colors.bg-surface}</div></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:var(--bg-subtle);border-bottom:1px solid var(--border-subtle)"></div><div class="swatch-meta"><div class="swatch-name">bg-subtle</div><div class="swatch-token">{colors.bg-subtle}</div></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:var(--bg-muted);border-bottom:1px solid var(--border-subtle)"></div><div class="swatch-meta"><div class="swatch-name">bg-muted</div><div class="swatch-token">{colors.bg-muted}</div></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:var(--bg-brand)"></div><div class="swatch-meta"><div class="swatch-name">bg-brand</div><div class="swatch-token">{colors.bg-brand}</div></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:var(--bg-brand-subtle)"></div><div class="swatch-meta"><div class="swatch-name">bg-brand-subtle</div><div class="swatch-token">{colors.bg-brand-subtle}</div></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:var(--bg-success-subtle)"></div><div class="swatch-meta"><div class="swatch-name">bg-success-subtle</div><div class="swatch-token">{colors.bg-success-subtle}</div></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:var(--bg-warning-subtle)"></div><div class="swatch-meta"><div class="swatch-name">bg-warning-subtle</div><div class="swatch-token">{colors.bg-warning-subtle}</div></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:var(--bg-danger-subtle)"></div><div class="swatch-meta"><div class="swatch-name">bg-danger-subtle</div><div class="swatch-token">{colors.bg-danger-subtle}</div></div></div>
+    </div>
+  </div>
+  <div class="specimen">
+    <div class="specimen-label">FOREGROUND (텍스트 위계 alpha multiplier)</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:18px;font-weight:700;color:var(--fg-strong)">fg-strong · 가장 강한 본문 (alpha 1.0) {typography.title3}</div>
+      <div style="color:var(--fg-default)">fg-default · 본문 기본 (alpha 0.88) — 가장 자주 쓰는 본문 색</div>
+      <div style="color:var(--fg-secondary)">fg-secondary · 라벨/캡션 (alpha 0.61) — 보조 정보</div>
+      <div style="color:var(--fg-tertiary)">fg-tertiary · placeholder (alpha 0.43)</div>
+      <div style="color:var(--fg-disabled)">fg-disabled · 비활성 (alpha 0.28)</div>
+      <div style="color:var(--fg-brand)">fg-brand · 링크/active 강조</div>
+      <div style="color:var(--fg-success)">fg-success</div>
+      <div style="color:var(--fg-warning)">fg-warning</div>
+      <div style="color:var(--fg-danger)">fg-danger</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Atomic 7종 (시안별 차이 비교) ===================== -->
+<section class="section" id="atomic">
+  <div class="section-head">
+    <h2>atomic 7종 (시안별 차이 비교)</h2>
+    <p>활성 시안의 토큰으로 button-* / input / badge / chip / avatar / icon-button / icon이 즉시 재렌더링된다. 시안 dropdown을 변경하며 시안 간 시그너처 차이를 비교한다.</p>
+  </div>
+
+  <!-- button (5 variant × 4 size) -->
+  <div class="specimen">
+    <div class="specimen-label">BUTTON — 5 variant × 4 size</div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-16)">
+      <div style="display:flex;gap:var(--space-12);align-items:center;flex-wrap:wrap">
+        <button class="button sm primary">primary sm</button>
+        <button class="button primary">primary md</button>
+        <button class="button lg primary">primary lg</button>
+      </div>
+      <div style="display:flex;gap:var(--space-12);align-items:center;flex-wrap:wrap">
+        <button class="button sm secondary">secondary sm</button>
+        <button class="button secondary">secondary md</button>
+        <button class="button lg secondary">secondary lg</button>
+      </div>
+      <div style="display:flex;gap:var(--space-12);align-items:center;flex-wrap:wrap">
+        <button class="button sm tertiary">tertiary sm</button>
+        <button class="button tertiary">tertiary md</button>
+        <button class="button lg tertiary">tertiary lg</button>
+      </div>
+      <div style="display:flex;gap:var(--space-12);align-items:center;flex-wrap:wrap">
+        <button class="button sm ghost">ghost sm</button>
+        <button class="button ghost">ghost md</button>
+        <button class="button lg ghost">ghost lg</button>
+      </div>
+      <div style="display:flex;gap:var(--space-12);align-items:center;flex-wrap:wrap">
+        <button class="button sm danger">danger sm</button>
+        <button class="button danger">danger md</button>
+        <button class="button lg danger">danger lg</button>
+      </div>
+      <div style="display:flex;gap:var(--space-12);align-items:center;flex-wrap:wrap">
+        <button class="button sm" style="background:var(--bg-muted);color:var(--fg-disabled);cursor:not-allowed">disabled sm</button>
+        <button class="button" style="background:var(--bg-muted);color:var(--fg-disabled);cursor:not-allowed">disabled md</button>
+        <button class="button lg" style="background:var(--bg-muted);color:var(--fg-disabled);cursor:not-allowed">disabled lg</button>
+      </div>
+    </div>
+    <p style="margin-top:var(--space-16);font-size:12px;color:var(--fg-secondary)">
+      시안 차이: <code class="annot">wanted</code> sm radius 6 / md radius 8 / lg radius 10 비-4 로컬값 · <code class="annot">minimal-mono</code> 4의 배수 정규화 · <code class="annot">toss-like</code> height 한 단계 큼 · <code class="annot">material-3</code> radius-full + +0.10em letter-spacing · <code class="annot">linear-like</code> height 한 단계 작음 + radius-6
+    </p>
+  </div>
+
+  <!-- input (4 state) -->
+  <div class="specimen">
+    <div class="specimen-label">INPUT — default / focus / error / disabled</div>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:var(--space-16);max-width:560px">
+      <div>
+        <label class="label-form">default</label>
+        <input class="input" placeholder="이메일을 입력해 주세요" />
+      </div>
+      <div>
+        <label class="label-form">focus (탭으로 이동)</label>
+        <input class="input" placeholder="포커스 시 border-brand + glow" />
+      </div>
+      <div>
+        <label class="label-form" style="color:var(--fg-danger)">error</label>
+        <input class="input" value="잘못된 값" style="border-color:var(--fg-danger)" />
+        <div class="helper-form" style="color:var(--fg-danger)">이메일 형식이 올바르지 않아요</div>
+      </div>
+      <div>
+        <label class="label-form">disabled</label>
+        <input class="input" value="수정 불가" disabled style="background:var(--bg-muted);color:var(--fg-disabled);cursor:not-allowed" />
+      </div>
+    </div>
+    <p style="margin-top:var(--space-16);font-size:12px;color:var(--fg-secondary)">
+      시안 차이: 시안마다 height(<code class="annot">linear-like 32</code> ~ <code class="annot">toss-like 52, material-3 56</code>) + radius(<code class="annot">linear-like radius-6</code>, <code class="annot">minimal-mono radius-4</code>, <code class="annot">toss-like radius-12</code>) 다름. focus glow는 모두 brand color alpha.
+    </p>
+  </div>
+
+  <!-- badge (4 variant) -->
+  <div class="specimen">
+    <div class="specimen-label">BADGE — active / pending / inactive / danger</div>
+    <div style="display:flex;gap:var(--space-12);align-items:center;flex-wrap:wrap">
+      <span class="badge active">진행중</span>
+      <span class="badge pending">대기</span>
+      <span class="badge inactive">완료</span>
+      <span class="badge danger">취소</span>
+      <span class="badge active">+12.4%</span>
+      <span class="badge inactive">v1.0.0</span>
+    </div>
+    <p style="margin-top:var(--space-12);font-size:12px;color:var(--fg-secondary)">
+      시안 차이: <code class="annot">wanted/minimal-mono/toss-like/material-3</code> radius-full pill, <code class="annot">linear-like</code> radius-4 직사각(productivity 시그너처).
+    </p>
+  </div>
+
+  <!-- chip -->
+  <div class="specimen">
+    <div class="specimen-label">CHIP — interactive (selected/default)</div>
+    <div style="display:flex;gap:var(--space-8);align-items:center;flex-wrap:wrap">
+      <button class="chip" style="background:var(--bg-brand-subtle);color:var(--fg-brand)">선택됨</button>
+      <button class="chip">상태: 전체</button>
+      <button class="chip">기간: 7일</button>
+      <button class="chip">매장: 강남점</button>
+      <button class="chip">#성장가능성</button>
+      <button class="chip">#스타트업</button>
+    </div>
+    <p style="margin-top:var(--space-12);font-size:12px;color:var(--fg-secondary)">
+      시안 차이: <code class="annot">wanted</code>의 #해시 chip 시그너처 · <code class="annot">material-3</code> input chip(radius-8) · <code class="annot">linear-like</code> radius-4 컴팩트.
+    </p>
+  </div>
+
+  <!-- avatar (size + fallback) -->
+  <div class="specimen">
+    <div class="specimen-label">AVATAR — 24 / 32 / 40 + fallback</div>
+    <div style="display:flex;gap:var(--space-16);align-items:center;flex-wrap:wrap">
+      <span class="avatar" style="width:24px;height:24px;font-size:11px">홍</span>
+      <span class="avatar">홍</span>
+      <span class="avatar" style="width:40px;height:40px;font-size:14px">김</span>
+      <span class="avatar" style="width:48px;height:48px;font-size:16px">이</span>
+      <span class="avatar" style="background:var(--bg-brand-subtle);color:var(--fg-brand)">박</span>
+      <span class="avatar" style="background:var(--bg-inverse);color:var(--fg-on-brand)">최</span>
+    </div>
+    <p style="margin-top:var(--space-12);font-size:12px;color:var(--fg-secondary)">
+      시안 차이: <code class="annot">linear-like 24</code> 컴팩트 · <code class="annot">wanted/minimal-mono/material-3 32</code> · <code class="annot">toss-like 40</code> 모바일 우선. 본 specimen의 그라디언트 채움은 wanted 시그너처(다른 시안에서는 단색 fallback 권장).
+    </p>
+  </div>
+
+  <!-- icon-button -->
+  <div class="specimen">
+    <div class="specimen-label">ICON-BUTTON — 28 / 36 / 40</div>
+    <div style="display:flex;gap:var(--space-12);align-items:center;flex-wrap:wrap">
+      <button class="icon-btn" style="width:28px;height:28px">
+        <svg class="icon sm" viewBox="0 0 24 24"><path d="M11 4a7 7 0 1 0 7 7"/><path d="M21 21l-4.3-4.3"/></svg>
+      </button>
+      <button class="icon-btn">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M11 4a7 7 0 1 0 7 7"/><path d="M21 21l-4.3-4.3"/></svg>
+      </button>
+      <button class="icon-btn" style="width:40px;height:40px">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M11 4a7 7 0 1 0 7 7"/><path d="M21 21l-4.3-4.3"/></svg>
+      </button>
+      <button class="icon-btn">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+        <span class="dot"></span>
+      </button>
+      <button class="icon-btn">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5"/></svg>
+      </button>
+    </div>
+    <p style="margin-top:var(--space-12);font-size:12px;color:var(--fg-secondary)">
+      시안 차이: <code class="annot">linear-like</code>는 radius-6(아닌 radius-full) 시그너처. 다른 시안은 모두 radius-full circle.
+    </p>
+  </div>
+
+  <!-- icon (sizes) -->
+  <div class="specimen">
+    <div class="specimen-label">ICON — 16 / 20 / 24 / 32 (currentColor)</div>
+    <div style="display:flex;gap:var(--space-24);align-items:center;flex-wrap:wrap;color:var(--fg-default)">
+      <svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+      <svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+      <svg class="icon lg" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+      <svg style="width:32px;height:32px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+      <span style="color:var(--fg-brand)">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M11 4a7 7 0 1 0 7 7"/><path d="M21 21l-4.3-4.3"/></svg>
+      </span>
+      <span style="color:var(--fg-success)">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+      </span>
+      <span style="color:var(--fg-danger)">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg>
+      </span>
+    </div>
+    <p style="margin-top:var(--space-12);font-size:12px;color:var(--fg-secondary)">
+      모든 시안 공통: <code class="annot">currentColor</code> 상속, monochrome, 2px stroke (linear-like는 1.5px), rounded line caps. 시안 무관.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== Signature (시안별 차별화) ===================== -->
+<section class="section" id="signature">
+  <div class="section-head">
+    <h2>시안 시그너처</h2>
+    <p>활성 시안 dropdown을 변경하면 해당 시안의 시그너처 컴포넌트가 표시된다.</p>
+  </div>
+
+  <!-- wanted: 잡카드 채용보상금 -->
+  <div class="specimen signature-only wanted">
+    <div class="specimen-label">WANTED 시그너처 — 채용보상금 잡카드</div>
+    <div class="signature-meta">잡카드 우측 하단 fg-brand 강조</div>
+    <div class="reward-card">
+      <div class="company">테크컴퍼니</div>
+      <div class="role">시니어 프론트엔드 엔지니어</div>
+      <div class="reward">
+        <span>채용보상금</span>
+        <span class="reward-amount">200만원</span>
+      </div>
+    </div>
+    <p style="margin-top:var(--space-12);font-size:13px;color:var(--fg-secondary)">
+      잡카드 우측 하단에 항상 노출되는 wanted 시그너처. fg-brand 색으로 다른 잡 사이트와 구분.
+    </p>
+  </div>
+
+  <!-- minimal-mono: 채도 0 위계 -->
+  <div class="specimen signature-only minimal-mono">
+    <div class="specimen-label">MINIMAL-MONO 시그너처 — 색 없는 타이포 위계</div>
+    <div class="signature-meta">색 없이 size + weight + underline 으로만 위계</div>
+    <div class="mono-emphasis">
+      <div class="h1">매출 ₩48,200,000</div>
+      <div class="h2">오늘 주문 1,284건</div>
+      <div class="h3">전월 대비 12.4% 증가</div>
+      <div class="h4 underline">상세 보기</div>
+    </div>
+    <p style="margin-top:var(--space-12);font-size:13px;color:var(--fg-secondary)">
+      brand color가 채도 0 — 위계는 size/weight/underline 조합으로만 만든다. 다른 시안의 fg-brand 색 강조와 직교.
+    </p>
+  </div>
+
+  <!-- toss-like: hero gradient + amount input -->
+  <div class="specimen signature-only toss-like">
+    <div class="specimen-label">TOSS-LIKE 시그너처 — hero gradient + amount input</div>
+    <div class="signature-meta">policy.gradient_locations: ["hero", "table-fade-edge"] — 마케팅 hero + 와이드 테이블 affordance</div>
+    <div class="hero-banner">
+      <div class="title">간편하게 송금해 보세요</div>
+      <div class="sub">계좌번호 없이 전화번호로 보낼 수 있어요</div>
+      <button class="cta">시작하기</button>
+    </div>
+
+    <div class="signature-meta" style="margin-top:var(--space-24)">amount input — tabular-nums + 32/700 + 큰 라운드</div>
+    <div class="amount-input">
+      <input class="amount" value="1,250,000" />
+      <span class="currency">원</span>
+    </div>
+    <p style="margin-top:var(--space-12);font-size:13px;color:var(--fg-secondary)">
+      금액 입력 전용 variant. tabular-nums로 자릿수 시각 정렬, 우측 정렬 + 통화 단위 suffix.
+    </p>
+  </div>
+
+  <!-- material-3: button radius-full + elevated card -->
+  <div class="specimen signature-only material-3">
+    <div class="specimen-label">MATERIAL-3 시그너처 — fully rounded button + elevated card</div>
+    <div class="signature-meta">M3 button은 radius-full + positive letter-spacing</div>
+    <div style="display:flex;gap:var(--space-12);align-items:center;flex-wrap:wrap">
+      <button class="button m3-pill" style="background:var(--bg-brand);color:var(--fg-on-brand)">Save</button>
+      <button class="button m3-pill" style="background:var(--bg-brand-subtle);color:var(--fg-brand)">Tonal</button>
+      <button class="button m3-pill" style="background:var(--bg-surface);color:var(--fg-brand);box-shadow:var(--shadow-1)">Elevated</button>
+      <button class="button m3-pill" style="background:transparent;color:var(--fg-brand);border:1px solid var(--border-default)">Outlined</button>
+      <button class="button m3-pill" style="background:transparent;color:var(--fg-brand)">Text</button>
+    </div>
+    <p style="margin-top:var(--space-12);font-size:13px;color:var(--fg-secondary)">
+      M3 5종 button variant — filled / tonal / elevated / outlined / text. 모두 radius-full + positive letter-spacing(0.10em).
+    </p>
+
+    <div class="signature-meta" style="margin-top:var(--space-24)">elevated card — shadow-2 적극</div>
+    <div class="m3-elevated-card">
+      <div class="label">TOTAL REVENUE</div>
+      <div class="title">₩48,200,000</div>
+    </div>
+  </div>
+
+  <!-- linear-like: kbd + gradient accent -->
+  <div class="specimen signature-only linear-like">
+    <div class="specimen-label">LINEAR-LIKE 시그너처 — kbd 단축키 + gradient accent</div>
+    <div class="signature-meta">kbd 컴포넌트 — productivity 시그너처</div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-12)">
+      <div class="kbd-row">
+        <span class="kbd">⌘</span><span class="kbd">K</span>
+        <span class="desc">Open command palette</span>
+      </div>
+      <div class="kbd-row">
+        <span class="kbd">⌘</span><span class="kbd">⇧</span><span class="kbd">P</span>
+        <span class="desc">Switch project</span>
+      </div>
+      <div class="kbd-row">
+        <span class="kbd">G</span><span style="color:var(--fg-tertiary)">then</span><span class="kbd">I</span>
+        <span class="desc">Go to inbox</span>
+      </div>
+      <div class="kbd-row">
+        <span class="kbd">Esc</span>
+        <span class="desc">Close</span>
+      </div>
+    </div>
+
+    <div class="signature-meta" style="margin-top:var(--space-24)">gradient accent — CTA hover, 강조 텍스트</div>
+    <div style="display:flex;gap:var(--space-16);align-items:center;flex-wrap:wrap">
+      <span class="gradient-accent">Create issue</span>
+      <span class="gradient-text">$48.2K MRR</span>
+    </div>
+    <p style="margin-top:var(--space-12);font-size:13px;color:var(--fg-secondary)">
+      brand는 gradient pair(violet→teal). accent는 CTA·강조 텍스트·selection에 적극 사용. 다른 시안의 단색 brand와 직교.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== login-layout ===================== -->
+<section class="section" id="login">
+  <div class="section-head">
+    <h2>1. login-layout</h2>
+    <p>standalone auth surface. 카드 그림자 금지, 1px 헤어라인 + radius-12.</p>
+  </div>
+  <div class="specimen">
+    <div class="login-stage">
+      <div class="login-card">
+        <div class="login-brand">
+          <span class="logo">A</span>
+          <span style="font-weight:700;color:var(--fg-strong);font-size:15px">Admin</span>
+          <span class="env">스테이징</span>
+        </div>
+        <div class="login-title">다시 만나서 반가워요</div>
+        <div class="login-sub">사용 중인 계정으로 로그인해 주세요</div>
+        <form class="login-form" onsubmit="event.preventDefault()">
+          <div>
+            <label class="label-form" for="login-email">이메일</label>
+            <input class="input" id="login-email" type="email" placeholder="name@company.com" />
+          </div>
+          <div>
+            <label class="label-form" for="login-pw">비밀번호</label>
+            <input class="input" id="login-pw" type="password" placeholder="비밀번호 입력" />
+          </div>
+          <button type="submit" class="button primary lg full">로그인하기</button>
+        </form>
+        <div class="login-secondary">
+          <a href="#">비밀번호 찾기</a>
+          <span class="dot">·</span>
+          <a href="#">회원가입</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== sidebar-nav ===================== -->
+<section class="section" id="sidebar">
+  <div class="section-head">
+    <h2>2. sidebar-nav</h2>
+    <p>240(expand) / 64(collapse) 두 폭. active는 bg-brand-subtle + fg-brand. 좌측 컬러 rail 금지.</p>
+  </div>
+  <div class="specimen">
+    <div class="sidebar-stage">
+      <aside class="sidebar" id="demo-sidebar">
+        <div class="sidebar-brand">
+          <span class="logo">A</span>
+          <span class="word">Admin</span>
+        </div>
+
+        <div class="nav-section-label">개요</div>
+        <a class="nav-item active" href="#">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+          <span>대시보드</span>
+        </a>
+        <a class="nav-item" href="#">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+          <span>분석</span>
+          <span class="dot"></span>
+        </a>
+
+        <div class="nav-section-label">운영</div>
+        <a class="nav-item" href="#">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+          <span>주문</span>
+        </a>
+        <a class="nav-item" href="#">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+          <span>회원</span>
+        </a>
+        <a class="nav-item" href="#">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/></svg>
+          <span>정산</span>
+        </a>
+
+        <div class="nav-section-label">설정</div>
+        <a class="nav-item" href="#">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5"/></svg>
+          <span>환경 설정</span>
+        </a>
+
+        <button class="sidebar-toggle" id="btn-collapse">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+      </aside>
+      <div style="flex:1;background:var(--bg-subtle);padding:24px;color:var(--fg-secondary);font-size:13px">
+        <span class="annot">collapse 토글을 눌러보세요</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== top-bar ===================== -->
+<section class="section" id="topbar">
+  <div class="section-head">
+    <h2>3. top-bar (admin)</h2>
+    <p>56 height. 좌측 페이지 제목+breadcrumb, 우측 search/env/notification/avatar.</p>
+  </div>
+  <div class="specimen">
+    <div class="topbar-stage">
+      <div class="topbar">
+        <div class="topbar-left">
+          <span class="topbar-title">주문 #1023</span>
+          <span class="topbar-crumb"><span class="sep">/</span>주문<span class="sep">/</span>#1023</span>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-search">
+            <svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input class="input" placeholder="검색" />
+          </div>
+          <span class="badge pending">스테이징</span>
+          <button class="icon-btn" title="알림">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+            <span class="dot"></span>
+          </button>
+          <span class="avatar">홍</span>
+        </div>
+      </div>
+      <div style="background:var(--bg-subtle);padding:48px;color:var(--fg-tertiary);font-size:13px">page content area</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== stat-card ===================== -->
+<section class="section" id="stat">
+  <div class="section-head">
+    <h2>4. stat-card (KPI)</h2>
+    <p>대시보드 상단 1행. 4개 평행 배치, gap 16. 카드 그림자 없음.</p>
+  </div>
+  <div class="specimen">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">오늘 주문</div>
+        <div class="stat-value">1,284</div>
+        <div class="stat-delta pos">
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7"/></svg>
+          12.4% 어제 대비
+        </div>
+        <svg class="stat-spark" viewBox="0 0 100 32" preserveAspectRatio="none"><path d="M0 24 L10 20 L20 22 L30 16 L40 18 L50 12 L60 14 L70 10 L80 8 L90 6 L100 4" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--fg-success)"/></svg>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">신규 회원</div>
+        <div class="stat-value">328</div>
+        <div class="stat-delta neg">
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+          3.1% 어제 대비
+        </div>
+        <svg class="stat-spark" viewBox="0 0 100 32" preserveAspectRatio="none"><path d="M0 8 L10 12 L20 10 L30 16 L40 14 L50 20 L60 18 L70 22 L80 20 L90 24 L100 26" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--fg-danger)"/></svg>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">매출</div>
+        <div class="stat-value">₩48.2M</div>
+        <div class="stat-delta pos">
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7"/></svg>
+          8.7% 어제 대비
+        </div>
+        <svg class="stat-spark" viewBox="0 0 100 32" preserveAspectRatio="none"><path d="M0 22 L15 20 L30 18 L45 14 L60 16 L75 10 L90 8 L100 6" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--fg-brand)"/></svg>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">취소율</div>
+        <div class="stat-value">2.4%</div>
+        <div class="stat-delta flat">
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
+          변동 없음
+        </div>
+        <svg class="stat-spark" viewBox="0 0 100 32" preserveAspectRatio="none"><path d="M0 16 L10 14 L20 18 L30 16 L40 14 L50 16 L60 18 L70 14 L80 16 L90 14 L100 16" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--fg-secondary)"/></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== data-table ===================== -->
+<section class="section" id="table">
+  <div class="section-head">
+    <h2>5. data-table</h2>
+    <p>header bg-muted. 행 hover bg-subtle. 행 클릭으로 상세 진입. zebra striping 금지.</p>
+  </div>
+  <div class="specimen">
+    <div class="table-frame">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="col-check"><span class="check"></span></th>
+            <th><span class="sort">주문번호 <svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></span></th>
+            <th>회원</th>
+            <th>상태</th>
+            <th class="right"><span class="sort">금액 <svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></span></th>
+            <th class="right">등록일</th>
+            <th class="col-action"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="selected">
+            <td class="col-check"><span class="check on"><svg class="icon sm" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span></td>
+            <td>#1023</td>
+            <td>홍길동</td>
+            <td><span class="badge pending">대기중</span></td>
+            <td class="right num">24,000</td>
+            <td class="right" style="color:var(--fg-secondary);font-size:13px">2026-05-15</td>
+            <td class="col-action"><button class="button tertiary sm">보기</button></td>
+          </tr>
+          <tr>
+            <td class="col-check"><span class="check"></span></td>
+            <td>#1022</td>
+            <td>김민지</td>
+            <td><span class="badge active">진행중</span></td>
+            <td class="right num">18,500</td>
+            <td class="right" style="color:var(--fg-secondary);font-size:13px">2026-05-15</td>
+            <td class="col-action"><button class="button tertiary sm">보기</button></td>
+          </tr>
+          <tr>
+            <td class="col-check"><span class="check"></span></td>
+            <td>#1021</td>
+            <td>이서연</td>
+            <td><span class="badge inactive">완료</span></td>
+            <td class="right num">9,200</td>
+            <td class="right" style="color:var(--fg-secondary);font-size:13px">2026-05-14</td>
+            <td class="col-action"><button class="button tertiary sm">보기</button></td>
+          </tr>
+          <tr>
+            <td class="col-check"><span class="check"></span></td>
+            <td>#1020</td>
+            <td>박지훈</td>
+            <td><span class="badge danger">취소</span></td>
+            <td class="right num">12,800</td>
+            <td class="right" style="color:var(--fg-secondary);font-size:13px">2026-05-14</td>
+            <td class="col-action"><button class="button tertiary sm">보기</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pagination">
+        <span class="info">1–4 / 320</span>
+        <div class="nav">
+          <button class="button ghost sm">이전</button>
+          <button class="button tertiary sm" style="min-width:32px">1</button>
+          <button class="button ghost sm" style="min-width:32px">2</button>
+          <button class="button ghost sm" style="min-width:32px">3</button>
+          <button class="button ghost sm">다음</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Wide Table Cases ===================== -->
+<section class="section" id="widetable">
+  <div class="section-head">
+    <h2>5b. Wide Table Cases (밀도 비교 — B 컴팩트 / C 와이드+sticky)</h2>
+    <p>컬럼 수와 밀도가 늘어날 때 임의로 padding을 줄이지 않고 4-케이스(`DESIGN.md ### data-table > #### Wide Table Cases`)에서 선택한다. 시안 선택에 따라 Case C의 스크롤 affordance 시각 단서가 달라진다.</p>
+  </div>
+
+  <!-- Case B — compact -->
+  <div class="case-card">
+    <div class="case-meta">
+      <span class="label">Case B</span>
+      <span>컬럼 9~12 · row 44 · padding <code>{spacing.space-12}</code> · 가로 스크롤 없음</span>
+    </div>
+    <div class="table-frame">
+      <table class="table compact">
+        <thead>
+          <tr>
+            <th class="col-check"><span class="check"></span></th>
+            <th>주문번호</th>
+            <th>주문일시</th>
+            <th>회원</th>
+            <th>상품</th>
+            <th class="right">수량</th>
+            <th class="right">금액</th>
+            <th>결제수단</th>
+            <th>상태</th>
+            <th>담당자</th>
+            <th class="col-action">액션</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="selected">
+            <td class="col-check"><span class="check on"><svg class="icon sm" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span></td>
+            <td>#1023</td>
+            <td style="color:var(--fg-secondary)">05-15 14:22</td>
+            <td>홍길동</td>
+            <td>아메리카노 외 2건</td>
+            <td class="right num">3</td>
+            <td class="right num">24,000</td>
+            <td>카드</td>
+            <td><span class="badge pending">대기중</span></td>
+            <td>김도현</td>
+            <td class="col-action"><button class="button tertiary sm">보기</button></td>
+          </tr>
+          <tr>
+            <td class="col-check"><span class="check"></span></td>
+            <td>#1022</td>
+            <td style="color:var(--fg-secondary)">05-15 14:08</td>
+            <td>김민지</td>
+            <td>샌드위치 세트</td>
+            <td class="right num">1</td>
+            <td class="right num">18,500</td>
+            <td>간편결제</td>
+            <td><span class="badge active">진행중</span></td>
+            <td>박서준</td>
+            <td class="col-action"><button class="button tertiary sm">보기</button></td>
+          </tr>
+          <tr>
+            <td class="col-check"><span class="check"></span></td>
+            <td>#1021</td>
+            <td style="color:var(--fg-secondary)">05-15 13:55</td>
+            <td>이서연</td>
+            <td>샐러드</td>
+            <td class="right num">2</td>
+            <td class="right num">9,200</td>
+            <td>카드</td>
+            <td><span class="badge inactive">완료</span></td>
+            <td>정민호</td>
+            <td class="col-action"><button class="button tertiary sm">보기</button></td>
+          </tr>
+          <tr>
+            <td class="col-check"><span class="check"></span></td>
+            <td>#1020</td>
+            <td style="color:var(--fg-secondary)">05-15 13:40</td>
+            <td>박지훈</td>
+            <td>버거 세트</td>
+            <td class="right num">1</td>
+            <td class="right num">12,800</td>
+            <td>현금</td>
+            <td><span class="badge danger">취소</span></td>
+            <td>—</td>
+            <td class="col-action"><button class="button tertiary sm">보기</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Case C — wide + sticky + scroll + 시안별 affordance -->
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">Case C</span>
+      <span>컬럼 13~18 · row 44 · padding <code>{spacing.space-12}</code> · 좌 2 + 우 1 sticky · 가로 스크롤 · 헤더 sticky</span>
+      <span style="margin-left:auto">스크롤 affordance는 활성 시안 정책으로 분기 → 좌/우 sticky 경계 관찰</span>
+    </div>
+    <div class="wide-frame">
+      <div class="wide-scroll">
+        <table class="table-wide">
+          <thead>
+            <tr>
+              <th class="sticky-l1"><span class="check"></span></th>
+              <th class="sticky-l2">주문번호</th>
+              <th>주문일시</th>
+              <th>고객명</th>
+              <th>상품</th>
+              <th class="right">수량</th>
+              <th class="right">금액</th>
+              <th>결제수단</th>
+              <th>배송상태</th>
+              <th>배송지</th>
+              <th>담당자</th>
+              <th>메모</th>
+              <th>등록자</th>
+              <th class="sticky-r1">액션</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="selected">
+              <td class="sticky-l1"><span class="check on"><svg class="icon sm" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span></td>
+              <td class="sticky-l2">#1023</td>
+              <td style="color:var(--fg-secondary)">2026-05-15 14:22</td>
+              <td>홍길동</td>
+              <td>아메리카노 외 2건</td>
+              <td class="right num">3</td>
+              <td class="right num">24,000</td>
+              <td>카드</td>
+              <td><span class="badge pending">대기중</span></td>
+              <td>서울 강남구 역삼동 822-3</td>
+              <td>김도현</td>
+              <td style="color:var(--fg-secondary)">문 앞에 두고 노크</td>
+              <td>운영자(김)</td>
+              <td class="sticky-r1"><button class="button tertiary sm">보기</button></td>
+            </tr>
+            <tr>
+              <td class="sticky-l1"><span class="check"></span></td>
+              <td class="sticky-l2">#1022</td>
+              <td style="color:var(--fg-secondary)">2026-05-15 14:08</td>
+              <td>김민지</td>
+              <td>샌드위치 세트</td>
+              <td class="right num">1</td>
+              <td class="right num">18,500</td>
+              <td>간편결제</td>
+              <td><span class="badge active">진행중</span></td>
+              <td>서울 마포구 합정동 411-9</td>
+              <td>박서준</td>
+              <td style="color:var(--fg-secondary)">—</td>
+              <td>운영자(이)</td>
+              <td class="sticky-r1"><button class="button tertiary sm">보기</button></td>
+            </tr>
+            <tr>
+              <td class="sticky-l1"><span class="check"></span></td>
+              <td class="sticky-l2">#1021</td>
+              <td style="color:var(--fg-secondary)">2026-05-15 13:55</td>
+              <td>이서연</td>
+              <td>샐러드</td>
+              <td class="right num">2</td>
+              <td class="right num">9,200</td>
+              <td>카드</td>
+              <td><span class="badge inactive">완료</span></td>
+              <td>서울 송파구 잠실동 30-1</td>
+              <td>정민호</td>
+              <td style="color:var(--fg-secondary)">드레싱 별도</td>
+              <td>운영자(박)</td>
+              <td class="sticky-r1"><button class="button tertiary sm">보기</button></td>
+            </tr>
+            <tr>
+              <td class="sticky-l1"><span class="check"></span></td>
+              <td class="sticky-l2">#1020</td>
+              <td style="color:var(--fg-secondary)">2026-05-15 13:40</td>
+              <td>박지훈</td>
+              <td>버거 세트</td>
+              <td class="right num">1</td>
+              <td class="right num">12,800</td>
+              <td>현금</td>
+              <td><span class="badge danger">취소</span></td>
+              <td>서울 영등포구 여의도동 23</td>
+              <td>—</td>
+              <td style="color:var(--fg-secondary)">고객 변심</td>
+              <td>운영자(김)</td>
+              <td class="sticky-r1"><button class="button tertiary sm">보기</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <span class="info">1–4 / 320</span>
+        <div class="nav">
+          <button class="button ghost sm">이전</button>
+          <button class="button tertiary sm" style="min-width:32px">1</button>
+          <button class="button ghost sm" style="min-width:32px">2</button>
+          <button class="button ghost sm" style="min-width:32px">3</button>
+          <button class="button ghost sm">다음</button>
+        </div>
+      </div>
+    </div>
+    <div class="case-meta" style="margin-top:var(--space-8)">
+      <span>현재 시안의 affordance:</span>
+      <code id="case-c-affordance">—</code>
+      <span style="color:var(--fg-tertiary)">(시안 변경 시 자동 갱신)</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== List Toolbar Cases ===================== -->
+<section class="section" id="toolbar">
+  <div class="section-head">
+    <h2>5c. List Toolbar Cases (검색 X / 엑셀 다운로드 / 페이지 크기)</h2>
+    <p>리스트 페이지 보조 컨트롤 케이스 비교. 임의 디자인 대신 케이스를 선택해 합의한다. <code>DESIGN.md ### data-table > #### List Toolbar Cases</code>. 우측 hint가 활성 시안의 디폴트 케이스를 자동 표시.</p>
+  </div>
+
+  <!-- 1) Search Clear -->
+  <div class="case-card">
+    <div class="case-meta">
+      <span class="label">검색 X (Search Clear)</span>
+      <span>A 항상 / B 호버·포커스 시 / C 없음(키보드만)</span>
+      <span class="row-hint" id="toolbar-hint-search">디폴트: —</span>
+    </div>
+    <div class="toolbar-grid">
+      <div class="toolbar-row">
+        <span class="row-label">A — 항상</span>
+        <div class="search-input case-a">
+          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <input value="홍길동" />
+          <button class="clear" aria-label="검색어 지우기"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <span class="row-hint">값이 있으면 즉시 노출</span>
+      </div>
+      <div class="toolbar-row">
+        <span class="row-label">B — 호버</span>
+        <div class="search-input case-b">
+          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <input value="김민지" />
+          <button class="clear" aria-label="검색어 지우기"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <span class="row-hint">input hover/focus 시만 (행에 마우스를 올려보세요)</span>
+      </div>
+      <div class="toolbar-row">
+        <span class="row-label">C — 없음</span>
+        <div class="search-input case-c">
+          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <input value="이서연" />
+          <button class="clear" aria-label="검색어 지우기"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <span class="row-hint">Esc 또는 ⌘+Backspace</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2) Excel Export -->
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">엑셀 다운로드 (Export)</span>
+      <span>A 단일 버튼 / B 아이콘 only / C 옵션 dropdown / D 비동기 progress</span>
+      <span class="row-hint" id="toolbar-hint-export">디폴트: —</span>
+    </div>
+    <div class="toolbar-grid">
+      <div class="toolbar-row">
+        <span class="row-label">A — 버튼</span>
+        <button class="button secondary md">
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+          엑셀 다운로드
+        </button>
+        <span class="row-hint">즉시 다운로드 (.xlsx)</span>
+      </div>
+      <div class="toolbar-row">
+        <span class="row-label">B — 아이콘</span>
+        <button class="icon-btn" title="엑셀 다운로드" aria-label="엑셀 다운로드">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+        </button>
+        <span class="row-hint">tooltip 의존, 공간 절약</span>
+      </div>
+      <div class="toolbar-row">
+        <span class="row-label">C — dropdown</span>
+        <button class="button secondary md">
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+          엑셀 다운로드
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <span class="row-hint">옵션: 전체 / 필터 결과 / 선택한 항목 / 현재 페이지</span>
+      </div>
+      <div class="toolbar-row">
+        <span class="row-label">D — async</span>
+        <button class="button secondary md" disabled>
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+          엑셀 다운로드
+        </button>
+        <span class="export-progress">처리 중 — 2,481 / 12,000</span>
+        <span class="row-hint">서버 export 큐 + 완료 시 toast</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3) Page Size -->
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">페이지 크기 (Page Size)</span>
+      <span>A dropdown / B segmented / C auto-fit</span>
+      <span class="row-hint" id="toolbar-hint-pagesize">디폴트: —</span>
+    </div>
+    <div class="toolbar-grid">
+      <div class="toolbar-row">
+        <span class="row-label">A — dropdown</span>
+        <button class="button tertiary sm">
+          20개씩 보기
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <span class="row-hint">10 / 20 / 50 / 100 popover</span>
+      </div>
+      <div class="toolbar-row">
+        <span class="row-label">B — segmented</span>
+        <div class="segmented" role="tablist">
+          <button type="button">10</button>
+          <button type="button" class="on">20</button>
+          <button type="button">50</button>
+        </div>
+        <span class="row-hint">즉시 비교, compact 시그너처</span>
+      </div>
+      <div class="toolbar-row">
+        <span class="row-label">C — auto-fit</span>
+        <span class="auto-fit-tag">
+          <svg class="icon sm" viewBox="0 0 24 24"><path d="M4 12h16M4 6h16M4 18h16"/></svg>
+          자동 (현재 24행)
+        </span>
+        <span class="row-hint">UI 미노출, 컨테이너 높이로 자동 계산</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Surface Density Cases ===================== -->
+<section class="section" id="density">
+  <div class="section-head">
+    <h2>5d. Admin Surface Density Cases (대시보드/KPI/data-table 여백)</h2>
+    <p>화면 단위로 한 가지 케이스를 선택. 같은 화면에서 두 케이스 혼용 금지. 미니멈(C)·모니터링(D)은 4의 배수 ladder 유지하면서 정보 밀도 최대화. <code>DESIGN.md ### Admin / Dashboard surface > #### Admin Surface Density Cases</code>.</p>
+  </div>
+
+  <div class="case-card">
+    <div class="case-meta">
+      <span class="label">4 케이스 비교</span>
+      <span>content padding · card padding · KPI gap · button/input · row</span>
+      <span class="row-hint" id="density-hint">디폴트: —</span>
+    </div>
+    <div class="density-grid">
+      <div class="density-row">
+        <span class="row-label">A — 표준<br/>32 · 24 · 16<br/>btn 40 · row 56</span>
+        <div class="density-mini spacious">
+          <div class="kpi"><span class="kpi-label">오늘 주문</span><span class="kpi-val">1,284</span></div>
+          <div class="kpi"><span class="kpi-label">신규 회원</span><span class="kpi-val">328</span></div>
+          <div class="kpi"><span class="kpi-label">매출</span><span class="kpi-val">₩48.2M</span></div>
+          <input class="mini-input" value="주문번호 검색" />
+          <button class="mini-btn">엑셀 다운로드</button>
+          <div class="mini-row">#1023 · 홍길동</div>
+        </div>
+      </div>
+      <div class="density-row">
+        <span class="row-label">B — 컴팩트<br/>24 · 16 · 12<br/>btn 36 · row 40</span>
+        <div class="density-mini compact">
+          <div class="kpi"><span class="kpi-label">오늘 주문</span><span class="kpi-val">1,284</span></div>
+          <div class="kpi"><span class="kpi-label">신규 회원</span><span class="kpi-val">328</span></div>
+          <div class="kpi"><span class="kpi-label">매출</span><span class="kpi-val">₩48.2M</span></div>
+          <input class="mini-input" value="주문번호 검색" />
+          <button class="mini-btn">엑셀 다운로드</button>
+          <div class="mini-row">#1023 · 홍길동</div>
+        </div>
+      </div>
+      <div class="density-row">
+        <span class="row-label">C — 미니멈<br/>16 · 12 · 8<br/>btn 32 · row 36</span>
+        <div class="density-mini minimum">
+          <div class="kpi"><span class="kpi-label">오늘 주문</span><span class="kpi-val">1,284</span></div>
+          <div class="kpi"><span class="kpi-label">신규 회원</span><span class="kpi-val">328</span></div>
+          <div class="kpi"><span class="kpi-label">매출</span><span class="kpi-val">₩48.2M</span></div>
+          <input class="mini-input" value="주문번호 검색" />
+          <button class="mini-btn">엑셀 다운로드</button>
+          <div class="mini-row">#1023 · 홍길동</div>
+        </div>
+      </div>
+      <div class="density-row">
+        <span class="row-label">D — 모니터링<br/>8 · 8 · 8<br/>btn 32 · row 36</span>
+        <div class="density-mini monitor">
+          <div class="kpi"><span class="kpi-label">오늘 주문</span><span class="kpi-val">1,284</span></div>
+          <div class="kpi"><span class="kpi-label">신규 회원</span><span class="kpi-val">328</span></div>
+          <div class="kpi"><span class="kpi-label">매출</span><span class="kpi-val">₩48.2M</span></div>
+          <input class="mini-input" value="주문번호 검색" />
+          <button class="mini-btn">엑셀 다운로드</button>
+          <div class="mini-row">#1023 · 홍길동</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Filter Bar Cases ===================== -->
+<section class="section" id="filterbar">
+  <div class="section-head">
+    <h2>5e. Filter Bar Cases (admin) — 일시 + 엑셀 포함</h2>
+    <p>리스트 페이지 상단 필터 바 케이스. 일시(date-range)는 단일 트리거로 통합, 엑셀 다운로드는 <code>List Toolbar §2</code> 케이스 호출. <code>DESIGN.md ### filter-bar (admin) > #### Filter Bar Cases</code>.</p>
+  </div>
+
+  <div class="case-card">
+    <div class="case-meta">
+      <span class="label">A — 기본 chip</span>
+      <span>상태/카테고리 chip + 검색 + reset</span>
+      <span class="row-hint" id="fbar-hint">디폴트: —</span>
+    </div>
+    <div class="fbar">
+      <button class="chip">상태: 전체</button>
+      <button class="chip">카테고리: 음식</button>
+      <button class="chip">매장: 전체</button>
+      <div class="grow">
+        <div class="search-input case-a">
+          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <input value="" placeholder="주문번호, 회원명" />
+          <button class="clear" aria-label="검색어 지우기" style="display:none"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+      </div>
+      <button class="button ghost sm">필터 초기화</button>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">B — 일시 + 엑셀</span>
+      <span>date-range 단일 트리거 + chip 1~3 + 우측 엑셀 다운로드</span>
+    </div>
+    <div class="fbar">
+      <button class="date-trigger" aria-haspopup="dialog">
+        <span class="cal"><svg class="icon sm" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
+        기간: 2026-05-11 — 2026-05-18
+        <svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <button class="chip">상태: 전체</button>
+      <button class="chip">매장: 강남점·홍대점</button>
+      <div class="grow">
+        <div class="search-input case-a">
+          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <input value="홍길동" />
+          <button class="clear" aria-label="검색어 지우기"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+      </div>
+      <span class="fbar-counter">필터 (3)</span>
+      <button class="button ghost sm">필터 초기화</button>
+      <button class="button secondary md">
+        <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+        엑셀 다운로드
+      </button>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">C — 다중 패널</span>
+      <span>필터 토글 → 좌측 slide panel(320) + 저장된 뷰 + 엑셀 옵션 dropdown</span>
+    </div>
+    <div class="fbar">
+      <button class="panel-trigger" aria-expanded="false">
+        <svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
+        필터
+        <span class="pt-dot">5</span>
+      </button>
+      <button class="button tertiary sm">저장된 뷰: VIP 회원 ▾</button>
+      <div class="grow">
+        <div class="search-input case-a">
+          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <input value="" placeholder="회원/주문 검색" />
+          <button class="clear" aria-label="검색어 지우기" style="display:none"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+      </div>
+      <button class="button secondary md">
+        <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+        엑셀 다운로드
+        <svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">D — 검색만</span>
+      <span>단일 검색 페이지(회원/주문 단건 조회), 정적 필터 없음</span>
+    </div>
+    <div class="fbar">
+      <div class="grow" style="max-width:600px">
+        <div class="search-input case-a" style="width:100%">
+          <span class="leading"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <input value="" placeholder="회원 ID 또는 주문번호 입력" />
+          <button class="clear" aria-label="검색어 지우기" style="display:none"><svg class="icon sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Column Filter Cases ===================== -->
+<section class="section" id="colfilter">
+  <div class="section-head">
+    <h2>5f. Column Filter Cases (테이블 컬럼 필터)</h2>
+    <p>컬럼 헤더 안에서 정렬·필터를 어디까지 노출할지. 전역 Filter Bar와 듀얼(D) 운영 시 역할 분리를 PR 본문에 명시. <code>DESIGN.md ### data-table > #### Column Filter Cases</code>.</p>
+  </div>
+
+  <div class="case-card">
+    <div class="case-meta">
+      <span class="label">A — 정렬만</span>
+      <span>sort 3-state icon만 노출, 컬럼 필터 없음</span>
+      <span class="row-hint" id="colf-hint">디폴트: —</span>
+    </div>
+    <div class="colf-frame">
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th><span class="h-control">주문번호 <span class="ctrl-cluster"><button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button></span></span></th>
+            <th><span class="h-control">고객명 <span class="ctrl-cluster"><button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button></span></span></th>
+            <th><span class="h-control">상태 <span class="ctrl-cluster"><button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button></span></span></th>
+            <th><span class="h-control">금액 <span class="ctrl-cluster"><button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button></span></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>#1023</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td>24,000</td></tr>
+          <tr><td>#1022</td><td>김민지</td><td><span class="badge active">진행중</span></td><td>18,500</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">B — 헤더 popover</span>
+      <span>sort + funnel icon, 활성 시 brand dot. 헤더 클릭 → popover에서 검색/체크박스/날짜</span>
+    </div>
+    <div class="colf-frame">
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th><span class="h-control">주문번호 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn" aria-label="필터"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+            <th><span class="h-control">고객명 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn on" aria-label="필터 적용됨"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+            <th><span class="h-control">상태 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn on" aria-label="필터 적용됨"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+            <th><span class="h-control">금액 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn" aria-label="필터"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>#1023</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td>24,000</td></tr>
+          <tr><td>#1022</td><td>김민지</td><td><span class="badge active">진행중</span></td><td>18,500</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="case-meta" style="margin-top:var(--space-8)">
+      <span style="color:var(--fg-tertiary)">고객명·상태 컬럼 funnel에 brand dot — 활성 필터 표기 (텍스트 'filtered' 라벨 금지).</span>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">C — 인라인 row</span>
+      <span>thead 다음 row에 컬럼별 input/select 영구 노출 (Excel 필터 패턴, 회계/정산)</span>
+    </div>
+    <div class="colf-frame">
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th>주문번호</th>
+            <th>고객명</th>
+            <th>상태</th>
+            <th>금액</th>
+          </tr>
+          <tr class="colf-inline-row">
+            <td><input placeholder="#1000-" /></td>
+            <td><input placeholder="홍길..." /></td>
+            <td>
+              <select>
+                <option>전체</option>
+                <option>대기중</option>
+                <option>진행중</option>
+                <option>완료</option>
+              </select>
+            </td>
+            <td><input placeholder="≥ 10,000" /></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>#1023</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td>24,000</td></tr>
+          <tr><td>#1022</td><td>김민지</td><td><span class="badge active">진행중</span></td><td>18,500</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">D — 듀얼</span>
+      <span>전역 Filter Bar + 컬럼 popover/inline 동시. Case D(초과밀도) 테이블 + 운영자 전문 사용</span>
+    </div>
+    <div class="fbar" style="margin-bottom:var(--space-8)">
+      <button class="date-trigger">
+        <span class="cal"><svg class="icon sm" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
+        기간: 최근 30일
+        <svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <button class="chip">상태: 진행중·완료</button>
+      <span class="fbar-counter">전역 (2) +컬럼 (2)</span>
+      <button class="button ghost sm">전체 초기화</button>
+    </div>
+    <div class="colf-frame">
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th><span class="h-control">주문번호 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn" aria-label="필터"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+            <th><span class="h-control">고객명 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn on" aria-label="필터 적용됨"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+            <th><span class="h-control">상태 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn" aria-label="필터"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+            <th><span class="h-control">금액 <span class="ctrl-cluster">
+              <button class="ctrl-btn" aria-label="정렬"><svg class="icon sm" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></button>
+              <button class="ctrl-btn on" aria-label="필터 적용됨"><svg class="icon sm" viewBox="0 0 24 24"><path d="M3 5h18l-7 9v5l-4-2v-3z"/></svg></button>
+            </span></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>#1023</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td>24,000</td></tr>
+          <tr><td>#1022</td><td>김민지</td><td><span class="badge active">진행중</span></td><td>18,500</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Tab Page Cases ===================== -->
+<section class="section" id="tabs">
+  <div class="section-head">
+    <h2>5g. Tab Page Cases (탭 페이지 패턴)</h2>
+    <p>in-page 탭(browser tab과 다른 콘텐츠 그룹 전환). 한 화면에 두 케이스 혼용 금지 — 섹션 탭은 A, 그 안 서브 토글은 C 식 위계 분리. <code>DESIGN.md ### tab (admin) > #### Tab Page Cases</code>.</p>
+  </div>
+
+  <div class="case-card">
+    <div class="case-meta">
+      <span class="label">A — line</span>
+      <span>하단 2px solid 강조 underline, 상세 페이지 안 섹션 전환 (주문 상세 &gt; 기본/배송/이력)</span>
+      <span class="row-hint" id="tab-hint">디폴트: —</span>
+    </div>
+    <div class="tab-group">
+      <div class="tab-line">
+        <button type="button" class="on">기본 정보</button>
+        <button type="button">배송 <span class="badge inactive" style="margin-left:6px">2</span></button>
+        <button type="button">결제</button>
+        <button type="button">이력</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">B — pill</span>
+      <span>brand-subtle 채움 pill, 카테고리/유형 전환 (상품 카테고리, 정산 유형)</span>
+    </div>
+    <div class="tab-group">
+      <div class="tab-pill">
+        <button type="button" class="on">음식</button>
+        <button type="button">생필품</button>
+        <button type="button">의약품</button>
+        <button type="button">반려동물</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">C — segmented</span>
+      <span>2~3개 분명한 토글 (테이블/보드 뷰, 일/월 단위)</span>
+    </div>
+    <div class="tab-group">
+      <div class="tab-segment" role="tablist">
+        <button type="button">일별</button>
+        <button type="button" class="on">월별</button>
+        <button type="button">연간</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="case-card" style="margin-top:var(--space-24)">
+    <div class="case-meta">
+      <span class="label">D — vertical</span>
+      <span>좌측 200~240 navigation 컬럼, 탭 5+ 또는 세부 페이지 다단 (설정 페이지)</span>
+    </div>
+    <div class="tab-vertical-frame">
+      <nav class="tab-vertical-nav" aria-label="설정 섹션">
+        <button type="button">일반</button>
+        <button type="button" class="on">알림</button>
+        <button type="button">권한</button>
+        <button type="button">보안</button>
+        <button type="button">결제</button>
+        <button type="button">통합</button>
+      </nav>
+      <div class="tab-vertical-body">
+        본문 영역 — 활성 탭(알림)의 콘텐츠가 우측에 표시됩니다.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Assembly: Dashboard ===================== -->
+<section class="section" id="dashboard">
+  <div class="section-head">
+    <h2>화면 조립 1. 대시보드</h2>
+    <p>sidebar + top-bar + stat-card row + 차트/테이블.</p>
+  </div>
+  <div class="specimen">
+    <div class="dashboard">
+      <aside class="sidebar">
+        <div class="sidebar-brand"><span class="logo">A</span><span class="word">Admin</span></div>
+        <div class="nav-section-label">개요</div>
+        <a class="nav-item active" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg><span>대시보드</span></a>
+        <a class="nav-item" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg><span>분석</span></a>
+        <div class="nav-section-label">운영</div>
+        <a class="nav-item" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/></svg><span>주문</span></a>
+        <a class="nav-item" href="#"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span>회원</span></a>
+      </aside>
+      <div style="display:flex;flex-direction:column;min-width:0">
+        <div class="topbar">
+          <div class="topbar-left">
+            <span class="topbar-title">대시보드</span>
+            <span class="topbar-crumb">오늘 · 2026-05-15</span>
+          </div>
+          <div class="topbar-right">
+            <span class="badge pending">스테이징</span>
+            <button class="icon-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><span class="dot"></span></button>
+            <span class="avatar">홍</span>
+          </div>
+        </div>
+        <div class="content">
+          <div class="stat-grid">
+            <div class="stat-card"><div class="stat-label">오늘 주문</div><div class="stat-value">1,284</div><div class="stat-delta pos"><svg class="icon sm" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7"/></svg>12.4%</div></div>
+            <div class="stat-card"><div class="stat-label">신규 회원</div><div class="stat-value">328</div><div class="stat-delta neg"><svg class="icon sm" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>3.1%</div></div>
+            <div class="stat-card"><div class="stat-label">매출</div><div class="stat-value">₩48.2M</div><div class="stat-delta pos"><svg class="icon sm" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7"/></svg>8.7%</div></div>
+            <div class="stat-card"><div class="stat-label">취소율</div><div class="stat-value">2.4%</div><div class="stat-delta flat"><svg class="icon sm" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>변동 없음</div></div>
+          </div>
+          <div class="table-frame">
+            <table class="table">
+              <thead><tr>
+                <th>최근 활동</th><th>회원</th><th>상태</th><th class="right">시각</th>
+              </tr></thead>
+              <tbody>
+                <tr><td>주문 등록</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td class="right" style="color:var(--fg-secondary)">10분 전</td></tr>
+                <tr><td>회원 가입</td><td>김민지</td><td><span class="badge active">활성</span></td><td class="right" style="color:var(--fg-secondary)">23분 전</td></tr>
+                <tr><td>정산 완료</td><td>이서연</td><td><span class="badge inactive">완료</span></td><td class="right" style="color:var(--fg-secondary)">1시간 전</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Assembly: List page ===================== -->
+<section class="section" id="listpage">
+  <div class="section-head">
+    <h2>화면 조립 2. 리스트 페이지</h2>
+    <p>top-bar + filter row + data-table + pagination.</p>
+  </div>
+  <div class="specimen">
+    <div class="dashboard" style="grid-template-columns: 64px 1fr">
+      <aside class="sidebar collapsed">
+        <div class="sidebar-brand"><span class="logo">A</span></div>
+        <a class="nav-item" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg></a>
+        <a class="nav-item active" href="#"><svg class="icon" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/></svg></a>
+        <a class="nav-item" href="#"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></a>
+      </aside>
+      <div style="display:flex;flex-direction:column;min-width:0">
+        <div class="topbar">
+          <div class="topbar-left">
+            <span class="topbar-title">주문 목록</span>
+            <span class="topbar-crumb">총 320건</span>
+          </div>
+          <div class="topbar-right">
+            <button class="button primary">내보내기</button>
+            <span class="avatar">홍</span>
+          </div>
+        </div>
+        <div class="content">
+          <div class="filter-row">
+            <button class="chip">상태: 전체</button>
+            <button class="chip">기간: 최근 7일</button>
+            <button class="chip">매장: 전체</button>
+            <div class="grow">
+              <input class="input" placeholder="주문번호, 회원명으로 검색" />
+            </div>
+            <button class="button ghost sm">필터 초기화</button>
+          </div>
+          <div class="table-frame">
+            <table class="table">
+              <thead><tr>
+                <th class="col-check"><span class="check"></span></th>
+                <th>주문번호</th><th>회원</th><th>상태</th>
+                <th class="right">금액</th><th class="right">등록일</th>
+                <th class="col-action"></th>
+              </tr></thead>
+              <tbody>
+                <tr><td class="col-check"><span class="check"></span></td><td>#1023</td><td>홍길동</td><td><span class="badge pending">대기중</span></td><td class="right num">24,000</td><td class="right" style="color:var(--fg-secondary)">2026-05-15</td><td class="col-action"><button class="button tertiary sm">보기</button></td></tr>
+                <tr><td class="col-check"><span class="check"></span></td><td>#1022</td><td>김민지</td><td><span class="badge active">진행중</span></td><td class="right num">18,500</td><td class="right" style="color:var(--fg-secondary)">2026-05-15</td><td class="col-action"><button class="button tertiary sm">보기</button></td></tr>
+                <tr><td class="col-check"><span class="check"></span></td><td>#1021</td><td>이서연</td><td><span class="badge inactive">완료</span></td><td class="right num">9,200</td><td class="right" style="color:var(--fg-secondary)">2026-05-14</td><td class="col-action"><button class="button tertiary sm">보기</button></td></tr>
+                <tr><td class="col-check"><span class="check"></span></td><td>#1020</td><td>박지훈</td><td><span class="badge danger">취소</span></td><td class="right num">12,800</td><td class="right" style="color:var(--fg-secondary)">2026-05-14</td><td class="col-action"><button class="button tertiary sm">보기</button></td></tr>
+                <tr><td class="col-check"><span class="check"></span></td><td>#1019</td><td>최수아</td><td><span class="badge active">진행중</span></td><td class="right num">7,400</td><td class="right" style="color:var(--fg-secondary)">2026-05-14</td><td class="col-action"><button class="button tertiary sm">보기</button></td></tr>
+              </tbody>
+            </table>
+            <div class="pagination">
+              <span class="info">1–5 / 320</span>
+              <div class="nav">
+                <button class="button ghost sm">이전</button>
+                <button class="button tertiary sm" style="min-width:32px">1</button>
+                <button class="button ghost sm" style="min-width:32px">2</button>
+                <button class="button ghost sm" style="min-width:32px">3</button>
+                <button class="button ghost sm">다음</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div style="text-align:center;color:var(--fg-tertiary);font-size:12px;padding:32px 0">
+  Admin FE 디자인 프리뷰 · DESIGN.md 토큰 직접 매핑 · 단일 HTML 파일
+</div>
+
+</div>
+
+<script>
+  /* ============================================================
+     시안 카탈로그 — 시안 추가 시 이 객체에 한 항목 추가.
+     CSS 변수 정의는 <style> 안의 :root[data-design="<slug>"]
+     블록에 별도로 inline 한다.
+     policy: 활성 시안의 frontmatter policy 블록과 동기 유지.
+     ============================================================ */
+  const DESIGNS = {
+    wanted: {
+      label: 'wanted',
+      policy: {
+        shadow_on_cards: false,
+        gradient_locations: ['symbol', 'avatar', 'thumbnail', 'hero'],
+        copy_tone: 'ko-friendly',
+        dark_mode: 'supported',
+        non_4_spacing: false,
+      },
+    },
+    'minimal-mono': {
+      label: 'minimal-mono',
+      policy: {
+        shadow_on_cards: false,
+        gradient_locations: [],
+        copy_tone: 'ko-friendly',
+        dark_mode: 'supported',
+        non_4_spacing: false,
+      },
+    },
+    'toss-like': {
+      label: 'toss-like',
+      policy: {
+        shadow_on_cards: true,
+        gradient_locations: ['hero', 'table-fade-edge'],
+        copy_tone: 'ko-friendly',
+        dark_mode: 'supported',
+        non_4_spacing: false,
+      },
+    },
+    'material-3': {
+      label: 'material-3',
+      policy: {
+        shadow_on_cards: true,
+        gradient_locations: [],
+        copy_tone: 'en-sentence',
+        dark_mode: 'supported',
+        non_4_spacing: false,
+      },
+    },
+    'linear-like': {
+      label: 'linear-like',
+      policy: {
+        shadow_on_cards: false,
+        gradient_locations: ['accent', 'hero', 'table-fade-edge'],
+        copy_tone: 'en-sentence',
+        dark_mode: 'supported',
+        non_4_spacing: false,
+      },
+    },
+  };
+
+  /* state + persistence */
+  const root = document.documentElement;
+  const btnLight = document.getElementById('btn-light');
+  const btnDark = document.getElementById('btn-dark');
+  const selectDesign = document.getElementById('design-select');
+  const policyStrip = document.getElementById('policy-strip');
+  const KEY_THEME = 'admin-fe-preview-theme';
+  const KEY_DESIGN = 'admin-fe-preview-design';
+
+  /* dropdown populate */
+  function populateDesigns() {
+    selectDesign.innerHTML = '';
+    Object.entries(DESIGNS).forEach(([slug, def]) => {
+      const opt = document.createElement('option');
+      opt.value = slug;
+      opt.textContent = def.label;
+      selectDesign.appendChild(opt);
+    });
+  }
+
+  /* policy chip strip */
+  function renderPolicy(slug) {
+    const def = DESIGNS[slug];
+    if (!def) return;
+    const p = def.policy;
+    const chips = [];
+    chips.push(`<span class="policy-pill ${p.shadow_on_cards ? 'on' : 'off'}">카드 그림자: ${p.shadow_on_cards ? '허용' : '금지'}</span>`);
+    if (p.gradient_locations.length === 0) {
+      chips.push(`<span class="policy-pill off">gradient: 전면 금지</span>`);
+    } else {
+      chips.push(`<span class="policy-pill info">gradient: ${p.gradient_locations.join(' · ')}</span>`);
+    }
+    chips.push(`<span class="policy-pill info">copy tone: ${p.copy_tone}</span>`);
+    chips.push(`<span class="policy-pill ${p.dark_mode === 'supported' ? 'on' : 'off'}">dark: ${p.dark_mode}</span>`);
+    chips.push(`<span class="policy-pill ${p.non_4_spacing ? 'off' : 'on'}">non-4 spacing: ${p.non_4_spacing ? '허용' : '금지'}</span>`);
+    policyStrip.innerHTML = '<span class="policy-strip-label">POLICY</span>' + chips.join('');
+  }
+
+  /* Case C affordance description per design */
+  const CASE_C_AFFORDANCE = {
+    'wanted': '1px border-default 라인 (chrome 외 grad 금지 정책)',
+    'minimal-mono': '1px border-strong + 4px inset shadow (전면 grad 금지)',
+    'toss-like': 'fade-edge 8px gradient mask (gradient_locations: table-fade-edge)',
+    'material-3': 'state-layer 8% brand alpha overlay (M3 state layer)',
+    'linear-like': 'fade-edge 8px gradient mask, 다크 친화 강 alpha (gradient_locations: table-fade-edge)',
+  };
+  function renderCaseCAffordance(slug) {
+    const el = document.getElementById('case-c-affordance');
+    if (el) el.textContent = CASE_C_AFFORDANCE[slug] || '—';
+  }
+
+  /* List Toolbar Cases — 시안별 디폴트 표기 (DESIGN.md ### data-table > #### List Toolbar Cases) */
+  const TOOLBAR_DEFAULT = {
+    'wanted':       { search: 'A — 항상 표시', export: 'A — 단일 버튼',          pagesize: 'A — dropdown (20)' },
+    'minimal-mono': { search: 'B — 호버/포커스', export: 'B — 아이콘 only',       pagesize: 'A — dropdown (20)' },
+    'toss-like':    { search: 'A — 항상 표시', export: 'A — 단일 버튼',          pagesize: 'A — dropdown (20)' },
+    'material-3':   { search: 'B — 호버/포커스', export: 'A — 단일 버튼',          pagesize: 'A — dropdown (20)' },
+    'linear-like':  { search: 'C — 없음 (Esc/⌘+Backspace)', export: 'B — 아이콘 only (⌘E)', pagesize: 'B — segmented (20)' },
+  };
+  function renderToolbarDefault(slug) {
+    const d = TOOLBAR_DEFAULT[slug] || {};
+    const hs = document.getElementById('toolbar-hint-search');
+    const he = document.getElementById('toolbar-hint-export');
+    const hp = document.getElementById('toolbar-hint-pagesize');
+    if (hs) hs.textContent = '디폴트: ' + (d.search || '—');
+    if (he) he.textContent = '디폴트: ' + (d.export || '—');
+    if (hp) hp.textContent = '디폴트: ' + (d.pagesize || '—');
+  }
+
+  /* Surface Density / Filter Bar / Column Filter / Tab 시안별 디폴트 (DESIGN.md 각 케이스 매트릭스 정합) */
+  const ADMIN_DEFAULT = {
+    'wanted':       { density: 'A — 표준',   fbar: 'A 또는 B',     colf: 'A — 정렬만',  tab: 'A — line' },
+    'minimal-mono': { density: 'B — 컴팩트', fbar: 'A 또는 B',     colf: 'A or B',      tab: 'A — line' },
+    'toss-like':    { density: 'A — 표준',   fbar: 'A 또는 B',     colf: 'A — 정렬만',  tab: 'A — line (또는 B)' },
+    'material-3':   { density: 'A — 표준',   fbar: 'A 또는 B',     colf: 'A — 정렬만',  tab: 'A — line (M3 Primary)' },
+    'linear-like':  { density: 'C — 미니멈', fbar: 'C — 다중 패널', colf: 'B — popover (⌘F)', tab: 'C — segmented (설정은 D)' },
+  };
+  function renderAdminDefault(slug) {
+    const d = ADMIN_DEFAULT[slug] || {};
+    const setHint = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = '디폴트: ' + (val || '—');
+    };
+    setHint('density-hint', d.density);
+    setHint('fbar-hint',    d.fbar);
+    setHint('colf-hint',    d.colf);
+    setHint('tab-hint',     d.tab);
+  }
+
+  function setTheme(t) {
+    root.setAttribute('data-theme', t);
+    btnLight.setAttribute('aria-pressed', t === 'light');
+    btnDark.setAttribute('aria-pressed', t === 'dark');
+    try { localStorage.setItem(KEY_THEME, t); } catch (e) {}
+  }
+  function setDesign(slug) {
+    if (!DESIGNS[slug]) slug = 'wanted';
+    root.setAttribute('data-design', slug);
+    selectDesign.value = slug;
+    renderPolicy(slug);
+    renderCaseCAffordance(slug);
+    renderToolbarDefault(slug);
+    renderAdminDefault(slug);
+    try { localStorage.setItem(KEY_DESIGN, slug); } catch (e) {}
+  }
+
+  populateDesigns();
+
+  let savedTheme = 'light';
+  let savedDesign = 'wanted';
+  try {
+    savedTheme = localStorage.getItem(KEY_THEME) || 'light';
+    savedDesign = localStorage.getItem(KEY_DESIGN) || 'wanted';
+  } catch (e) {}
+  setDesign(savedDesign);
+  setTheme(savedTheme);
+
+  btnLight.addEventListener('click', () => setTheme('light'));
+  btnDark.addEventListener('click', () => setTheme('dark'));
+  selectDesign.addEventListener('change', e => setDesign(e.target.value));
+
+  /* sidebar collapse demo */
+  const demo = document.getElementById('demo-sidebar');
+  const btn = document.getElementById('btn-collapse');
+  if (btn && demo) {
+    btn.addEventListener('click', () => demo.classList.toggle('collapsed'));
+  }
+
+  /* checkbox demo */
+  document.querySelectorAll('.table .check').forEach(c => {
+    c.addEventListener('click', e => {
+      e.stopPropagation();
+      c.classList.toggle('on');
+      if (c.classList.contains('on')) {
+        c.innerHTML = '<svg class="icon sm" viewBox="0 0 24 24" stroke-width="2.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>';
+      } else {
+        c.innerHTML = '';
+      }
+    });
+  });
+</script>
+</body>
+</html>
