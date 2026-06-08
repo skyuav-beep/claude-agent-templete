@@ -31,8 +31,9 @@
 
 ## 이번 세션에서 완료한 작업
 
-- 신규 DEX 거래소 개발용 `dexchange/` 프로젝트 초기화. (2026-06-08)
-  - `/home/skyua/projects/claude-agent-template/dexchange` 디렉터리 생성 후 Claude/Codex 에이전트 템플릿 v1.1.0 설치.
+- 신규 DEX 거래소 개발용 sibling 프로젝트 `../dexchange/` 초기화. (2026-06-08)
+  - 최초 생성 위치가 템플릿 저장소 내부였음을 확인하고 `/home/skyua/projects/dexchange` sibling 프로젝트로 이동했다.
+  - Claude/Codex 에이전트 템플릿 v1.1.0 설치.
   - 프로젝트 전용 `AGENTS.md`, `CLAUDE.md`, `README.md`, `STATE.md` 작성 — DEX 보안 경계(private key/seed phrase/mainnet/실자금/contract deploy 자동 실행 금지), `local`/`develop`/`production` 환경 호칭, pnpm/Docker 기본 명령 반영.
   - DEX 초기 기준 문서 `docs/project-guide.md`, `docs/architecture.md`, `docs/security-model.md` 작성.
   - 기본 모노레포 골격 추가: `apps/web`, `apps/indexer`, `packages/contracts`, `packages/sdk`, `packages/shared`, `infra`.
