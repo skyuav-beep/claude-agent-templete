@@ -31,6 +31,11 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 신규 sibling 프로젝트 `../aiospace/` 풀 연결 셋업 + 세션 종료 점검. (2026-06-11)
+  - `~/projects/aiospace` 생성: `rules -> ../claude-agent-template` symlink + `.claude/{skills,commands,hooks,agents,plugins}` 5종 symlink + 진입 문서 3종(`CLAUDE.md`/`AGENTS.md`/`STATE.md`) + `settings.json`(hook 3종) + git init(초기 커밋 `9a4c4eb`). 연결 프로젝트 9 → 10개.
+  - aiospace는 이후 별도 세션에서 WorkNest(AI Workspace OS) 방향으로 진행 중 — 템플릿 측 반영분(`designs/worknest.md` 추가·활성화)은 커밋 `0b8bd9c`. aiospace 자체 상태는 `../aiospace/STATE.md` 참조.
+  - 세션 종료 점검: 미커밋으로 남아 있던 CI 실행 모델 재정의분(24파일, 2026-06-09 작업)을 커밋 `3366956`으로 보존. aiospace는 전부 커밋(클린)이나 원격 미설정이라 백업 push 없음. 템플릿 repo는 백업 push 1회 수행(원격 자동 CI 워크플로 없음 — `[skip ci]` 불필요).
+
 - CI 실행 모델 재정의 — "CI = GitHub Actions(push 트리거)"에서 "로컬 CI(사용자 요청 시 로컬 실행)"로 전환 + 브랜치·머지·정리 절차 신설. (2026-06-09)
   - 배경: 사용자가 "CI를 git(GitHub Actions)에서 자동으로 돌리지 말고 로컬에서 개발자 요청 시 실행, push/머지/브랜치 정리는 올바른 절차로"를 요청. 기존 정본 `§1.1`의 "push 1회 = CI 1회" 커플링(2026-06-04 정책)이 이 요구와 정면 충돌했고, 브랜치 정리·머지 절차가 정본에 부재했음.
   - 결정: (1) CI 정의를 GitHub Actions → **로컬 CI 전체 스위트**(lint+typecheck+unit+build[+e2e/smoke] 또는 `act`)로 변경, 사용자 요청 시 로컬 실행. (2) push와 CI를 완전 분리 — push는 원격 백업·공유 수단이며 CI를 트리거하지 않음. (3) 머지·원격 브랜치 정리는 사용자 수동, 로컬 `git branch -d`는 agent 요청 시 가능(안전). (4) GitHub Actions 보유 시 `workflow_dispatch` 강등(권장) 또는 제거. "로컬 CI" 해석은 로컬 스크립트 스위트(기본) + `act`(옵션) 병기.
