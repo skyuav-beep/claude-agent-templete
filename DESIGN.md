@@ -334,7 +334,27 @@ stroke 기반 SVG(1.5~1.75px), `currentColor` 상속, 사이즈 16/20/24(관찰 
 
 ### sticky-memo
 
-포스트잇 5색(데이터 색), radius 8px, 부유 그림자(shadow-pop급), 헤더 드래그 이동·압정 축소·리스트 보기. 우하단 런처 + 개수 배지.
+포스트잇 5색(데이터 색), radius 8px, 부유 그림자(shadow-pop급), 헤더 드래그 이동·압정 축소·리스트 보기. 우하단 런처 + 개수 배지. 모바일은 리스트 모드만(부유·드래그 비활성).
+
+### bottom-sheet
+
+modal의 모바일(<768) 변형 — 동일 컴포넌트가 미디어쿼리로 전환된다. 하단 고정 풀폭, 상단만 `{rounded.radius-16}`, `{colors.bg-elevated}` + `{elevation.shadow-3}`, 최대 높이 88dvh + 내부 스크롤, 헤더(타이틀+X)·푸터 고정, safe-area 패딩. **닫기 정책은 modal과 동일** — 스와이프·scrim 클릭 닫기 금지.
+
+### mobile-nav
+
+모바일 하단 탭 바 — 높이 56px + safe-area, `{colors.bg-surface}` + 상단 `{colors.border-subtle}` 헤어라인, 5칸 고정(아이콘 20 + `{typography.caption1}` 라벨), active `{colors.fg-brand}`.
+
+### nav-drawer
+
+sidebar-nav의 모바일 오버레이 변형 — 폭 `min(304px, 84vw)`, sidebar-bg 표면 + `{elevation.shadow-3}` + scrim. 닫기는 헤더 X·ESC·메뉴 선택만(scrim 클릭 닫기 없음).
+
+### fab
+
+모바일 빠른 생성 버튼 — 48px 원형(`{rounded.radius-full}`), `{colors.bg-brand}` + `{colors.fg-on-brand}` + `{elevation.shadow-pop}`, 우하단 고정(탭 바 위 safe-area 보정).
+
+### card-row
+
+data-table 행의 모바일 카드 변형 — `{colors.bg-surface}` + `{colors.border-subtle}` 헤어라인, `{rounded.radius-12}`, 구성 3~4행: 제목 `{typography.title3}` + 상태 badge / 메타 `{typography.body2}` / 금액 강조(tabular-nums) / 액션 행(이벤트 버블링 차단). 탭 = 데스크톱 행 클릭과 동일 진입.
 
 ## Do's and Don'ts
 
@@ -358,15 +378,19 @@ stroke 기반 SVG(1.5~1.75px), `currentColor` 상속, 사이즈 16/20/24(관찰 
 
 ## Responsive Behavior
 
-- 기준 디바이스: PC 우선(pro tool). 콘텐츠 폭 `max-width 1180px` 중앙 정렬(`wide` 변형은 full-bleed), 페이지 패딩 26/36px.
-- 사이드바: < 1024px에서 collapsed(56px) 기본, < 768px에서 오버레이 전환 권장(합성 — 프로토타입은 데스크톱만 검증).
-- 모바일에서 모달은 바텀 시트 전환 가능하되 닫기 정책 동일(X·닫기 버튼·ESC만).
-- 터치 타깃 최소 40px(합성 — 프로토타입 데스크톱 밀도 26~36px).
+- 브레이크포인트: `bp-sm 640` / `bp-md 768` / `bp-lg 1024` / `bp-xl 1280`. **<768 = Mobile 전용 레이아웃**, 768~1023 = Tablet(데스크톱 레이아웃 + 사이드바 collapsed 기본), **≥1024 = Desktop(기준 UI)**.
+- **무회귀 원칙**: 모든 반응형 규칙은 `max-width` 미디어쿼리(또는 mobile 분기)로만 작성한다 — 데스크톱 기본 스타일·DOM 무수정.
+- 셸 전환(Mobile): 사이드바 → `nav-drawer`(햄버거), 빠른 생성 → `fab`, 하단 `mobile-nav` 탭 바 5칸(Home·Tasks·Calendar·Finance·더보기), breadcrumb은 현재 단계만 표시.
+- 모달·대형 팝오버(알림·빠른 생성) → `bottom-sheet` 전환. 드로어·AI 패널은 풀스크린. 닫기 정책은 모달과 동일.
+- 데이터 테이블 → `card-row` 전환(미전환 테이블은 가로 스크롤 폴백). 칸반은 가로 스크롤 + scroll-snap(컬럼 86vw). 탭/필터 행은 가로 스크롤 칩.
+- 터치 타깃 최소 40px(`space-40`), hover-reveal UI는 모바일 상시 노출, 모바일 입력 font-size 16px(iOS 자동 줌 방지 — body1의 모바일 보정값).
+- safe-area inset(탭 바·fab·시트)·`100dvh` 기준. 다이어그램 캔버스는 모바일 보기 전용(편집은 PC).
+- 데스크톱 기준: 콘텐츠 폭 `max-width 1180px` 중앙 정렬(`wide` 변형은 full-bleed), 페이지 패딩 26/36px.
 
 ## Known Gaps
 
 - **어드민 표면 미정의** — 본 시안은 사용자 기준. 어드민 환경설정·권한 화면은 추후 별도 정의.
-- 합성 토큰: `bg-inverse`(light), `fg-disabled`, `border-strong`, `bg-danger-subtle`, dark의 `*-subtle` 3종, `display3`, `title2`, button `lg/danger/disabled`, input `error/disabled`, 반응형 브레이크포인트.
+- 합성 토큰: `bg-inverse`(light), `fg-disabled`, `border-strong`, `bg-danger-subtle`, dark의 `*-subtle` 3종, `display3`, `title2`, button `lg/danger/disabled`, input `error/disabled`. (반응형 정책은 2026-06-11 Phase R에서 mock 구현·검증값으로 확정 — 합성 아님.)
 - 시안 전용 토큰(계약 §9b 등재): `shadow-3`(드로어·모달), `mono` variant, `sidebar-bg`, `bg-active`, `scrim`, `topbar-h 46px`, 상태 팔레트.
 - radius·spacing은 프로토타입 관찰값(5/7/10/14px radii, 5/7/9/11px 패딩)을 ladder로 정규화했다 — mock(`mockup/`)과 1px대 차이가 날 수 있다.
 - 프로토타입에 scrim 클릭 닫기·이모지 아이콘 픽커 등 표준 정책과 다른 동작이 남아 있다. mock은 시각 정본이지 인터랙션 정책 정본이 아니다.
