@@ -31,6 +31,10 @@
 
 ## 이번 세션에서 완료한 작업
 
+- worknest 시안 반응형 정책 확정 + 모바일 컴포넌트 5종 등재 — `DESIGN.md` 변경 이력 기록. (2026-06-11, 커밋 `de0859e`)
+  - `designs/worknest.md` + 활성 `DESIGN.md`: Responsive Behavior(브레이크포인트·PC 무회귀·셸 전환·card-row/시트 규칙·터치 기준) 확정, Components에 `bottom-sheet`/`mobile-nav`/`nav-drawer`/`fab`/`card-row` 5종 추가. aiospace Phase R(모바일 반응형) 구현과 연동.
+  - 세션 종료 점검(2차): 양 저장소 working tree 클린. aiospace는 Phase R + W1+W2 커밋(`121e21b`·`35402b4`, STATE.md 포함) 완료·원격 미설정. 템플릿은 본 기록 커밋 후 백업 push 1회.
+
 - 신규 sibling 프로젝트 `../aiospace/` 풀 연결 셋업 + 세션 종료 점검. (2026-06-11)
   - `~/projects/aiospace` 생성: `rules -> ../claude-agent-template` symlink + `.claude/{skills,commands,hooks,agents,plugins}` 5종 symlink + 진입 문서 3종(`CLAUDE.md`/`AGENTS.md`/`STATE.md`) + `settings.json`(hook 3종) + git init(초기 커밋 `9a4c4eb`). 연결 프로젝트 9 → 10개.
   - aiospace는 이후 별도 세션에서 WorkNest(AI Workspace OS) 방향으로 진행 중 — 템플릿 측 반영분(`designs/worknest.md` 추가·활성화)은 커밋 `0b8bd9c`. aiospace 자체 상태는 `../aiospace/STATE.md` 참조.
