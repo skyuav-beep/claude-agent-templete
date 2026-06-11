@@ -10,7 +10,7 @@
 4. 기존 테스트나 사용 경로를 확인한다.
 5. 동작 변경 없이 구조만 정리한다.
 6. 검증 기준에 맞게 테스트 또는 정적 확인을 실행한다.
-7. 로컬 검증·Docker 재빌드 판단·push/CI 인계는 `docs/local-dev-ci-guide.md`를 따른다. push·CI는 사용자 요청 시, 원격은 사용자 수동.
+7. 로컬 검증·Docker 재빌드 판단·로컬 CI·push 인계는 `docs/local-dev-ci-guide.md`를 따른다. 로컬 CI·push는 사용자 요청 시(CI는 GitHub Actions가 아니라 로컬 실행, §6.2), 머지·원격 브랜치 정리·원격은 사용자 수동.
 
 ## 산출물
 

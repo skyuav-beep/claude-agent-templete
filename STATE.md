@@ -31,6 +31,15 @@
 
 ## 이번 세션에서 완료한 작업
 
+- CI 실행 모델 재정의 — "CI = GitHub Actions(push 트리거)"에서 "로컬 CI(사용자 요청 시 로컬 실행)"로 전환 + 브랜치·머지·정리 절차 신설. (2026-06-09)
+  - 배경: 사용자가 "CI를 git(GitHub Actions)에서 자동으로 돌리지 말고 로컬에서 개발자 요청 시 실행, push/머지/브랜치 정리는 올바른 절차로"를 요청. 기존 정본 `§1.1`의 "push 1회 = CI 1회" 커플링(2026-06-04 정책)이 이 요구와 정면 충돌했고, 브랜치 정리·머지 절차가 정본에 부재했음.
+  - 결정: (1) CI 정의를 GitHub Actions → **로컬 CI 전체 스위트**(lint+typecheck+unit+build[+e2e/smoke] 또는 `act`)로 변경, 사용자 요청 시 로컬 실행. (2) push와 CI를 완전 분리 — push는 원격 백업·공유 수단이며 CI를 트리거하지 않음. (3) 머지·원격 브랜치 정리는 사용자 수동, 로컬 `git branch -d`는 agent 요청 시 가능(안전). (4) GitHub Actions 보유 시 `workflow_dispatch` 강등(권장) 또는 제거. "로컬 CI" 해석은 로컬 스크립트 스위트(기본) + `act`(옵션) 병기.
+  - 정본 `docs/local-dev-ci-guide.md`: §1 기준선·경계 표(로컬 CI 행 신설·CI 트리거 표현 제거·브랜치 행 추가), §1.1 제목/본문 전면 재작성(3행위 분리), §3 인계 흐름(로컬 CI를 push 앞 단계로 재배치), §4 인계 요약(로컬 CI 여부), §5 금지사항(로컬 CI 검증 원칙) + **신규 §6 "브랜치·로컬 CI·머지·정리"**(6.1 네이밍 / 6.2 로컬 CI 실행법 / 6.3 머지 squash / 6.4 Actions 강등 / 6.5 cleanup).
+  - 하위 정합: `docs/business-logic-playbook.md`(§5 경계·§5.1 흐름·§5.3 git 시나리오에 로컬 CI+cleanup·§5.4 실패), `templates/`(qa-intake·startup-checklist 예시 재작성, feature/bugfix/refactor/business-logic-request 검증 기준), `docs/development-process.md`·`development-strategy.md`.
+  - 루트·레이어 배선: `CLAUDE.md` Golden Rules 2줄, `AGENTS.md`(Operational Commands·문서화 원칙·Context Map), `.claude/skills/`(feature/bugfix/refactor/dev-start), `agents/`(executor/reviewer), `.codex/workflows/`(bugfix/feature/refactor/review/dev-start) — 옛 "push·CI" 묶음 표현을 "로컬 CI·push" + "CI는 로컬 실행"으로 통일.
+  - 검증: 활성 문서 전체에서 옛 표현("push·CI"/"push/CI"/"CI는 사용자 요청"/"push 1회=CI") 잔존 0건(STATE.md 과거 로그 제외). 전파: 정본+루트 갱신으로 9개 linked project가 `rules/` symlink로 자동 참조. 각 프로젝트 자체 `AGENTS.md`에 옛 모델을 복사한 부분은 별도 재동기화 필요(후속).
+  - 미반영(사용자 판단 대기): `act` 도입 여부 최종 확정, 기존 워크플로 보유 프로젝트의 강등 vs 제거, `pnpm ci:local` 단일 진입점의 실제 스크립트화는 각 런타임 프로젝트에서 진행.
+
 - 신규 DEX 거래소 개발용 sibling 프로젝트 `../dexchange/` 초기화. (2026-06-08)
   - 최초 생성 위치가 템플릿 저장소 내부였음을 확인하고 `/home/skyua/projects/dexchange` sibling 프로젝트로 이동했다.
   - Claude/Codex 에이전트 템플릿 v1.1.0 설치.

@@ -226,7 +226,7 @@ Q3. 폼 상태 관리 및 검증 전략은? (예: React Hook Form + Zod 활용 �
 ```
 Q1. 기능 구현 시 에이전트의 테스트 코드(Unit/E2E) 작성을 필수로 강제할 것인가?
 Q2. 커밋 메시지 작성 템플릿/컨벤션이 별도로 정의되어 있는가? (예: `feat:`, `fix:`)
-Q3. 프로젝트에 반영 후 즉각적으로 실행되는 CI/CD(린트 점검, 자동 배포 등) 파이프라인이 있는가?
+Q3. CI는 로컬에서 개발자 요청 시 실행한다(GitHub Actions 자동 트리거 없음). 로컬 CI 스위트(lint/typecheck/test/build, Docker smoke 포함 여부)와 단일 진입점은? 자동 배포 파이프라인 필요 여부는? (`docs/local-dev-ci-guide.md §6`)
 ```
 
 ---
@@ -273,13 +273,13 @@ Q3. 프로젝트에 반영 후 즉각적으로 실행되는 CI/CD(린트 점검,
 - API: BFF 경유, React Query, OpenAPI 자동 타입
 - 폼: React Hook Form + Zod
 - 테스트 강제: 비즈니스 로직 단위, 핵심 흐름 e2e
-- Git: Conventional Commits, `feat/<scope>` 브랜치
-- CI/CD: PR lint+test, main 머지 시 staging 자동 배포
+- Git: Conventional Commits, `feat/<scope>` 브랜치, 머지 후 브랜치 정리(squash + 로컬/원격 삭제)
+- CI/CD: 로컬 CI(`pnpm ci:local` = lint+typecheck+test+build)를 개발자 요청 시 로컬 실행. GitHub Actions 자동 트리거 없음(필요 시 `workflow_dispatch` 강등). production 배포 수동
 
 ### 미정 사항
 - 알림 채널 (Slack vs 자체 푸시): 1주 차 결정 예정
 - 모니터링 (Sentry only vs Datadog 추가): 운영 시작 후 결정
-- e2e 테스트 DB 시드 전략: CI 환경 구성 시 결정
+- e2e 테스트 DB 시드 전략: 로컬 CI(e2e) 환경 구성 시 결정
 
 ### 제외 사항
 - 정산 모듈, 고객 CS 도구, <엔티티B> 모바일 앱, 다국어, AI 추천

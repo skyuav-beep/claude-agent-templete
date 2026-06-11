@@ -29,41 +29,45 @@ agent가 로컬 개발 루프에서 Docker Desktop을 다루는 방식과, **age
 
 ## 1. Agent 실행 경계 (핵심 규칙)
 
-기준선: **로컬(Docker Desktop) + commit = agent 상시**, **push + CI = 사용자 요청 시에만(§1.1)**, **"GitHub 이상"(원격 배포·원격 migration·릴리스 Action) = 사용자 수동**.
+기준선: **로컬(Docker Desktop) + commit + 작업 브랜치 생성 = agent 상시**, **로컬 CI 전체 스위트 실행 = 사용자 요청 시 로컬에서(§1.1, §6.2 — GitHub Actions 트리거 아님)**, **push / PR = 사용자 요청 시(§1.1)**, **머지 / 원격 브랜치 정리 / "GitHub 이상"(원격 배포·원격 migration·릴리스 Action) = 사용자 수동(§6)**.
 
 | 영역 | 담당 | 비고 |
 |---|---|---|
-| 로컬 빌드 / 테스트 / 실행 (Docker Desktop) | **agent** | 컨테이너 기동·검증은 로컬에서 수행 |
+| 로컬 빌드 / 테스트 / 실행 (Docker Desktop) | **agent** | 컨테이너 기동·개발 루프 검증은 로컬에서 수행 |
+| **로컬 CI 전체 스위트** (lint+typecheck+unit+build[+e2e/smoke], 또는 `act`) | **사용자 요청 시 agent** | push 전 게이트. **로컬에서 실행하고 GitHub Actions를 트리거하지 않는다** (§6.2) |
 | DB migration — **`local`(Docker Desktop) 적용** | **agent** | 로컬 테스트 목적의 migration 파일 작성 + 로컬 DB 적용까지 (호칭·판단 기준 §0) |
 | `git commit` | **agent** | Conventional Commits, 논리 단위 분리. **로컬 누적 가능**(push와 분리) |
-| `git push` | **사용자 요청 시 agent** | 사용자가 지시할 때만(§1.1). 예외: 세션 종료 백업 push 1회(`[skip ci]`) |
+| 작업 브랜치 생성 (`git checkout -b`) | **agent** | base 정렬 후 생성, 네이밍 §6.1 |
+| `git push` | **사용자 요청 시 agent** | 사용자가 지시할 때만(§1.1). **push는 CI를 트리거하지 않는다.** 예외: 세션 종료 백업 push 1회 |
 | `gh pr create` / PR 생성 | **사용자 요청 시 agent** | push와 함께 1회, slice마다 쪼개지 않음 (§1.1) |
-| CI (push로 자동 트리거, 결과 확인) | **사용자 요청 시 agent** | push가 요청 시에만 일어나므로 CI도 그때만. 실패 시 원인 수정 후 재push |
+| 머지된 **로컬** 브랜치 삭제 (`git branch -d`) | **사용자 요청 시 agent** | unmerged면 git이 거부 — 안전. cleanup §6.5 |
 | ───────── 경계선 ───────── | | agent는 여기서 종료하고 인계 요약을 남긴다 |
-| GitHub Actions 배포 / 릴리스 workflow 실행 | **사용자 수동** | agent는 dispatch/trigger 금지 |
+| 머지 (main/develop로) | **사용자 수동** | 로컬 CI green이 게이트. 절차 §6.3 |
+| 원격 브랜치 삭제 (`git push origin --delete`) | **사용자 수동** | push 계열 — 요청 시 agent 보조 가능. §6.5 |
+| GitHub Actions 배포 / 릴리스 workflow 실행 | **사용자 수동** | agent는 dispatch/trigger 금지. push 자동 트리거 CI는 §6.4로 강등/제거 |
 | **`develop`/`production`** DB migration 적용 | **사용자 수동** | "GitHub 이상" — agent 적용 금지 (§0) |
 | 운영 반영 확인 / 롤백 판단 | **사용자 수동** | |
 
 핵심: agent는 **"GitHub 이상"의 원격 작업을 자동 실행하지 않는다.** push까지 마치면 `## 4. 인계 요약`을 남기고 종료한다. migration은 **로컬 Docker Desktop에서만** 적용하고, 원격 적용은 사용자에게 인계한다.
 
-## 1.1. push / CI 게이트 (사용자 요청 기반)
+## 1.1. 로컬 CI · push 게이트 (사용자 요청 기반)
 
-`git commit`(로컬)과 `git push`·`PR 생성`·CI(원격 노출)를 분리한다. **push 1회 = CI 1회 = 리뷰/머지 1회**이므로, push 빈도가 곧 CI 실행 빈도다. CI를 통제하려면 push를 통제하면 된다.
+핵심 분리: **CI는 git(GitHub Actions)에서 자동으로 돌리지 않는다.** 검증은 **로컬 CI**(§6.2)로 하고, `git push`는 원격 백업·공유 수단일 뿐 CI를 트리거하지 않는다. 즉 `git commit`(로컬 누적) · `로컬 CI 실행`(검증) · `git push`(원격 노출)를 **세 개의 독립 행위**로 분리한다 — 과거의 "push 1회 = CI 1회" 묶음을 버린다.
 
-기본 규칙: **push·PR·CI는 사용자가 명시 지시할 때만 수행한다. agent는 스스로 push하지 않는다.**
+기본 규칙: **로컬 CI 전체 스위트 실행 · push · PR · 머지는 모두 사용자가 명시 지시할 때만 수행한다. agent는 스스로 push하지 않는다.**
 
 - 로컬 commit은 자유롭게 자주 한다 — 체크포인트·되돌리기 목적. 논리 단위마다 누적해도 된다.
-- 완료 판단과 검증은 **로컬에서만** 한다 (lint / 단위 테스트 / build / Docker smoke). agent는 로컬 검증만으로 "완료"를 보고하고 push하지 않는다.
-- 사용자가 `push` / `올려` / `PR` / `CI 돌려` 를 명시하면 → 그때 누적 commit을 일괄 push하고 필요 시 **PR 1개**를 만든다(slice마다 쪼개지 않는다).
-- 검증이 **CI에서만 가능**하다고 판단되면, 자동 push하지 말고 사용자에게 "CI를 돌릴까요?"라고 묻고 요청을 받는다.
+- 개발 루프 중 **변경 모듈 단위 로컬 검증**(lint / 단위 테스트 / build / Docker smoke)은 agent가 상시 수행하고, 이것만으로 "완료"를 보고한다. push하지 않는다.
+- 사용자가 `CI 돌려` / `검증해` 를 명시하면 → **로컬 CI 전체 스위트**(§6.2)를 로컬에서 실행한다 (GitHub Actions가 아니라 로컬에서). green이 push·머지의 게이트다.
+- 사용자가 `push` / `올려` / `PR` 을 명시하면 → 그때 누적 commit을 일괄 push하고 필요 시 **PR 1개**를 만든다(slice마다 쪼개지 않는다). push는 CI를 트리거하지 않는다.
+- 전체 스위트 검증이 필요하다고 판단되면, 자동 push하지 말고 사용자에게 **"로컬 CI를 돌릴까요?"**라고 묻고 요청을 받아 로컬에서 실행한다. 원격 CI에 의존하지 않는다.
 
 세션 종료·인계 예외 (유실 방지 백업):
 
 - 세션을 종료하며 작업을 원격에 보존해야 하면, 백업 목적으로 **1회 push를 허용**한다.
-- 단 이 백업 push는 **CI를 트리거하지 않는다** — 마지막 commit 메시지에 CI provider가 인식하는 skip 토큰(GitHub Actions: `[skip ci]` / `[ci skip]` 등)을 넣어 워크플로 실행을 건너뛴다.
-- skip 토큰을 지원하지 않는 CI를 쓰는 프로젝트는 이 백업 push를 생략하거나 사용자 확인을 받는다.
+- 로컬 CI 모델에서는 push가 워크플로를 트리거하지 않으므로 별도 조치가 필요 없다. 단, 프로젝트에 아직 push 자동 트리거 GitHub Actions가 남아 있다면(§6.4 강등 전), 마지막 commit 메시지에 skip 토큰(`[skip ci]` / `[ci skip]`)을 넣어 실행을 건너뛴다.
 
-머지는 agent 범위 밖이다(§1 경계선). 사용자가 별도 정책(작업당 PR, trunk-based 직접 push 등)을 지정하면 그 정책을 우선한다.
+머지·브랜치 정리는 §6을 따른다(머지 자체는 사용자 수동). 사용자가 별도 정책(작업당 PR, trunk-based 직접 push 등)을 지정하면 그 정책을 우선한다.
 
 ## 2. Docker Desktop 개발 루프 전략
 
@@ -186,14 +190,17 @@ services:
   5) 반영 — 코드는 hot reload 자동(§2.1) / 의존성·이미지 변경 시만 rebuild(§2.4 판단) + smoke
   6) DB migration — 로컬 Docker Desktop 적용 + 검증 (해당 시)
   7) git commit (로컬 누적 — 1~6을 여러 번 반복하며 commit만 쌓는다)
-─────────── 사용자가 push/CI를 요청할 때만 (§1.1) ───────────
-  8) git push (누적 commit 일괄) + 필요 시 PR 1개   ← 사용자 지시 시
-  9) CI 결과 확인 (push로 트리거됨, 실패 시 원인 수정 후 재push)
+─────────── 사용자가 "CI 돌려"를 요청할 때만 (§1.1) ───────────
+  8) 로컬 CI 전체 스위트 실행 (§6.2) — lint+typecheck+unit+build[+e2e/smoke] 또는 `act`
+     → 로컬에서 실행, GitHub Actions 트리거 아님. green이어야 9 진행
+─────────── 사용자가 "push/올려/PR"을 요청할 때만 (§1.1) ───────────
+  9) git push (누적 commit 일괄) + 필요 시 PR 1개   ← 사용자 지시 시 (CI 트리거 안 함)
 ──────────────────── 경계선 ────────────────────
-[사용자 수동]
-  10) GitHub Actions 배포/릴리스 실행
-  11) 원격(`develop`/`production`) migration 적용
-  12) 운영 반영 확인 / 롤백 판단
+[사용자 수동 — §6.3 / §6.5]
+  10) 머지 (로컬 CI green 게이트, squash 권장) + 브랜치 정리(로컬/원격)
+  11) GitHub Actions 배포/릴리스 실행 (있다면)
+  12) 원격(`develop`/`production`) migration 적용
+  13) 운영 반영 확인 / 롤백 판단
 ```
 
 각 단계 통과 기준과 실패 대응은 `docs/business-logic-playbook.md §5.1 / §5.4`를 따른다.
@@ -205,8 +212,8 @@ agent는 로컬 검증을 마친 뒤(또는 사용자 요청으로 push한 뒤) 
 - 변경 요약 (무엇을 왜)
 - 적용한 **재빌드 모드 + 사유** (증분 / 강력)
 - **로컬 migration 적용 여부와 내용** (적용했다면 어떤 변경인지)
-- **push 여부**: 미push(로컬 commit만) / 사용자 요청 push / 세션 종료 백업 push(`[skip ci]`, CI 미실행)
-- CI 상태: 사용자가 CI를 요청해 push한 경우만 "트리거됨, 결과 확인 필요". 그 외엔 "CI 미실행(요청 시 실행)"
+- **로컬 CI 여부**: 실행했으면 스위트 결과(lint/test/build 통과 여부) / 안 했으면 "로컬 CI 미실행(요청 시 로컬 실행)". GitHub Actions는 트리거하지 않는다
+- **push 여부**: 미push(로컬 commit만) / 사용자 요청 push / 세션 종료 백업 push(원격 자동 CI가 남아 있으면 `[skip ci]`)
 - **[수동 TODO]** 사용자가 직접 진행할 것:
   - GitHub Actions 배포/릴리스 실행
   - 원격 migration 적용 (적용 순서·주의점 포함)
@@ -215,6 +222,82 @@ agent는 로컬 검증을 마친 뒤(또는 사용자 요청으로 push한 뒤) 
 ## 5. 금지 사항
 
 - agent는 GitHub Actions 배포/릴리스 workflow를 trigger/dispatch하지 않는다 (`gh workflow run`, `gh release create`, 배포 스크립트 직접 실행 등 금지).
+- agent는 검증을 **로컬 CI**(§6.2)로 한다. push로 원격 GitHub Actions CI를 트리거해 검증을 대신하지 않는다. push 자동 트리거 워크플로가 있으면 §6.4로 강등·제거한다.
 - agent는 원격(`develop`/`production`) DB에 migration을 적용하지 않는다. migration 적용은 **`local`(Docker Desktop)까지만**. 실행 전 `DATABASE_URL`이 `local`을 가리키는지 확인하고, 원격을 가리키면 명령이 `migrate dev`라도 실행하지 않는다(§0).
 - `docker compose down -v` 등 로컬 DB 데이터를 삭제하는 명령은 사용자 확인 없이 실행하지 않는다.
 - `git push --force`는 본인 작업 브랜치에서 `--force-with-lease`로만. `main`/`master`/`develop`에는 금지 (`block-destructive.sh` hook이 차단).
+
+## 6. 브랜치 · 로컬 CI · 머지 · 정리
+
+git 작업(브랜치 생성 → 로컬 CI → push → 머지 → 정리)의 정본 절차. **CI는 GitHub Actions가 아니라 로컬에서 사용자 요청 시** 실행하는 것이 기준이다(§1.1). 명령은 프로젝트 스택에 맞게 `AGENTS.md ### Operational Commands`에서 치환한다.
+
+### 6.1. 브랜치 생성·네이밍
+
+- 작업당 1 브랜치. base를 먼저 정렬한 뒤 만든다.
+  ```bash
+  git checkout main && git pull --rebase origin main   # 또는 develop
+  git checkout -b feat/orders-cancel-window
+  ```
+- 네이밍: `feat|fix|refactor|chore/<scope>-<short>` (Conventional Commits 접두사 + 범위).
+- 브랜치 생성·로컬 commit 누적은 agent 상시 범위. push는 §1.1 게이트.
+
+### 6.2. 로컬 CI (검증 게이트)
+
+"CI"는 GitHub Actions가 아니라 **로컬에서 실행하는 전체 체크 스위트**다. 사용자가 `CI 돌려`/`검증해`를 지시할 때 로컬에서 돌리고, green이 push·머지의 게이트가 된다.
+
+실행 방식 (프로젝트 스택에 맞게 치환):
+
+- **기본 — 로컬 스크립트 스위트** (가볍고 워크플로 파일 불필요):
+  ```bash
+  pnpm lint && pnpm typecheck && pnpm test && pnpm build
+  # Docker 프로젝트면 smoke까지: docker compose up -d --build && <healthcheck>
+  ```
+  프로젝트에 단일 진입점(예: `pnpm ci:local` = 위 묶음)을 두면 호출이 단순해진다.
+- **옵션 — `act`로 GitHub Actions 워크플로를 로컬 재현** (CI 환경 동등성이 필요할 때):
+  ```bash
+  act -j build                      # .github/workflows의 job을 로컬 Docker로 실행
+  act pull_request                  # PR 이벤트 트리거 재현
+  ```
+  Docker 부하가 크므로 환경 동등성 검증이 꼭 필요한 경우에 쓴다. 워크플로 파일은 §6.4 기준으로 GitHub 자동 실행은 막아 둔 채 `act`로만 돌린다.
+
+원칙: 검증은 로컬에서 끝낸다. push가 원격 CI를 대신 돌리게 두지 않는다.
+
+### 6.3. 머지 (사용자 수동)
+
+- 게이트: **로컬 CI(§6.2) green** + push/PR 완료가 전제. agent는 머지 자체를 자동 수행하지 않는다(§1 경계선).
+- 방식: 이력 단순화를 위해 **squash merge 권장**(작업 브랜치 commit들을 1개로 압축). 프로젝트가 merge-commit/rebase 정책을 지정하면 그쪽을 따른다.
+- 절차(사용자):
+  ```bash
+  # PR 기반: GitHub UI 또는
+  gh pr merge <num> --squash --delete-branch
+  # 로컬 직접 머지:
+  git checkout main && git pull --rebase origin main
+  git merge --squash feat/orders-cancel-window && git commit
+  git push origin main
+  ```
+- 사용자가 명시 요청하면 agent가 머지를 보조할 수 있으나, 기본은 사용자 수동이다.
+
+### 6.4. GitHub Actions 처리 (자동 CI 비활성)
+
+- **push/PR로 자동 실행되는 CI 워크플로를 두지 않는다.** 검증 정본은 로컬 CI(§6.2)다.
+- 기존 워크플로가 있으면 둘 중 하나:
+  - **강등(권장)**: 트리거를 `on: workflow_dispatch`(또는 수동)로 바꿔 push/PR 자동 실행을 끈다. 파일은 남아 `act` 로컬 재현·필요 시 수동 dispatch에 쓸 수 있다.
+  - **제거**: 워크플로 파일을 삭제한다.
+- 배포/릴리스 워크플로는 agent가 trigger/dispatch하지 않는다(§5, 사용자 수동).
+
+### 6.5. 브랜치 정리 (cleanup)
+
+머지가 끝나면 작업 브랜치를 정리한다.
+
+```bash
+# 로컬 머지 브랜치 삭제 — unmerged면 git이 거부(안전). agent 요청 시 수행 가능
+git branch -d feat/orders-cancel-window
+# 원격 브랜치 삭제 — push 계열, 사용자 요청 시
+git push origin --delete feat/orders-cancel-window
+# 삭제된 원격 추적 ref 정리
+git fetch --prune
+```
+
+- 로컬 `git branch -d`는 머지 안 된 브랜치를 거부하므로 안전 — agent가 요청 시 수행 가능.
+- `git branch -D`(강제 삭제)는 미머지 작업을 잃으므로 사용자 확인 없이는 쓰지 않는다(`block-destructive.sh` 점검 대상).
+- 원격 삭제·`--prune`는 push 계열이라 사용자 요청 시 수행한다.

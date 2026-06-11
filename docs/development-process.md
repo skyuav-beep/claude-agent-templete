@@ -165,7 +165,7 @@ QnA 답변을 바탕으로 이 프로젝트에만 적용되는 기준 문서를 
 4. 테스트를 추가할 수 있으면 기능 코드와 함께 추가한다.
 5. 테스트를 추가하지 못했다면 이유와 남은 위험을 기록한다.
 6. UI 문자열을 하드코딩하지 않는다 (다국어 프로젝트 기준).
-7. 로컬 검증은 Docker Desktop에서 수행한다 (개발 컨테이너 모델 + 재빌드 판단 + push/CI 경계: `docs/local-dev-ci-guide.md`).
+7. 로컬 검증은 Docker Desktop에서 수행한다 (개발 컨테이너 모델 + 재빌드 판단 + 로컬 CI·push 경계: CI는 GitHub Actions가 아니라 로컬에서 요청 시 실행 — `docs/local-dev-ci-guide.md §6`).
 
 ---
 
@@ -185,7 +185,7 @@ QnA 답변을 바탕으로 이 프로젝트에만 적용되는 기준 문서를 
 
 ## Phase 5 — STATE.md 업데이트 및 인계
 
-**언제:** 하나의 논리적 작업이 끝날 때마다, 세션 종료 전 (여기서 커밋은 **로컬 커밋** 누적이며, `git push`·`PR`·CI는 별도 — **사용자 요청 시에만**, 세션 종료 백업 push는 `[skip ci]`: `docs/local-dev-ci-guide.md §1.1`)
+**언제:** 하나의 논리적 작업이 끝날 때마다, 세션 종료 전 (여기서 커밋은 **로컬 커밋** 누적이며, 로컬 CI·`git push`·`PR`는 별도 — **사용자 요청 시에만**, CI는 GitHub Actions가 아니라 로컬 실행이고 push는 CI를 트리거하지 않는다. 세션 종료 백업 push는 원격 자동 CI가 남아 있으면 `[skip ci]`: `docs/local-dev-ci-guide.md §1.1`, §6)
 
 ### 수행 항목
 

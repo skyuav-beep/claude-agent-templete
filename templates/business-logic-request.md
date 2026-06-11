@@ -43,7 +43,7 @@
 - `git pull` 필요 여부
 - commit 메시지 방향
 - push 전 확인할 점
-- agent 종료 지점 = push/CI까지. 이후 수동 인계 항목(배포 Action / 원격 migration) 명시
+- agent 종료 지점 = 로컬 CI(요청 시)·push까지. 이후 수동 인계 항목(머지·브랜치 정리 / 배포 Action / 원격 migration) 명시
 
 ## 작성 예시
 
@@ -82,7 +82,7 @@
   2. `pnpm test src/server/orders` — 변경 모듈 단위 테스트 green
   3. `pnpm test` — 전체 회귀 green
   4. `pnpm build` (production 모드) — 타입 + 번들 오류 없음
-  5. e2e: `pnpm test:e2e orders/cancel.spec.ts` (CI 환경에서 자동 실행, 로컬 환경 미구성 시 PR 본문에 사유 기록)
+  5. e2e: `pnpm test:e2e orders/cancel.spec.ts` (로컬 CI 스위트에 포함, §6.2. 환경 미구성 시 PR 본문에 사유 기록)
 - Docker rebuild 판단 (playbook §5.2):
   - 변경 파일이 `src/server/orders/` 코드만이므로 **불필요**.
   - dev 환경은 volume mount로 즉시 반영. 운영 이미지는 다음 배포에서 자연 빌드.
@@ -102,6 +102,8 @@
   - `grep -rnE "console\.(log|debug)" src/server/orders` (디버그 잔재 0건)
   - `.env`/`*.key`/`*.pem` staged 여부 재확인
   - 단위 + 통합 + e2e 통과 증거를 PR 본문 `## Test plan`에 붙임
-- push (사용자 요청 시 1회): `git push -u origin feat/orders-cancel-window` → `gh pr create` — 매 commit이 아니라 사용자가 push/CI를 지시할 때 누적 commit 일괄. 세션 종료 백업은 `[skip ci]` (`docs/local-dev-ci-guide.md §1.1`)
+- 로컬 CI (사용자 "CI 돌려" 시): `pnpm lint && pnpm typecheck && pnpm test && pnpm build` (또는 `act`) — 로컬 실행, GitHub Actions 아님(§6.2). green이 push 게이트.
+- push (사용자 요청 시 1회): `git push -u origin feat/orders-cancel-window` → `gh pr create` — 매 commit이 아니라 사용자가 push를 지시할 때 누적 commit 일괄. push는 CI를 트리거하지 않는다 (`docs/local-dev-ci-guide.md §1.1`)
 - PR 본문 필수 항목: 변경 요약 / 검증 통과 결과 / Docker rebuild 여부 + 사유 / rollback 방법(코드 상수만 되돌리면 즉시 복귀 가능)
+- [사용자 수동] 머지(squash) 후 브랜치 정리: `git branch -d` + `git push origin --delete` + `git fetch --prune` (§6.5)
 ```

@@ -115,7 +115,7 @@
 
 ## 5. 명령 실행 가이드
 
-agent 실행 경계(로컬 Docker Desktop·migration·commit·push·CI까지, 배포 Action·원격 migration은 사용자 수동)와 Docker 재빌드 2모드(증분/강력 no-cache) 판단 기준은 `docs/local-dev-ci-guide.md`를 정본으로 따른다. 본 §5는 비즈니스 로직 변경의 단계별 흐름을 다룬다.
+agent 실행 경계(로컬 Docker Desktop·migration·commit·**로컬 CI**·push까지, **머지·원격 브랜치 정리**·배포 Action·원격 migration은 사용자 수동)와 Docker 재빌드 2모드(증분/강력 no-cache) 판단 기준은 `docs/local-dev-ci-guide.md`를 정본으로 따른다 — **CI는 GitHub Actions가 아니라 로컬에서 사용자 요청 시 실행한다(§1.1, §6.2).** 본 §5는 비즈니스 로직 변경의 단계별 흐름을 다룬다.
 
 실제 명령은 프로젝트별 `AGENTS.md` 또는 guide 문서에 맞게 적되, 아래 항목은 항상 확인한다.
 
@@ -148,11 +148,12 @@ agent 실행 경계(로컬 Docker Desktop·migration·commit·push·CI까지, �
 6) docker rebuild 판단 (5.2)             → 증분/강력 판단 후 rebuild + smoke
 7) DB migration (해당 시)                → `local`(Docker Desktop)에만 적용·검증 (`develop`/`production`은 수동, §0)
 8) git commit (로컬 누적)                → 1~7 반복하며 commit만 쌓는다 (push 아님)
-9) 사용자 요청 시 push + PR 1개          → 누적 commit 일괄 (`docs/local-dev-ci-guide.md §1.1`). 그 전엔 로컬 검증만으로 완료 보고
-   CI 결과 확인 (push로 트리거됨)         → 실패 시 원인 수정 후 재push
+9) 사용자 "CI 돌려" 시 로컬 CI 스위트    → lint+typecheck+unit+build[+e2e/smoke] 또는 `act`. 로컬 실행(GitHub Actions 아님). green이 게이트 (§6.2)
+10) 사용자 "push" 시 push + PR 1개        → 누적 commit 일괄. push는 CI 트리거 안 함 (`docs/local-dev-ci-guide.md §1.1`)
 ──────────────── agent 종료 / 사용자 수동 인계 ────────────────
-10) [수동] GitHub Actions 배포·릴리스 실행
-11) [수동] 원격(`develop`/`production`) migration 적용
+11) [수동] 머지(로컬 CI green 게이트, squash 권장) + 브랜치 정리(로컬/원격) (§6.3/§6.5)
+12) [수동] GitHub Actions 배포·릴리스 실행 (있다면)
+13) [수동] 원격(`develop`/`production`) migration 적용
 ```
 
 각 단계의 통과 기준:
@@ -197,16 +198,23 @@ git add src/server/orders/cancelService.ts
 git add src/server/orders/__tests__/cancelService.test.ts
 git commit -m "feat(orders): extend self-cancel window to 60m"
 
-# 4) 5.1 단계별 검증 통과 후 push 전
+# 4) push 전 점검 + 로컬 CI (사용자 "CI 돌려" 시, §6.2)
 git status                          # untracked가 있다면 의도 확인
 git diff --staged --check           # whitespace/trailing 검출
 grep -nE "console\.(log|debug)|TODO\(self\)" -r src/  # 디버그 잔재
 git log --oneline main..HEAD        # 본 브랜치 commit 개수와 순서 확인
+pnpm lint && pnpm typecheck && pnpm test && pnpm build   # 로컬 CI 스위트 (또는 `act`). GitHub Actions 아님
 
-# 5) 사용자 요청 시 (§1.1) — 누적 commit 일괄 push + PR 1개
-#    (매 commit/slice가 아니라 사용자가 push/CI를 지시할 때. 세션 종료 백업은 [skip ci])
+# 5) 사용자 "push" 시 (§1.1) — 누적 commit 일괄 push + PR 1개
+#    (매 commit/slice가 아니라 사용자가 지시할 때. push는 CI를 트리거하지 않는다)
 git push -u origin feat/orders-cancel-window
 # gh pr create --title ... --body ... (또는 웹 UI)
+
+# 6) [사용자 수동] 머지 후 브랜치 정리 (§6.3 / §6.5)
+# gh pr merge <num> --squash --delete-branch
+git branch -d feat/orders-cancel-window               # 로컬 (unmerged면 거부 — 안전)
+git push origin --delete feat/orders-cancel-window    # 원격 (사용자 요청 시)
+git fetch --prune
 ```
 
 push 전 강제 점검 항목:
@@ -229,7 +237,7 @@ git rebase origin/main              # main이 앞서갔다면
 
 `git push --force`는 본인 작업 브랜치에서 `--force-with-lease`로만 허용. `main`/`master`/`develop`에는 절대 금지(`block-destructive.sh` hook이 차단).
 
-push/PR과 CI 결과 확인까지가 agent 범위다. 이후 GitHub Actions 배포·릴리스 실행과 원격 migration 적용은 사용자가 수동으로 진행하며, agent는 `docs/local-dev-ci-guide.md §4` 인계 요약을 남기고 종료한다.
+로컬 CI(§6.2)와 push/PR까지가 agent 범위다. 머지·브랜치 정리(원격)·GitHub Actions 배포·릴리스 실행·원격 migration 적용은 사용자가 수동으로 진행하며(§6.3/§6.5), agent는 `docs/local-dev-ci-guide.md §4` 인계 요약을 남기고 종료한다.
 
 ### 5.4. 실패 케이스 대응
 
@@ -241,7 +249,7 @@ push/PR과 CI 결과 확인까지가 agent 범위다. 이후 GitHub Actions 배�
 - **build 실패 (번들·imports)**: barrel index 순서, dynamic import 경로 확인.
 - **docker rebuild 실패**: 캐시 문제면 `--no-cache`. 의존성 설치 실패면 lock 파일과 base 이미지 버전 정합 확인.
 - **push 거부 (non-fast-forward)**: `git pull --rebase` 후 충돌 해결. 강제 push는 본인 브랜치 + `--force-with-lease`만 사용.
-- **CI 실패**: 로컬에서 동일 명령 재현. 환경 차이(NODE_ENV, OS, 시간대)부터 점검.
+- **로컬 CI 실패**: 이미 로컬이므로 동일 명령을 그대로 재현해 원인 수정. (`act` 사용 시 워크플로와 로컬 스크립트 결과가 갈리면 NODE_ENV·OS·시간대 등 환경차부터 점검.)
 
 실패 후 우회·skip을 코드로 남기지 않는다. 원인 해결 후 PR 본문 또는 commit 메시지에 "원인 + 해결" 한 줄 기록.
 

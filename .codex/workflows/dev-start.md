@@ -13,7 +13,7 @@ PC를 켜고 개발을 재개할 때 이 절차를 따른다.
 ## 정책
 
 - 컨테이너 기동은 항상 `docker compose up -d`(멱등 — 이미 기동 중이면 재생성 안 함). 세션 시작을 이유로 rebuild하지 않는다(§2.4).
-- 모두 로컬 작업이라 agent 자동 실행 범위 안이다. push·CI는 사용자 요청 시, 원격 배포/migration은 사용자 수동(`docs/local-dev-ci-guide.md §1`).
+- 모두 로컬 작업이라 agent 자동 실행 범위 안이다. 로컬 CI·push는 사용자 요청 시(CI는 GitHub Actions가 아니라 로컬 실행), 머지·원격 배포/migration은 사용자 수동(`docs/local-dev-ci-guide.md §1`, §6).
 - 실제 명령·서비스명·포트는 `AGENTS.md ### Operational Commands`에서 치환한다.
 
 ## 산출물

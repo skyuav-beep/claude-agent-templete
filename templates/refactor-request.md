@@ -22,7 +22,7 @@
 ## 검증 기준
 
 - 리팩터링 후 어떤 테스트나 확인이 필요한지 적는다.
-- 실행·검증은 로컬 Docker Desktop에서 한다(`docs/local-dev-ci-guide.md §2.1`). push·CI는 사용자 요청 시, 원격은 사용자 수동.
+- 실행·검증은 로컬 Docker Desktop에서 한다(`docs/local-dev-ci-guide.md §2.1`). **CI는 로컬에서 요청 시 실행**(§6.2), push는 요청 시, 머지·브랜치 정리·원격은 사용자 수동(§6).
 
 ## 작성 예시
 

@@ -26,7 +26,7 @@ description: "사용자가 기능 추가, 새 기능, 신규 화면/엔드포인
 
 ## 완료 후
 
-구조화된 feature-request 마크다운 블록을 출력하고, 바로 구현을 시작할지 사용자에게 확인한다. 구현·검증 단계는 `docs/local-dev-ci-guide.md`를 따른다 — 로컬 Docker Desktop 검증, push·CI는 사용자 요청 시.
+구조화된 feature-request 마크다운 블록을 출력하고, 바로 구현을 시작할지 사용자에게 확인한다. 구현·검증 단계는 `docs/local-dev-ci-guide.md`를 따른다 — 로컬 Docker Desktop 검증, 로컬 CI·push는 사용자 요청 시(CI는 GitHub Actions가 아니라 로컬 실행, §6.2).
 
 ## 다른 skill과의 연계
 

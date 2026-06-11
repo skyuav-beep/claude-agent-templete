@@ -94,7 +94,7 @@ UI보다 데이터 정합성, 상태 전이, 권한, 계산 규칙이 더 위험
 - 2차 commit: service/usecase와 테스트
 - 3차 commit: UI 연결, 예외 상태, 통합 검증
 
-> 위 1·2·3차 commit은 **로컬 commit 단위**다. push와 PR은 각 차수마다 쪼개지 말고, **사용자가 요청할 때** 누적 commit을 한 번에 올린다. push·CI는 사용자 요청 기반이다 (`docs/local-dev-ci-guide.md §1.1`).
+> 위 1·2·3차 commit은 **로컬 commit 단위**다. push와 PR은 각 차수마다 쪼개지 말고, **사용자가 요청할 때** 누적 commit을 한 번에 올린다. 로컬 CI·push는 사용자 요청 기반이다(CI는 GitHub Actions가 아니라 로컬에서 실행하고, push는 CI를 트리거하지 않는다 — §6.2) (`docs/local-dev-ci-guide.md §1.1`).
 
 ## 관련 문서
 
