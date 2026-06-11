@@ -149,13 +149,15 @@ radius-2, radius-4, radius-8, radius-12, radius-16, radius-full
 | `--radius-24` | wanted | `--radius-16` | wanted 일부 카드 |
 | `--radius-28` | material-3 | `--radius-16` | M3 FAB, bottom sheet |
 | `--radius-32` | wanted | `--radius-16` | wanted 일부 hero |
-| `--shadow-3` | material-3, wanted | `--shadow-2` | M3 elevation level 3 (FAB, dialog) |
+| `--shadow-3` | material-3, wanted, worknest | `--shadow-2` (worknest는 `--shadow-pop`) | M3 elevation level 3 (FAB, dialog), worknest 모달·드로어 |
 | `--shadow-4` | material-3, wanted | `--shadow-pop` | M3 elevation level 4 (nav drawer) |
 | `--shadow-cta` | toss-like | `--shadow-1` | brand color glow CTA |
 | `--border-inverse` | wanted | `--border-strong` | wanted 일부 dark surface 분리 |
-| `--bg-scrim` | wanted | `oklch(0 0 0 / 0.5)` (flat 반투명 흑색, blur 금지) | modal/sheet backdrop |
+| `--bg-scrim` | wanted, worknest | `oklch(0 0 0 / 0.5)` (flat 반투명 흑색, blur 금지) | modal/sheet backdrop |
+| `--sidebar-bg` | worknest | `--bg-subtle` | 앱 셸 사이드바 표면 |
+| `--bg-active` | worknest | `--bg-muted` | pressed/active 채움 (hover보다 한 단계 깊음) |
 | `--fg-link` | wanted | `--fg-brand` | wanted 인라인 링크 강조 |
-| `font: mono` | linear-like | `font-family: ui-monospace, "SF Mono", monospace; font-size: 13px` | 단축키, 코드 inline |
+| `font: mono` | linear-like, worknest | `font-family: ui-monospace, "SF Mono", monospace; font-size: 13px` | 단축키, 코드 inline |
 | `typography.amount` | toss-like | `font-size: 32px; font-weight: 700; tabular-nums` | 금액 강조 input |
 | `kbd` 컴포넌트 | linear-like | (전용 — 다른 시안 활성 시 비활성 처리 또는 chip fallback) | 키보드 단축키 표기 |
 | `amount-input` 컴포넌트 | toss-like | (전용 — 다른 시안 활성 시 일반 input + tabular-nums 옵션) | 금액 입력 |
