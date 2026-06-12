@@ -31,6 +31,13 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 신규 sibling 프로젝트 `../goldlink/` 풀 연결 셋업 + 제품 정의 + Phase 0 fork + 세션 종료 점검. (2026-06-12)
+  - 셋업: `rules -> ../claude-agent-template` + `.claude/` 5종 symlink + hook 3종 `settings.json` + 진입 문서 3종 + git init(`13b1290`). 연결 프로젝트 10 → **11개**.
+  - 제품 정의: **signal2 기반 + 채굴파워 게임 보너스 플랫폼**. `docs/prd-mining-power-game.md` v1.0(정책 D-1~D-10 + 브랜딩 전건 확정 — 방식 A 기본/하이브리드 추첨/소규모 진행/재화 조합/BSC 토큰 설정 등재/당첨 보너스율 가중/배치 시각 시세/수수료 미적용/취소 불가/제한 단위 설정형), `docs/development-plan.md`(Phase 0~7, 추정 11~12주).
+  - Phase 0: signal2 main fork 반입(`e6bc4cf`, 1,503 files), 인프라 전환(명칭 goldlink·포트 5520~5523·DB명 goldlink, compose 검증 통과), GoldLink 브랜딩 전환(`2a99119`, 표시 문자열 261건·식별자 소문자 보존·signal2 잔여 0).
+  - Phase 1 준비: `docs/phase1-data-model.md` 설계서(신규 모델 7종 + 기존 확장 3건) — §6 리뷰 포인트 4건 사용자 확인 대기. 루트 `.env` 작성(사용자) 후 Docker 기동·회귀 확인 예정.
+  - 세션 종료 점검: goldlink 커밋 7개·working tree 클린·원격 미설정(백업 push 없음). 메모리 갱신(`project_goldlink.md` 신규, linked-projects 11개로). 템플릿 저장소 자체 변경 없음(본 기록만). 백업 push는 세션 권한 정책으로 보류 — 필요 시 사용자가 `git push origin main` 직접 실행.
+
 - worknest 시안 반응형 정책 확정 + 모바일 컴포넌트 5종 등재 — `DESIGN.md` 변경 이력 기록. (2026-06-11, 커밋 `de0859e`)
   - `designs/worknest.md` + 활성 `DESIGN.md`: Responsive Behavior(브레이크포인트·PC 무회귀·셸 전환·card-row/시트 규칙·터치 기준) 확정, Components에 `bottom-sheet`/`mobile-nav`/`nav-drawer`/`fab`/`card-row` 5종 추가. aiospace Phase R(모바일 반응형) 구현과 연동.
   - 세션 종료 점검(2차): 양 저장소 working tree 클린. aiospace는 Phase R + W1+W2 커밋(`121e21b`·`35402b4`, STATE.md 포함) 완료·원격 미설정. 템플릿은 본 기록 커밋 후 백업 push 1회.
