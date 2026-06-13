@@ -91,6 +91,7 @@
       { "path": ".codex/workflows/start.md", "description": "Codex start workflow" },
       { "path": ".codex/workflows/dev-start.md", "description": "Codex dev session bootstrap workflow" },
       { "path": ".codex/workflows/intake.md", "description": "Codex intake workflow" },
+      { "path": ".codex/workflows/request.md", "description": "Codex ambiguous request routing workflow" },
       { "path": ".codex/workflows/feature.md", "description": "Codex feature workflow" },
       { "path": ".codex/workflows/bugfix.md", "description": "Codex bugfix workflow" },
       { "path": ".codex/workflows/refactor.md", "description": "Codex refactor workflow" },

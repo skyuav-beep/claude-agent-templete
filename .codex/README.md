@@ -6,15 +6,17 @@
 
 1. `AGENTS.md`
 2. `STATE.md`
-3. `.codex/workflows/<작업유형>.md`
-4. workflow가 가리키는 `templates/`, `docs/`, `DESIGN.md`
-5. `.codex/checks/finish-checklist.md`
+3. `.codex/checks/safety-checklist.md`
+4. `.codex/workflows/<작업유형>.md`
+5. workflow가 가리키는 `templates/`, `docs/`, `DESIGN.md`
+6. `.codex/checks/finish-checklist.md`
 
 ## 작업 라우팅
 
 - 새 프로젝트 시작: `workflows/start.md`
 - 개발 세션 재개(PC 켜고 시작): `workflows/dev-start.md`
 - 토픽별 intake: `workflows/intake.md`
+- 모호한 작업 요청 분류: `workflows/request.md`
 - 기능 개발: `workflows/feature.md`
 - 버그 수정: `workflows/bugfix.md`
 - 리팩터링: `workflows/refactor.md`
@@ -28,3 +30,9 @@
 - 실행하지 못한 검증은 이유를 남긴다.
 - 문서/운영 규칙 변경 시 `STATE.md`를 갱신한다.
 - 저장소 규칙이 요구하면 커밋까지 완료한다.
+
+## 동등성 기준
+
+- `.codex/workflows/*`는 `.claude/skills/*`와 `.claude/commands/*`가 수행하는 절차를 Codex에서 명시적으로 재현한다.
+- `.codex/agents/*`는 `.claude/agents/*`의 역할과 같은 책임을 수행하되, Codex 도구·승인·샌드박스 모델에 맞춰 실행한다.
+- 상세 정책은 중복 정의하지 않고 `AGENTS.md`, `agents/*.md`, `templates/*.md`, `docs/*.md`, `DESIGN.md`를 공통 정본으로 사용한다.

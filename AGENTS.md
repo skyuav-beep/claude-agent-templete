@@ -179,7 +179,7 @@
 - **[Hooks Layer](./.claude/hooks/)** - 파괴적 명령 차단, 비밀 파일 쓰기 차단, STATE.md 갱신 리마인더. 설정은 `.claude/settings.local.json`.
 - **[서브에이전트 템플릿](./.claude/agents/)** - Agent 도구 호출 시 역할별 프롬프트 템플릿 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer). 디스패치 기준은 `docs/subagent-guide.md`.
 - **[Plugins Layer](./.claude/plugins/)** - manifest.json, VERSION, install.sh. 다른 프로젝트에 설치 시 `docs/plugin-guide.md` 참조.
-- **[Codex Layer](./.codex/)** - Codex용 workflow, safety/finish checklist, subagent prompt guide. Claude 전용 자동화와 분리된 보완 레이어.
+- **[Codex Layer](./.codex/)** - Codex용 workflow 10종(`start`, `dev-start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`), safety/finish checklist, subagent prompt guide. Claude 전용 자동화와 분리된 보완 레이어.
 - **[Plugin 가이드](./docs/plugin-guide.md)** - 설치, 업데이트, 커스텀, 버전 관리 방법.
 - **[디자인 운영 가이드](./docs/design-guidelines.md)** - `DESIGN.md` 토큰 호출 규칙, alias/atomic 선택, 컴포넌트 추가 절차, dark alias 합성 표기.
 - **[Admin FE 디자인 가이드](./docs/admin-fe-design-guide.md)** - admin/dashboard 화면(로그인, 사이드바, top bar, KPI 카드, data table, 폼) 조립 패턴. DESIGN.md 토큰/컴포넌트 호출 기준.

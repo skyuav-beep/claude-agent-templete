@@ -87,7 +87,7 @@
 - `.claude/hooks/` — L3 Guardrails (가드레일 스크립트 4종, opt-in 1종 포함)
 - `.claude/agents/` — L4 서브에이전트 프롬프트 템플릿 6종 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - `.claude/plugins/` — L5 배포 도구 (manifest, install)
-- `.codex/` — Codex runtime adapter (workflow 9종, checks 2종, subagent prompt guide 6종). Claude 자동화와 분리된 보완 레이어
+- `.codex/` — Codex runtime adapter (workflow 10종, checks 2종, subagent prompt guide 6종). Claude 자동화와 분리된 보완 레이어
 
 ## Design System
 

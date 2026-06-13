@@ -22,11 +22,11 @@ install.sh는 `manifest.json`에 등록된 파일을 대상 프로젝트에 복�
 - L3 Hooks: `.claude/hooks/` (4개 가드레일 스크립트, opt-in 1개 포함) + `settings.local.json`
 - L4 Subagents: `.claude/agents/` (6개 프롬프트 템플릿 — explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - Design library: `designs/` (5개 시안 + alias contract + template) + `.claude/plugins/select-design.sh`
-- Codex Layer: `.codex/` (workflow 9종 + checks 2종 + subagent prompt guide 6종)
-- Supporting: `agents/` (4개 역할 지침), `templates/` (요청 5종 + intake 13종 + data-table density), `docs/` (가이드/플레이북/HTML UI/런타임 매트릭스)
+- Codex Layer: `.codex/` (workflow 10종 + checks 2종 + subagent prompt guide 6종)
+- Supporting: `agents/` (4개 역할 지침), `templates/` (요청 5종 + intake 12종 + startup checklist + data-table density), `docs/` (가이드/플레이북/HTML UI/런타임 매트릭스)
 
 L2의 skills와 commands는 병존한다. skills는 자연어 키워드 매칭으로 자동 활성화되고, commands는 사용자가 슬래시 입력으로 명시 호출한다.
-Codex는 `.codex/README.md`와 `.codex/workflows/*.md`를 통해 같은 운영 절차를 명시적으로 수행한다.
+Codex는 `.codex/README.md`와 `.codex/workflows/*.md`를 통해 같은 운영 절차를 명시적으로 수행한다. 모호한 요청은 `.codex/workflows/request.md`가 Claude `request` skill과 같은 라우팅 역할을 맡는다.
 
 설치 후 대상 프로젝트에 `.claude/.plugin-version` 파일이 생성되어 설치된 버전을 기록한다. `.claude/settings.local.json` 안의 hook 경로는 설치 대상 프로젝트의 절대 경로로 자동 치환된다.
 

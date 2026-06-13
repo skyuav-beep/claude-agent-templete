@@ -31,6 +31,12 @@
 
 ## 이번 세션에서 완료한 작업
 
+- Codex parity 업데이트 — `rules/.codex` 소비 프로젝트가 Claude와 동등한 역할 라우팅/서브에이전트 절차를 수행하도록 루트 `.codex` 정본을 보강. (2026-06-13)
+  - 신규 `.codex/workflows/request.md`: Claude `request` skill 대응. 모호하거나 복합적인 작업 요청을 feature/bugfix/refactor/review/business-logic/design/dev-start로 분류하는 절차 추가.
+  - `.codex/README.md`, `docs/codex-guide.md`, `docs/agent-runtime-matrix.md`, `docs/codex-reading-order.md`: safety preflight, request 라우팅, dev-start/design/business-logic 읽기 순서, Claude/Codex 동등성 기준 반영.
+  - `.codex/agents/*` 6종 보강: 공통 기준 문서, 입력 항목, 출력 형식, 도구 제한을 추가하고 Claude counterpart와 같은 책임을 Codex 도구·승인 모델로 수행하도록 명시. 특히 `design-reviewer`는 Claude A/B 상세 체크리스트를 동등 적용.
+  - `.claude/plugins/manifest.json`, `README.md`, `AGENTS.md`, `CLAUDE.md`, `docs/plugin-guide.md`: Codex workflow 10종으로 카운트 및 설치 등록 정합.
+
 - 신규 sibling 프로젝트 `../goldlink/` 풀 연결 셋업 + 제품 정의 + Phase 0 fork + 세션 종료 점검. (2026-06-12)
   - 셋업: `rules -> ../claude-agent-template` + `.claude/` 5종 symlink + hook 3종 `settings.json` + 진입 문서 3종 + git init(`13b1290`). 연결 프로젝트 10 → **11개**.
   - 제품 정의: **signal2 기반 + 채굴파워 게임 보너스 플랫폼**. `docs/prd-mining-power-game.md` v1.0(정책 D-1~D-10 + 브랜딩 전건 확정 — 방식 A 기본/하이브리드 추첨/소규모 진행/재화 조합/BSC 토큰 설정 등재/당첨 보너스율 가중/배치 시각 시세/수수료 미적용/취소 불가/제한 단위 설정형), `docs/development-plan.md`(Phase 0~7, 추정 11~12주).

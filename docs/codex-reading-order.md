@@ -48,7 +48,18 @@ Codex는 보통 다음 순서로 저장소 문서를 읽는다.
 1. `AGENTS.md`
 2. `STATE.md`
 3. `.codex/README.md`
-4. `README.md`
+4. `.codex/checks/safety-checklist.md`
+5. 요청 유형이 모호하면 `.codex/workflows/request.md`
+6. `README.md`
+
+### 개발 세션 재개
+
+1. `AGENTS.md`
+2. `STATE.md`
+3. `.codex/workflows/dev-start.md`
+4. `docs/local-dev-ci-guide.md §2.0`
+5. 프로젝트별 `AGENTS.md ### Operational Commands`
+6. `docker compose` 설정 또는 실행 스크립트
 
 ### 기능 구현
 
@@ -57,7 +68,8 @@ Codex는 보통 다음 순서로 저장소 문서를 읽는다.
 3. `.codex/workflows/feature.md`
 4. `agents/executor-agent.md`
 5. `templates/feature-request.md`
-6. 관련 코드 또는 문서
+6. UI 영향이 있으면 `.codex/workflows/design.md`
+7. 관련 코드 또는 문서
 
 ### 버그 수정
 
@@ -66,7 +78,8 @@ Codex는 보통 다음 순서로 저장소 문서를 읽는다.
 3. `.codex/workflows/bugfix.md`
 4. `agents/executor-agent.md`
 5. `templates/bugfix-request.md`
-6. 재현 경로와 관련 구현
+6. UI 깨짐/시각 회귀이면 `.codex/workflows/design.md`
+7. 재현 경로와 관련 구현
 
 ### 코드 리뷰
 
@@ -85,16 +98,40 @@ Codex는 보통 다음 순서로 저장소 문서를 읽는다.
 5. `templates/refactor-request.md`
 6. 영향 범위 코드
 
+### 비즈니스 로직 변경
+
+1. `AGENTS.md`
+2. `STATE.md`
+3. `.codex/workflows/business-logic.md`
+4. `templates/business-logic-request.md`
+5. `docs/business-logic-playbook.md`
+6. `docs/local-dev-ci-guide.md`
+7. 영향 범위 코드, 데이터 모델, migration
+
+### 디자인/UI 작업
+
+1. `AGENTS.md`
+2. `STATE.md`
+3. `.codex/workflows/design.md`
+4. `DESIGN.md`
+5. `docs/design-guidelines.md`
+6. admin/dashboard 화면이면 `docs/admin-fe-design-guide.md`
+7. User FE 반응형이면 `docs/user-fe-design-guide.md`
+8. 모바일 전용판이면 `docs/user-fe-mobile-design-guide.md`
+9. 필요 시 `.codex/agents/design-reviewer.md`
+
 ### 프로젝트 초기 설계
 
 1. `AGENTS.md`
-2. `README.md`
-3. `.codex/workflows/start.md`
-4. `templates/project-intake.md`
-5. `templates/ui-intake.md`
-6. `templates/responsive-intake.md`
-7. `templates/tech-intake.md`
-8. `docs/project-guide-template.md`
+2. `STATE.md`
+3. `README.md`
+4. `.codex/workflows/start.md`
+5. `templates/startup-checklist.md`
+6. `templates/project-intake.md`
+7. `templates/ui-intake.md`
+8. `templates/responsive-intake.md`
+9. `templates/tech-intake.md`
+10. `docs/project-guide-template.md`
 
 ### 다국어(i18n) 설계 또는 구현
 

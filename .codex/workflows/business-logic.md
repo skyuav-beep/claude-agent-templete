@@ -8,7 +8,7 @@
 2. `docs/business-logic-playbook.md`를 함께 확인한다.
 3. 변경 목표, 현재 문제, 요구사항, 시나리오, 영향 범위, 검증 계획, Git 작업 계획을 정리한다.
 4. 정상/실패/경계값/권한별 시나리오를 반드시 수집한다.
-5. 로컬 검증, Docker 재빌드 판단, CI 인계 기준은 `docs/local-dev-ci-guide.md`를 따른다.
+5. 로컬 검증, Docker 재빌드 판단, 로컬 CI·push 인계 기준은 `docs/local-dev-ci-guide.md`를 따른다.
 6. 원격 배포/migration은 사용자 수동 영역으로 남긴다.
 
 ## 산출물

@@ -36,7 +36,7 @@ bash /path/to/claude-agent-template/.claude/plugins/install.sh /path/to/my-proje
 
 1. 이 저장소를 새 프로젝트의 시작점으로 복제하거나, 위 install.sh로 설치한다.
 2. Claude Code에서 자연어로 "새 프로젝트 시작하자"고 말하면 `start` skill이 자동 활성화되어 초기 설정 QnA를 진행한다.
-3. Codex에서는 `.codex/README.md`를 진입점으로 삼고, 작업 유형에 맞는 `.codex/workflows/*.md`를 따라 같은 템플릿을 읽는다.
+3. Codex에서는 `.codex/README.md`를 진입점으로 삼고, 작업 전 safety checklist와 작업 유형에 맞는 `.codex/workflows/*.md`를 따라 같은 템플릿을 읽는다.
 4. 특정 영역(예: UI, API)을 더 깊이 수집하려면 자연어로 토픽을 언급하면 `intake` skill이 활성화된다. 또는 `/intake tech` 같은 슬래시 커맨드로 명시 호출 가능.
 5. 작업 요청 시 "기능 추가", "버그 수정" 같은 키워드를 쓰면 해당 개별 skill이 자동 활성화된다. 또는 `/feature`, `/bugfix` 등 슬래시 커맨드로 명시 호출 가능.
 6. 유형이 모호하면 `request` skill이 자동으로 분류한다. 또는 `/request`로 명시 호출.
@@ -50,6 +50,7 @@ bash /path/to/claude-agent-template/.claude/plugins/install.sh /path/to/my-proje
 `.claude/skills/<name>/SKILL.md`에 정의된 skill은 description의 트리거 키워드로 사용자 발화에서 자동 활성화된다.
 
 - `start` — 새 프로젝트 초기 설정 QnA (startup-checklist 11섹션)
+- `dev-start` — 개발 세션 재개 상태 브리핑 + dev 컨테이너 기동 + hot reload 점검
 - `intake` — 개별 토픽 수집 (project, tech, ui, responsive, i18n, framework, api, error, form, format, routing, qa)
 - `request` — 작업 유형이 모호할 때만 활성화, 자동 분류
 - `feature` — 기능 요청 구조화
@@ -57,6 +58,7 @@ bash /path/to/claude-agent-template/.claude/plugins/install.sh /path/to/my-proje
 - `refactor` — 리팩터링 요청 구조화
 - `review` — 코드 리뷰 요청 구조화
 - `business-logic` — 비즈니스 로직 변경 요청 구조화
+- `design` — UI/스타일/토큰 작업 시 `DESIGN.md` 강제 참조
 
 각 skill은 `templates/`의 원본을 읽어서 대화형으로 진행하며, 사용자 메시지의 설명을 미리 파싱해 가능한 항목을 채운다.
 우선순위 규칙과 skill 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
@@ -65,7 +67,7 @@ bash /path/to/claude-agent-template/.claude/plugins/install.sh /path/to/my-proje
 
 `.claude/commands/`에 동일 이름의 slash command가 병존한다. 사용자가 직접 입력해 호출할 수 있다.
 
-- `/start`, `/intake [토픽]`, `/request [설명]`, `/feature [설명]`, `/bugfix [설명]`, `/refactor [설명]`, `/review [대상]`, `/business-logic [설명]`
+- `/start`, `/dev-start`, `/intake [토픽]`, `/request [설명]`, `/feature [설명]`, `/bugfix [설명]`, `/refactor [설명]`, `/review [대상]`, `/business-logic [설명]`
 
 `[설명]` 인수를 주면 가능한 항목을 미리 채운다. skills와 동일 templates를 참조한다.
 
@@ -73,11 +75,12 @@ bash /path/to/claude-agent-template/.claude/plugins/install.sh /path/to/my-proje
 
 `.codex/workflows/`는 Claude skills를 Codex 실행 절차로 옮긴 레이어다.
 
-- `start` / `intake` — 초기 QnA와 토픽별 정보 수집
+- `start` / `dev-start` / `intake` — 초기 QnA, 개발 세션 재개, 토픽별 정보 수집
+- `request` — 모호하거나 복합적인 작업 요청을 개별 workflow로 분류
 - `feature` / `bugfix` / `refactor` / `review` / `business-logic` — 작업 요청 처리
 - `design` — UI/디자인 작업 시 `DESIGN.md`와 디자인 가이드 강제 참조
 
-Codex에서는 자동 hook이 없으므로 `.codex/checks/safety-checklist.md`와 `.codex/checks/finish-checklist.md`를 작업 전후 체크리스트로 사용한다.
+Codex에서는 자동 hook이 없으므로 `.codex/checks/safety-checklist.md`와 `.codex/checks/finish-checklist.md`를 작업 전후 체크리스트로 사용한다. `.codex/agents/*`는 `.claude/agents/*`와 같은 책임을 Codex 도구·승인 모델에 맞춰 수행하는 prompt guide다.
 
 ## README 운영 규칙
 
@@ -93,6 +96,9 @@ Codex에서는 자동 hook이 없으므로 `.codex/checks/safety-checklist.md`�
 - `docs/development-process.html` — 개발 프로세스 시각 가이드 + 단계별 체크리스트(`localStorage` 저장) + STATE 미니 대시보드.
 - `docs/development-strategy.html` — UI Mock First 기본 경로와 Logic/DB First 예외 경로를 비교하는 개발 전략 매뉴얼.
 - `docs/intake.html` — Startup QnA 11섹션 위저드 + 핵심 요청 템플릿 폼. 입력값을 Markdown으로 내보낸다.
+- `docs/admin-fe-preview.html` — admin/dashboard 디자인 시안과 data-table/filter/tab 케이스를 확인하는 프리뷰.
+- `docs/user-fe-preview.html` — User FE 반응형 컴포넌트와 화면 패턴 프리뷰.
+- `docs/user-fe-mobile-preview.html` — 모바일 전용판 컴포넌트와 네이티브-like 인터랙션 프리뷰.
 
 ### 1차 소스 규칙
 
