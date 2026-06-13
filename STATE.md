@@ -31,6 +31,12 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 세션 종료 점검 — Codex parity 보강 및 audit 후속 정리 완료. (2026-06-13)
+  - 템플릿 저장소 커밋 3개 누적: `17c3a8f`(Codex request workflow + agent guide parity), `86f2f36`(audit 후속 경로/문서 병기 정리), 본 세션 종료 기록 커밋 예정.
+  - 검증: `manifest.json` JSON 검증, `install.sh --dry-run /tmp`, `git diff --check`, manifest 등록 파일 누락 0건 확인 완료.
+  - 상태: 작업 전 기준 `main...origin/main [ahead 3]`, 워킹트리 변경은 본 종료 기록만. `.github/workflows` 없음(원격 자동 CI 워크플로 미확인).
+  - 원격 push는 사용자 명시 요청 전까지 보류. 필요 시 사용자가 `git push origin main` 또는 별도 push 요청으로 진행.
+
 - Codex parity 업데이트 — `rules/.codex` 소비 프로젝트가 Claude와 동등한 역할 라우팅/서브에이전트 절차를 수행하도록 루트 `.codex` 정본을 보강. (2026-06-13)
   - 신규 `.codex/workflows/request.md`: Claude `request` skill 대응. 모호하거나 복합적인 작업 요청을 feature/bugfix/refactor/review/business-logic/design/dev-start로 분류하는 절차 추가.
   - `.codex/README.md`, `docs/codex-guide.md`, `docs/agent-runtime-matrix.md`, `docs/codex-reading-order.md`: safety preflight, request 라우팅, dev-start/design/business-logic 읽기 순서, Claude/Codex 동등성 기준 반영.
