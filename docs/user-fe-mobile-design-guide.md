@@ -247,13 +247,13 @@
 1. 시안 md의 `## CSS Variables` 섹션 두 블록을 `<style>` 블록 안에 inline.
 2. `<script>` 안의 `DESIGNS` 객체에 한 항목 추가.
 
-## design skill 자동 연계
+## 디자인 런타임 연계
 
-모바일 전용 키워드(앱, 모바일, 네이티브, swipe, bottom-sheet, pull-to-refresh, sticky CTA)는 `.claude/skills/design/SKILL.md`를 자동 활성화해 `DESIGN.md`를 강제 로드한다. 본 가이드는 그 연장선으로 호출된다.
+모바일 전용 키워드(앱, 모바일, 네이티브, swipe, bottom-sheet, pull-to-refresh, sticky CTA)는 Claude에서는 `.claude/skills/design/SKILL.md`를 자동 활성화하고, Codex에서는 `.codex/workflows/design.md`를 명시 적용해 `DESIGN.md`를 강제 로드한다. 본 가이드는 그 연장선으로 호출된다.
 
 ## 운영 메모
 
 - 본 가이드를 갱신하면 `STATE.md ## 이번 세션에서 완료한 작업`에 변경 이력을 한 줄 남긴다(운영 규칙).
 - 본 가이드의 패턴은 `DESIGN.md`의 토큰/컴포넌트와 어긋날 수 없다. 어긋나면 `DESIGN.md`를 정본으로 보고 본 가이드를 갱신한다.
 - 반응형판과 본 가이드의 공통 원칙은 반응형판을 정본으로 두고, 본 가이드는 차이점과 모바일 전용 인터랙션만 명세한다.
-- 화면 mockup이 필요하면 `.claude/agents/design-reviewer.md`로 토큰/Do-Don't 점검을 분리 위임할 수 있다. A-12 + A-13(모바일 전용) + B-7 항목이 자동 적용된다.
+- 화면 mockup이 필요하면 Claude에서는 `.claude/agents/design-reviewer.md`, Codex에서는 `.codex/agents/design-reviewer.md`로 토큰/Do-Don't 점검을 분리 위임할 수 있다. A-12 + A-13(모바일 전용) + B-7 항목을 적용한다.

@@ -36,6 +36,7 @@
   - `.codex/README.md`, `docs/codex-guide.md`, `docs/agent-runtime-matrix.md`, `docs/codex-reading-order.md`: safety preflight, request 라우팅, dev-start/design/business-logic 읽기 순서, Claude/Codex 동등성 기준 반영.
   - `.codex/agents/*` 6종 보강: 공통 기준 문서, 입력 항목, 출력 형식, 도구 제한을 추가하고 Claude counterpart와 같은 책임을 Codex 도구·승인 모델로 수행하도록 명시. 특히 `design-reviewer`는 Claude A/B 상세 체크리스트를 동등 적용.
   - `.claude/plugins/manifest.json`, `README.md`, `AGENTS.md`, `CLAUDE.md`, `docs/plugin-guide.md`: Codex workflow 10종으로 카운트 및 설치 등록 정합.
+  - audit 후속 보강: `.codex/workflows/request.md` 내부 경로를 `.codex/workflows/*`로 명확화하고, 디자인/서브에이전트 공통 문서에 Claude 자동화와 Codex 명시 절차를 병기.
 
 - 신규 sibling 프로젝트 `../goldlink/` 풀 연결 셋업 + 제품 정의 + Phase 0 fork + 세션 종료 점검. (2026-06-12)
   - 셋업: `rules -> ../claude-agent-template` + `.claude/` 5종 symlink + hook 3종 `settings.json` + 진입 문서 3종 + git init(`13b1290`). 연결 프로젝트 10 → **11개**.

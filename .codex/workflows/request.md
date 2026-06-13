@@ -5,14 +5,14 @@
 ## 우선순위 규칙
 
 - 사용자 메시지에 명확한 유형 키워드가 있으면 해당 개별 workflow를 바로 따른다.
-  - 기능 추가, 신규 화면/엔드포인트/명령: `workflows/feature.md`
-  - 버그, 에러, 깨짐, 동작 안 함: `workflows/bugfix.md`
-  - 구조 개선, 코드 정리, 동작 불변: `workflows/refactor.md`
-  - 코드 리뷰, PR 검토, 변경 점검: `workflows/review.md`
-  - 정책/권한/시나리오/경계값 변경: `workflows/business-logic.md`
+  - 기능 추가, 신규 화면/엔드포인트/명령: `.codex/workflows/feature.md`
+  - 버그, 에러, 깨짐, 동작 안 함: `.codex/workflows/bugfix.md`
+  - 구조 개선, 코드 정리, 동작 불변: `.codex/workflows/refactor.md`
+  - 코드 리뷰, PR 검토, 변경 점검: `.codex/workflows/review.md`
+  - 정책/권한/시나리오/경계값 변경: `.codex/workflows/business-logic.md`
 - 유형이 모호하거나 복합적일 때만 이 workflow를 사용한다.
-- UI/디자인 영향이 있으면 주 workflow와 함께 `workflows/design.md`를 적용한다.
-- 개발 세션 재개 요청이면 `workflows/dev-start.md`를 우선한다. 단, "개발 시작"이 만들 기능을 설명하는 맥락이면 feature/bugfix/business-logic으로 분류한다.
+- UI/디자인 영향이 있으면 주 workflow와 함께 `.codex/workflows/design.md`를 적용한다.
+- 개발 세션 재개 요청이면 `.codex/workflows/dev-start.md`를 우선한다. 단, "개발 시작"이 만들 기능을 설명하는 맥락이면 feature/bugfix/business-logic으로 분류한다.
 
 ## 절차
 

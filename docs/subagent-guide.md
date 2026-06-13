@@ -1,6 +1,6 @@
 # 서브 에이전트 가이드
 
-Claude Code의 `Agent` 도구를 사용해 서브 에이전트를 실행하는 방법과 기준을 정리한다.
+Claude Code의 `Agent` 도구와 Codex의 subagent prompt guide를 사용해 역할별 보조 에이전트를 실행하는 방법과 기준을 정리한다.
 
 ## Skills vs 서브 에이전트 역할 구분
 
@@ -14,7 +14,7 @@ Claude Code의 `Agent` 도구를 사용해 서브 에이전트를 실행하는 �
 - 산출물: `templates/*.md` 구조에 맞춘 마크다운 블록.
 - 본 에이전트가 직접 사용자에게 응답을 만든다.
 
-### 서브 에이전트 (`Agent` 도구 + `.claude/agents/<name>.md`)
+### 서브 에이전트 (`Agent` 도구 + `.claude/agents/<name>.md` / `.codex/agents/<name>.md`)
 
 - 별도 컨텍스트에서 독립 실행된다. 본 에이전트의 대화 이력을 보지 않는다.
 - 본 에이전트가 명시적으로 호출한다 (자동 활성화 아님).
@@ -29,7 +29,7 @@ Claude Code의 `Agent` 도구를 사용해 서브 에이전트를 실행하는 �
 
 ## 서브 에이전트란
 
-Claude Code는 `Agent` 도구를 통해 독립적인 서브 에이전트를 실행할 수 있다.
+Claude Code는 `Agent` 도구를 통해 독립적인 서브 에이전트를 실행할 수 있다. Codex에서는 `.codex/agents/*.md`를 subagent 프롬프트 기준으로 사용해 같은 역할을 수행한다.
 서브 에이전트는 별도의 컨텍스트에서 동작하며, 본 에이전트의 컨텍스트를 공유하지 않는다.
 따라서 프롬프트에 필요한 배경, 목적, 제약을 명확히 담아야 한다.
 
@@ -47,7 +47,7 @@ Claude Code는 `Agent` 도구를 통해 독립적인 서브 에이전트를 실�
 
 ## 역할별 서브 에이전트
 
-이 저장소의 역할 분리(`agents/`)는 Claude Code 서브 에이전트 타입과 다음과 같이 대응한다.
+이 저장소의 역할 분리(`agents/`)는 Claude Code 서브 에이전트 타입 및 Codex prompt guide와 다음과 같이 대응한다.
 
 ### general-purpose (기본 범용 에이전트)
 
@@ -95,31 +95,31 @@ Claude Code는 `Agent` 도구를 통해 독립적인 서브 에이전트를 실�
 
 ## 서브 에이전트 템플릿 디스패치
 
-본 에이전트가 Agent 도구를 호출할 때 `.claude/agents/`의 템플릿을 읽어 프롬프트에 포함한다.
+Claude에서 본 에이전트가 Agent 도구를 호출할 때 `.claude/agents/`의 템플릿을 읽어 프롬프트에 포함한다. Codex에서 subagent를 사용할 때는 같은 역할의 `.codex/agents/` 문서를 읽어 프롬프트 기준으로 삼는다.
 
 ### 디스패치 기준
 
-- 조사/탐색 작업 -> `.claude/agents/explorer.md` (Explore 타입)
+- 조사/탐색 작업 -> Claude: `.claude/agents/explorer.md` (Explore 타입) / Codex: `.codex/agents/explorer.md`
   - 트리거: 기존 구조 파악, 중복 확인, 근거 수집, 영향 범위 조사
   - 병렬 가능: 독립된 두 영역을 동시에 탐색할 때
 
-- 코드 리뷰 작업 -> `.claude/agents/code-reviewer.md` (general-purpose 타입)
+- 코드 리뷰 작업 -> Claude: `.claude/agents/code-reviewer.md` (general-purpose 타입) / Codex: `.codex/agents/code-reviewer.md`
   - 트리거: 구현 완료 후 리스크 점검, PR 리뷰, 회귀 확인, repo conventions 검토
   - 순차 필요: 구현이 끝난 뒤에만 의미 있음
 
-- 설계/계획 작업 -> `.claude/agents/planner.md` (Plan 타입)
+- 설계/계획 작업 -> Claude: `.claude/agents/planner.md` (Plan 타입) / Codex: `.codex/agents/planner.md`
   - 트리거: 큰 기능 추가 전, 구조 변경 전, 복합 요청 분해 시
   - 순차 필요: 조사 결과가 있어야 정확한 계획 가능
 
-- 테스트 실행 작업 -> `.claude/agents/test-runner.md` (general-purpose 타입)
+- 테스트 실행 작업 -> Claude: `.claude/agents/test-runner.md` (general-purpose 타입) / Codex: `.codex/agents/test-runner.md`
   - 트리거: 구현 완료 후 테스트 실행, 테스트 실패 분석, 회귀 테스트
   - 병렬 가능: 코드 리뷰와 동시에 실행 가능
 
-- 기능 구현 작업 -> `.claude/agents/feature-dev.md` (general-purpose 타입)
+- 기능 구현 작업 -> Claude: `.claude/agents/feature-dev.md` (general-purpose 타입) / Codex: `.codex/agents/feature-dev.md`
   - 트리거: 설계 완료 후 end-to-end 기능 구현 위임
   - 순차 필요: planner 결과가 있어야 정확한 구현 가능
 
-- 디자인 일관성 리뷰 -> `.claude/agents/design-reviewer.md` (general-purpose 타입)
+- 디자인 일관성 리뷰 -> Claude: `.claude/agents/design-reviewer.md` (general-purpose 타입) / Codex: `.codex/agents/design-reviewer.md`
   - 트리거: UI 산출물 검토, `DESIGN.md` 토큰 호출 준수 검증, Do/Don't 위반 검출, 다크 모드 alias 누락 점검
   - 병렬 가능: `code-reviewer`와 직교(코드 품질과 디자인 일관성은 별도 축)이므로 동시에 실행 가능
   - 순차 필요: UI 산출물이 만들어진 뒤에 의미 있음

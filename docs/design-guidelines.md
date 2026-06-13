@@ -57,7 +57,7 @@
 - 격식체(`-습니다`, `-십시오`) product 카피 → `-요`/`-어요`/`-아요` 종결
 - 챗봇 톤(`~해보세요!`, `여기를 눌러주세요`), 마케팅 과장(`혁신적`, `최고의`) → 절제된 동사형 라벨
 
-위반이 의심되면 `.claude/agents/design-reviewer.md` 서브에이전트를 호출해 일괄 점검한다.
+위반이 의심되면 Claude에서는 `.claude/agents/design-reviewer.md`, Codex에서는 `.codex/agents/design-reviewer.md` 기준으로 일괄 점검한다.
 
 ## 카피 톤
 
@@ -122,8 +122,8 @@
   - frontmatter `policy:` 블록과 POLICY strip의 chip이 일치
 - 위반 시 시안 md의 `## CSS Variables`와 `## Do's and Don'ts`를 우선 갱신한다.
 
-## 자동 활성화 흐름
+## 런타임 연계 흐름
 
-디자인 키워드가 사용자 메시지에 등장하면 `.claude/skills/design/SKILL.md`가 자동 활성화되어 `DESIGN.md`를 강제 로드한다. `feature`/`refactor`/`bugfix` 진행 중 UI 영향이 발견되면 design skill이 추가로 활성화되어 일관성 항목을 보강한다.
+디자인 키워드가 사용자 메시지에 등장하면 Claude에서는 `.claude/skills/design/SKILL.md`가 자동 활성화되어 `DESIGN.md`를 강제 로드한다. Codex에서는 `.codex/workflows/design.md`를 명시적으로 적용한다. `feature`/`refactor`/`bugfix` 진행 중 UI 영향이 발견되면 같은 디자인 절차를 추가 적용해 일관성 항목을 보강한다.
 
-상세 흐름은 `CLAUDE.md ## Design System` 섹션과 `.claude/skills/design/SKILL.md`를 참조한다.
+상세 흐름은 `CLAUDE.md ## Design System`, `.claude/skills/design/SKILL.md`, `.codex/workflows/design.md`를 참조한다.

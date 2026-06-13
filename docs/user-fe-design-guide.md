@@ -352,9 +352,9 @@ user FE도 product 카피 톤은 활성 시안의 `policy.copy_tone`을 따른�
 1. 시안 md의 `## CSS Variables` 섹션 두 블록(`:root[data-design="<slug>"][data-theme="light/dark"] { ... }`)을 `user-fe-preview.html` `<style>` 블록 안의 시안 변수 영역에 inline.
 2. `<script>` 안의 `DESIGNS` 객체에 한 항목 추가(label + policy frontmatter 복사).
 
-## design skill 자동 연계
+## 디자인 런타임 연계
 
-user FE 작업 키워드(피드, 카드, 상세, 모바일, 폼, bottom-sheet, app-bar, bottom-nav)는 `.claude/skills/design/SKILL.md`를 자동 활성화해 `DESIGN.md`를 강제 로드한다. 본 가이드는 그 연장선으로 호출된다. 새로운 user FE 컴포넌트가 필요하면 `docs/design-guidelines.md ## 새 컴포넌트 추가 절차`를 따른다.
+user FE 작업 키워드(피드, 카드, 상세, 모바일, 폼, bottom-sheet, app-bar, bottom-nav)는 Claude에서는 `.claude/skills/design/SKILL.md`를 자동 활성화하고, Codex에서는 `.codex/workflows/design.md`를 명시 적용해 `DESIGN.md`를 강제 로드한다. 본 가이드는 그 연장선으로 호출된다. 새로운 user FE 컴포넌트가 필요하면 `docs/design-guidelines.md ## 새 컴포넌트 추가 절차`를 따른다.
 
 ## 모바일 전용판과의 차이
 
@@ -376,5 +376,5 @@ user FE 작업 키워드(피드, 카드, 상세, 모바일, 폼, bottom-sheet, a
 
 - 본 가이드를 갱신하면 `STATE.md ## 이번 세션에서 완료한 작업`에 변경 이력을 한 줄 남긴다(운영 규칙).
 - 본 가이드의 패턴은 `DESIGN.md`의 토큰/컴포넌트와 어긋날 수 없다. 어긋나면 `DESIGN.md`를 정본으로 보고 본 가이드를 갱신한다.
-- 화면 mockup이 필요하면 `.claude/agents/design-reviewer.md`로 토큰/Do-Don't 점검을 분리 위임할 수 있다.
+- 화면 mockup이 필요하면 Claude에서는 `.claude/agents/design-reviewer.md`, Codex에서는 `.codex/agents/design-reviewer.md`로 토큰/Do-Don't 점검을 분리 위임할 수 있다.
 - 모바일 전용판이 추가되면 두 가이드의 공통 원칙은 본 가이드를 정본으로 두고 모바일 전용 가이드는 차이점만 명세한다.
