@@ -77,7 +77,11 @@ SKIPPED=0
 
 for FILE in $FILES; do
   SRC="$TEMPLATE_ROOT/$FILE"
-  DST="$TARGET/$FILE"
+  DST_FILE="$FILE"
+  if [ "$FILE" = ".claude/settings.template.json" ]; then
+    DST_FILE=".claude/settings.local.json"
+  fi
+  DST="$TARGET/$DST_FILE"
 
   if [ ! -f "$SRC" ]; then
     echo "  건너뜀 (소스 없음): $FILE"
@@ -91,11 +95,15 @@ for FILE in $FILES; do
   fi
 
   if [ "$DRY_RUN" = true ]; then
-    echo "  [복사 예정] $FILE"
+    if [ "$FILE" = "$DST_FILE" ]; then
+      echo "  [복사 예정] $FILE"
+    else
+      echo "  [복사 예정] $FILE -> $DST_FILE"
+    fi
   else
     mkdir -p "$(dirname "$DST")"
     cp "$SRC" "$DST"
-    if [ "$FILE" = ".claude/settings.local.json" ]; then
+    if [ "$DST_FILE" = ".claude/settings.local.json" ]; then
       python3 - "$DST" "$TEMPLATE_ROOT" "$TARGET" <<'PY'
 from pathlib import Path
 import sys
@@ -110,7 +118,11 @@ PY
     if [[ "$FILE" == *.sh ]]; then
       chmod +x "$DST"
     fi
-    echo "  설치됨: $FILE"
+    if [ "$FILE" = "$DST_FILE" ]; then
+      echo "  설치됨: $FILE"
+    else
+      echo "  설치됨: $FILE -> $DST_FILE"
+    fi
   fi
   INSTALLED=$((INSTALLED + 1))
 done

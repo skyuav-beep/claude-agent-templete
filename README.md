@@ -20,7 +20,9 @@
 기존 프로젝트에 이 템플릿을 적용하려면:
 
 ```bash
-bash /path/to/claude-agent-template/.claude/plugins/install.sh /path/to/my-project
+TEMPLATE_ROOT=/path/to/your-template-folder
+TARGET_ROOT=/path/to/my-project
+bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" "$TARGET_ROOT"
 ```
 
 미리보기: `--dry-run`, 덮어쓰기: `--force`. 자세한 내용은 `docs/plugin-guide.md` 참조.

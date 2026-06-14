@@ -1,0 +1,41 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/block-destructive.sh\"'"
+          },
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/block-secret-files.sh\"'"
+          },
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/state-reminder.sh\"'"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/block-secret-files.sh\"'"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/block-secret-files.sh\"'"
+          }
+        ]
+      }
+    ]
+  }
+}

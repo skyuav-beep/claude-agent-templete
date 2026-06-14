@@ -1,5 +1,5 @@
 {
-  "name": "claude-agent-templete",
+  "name": "claude-agent-template",
   "version": "1.1.0",
   "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
   "compatibility": {
@@ -53,7 +53,7 @@
         { "path": ".claude/hooks/state-reminder.sh", "description": "Warn if STATE.md not updated on commit" },
         { "path": ".claude/hooks/warn-design-tokens.sh", "description": "Opt-in: warn on hex/non-4px usage in CSS/JSX (not registered by default)" }
       ],
-      "settings": ".claude/settings.local.json"
+      "settings": ".claude/settings.template.json"
     },
     "L4_subagents": {
       "description": "Agent 도구 호출용 프롬프트 템플릿",

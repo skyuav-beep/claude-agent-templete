@@ -31,6 +31,12 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 템플릿 폴더명/경로 의존성 제거 방안 적용. (2026-06-14)
+  - 결정: 로컬 폴더명은 정본으로 쓰지 않고, 고정 식별자는 `.claude/plugins/manifest.json`의 `name=claude-agent-template`로 둔다. 문서 예시는 `TEMPLATE_ROOT`/`TARGET_ROOT` 변수로 통일했다.
+  - hook 설정: 전역 ignore 대상인 `.claude/settings.local.json` 대신 추적 가능한 `.claude/settings.template.json`을 추가하고, 설치 시 대상 프로젝트의 `.claude/settings.local.json`으로 생성하도록 `install.sh`를 보강했다.
+  - 경로 안정성: hook 명령은 절대 경로 대신 실행 시점의 git 루트 또는 상위 `.claude/hooks` 탐색으로 스크립트를 찾는다. PC별 폴더명(`claude-agent-template`, `claude-agent-templete`, `rules` 등)이 달라도 동작하도록 정리했다.
+  - 검증: `jq empty`(`settings.template.json`, `settings.local.json`, `manifest.json`), hook/install shell `bash -n`, manifest 등록 파일 누락 0건, 실제 설치 `/tmp/agent-template-install-check` 후 하위 `docs/`에서 `git reset --hard` 차단 hook `EXIT:2`, `install.sh --dry-run`의 `settings.template.json -> settings.local.json` 매핑 확인.
+
 - 세션 종료 점검 — Codex parity 보강 및 audit 후속 정리 완료. (2026-06-13)
   - 템플릿 저장소 커밋 3개 누적: `17c3a8f`(Codex request workflow + agent guide parity), `86f2f36`(audit 후속 경로/문서 병기 정리), 본 세션 종료 기록 커밋 예정.
   - 검증: `manifest.json` JSON 검증, `install.sh --dry-run /tmp`, `git diff --check`, manifest 등록 파일 누락 0건 확인 완료.
