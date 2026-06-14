@@ -31,6 +31,13 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 세션 종료 준비 — 템플릿 portable 경로 업데이트 후 커밋·push·브랜치/PR 상태 점검 완료. (2026-06-14)
+  - 완료 커밋: `4633710`(`docs: make template paths portable across local folders`) — 로컬 폴더명/절대경로 의존 제거, `settings.template.json` 도입, 설치 시 `settings.local.json` 생성 흐름 반영.
+  - 원격 반영: `git push origin main` 완료. 종료 점검 직전 기준 `main`과 `origin/main`은 `4633710`에서 동기화.
+  - 브랜치 상태: 로컬 브랜치는 `main`만 확인, 별도 작업 브랜치 없음. `origin/main`도 동일 커밋.
+  - PR 상태: 열린 PR 없음 확인. 머지할 PR이나 정리할 원격 작업 브랜치 없음.
+  - 다음 점검: 기존 연결 프로젝트별 `.claude/settings*.json` portable hook 반영 여부는 각 해당 프로젝트에서 별도 진행한다.
+
 - 템플릿 폴더명/경로 의존성 제거 방안 적용. (2026-06-14)
   - 결정: 로컬 폴더명은 정본으로 쓰지 않고, 고정 식별자는 `.claude/plugins/manifest.json`의 `name=claude-agent-template`로 둔다. 문서 예시는 `TEMPLATE_ROOT`/`TARGET_ROOT` 변수로 통일했다.
   - hook 설정: 전역 ignore 대상인 `.claude/settings.local.json` 대신 추적 가능한 `.claude/settings.template.json`을 추가하고, 설치 시 대상 프로젝트의 `.claude/settings.local.json`으로 생성하도록 `install.sh`를 보강했다.
