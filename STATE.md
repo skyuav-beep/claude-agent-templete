@@ -31,6 +31,13 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 템플릿 전체 점검(업데이트 체크) — manifest 미등록 3건 + 카운트 노후 1건 수정. (2026-07-01)
+  - 배경: 사용자 요청으로 5-Layer 전체 정합성 점검. JSON/shell/version/레이어 카운트/dangling/라이브 링크는 모두 정합 확인. 실질 이슈는 manifest 등록 누락 3건.
+  - 결함: (1) `designs/worknest.md`가 `manifest.json designs.files`에 미등록 — 현재 활성 시안(`.active-design`=worknest·`DESIGN.md`=WorkNest)인데도 누락되어 `install.sh --design worknest` 시 시안 파일 미복사로 활성화 실패. (2) `docs/development-strategy.md`+`.html`가 `supporting.docs` 미등록(설치 대상에서 빠짐). (3) `docs/plugin-guide.md` "5개 시안" 표기 노후(실제 6종).
+  - 수정: `manifest.json`에 worknest(designs.files)·development-strategy 2종(supporting.docs) 등록, `plugin-guide.md` 6개 시안으로 갱신.
+  - 검증: `jq empty` 통과, 설치 대상 파일 미등록 0건(comm 대조), `designs.files` 9건(인프라 3+시안 6)·`supporting.docs` 25건 = 실제 `docs/` 25건 일치.
+  - 미반영(정보성, 결함 아님): `manifest designs.default: wanted`는 신규 설치 권장 기본값이라 활성 worknest와 별개로 유지. STATE `## 다음 작업`·`todo.md`의 "시안 5종" 노후 문구와 `docs/index.html`·`docs/template-usage.md` 미래 후보 참조는 라이브 결함 아님(후속 정리 대상).
+
 - 세션 종료 준비 — 템플릿 portable 경로 업데이트 후 커밋·push·브랜치/PR 상태 점검 완료. (2026-06-14)
   - 완료 커밋: `4633710`(`docs: make template paths portable across local folders`) — 로컬 폴더명/절대경로 의존 제거, `settings.template.json` 도입, 설치 시 `settings.local.json` 생성 흐름 반영.
   - 원격 반영: `git push origin main` 완료. 종료 점검 직전 기준 `main`과 `origin/main`은 `4633710`에서 동기화.

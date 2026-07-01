@@ -32,7 +32,7 @@ install.sh는 `manifest.json`에 등록된 파일을 대상 프로젝트에 복�
 - L2 Commands: `.claude/commands/` (9개 slash command — 사용자가 직접 호출)
 - L3 Hooks: `.claude/hooks/` (4개 가드레일 스크립트, opt-in 1개 포함) + `settings.template.json` -> 설치 대상의 `settings.local.json`
 - L4 Subagents: `.claude/agents/` (6개 프롬프트 템플릿 — explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
-- Design library: `designs/` (5개 시안 + alias contract + template) + `.claude/plugins/select-design.sh`
+- Design library: `designs/` (6개 시안 + alias contract + template) + `.claude/plugins/select-design.sh`
 - Codex Layer: `.codex/` (workflow 10종 + checks 2종 + subagent prompt guide 6종)
 - Supporting: `agents/` (4개 역할 지침), `templates/` (요청 5종 + intake 12종 + startup checklist + data-table density), `docs/` (가이드/플레이북/HTML UI/런타임 매트릭스)
 

@@ -78,7 +78,8 @@
       { "path": "designs/minimal-mono.md", "description": "Minimal mono starter — 흑백 단색, gradient 전면 금지, 도구/admin UI 기본 시안" },
       { "path": "designs/toss-like.md", "description": "Toss-like fintech — 단일 강조 파랑, 큰 라운드, 카드 그림자 허용, hero gradient" },
       { "path": "designs/material-3.md", "description": "Material 3 — tonal palette, button radius-full, elevation 5단, en-sentence" },
-      { "path": "designs/linear-like.md", "description": "Linear-like productivity — 다크 우선, gradient accent 적극, 컴팩트 밀도, kbd 시그너처" }
+      { "path": "designs/linear-like.md", "description": "Linear-like productivity — 다크 우선, gradient accent 적극, 컴팩트 밀도, kbd 시그너처" },
+      { "path": "designs/worknest.md", "description": "WorkNest productivity — 헤어라인 보더 카드(그림자 제한), gradient 전면 금지, ko-friendly 카피, 반응형+모바일 컴포넌트 5종(현재 활성 시안)" }
     ],
     "selector": ".claude/plugins/select-design.sh"
   },
@@ -147,6 +148,8 @@
       "docs/subagent-guide.md",
       "docs/development-process.md",
       "docs/development-process.html",
+      "docs/development-strategy.md",
+      "docs/development-strategy.html",
       "docs/intake.html",
       "docs/global-claude-md-template.md",
       "docs/design-guidelines.md",
