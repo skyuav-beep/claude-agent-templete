@@ -31,6 +31,14 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 세션 종료 점검 — 연결 프로젝트 Codex 런타임 연결 보강 및 선택 커밋 완료. (2026-07-02)
+  - 배경: 사용자가 "Claude 가이드 및 에이전트 작동처럼 Codex도 각 프로젝트 연결되어 환경설정 및 제대로 구현되는지 리뷰 및 검토"를 요청. 점검 결과 템플릿 `.codex` 레이어 자체는 manifest/설치/가이드 정합성이 있으나, 여러 sibling 프로젝트 루트에 `.codex` 연결이 없어 Codex가 workflow/check를 바로 발견하기 어려운 상태였음.
+  - 연결 보강: `GoldFX`, `aiospace`, `ccaa`, `goldlink`, `goldlink-wt-pointcharge-balance`, `makeupshop`, `riderapp-runtime`, `skim`, `tokendtu`, `trippass`, `vwallet`에 `.codex -> rules/.codex` symlink 추가. 기존 연결 확인: `aica2`, `signal2`, `riderwebapp`, `dexchange`.
+  - 문서 보강: `GoldFX`, `aica2`, `aiospace`, `ccaa`, `goldlink`, `goldlink-wt-pointcharge-balance`, `makeupshop`, `signal2`, `skim`, `tokendtu`, `trippass`, `vwallet`의 `AGENTS.md`에 `Agent Runtime 연결` 섹션을 추가해 Codex가 `.codex/README.md`, safety checklist, workflow, finish checklist를 따르도록 명시.
+  - 로컬 커밋 완료(분리 가능한 저장소만): `aica2` `63fd6e7`, `ccaa` `bde467e`, `makeupshop` `9247ba6`, `tokendtu` `b23a0f5`, `trippass` `7e8c22f`, `vwallet` `8e257c6` — 모두 `docs: connect codex runtime adapter`.
+  - 커밋 보류/주의: `GoldFX`와 `riderapp-runtime`은 루트가 git repo가 아니라 symlink만 적용. `aiospace`와 `skim`은 기존 대량 미커밋 변경이 `AGENTS.md`와 섞여 있어 이번 Codex 블록만 안전하게 분리 커밋하지 않음. `goldlink`/`signal2`/`riderwebapp`/`dexchange`는 종료 점검 기준 추가 커밋 없음.
+  - 검증: 모든 대상에서 `.codex/README.md`와 `.codex/checks/finish-checklist.md` 접근 확인, `AGENTS.md` Codex 연결 문구 확인, 관련 `AGENTS.md`/`.codex` 대상 `git diff --check` 통과. push/원격 작업은 사용자 명시 요청이 없어 수행하지 않음.
+
 - 템플릿 전체 점검(업데이트 체크) — manifest 미등록 3건 + 카운트 노후 1건 수정. (2026-07-01)
   - 배경: 사용자 요청으로 5-Layer 전체 정합성 점검. JSON/shell/version/레이어 카운트/dangling/라이브 링크는 모두 정합 확인. 실질 이슈는 manifest 등록 누락 3건.
   - 결함: (1) `designs/worknest.md`가 `manifest.json designs.files`에 미등록 — 현재 활성 시안(`.active-design`=worknest·`DESIGN.md`=WorkNest)인데도 누락되어 `install.sh --design worknest` 시 시안 파일 미복사로 활성화 실패. (2) `docs/development-strategy.md`+`.html`가 `supporting.docs` 미등록(설치 대상에서 빠짐). (3) `docs/plugin-guide.md` "5개 시안" 표기 노후(실제 6종).
