@@ -31,6 +31,14 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 답변 포맷에 `내부 식별자 절제` 규칙 신설 — 설명·보고에서 소스/DB 명칭을 기본 생략. (2026-07-10)
+  - 배경: 사용자가 "설명·리포트할 때 소스 및 DB 명칭을 웬만하면 사용하지 않고 쉽게 설명, 소스/DB 명은 요청할 때 알려주고 설명에 필요할 때만 언급"을 요청.
+  - 규칙: `CLAUDE.md ## 답변 포맷` 아래 `### 내부 식별자 절제 (설명은 쉬운 말로)` 소절 추가. 기본은 생략하고 사용자 영향 중심으로 서술 · 언급 조건 3가지(직접 열거나 실행 / 동명이 둘 이상이라 지목 필요 / 재현·디버깅에 위치 필수) · 요청 시 즉시 정확히 제시 · 절제 대상 아님(커밋 해시·버전·테스트 카운트·실행 명령·서비스 URL·포트) · 예외(코드 리뷰·리팩터링·버그 원인 분석은 식별자가 설명의 본체).
+  - 기존 `파일·심볼·명령은 inline code` 항목에 "언급할 때는"을 붙여 새 소절과의 충돌을 제거.
+  - 전파 검증: `## 답변 포맷` 헤딩 보유 문서는 템플릿 하나뿐(로컬 사본 없음). 다만 템플릿 규칙은 프로젝트 읽기 순서에 `rules/CLAUDE.md`가 등재된 경우에만 로드됨 → 도달 11(`GoldFX` `aica2` `aiospace` `ccaa` `goldlink` `makeupshop` `riderwebapp` `signal2` `skim` `tokendtu` `trippass`), 미도달 12(`rules` symlink는 있으나 읽기 순서 미등재: `riderapp-runtime` `vwallet` / symlink 없음: `aeghash` `blockminer2` `bot-trading_v1.1` `dexchange` `hashdamlanding` `icp2p` `icwallet` `inventory-app` `mlm_v1.0` `tokengenerator`).
+  - 빈틈 보강: 항상 로드되는 유저 전역 지침(`~/.claude/CLAUDE.md`, 이미 `## 답변 포맷`을 미러 중)에 동일 규칙을 반영하고, 정본이 템플릿임을 명시하는 안내문을 미러 상단에 추가. 규칙 본문 7줄 `diff` 일치 확인.
+  - 후속: `riderapp-runtime`·`vwallet`의 읽기 순서에 `rules/CLAUDE.md` 등재(근본 해결). `riderapp-runtime`은 루트가 git repo가 아니라 커밋 대상이 아님.
+
 - 세션 종료 점검 — 연결 프로젝트 Codex 런타임 연결 보강 및 선택 커밋 완료. (2026-07-02)
   - 배경: 사용자가 "Claude 가이드 및 에이전트 작동처럼 Codex도 각 프로젝트 연결되어 환경설정 및 제대로 구현되는지 리뷰 및 검토"를 요청. 점검 결과 템플릿 `.codex` 레이어 자체는 manifest/설치/가이드 정합성이 있으나, 여러 sibling 프로젝트 루트에 `.codex` 연결이 없어 Codex가 workflow/check를 바로 발견하기 어려운 상태였음.
   - 연결 보강: `GoldFX`, `aiospace`, `ccaa`, `goldlink`, `goldlink-wt-pointcharge-balance`, `makeupshop`, `riderapp-runtime`, `skim`, `tokendtu`, `trippass`, `vwallet`에 `.codex -> rules/.codex` symlink 추가. 기존 연결 확인: `aica2`, `signal2`, `riderwebapp`, `dexchange`.
