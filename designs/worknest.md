@@ -2,7 +2,7 @@
 name: WorkNest
 slug: worknest
 category: productivity
-last_updated: "2026-06-11"
+last_updated: "2026-07-10"
 sources:
   - https://api.anthropic.com/v1/design/h/NR6vHcu1-8PDV2dAGDA3_w?open_file=WorkNest.html
 related_services:
@@ -20,7 +20,7 @@ policy:
 
 # WorkNest — design.md
 
-> 노션형 블록 에디터를 중심으로 프로젝트·할일·일정·고객·견적·재무·아이디어·작업일지를 잇는 **AI Workspace OS**의 디자인 시스템. Notion/Linear 계열의 절제된 정석 톤, 휴머니스트 산세리프(IBM Plex Sans KR), **정보 밀도 높은 pro-tool** 레이아웃. 사용자(작업자) 표면 기준으로 정의하며 어드민 환경설정 표면은 포함하지 않는다.
+> 노션형 블록 에디터를 중심으로 프로젝트·할일·일정·고객·견적·재무·아이디어·작업일지를 잇는 **AI Workspace OS**의 디자인 시스템. Notion/Linear 계열의 절제된 정석 톤, 한글 UI 산세리프(Pretendard), **정보 밀도 높은 pro-tool** 레이아웃. 사용자(작업자) 표면 기준으로 정의하며 어드민 환경설정 표면은 포함하지 않는다.
 
 본 시안은 `designs/_alias-contract.md` 계약을 준수한다. 정본 프로토타입(SSOT preview)은 aiospace `mockup/WorkNest.html`이다.
 
@@ -185,7 +185,8 @@ caption1:    11.5px / 600 / 1.35 / 0.03em   # 테이블 헤더·섹션 라벨 (u
 
 ### 서체 선택
 
-- **Primary**: `"IBM Plex Sans KR", system-ui, sans-serif` — 휴머니스트 산세리프, weight 300–700 사용.
+- **Primary**: `"Pretendard Variable", system-ui, sans-serif` — 한글 UI 산세리프(가변 weight 45–920, 실사용 400–700). 자체 호스팅(`pretendard` 패키지의 동적 서브셋 92조각 + `unicode-range`)이라 화면에 쓰인 글자가 든 조각만 내려온다.
+  - 2026-07-10 교체. 이전 `"IBM Plex Sans KR"`는 라틴 본문용 서체에 한글을 얹은 계열이라 본문 13.5px에서 획이 가늘고 자소가 뭉쳐 보였다.
 - **Mono**(시안 전용 variant): `"IBM Plex Mono", ui-monospace, monospace` — 코드 블록 12.5px, kbd 10.5px. 다른 시안 전환 시 `_alias-contract.md §9b` mono fallback 적용.
 - 전역 `letter-spacing -0.01em`, `-webkit-font-smoothing: antialiased`, `word-break: keep-all`.
 
@@ -444,7 +445,7 @@ data-table 행의 모바일 카드 변형 — `{colors.bg-surface}` + `{colors.b
   --bg-active:  #ECEEF1;
   --bg-scrim:   rgba(17, 24, 39, 0.32);
   --topbar-h:   46px;
-  --font-sans:  "IBM Plex Sans KR", system-ui, sans-serif;
+  --font-sans:  "Pretendard Variable", system-ui, sans-serif;
   --font-mono:  "IBM Plex Mono", ui-monospace, monospace;
 
   /* Spacing */
