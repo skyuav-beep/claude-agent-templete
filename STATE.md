@@ -31,6 +31,12 @@
 
 ## 이번 세션에서 완료한 작업
 
+- Codex dev-start/review 어댑터와 비밀 파일 훅 보강. (2026-07-12)
+  - 배경: riderwebapp 점검에서 Codex dev-start workflow가 공용 템플릿의 예전 고정 `docker compose up -d` 모델을 들고 있어, 프로젝트별 `docs/local-dev-ci-guide.md` 부트스트랩 절과 어긋날 수 있음이 확인됨. Claude `dev-start` skill은 이미 절 이름 기반 위임으로 중립화되어 있었고, Codex 어댑터만 뒤처진 상태였다.
+  - 변경: `.codex/workflows/dev-start.md`를 섹션 번호/고정 명령 대신 `docs/local-dev-ci-guide.md`의 **개발 세션 부트스트랩** 절을 절 이름으로 찾아 따르도록 수정. `.codex/workflows/review.md`에는 프로젝트 `AGENTS.md`/가이드 override가 공용 reviewer 기준보다 우선임을 명시했다.
+  - 훅 보강: `.claude/hooks/block-secret-files.sh`가 기존 Write/Edit `file_path`뿐 아니라 Bash `command`도 검사한다. `.env*`, credential/key 파일 대상 redirection, `tee`, `cp`, `mv`, `install`, `sed -i` 쓰기 패턴을 차단한다.
+  - 검증: `bash -n .claude/hooks/block-secret-files.sh` 통과. 수동 프로브로 `echo SECRET > .env`, `file_path=/tmp/.env.local`, `printf x | tee .env.local`, `sed -i s/a/b/ credentials.json` 차단(exit 2) 확인. `sed -n 1,20p .env.example`, `echo ok > /tmp/not-secret.txt`는 통과(exit 0).
+
 - WorkNest 시안 Primary 서체 교체 — `IBM Plex Sans KR` → `Pretendard Variable`. (2026-07-10)
   - 배경: aiospace 사용자가 "폰트가 깔끔하지 않고 약간 깨지듯 보인다"고 진단. 타이포 토큰 레이어를 먼저 도입해 크기·행간·자간을 정본에 맞췄으나(구조 문제 해소) 서체 인상은 그대로여서 "눈에 확 안 띈다"는 후속 요청. 서체 4종(IBM Plex Sans KR·Pretendard·Noto Sans KR·Gothic A1)을 같은 문구·같은 타입 램프로 렌더해 비교한 뒤 사용자가 Pretendard를 선택.
   - 변경 토큰: `--font-sans: "Pretendard Variable", system-ui, sans-serif`. `### 서체 선택`의 Primary 항목과 개요 문장(휴머니스트 산세리프 → 한글 UI 산세리프) 갱신. 굵기 표기 `300–700` → 가변 `45–920`(실사용 400–700). Mono(`IBM Plex Mono`)·색·간격·라운드 토큰은 무변경.
