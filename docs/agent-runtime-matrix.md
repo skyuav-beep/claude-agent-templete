@@ -26,7 +26,7 @@
 | 파괴적 명령 차단 | `.claude/hooks/block-destructive.sh` | Codex 승인/샌드박스 + `.codex/checks/safety-checklist.md` | `AGENTS.md` 사용자 확인 규칙 |
 | STATE 리마인더 | `.claude/hooks/state-reminder.sh` | `.codex/checks/finish-checklist.md` | `STATE.md` |
 | 서브에이전트 | Claude `Agent` 도구 + `.claude/agents/*` | Codex subagent 사용 시 `.codex/agents/*` | `agents/*`, `docs/subagent-guide.md` |
-| 설치 | `.claude/plugins/install.sh` | 동일 셸 스크립트로 파일 복사 | `.claude/plugins/manifest.json` |
+| 설치 | `.claude/plugins/install.sh` | 동일 설치기로 연결·업데이트 | manifest 소유권 + `.claude/.template-install-state.json` 해시 상태 |
 
 ## 변경 규칙
 
