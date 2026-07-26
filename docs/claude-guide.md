@@ -22,6 +22,8 @@ Claude 전용 레이어는 실행 어댑터이며, 질문과 정책의 정본은
 - `DESIGN.md`: active 디자인 시스템 카탈로그
 - `STATE.md`: 현재 상태와 인계
 
+모든 skill, command, subagent는 실행 전에 `AGENTS.md ## 프로젝트 로컬 가이드 우선`을 적용한다. `docs/project-guide.md`와 더 구체적인 프로젝트 로컬 문서가 템플릿 기본값보다 우선하며, 런타임 어댑터에는 프로젝트 정책을 중복 정의하지 않는다.
+
 ## Codex와의 관계
 
 Codex 지원을 위해 `.codex/`가 존재하더라도 Claude Code는 기존 `.claude/` 자동화 레이어를 계속 사용한다. 두 레이어가 같은 내용을 중복 정의하지 않도록 공통 정책은 `templates/`와 `docs/`로 올리고, 런타임별 파일은 실행 절차만 담는다.

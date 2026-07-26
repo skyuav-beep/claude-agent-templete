@@ -31,6 +31,14 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 프로젝트 로컬 가이드 우선 적용 및 안전 업데이트 구조 추가. (2026-07-26)
+  - 표준 프로젝트 가이드 정본을 `docs/project-guide.md`로 확정하고, 모든 작업에서 해당 문서·하위 `AGENTS.md`·관련 로컬 문서를 템플릿 기본값보다 먼저 적용하도록 루트 규칙과 총괄 역할에 명시했다.
+  - 우선순위는 상위 런타임 규칙과 사용자 최신 요청을 먼저 따르고, 그 범위 안에서 프로젝트 로컬 기준과 더 구체적인 하위 문서를 우선하도록 정리했다. 충돌 시 적용 기준을 작업 보고에 남긴다.
+  - Claude skill·command·subagent와 Codex workflow·agent는 규칙을 복제하지 않고 루트 선행 규칙을 공통으로 적용하도록 런타임 가이드, 읽기 순서, 안전·종료 체크리스트를 연결했다.
+  - 설치기의 `--force`는 공용 어댑터만 갱신하고 `AGENTS.md`, `CLAUDE.md`, `STATE.md`, `DESIGN.md`, `docs/project-guide.md`는 보호하도록 변경했다. 프로젝트 소유 파일 교체는 백업 후 `--force-project-files`를 명시해야 한다.
+  - 기존 프로젝트에도 필수 로딩 규칙이 전달되도록 `--force` 실행 시 `AGENTS.md`와 `CLAUDE.md`의 `agent-template:project-guide-routing` 관리 블록만 삽입·갱신하고 나머지 프로젝트 내용은 보존하는 안전 병합을 추가했다.
+  - 일부 파일이 건너뛴 일반 설치에는 최신 버전 스탬프를 기록하지 않도록 수정하고 plugin/manifest version을 `1.2.0`으로 올렸다.
+
 - Codex 공통 응답 정책 필수 로딩 경로 보강. (2026-07-26)
   - 점검 결과 Claude Code는 루트 `CLAUDE.md`를 통해 단계별 응답 정책을 직접 적용하지만, Codex 기본 읽기 순서에는 해당 정본이 없어 간접 참조에 의존하는 문제가 확인됐다.
   - Codex가 자동 로드하는 `AGENTS.md`에 모든 런타임의 `CLAUDE.md ## 커뮤니케이션`, `## 답변 포맷` 필수 로딩 규칙을 추가하고 공통 시작 순서에 반영했다.
@@ -633,6 +641,7 @@
 - 플러그인 가이드: `docs/plugin-guide.md`
 - 요청 템플릿: `templates/feature-request.md`, `templates/bugfix-request.md`, `templates/review-request.md`, `templates/refactor-request.md`, `templates/business-logic-request.md`
 - intake 템플릿: `templates/project-intake.md`, `templates/ui-intake.md`, `templates/responsive-intake.md`, `templates/tech-intake.md`, `templates/i18n-intake.md`, `templates/framework-structure-intake.md`, `templates/startup-checklist.md`, `templates/api-intake.md`, `templates/error-intake.md`, `templates/form-intake.md`, `templates/format-intake.md`, `templates/qa-intake.md`, `templates/routing-intake.md`
+- 프로젝트 가이드 정본: `docs/project-guide.md`
 - guide 템플릿: `docs/project-guide-template.md`, `docs/i18n-guidelines.md`, `docs/business-logic-playbook.md`, `docs/framework-structure-guide.md`, `docs/design-guidelines.md`, `docs/admin-fe-design-guide.md`, `docs/user-fe-design-guide.md`, `docs/user-fe-mobile-design-guide.md`, `docs/ui-decisions.md`
 - 디자인 시스템 카탈로그(active): `DESIGN.md`
 - 디자인 시안 라이브러리: `designs/README.md`, `designs/_alias-contract.md`, `designs/_template.md`, `designs/wanted.md`, `designs/minimal-mono.md`, `designs/toss-like.md`, `designs/material-3.md`, `designs/linear-like.md`

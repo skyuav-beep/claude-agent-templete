@@ -7,10 +7,11 @@
 1. `AGENTS.md`
 2. `CLAUDE.md`의 `## 커뮤니케이션`, `## 답변 포맷`
 3. `STATE.md`
-4. `.codex/checks/safety-checklist.md`
-5. `.codex/workflows/<작업유형>.md`
-6. workflow가 가리키는 `templates/`, `docs/`, `DESIGN.md`
-7. `.codex/checks/finish-checklist.md`
+4. `docs/project-guide.md`가 있으면 해당 문서와 현재 작업 영역의 하위 `AGENTS.md`
+5. `.codex/checks/safety-checklist.md`
+6. `.codex/workflows/<작업유형>.md`
+7. workflow가 가리키는 프로젝트 로컬 `templates/`, `docs/`, `DESIGN.md`
+8. `.codex/checks/finish-checklist.md`
 
 ## 작업 라우팅
 
@@ -37,4 +38,5 @@
 
 - `.codex/workflows/*`는 `.claude/skills/*`와 `.claude/commands/*`가 수행하는 절차를 Codex에서 명시적으로 재현한다.
 - `.codex/agents/*`는 `.claude/agents/*`의 역할과 같은 책임을 수행하되, Codex 도구·승인·샌드박스 모델에 맞춰 실행한다.
+- 모든 workflow와 agent guide는 `AGENTS.md ## 프로젝트 로컬 가이드 우선`을 선행 기준으로 적용한다.
 - 상세 정책은 중복 정의하지 않고 `AGENTS.md`, `agents/*.md`, `templates/*.md`, `docs/*.md`, `DESIGN.md`를 공통 정본으로 사용한다.

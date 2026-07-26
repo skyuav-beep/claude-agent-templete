@@ -34,13 +34,14 @@ Codex는 보통 다음 순서로 저장소 문서를 읽는다.
 1. `AGENTS.md`
 2. `CLAUDE.md`의 `## 커뮤니케이션`, `## 답변 포맷`
 3. `STATE.md`
-4. `.codex/README.md`
-5. 작업 종류에 맞는 `.codex/workflows/*.md`
-6. `README.md`
-7. 작업 종류에 맞는 `agents/*.md`
-8. 요청 유형에 맞는 `templates/*.md`
-9. 기획/설계 단계라면 `docs/*.md`
-10. 마지막으로 실제 코드와 폴더 구조
+4. `docs/project-guide.md`가 있으면 해당 문서
+5. 현재 작업 영역의 하위 `AGENTS.md`와 관련 프로젝트 로컬 문서
+6. `.codex/README.md`
+7. 작업 종류에 맞는 `.codex/workflows/*.md`
+8. `README.md`
+9. 작업 종류에 맞는 `agents/*.md`
+10. 요청 유형에 맞는 `templates/*.md`
+11. 마지막으로 실제 코드와 폴더 구조
 
 ## 4. 작업 유형별 우선 참조 파일
 
@@ -49,10 +50,11 @@ Codex는 보통 다음 순서로 저장소 문서를 읽는다.
 1. `AGENTS.md`
 2. `CLAUDE.md`의 `## 커뮤니케이션`, `## 답변 포맷`
 3. `STATE.md`
-4. `.codex/README.md`
-5. `.codex/checks/safety-checklist.md`
-6. 요청 유형이 모호하면 `.codex/workflows/request.md`
-7. `README.md`
+4. `docs/project-guide.md`가 있으면 해당 문서와 관련 로컬 문서
+5. `.codex/README.md`
+6. `.codex/checks/safety-checklist.md`
+7. 요청 유형이 모호하면 `.codex/workflows/request.md`
+8. `README.md`
 
 ### 개발 세션 재개
 
@@ -173,6 +175,7 @@ Codex는 보통 다음 순서로 저장소 문서를 읽는다.
 
 - 루트 `AGENTS.md`는 공통 규칙과 라우팅만 유지한다.
 - Codex는 `AGENTS.md`의 필수 로딩 지시에 따라 `CLAUDE.md` 중 공통 커뮤니케이션·답변 포맷 섹션을 읽는다. Claude 전용 자동화 섹션을 Codex 기능으로 간주하지 않는다.
+- 모든 작업 유형은 `AGENTS.md ## 프로젝트 로컬 가이드 우선`을 공통 선행 조건으로 적용하므로 개별 workflow에 같은 우선순위를 반복하지 않는다.
 - `.codex/`는 Codex 전용 실행 절차이며 Claude Code의 `.claude/` 자동화와 경쟁하지 않는다.
 - 세부 구현 규칙은 `agents/`와 `docs/`로 위임한다.
 - intake 문서는 정보 수집용이고, 실제 개발 기준은 `docs/` 아래 guide 문서다.

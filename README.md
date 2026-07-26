@@ -25,13 +25,13 @@ TARGET_ROOT=/path/to/my-project
 bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" "$TARGET_ROOT"
 ```
 
-미리보기: `--dry-run`, 덮어쓰기: `--force`. 자세한 내용은 `docs/plugin-guide.md` 참조.
+미리보기: `--dry-run`, 공용 어댑터 업데이트: `--force`. 프로젝트 소유 파일은 보호되며 자세한 내용은 `docs/plugin-guide.md`를 참조한다.
 
 ## 지원 런타임
 
 - Claude Code: `.claude/*` 자동화 레이어로 skills, commands, hooks, subagents를 사용한다.
 - Codex: `AGENTS.md`와 `.codex/*` workflow/check 문서로 같은 운영 절차를 재현한다.
-- 공통 정본: `AGENTS.md`, `STATE.md`, `templates/`, `docs/`, `DESIGN.md`.
+- 공통 정본: `AGENTS.md`, `STATE.md`, `docs/project-guide.md`, 프로젝트 로컬 `templates/`, `docs/`, `DESIGN.md`.
 - 런타임별 대응 관계는 `docs/agent-runtime-matrix.md`, Codex 실행 기준은 `docs/codex-guide.md`, Claude 실행 기준은 `docs/claude-guide.md`를 따른다.
 
 ## 사용 방법
@@ -43,9 +43,10 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" "$TARGET_ROOT"
 5. 작업 요청 시 "기능 추가", "버그 수정" 같은 키워드를 쓰면 해당 개별 skill이 자동 활성화된다. 또는 `/feature`, `/bugfix` 등 슬래시 커맨드로 명시 호출 가능.
 6. 유형이 모호하면 `request` skill이 자동으로 분류한다. 또는 `/request`로 명시 호출.
 7. 프로젝트 성격에 맞게 `AGENTS.md`를 커스텀한다.
-8. `agents/*.md`에서 필요한 역할만 남기고 세부 규칙을 조정한다.
-9. `templates/*.md`를 팀 작업 방식에 맞게 수정한다.
-10. 작업이 끝날 때마다 `STATE.md`를 업데이트한다.
+8. intake 결과를 `docs/project-guide.md`에 반영한다.
+9. `agents/*.md`에서 필요한 역할만 남기고 세부 규칙을 조정한다.
+10. `templates/*.md`를 팀 작업 방식에 맞게 수정한다.
+11. 작업이 끝날 때마다 `STATE.md`를 업데이트한다.
 
 ## Skills Layer (자동 활성화)
 

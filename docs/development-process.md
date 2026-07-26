@@ -81,7 +81,7 @@ QnA 답변을 바탕으로 이 프로젝트에만 적용되는 기준 문서를 
 
 ### 수행 항목
 
-1. `docs/project-guide-template.md`를 복사해 프로젝트 전용 가이드를 작성한다.
+1. `docs/project-guide-template.md` 구조를 참고해 `docs/project-guide.md`를 프로젝트 전용 가이드 정본으로 작성한다.
 2. 기술 스택이 확정되면 `AGENTS.md`의 `Operational Commands`를 갱신한다.
 3. 다국어 지원이 확정되면 `docs/i18n-guidelines.md`를 작성한다.
 4. 프레임워크/디렉터리 구조 설계가 필요하면 `docs/framework-structure-guide.md`를 작성한다.
@@ -95,7 +95,8 @@ QnA 답변을 바탕으로 이 프로젝트에만 적용되는 기준 문서를 
 
 ### 참조 문서
 
-- [docs/project-guide-template.md](./project-guide-template.md)
+- [docs/project-guide.md](./project-guide.md) — 프로젝트 기준 정본
+- [docs/project-guide-template.md](./project-guide-template.md) — 작성 구조
 - [docs/i18n-guidelines.md](./i18n-guidelines.md)
 - [docs/framework-structure-guide.md](./framework-structure-guide.md)
 - [docs/business-logic-playbook.md](./business-logic-playbook.md)
@@ -228,7 +229,8 @@ reviewer-agent  → 리스크 점검, 회귀 확인, 테스트 누락 검토
 - **공통 원칙** → [AGENTS.md](../AGENTS.md)
 - **현재 상태 / 인계** → [STATE.md](../STATE.md)
 - **새 프로젝트 QnA** → [templates/startup-checklist.md](../templates/startup-checklist.md)
-- **프로젝트 가이드** → [docs/project-guide-template.md](./project-guide-template.md)
+- **프로젝트 가이드 정본** → [docs/project-guide.md](./project-guide.md)
+- **프로젝트 가이드 구조** → [docs/project-guide-template.md](./project-guide-template.md)
 - **기능 요청** → [templates/feature-request.md](../templates/feature-request.md)
 - **버그 수정** → [templates/bugfix-request.md](../templates/bugfix-request.md)
 - **리팩터링** → [templates/refactor-request.md](../templates/refactor-request.md)

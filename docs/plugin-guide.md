@@ -21,7 +21,7 @@ TARGET_ROOT=/path/to/my-project
 bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" "$TARGET_ROOT"
 ```
 
-기존 파일이 있으면 건너뛴다. 덮어쓰려면 `--force` 플래그를 추가한다.
+기존 파일이 있으면 건너뛴다. 업데이트 시 `--force`는 런타임 어댑터와 공용 템플릿을 갱신하고, 프로젝트 소유 파일에서는 필수 라우팅 관리 블록만 안전하게 병합한다.
 
 ## 설치 내용
 
@@ -43,27 +43,30 @@ Codex는 `.codex/README.md`와 `.codex/workflows/*.md`를 통해 같은 운영 �
 
 ## 플래그
 
-- `--force`: 기존 파일을 덮어쓴다.
+- `--force`: 런타임 어댑터와 공용 템플릿을 갱신한다. 프로젝트 소유 파일 전체는 덮어쓰지 않고 `AGENTS.md`와 `CLAUDE.md`의 필수 라우팅 관리 블록만 병합한다.
+- `--force-project-files`: `--force`를 포함하며 프로젝트 소유 파일까지 명시적으로 덮어쓴다.
 - `--dry-run`: 실제 복사 없이 어떤 파일이 설치될지 미리보기한다.
 - `--design <slug>`: 설치 후 활성화할 디자인 시안을 지정한다. 기본값은 `wanted`.
 
 ## 업데이트
 
 1. 템플릿 저장소에서 최신 버전을 pull한다.
-2. install.sh를 `--force`로 다시 실행한다.
+2. install.sh를 `--dry-run --force`로 실행해 공용 파일 갱신과 프로젝트 파일 보호 내역을 확인한다.
+3. 문제가 없으면 `--force`로 다시 실행한다.
 
 ```bash
 cd "$TEMPLATE_ROOT" && git pull
 bash .claude/plugins/install.sh --force "$TARGET_ROOT"
 ```
 
-주의: `--force`는 대상 프로젝트에서 커스텀한 파일도 덮어쓴다. 커스텀 내용을 보존하려면 먼저 `--dry-run`으로 변경 범위를 확인한다.
+`AGENTS.md`, `CLAUDE.md`, `STATE.md`, `DESIGN.md`, `docs/project-guide.md`는 프로젝트 소유 파일로 보호된다. `--force`는 `AGENTS.md`와 `CLAUDE.md`에서 `agent-template:project-guide-routing` 관리 블록만 삽입·갱신한다. 파일 전체를 교체해야 할 때만 변경사항을 백업한 뒤 `--force-project-files`를 사용한다.
 
 ## 커스텀
 
 설치된 파일은 복사본이므로 대상 프로젝트에서 자유롭게 수정할 수 있다.
 
 - `AGENTS.md`: 프로젝트별 Golden Rules, Context Map 수정
+- `docs/project-guide.md`: 프로젝트 목표, 기술·업무·검증 기준의 정본
 - `.claude/commands/`: 커맨드 추가/수정/삭제
 - `.claude/hooks/`: 가드레일 스크립트 추가/수정
 - `.claude/agents/`: 서브에이전트 템플릿 추가/수정

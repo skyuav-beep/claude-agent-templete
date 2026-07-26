@@ -2,6 +2,9 @@
 
 에이전트의 헌법이다. 항상 로드되며 모든 작업에 적용된다.
 운영 프로세스, Context Map, 작업 절차는 `AGENTS.md`를 참조한다.
+<!-- agent-template:project-guide-routing:start -->
+모든 작업에서 `AGENTS.md ## 프로젝트 로컬 가이드 우선`에 따라 프로젝트 가이드와 관련 로컬 문서를 템플릿 기본값보다 먼저 적용한다.
+<!-- agent-template:project-guide-routing:end -->
 
 ## Core Philosophy
 

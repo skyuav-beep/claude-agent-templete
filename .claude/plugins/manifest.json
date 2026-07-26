@@ -1,6 +1,6 @@
 {
   "name": "claude-agent-template",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
   "compatibility": {
     "claude_code": "full automation via .claude layers",
@@ -137,6 +137,7 @@
     ],
     "docs": [
       "docs/project-guide-template.md",
+      "docs/project-guide.md",
       "docs/business-logic-playbook.md",
       "docs/local-dev-ci-guide.md",
       "docs/framework-structure-guide.md",
