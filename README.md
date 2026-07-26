@@ -17,35 +17,43 @@
 
 ## 다른 프로젝트에 설치
 
-기존 프로젝트에 이 템플릿을 적용하려면:
+대상 상태에 맞는 모드를 명시한다.
 
 ```bash
 TEMPLATE_ROOT=/path/to/your-template-folder
 TARGET_ROOT=/path/to/my-project
-bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" "$TARGET_ROOT"
+# 빈 신규 프로젝트
+bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --new "$TARGET_ROOT"
+
+# 기존 프로젝트에 최초 연결
+bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --adopt "$TARGET_ROOT"
+
+# 연결된 프로젝트 업데이트
+bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 ```
 
-미리보기: `--dry-run`, 덮어쓰기: `--force`. 자세한 내용은 `docs/plugin-guide.md` 참조.
+모드를 생략하면 대상 상태를 진단하고 권장 명령만 안내한다. 실제 변경 전에는 `--dry-run`을 함께 사용한다. 자세한 내용은 `docs/plugin-guide.md`를 참조한다.
 
 ## 지원 런타임
 
 - Claude Code: `.claude/*` 자동화 레이어로 skills, commands, hooks, subagents를 사용한다.
 - Codex: `AGENTS.md`와 `.codex/*` workflow/check 문서로 같은 운영 절차를 재현한다.
-- 공통 정본: `AGENTS.md`, `STATE.md`, `templates/`, `docs/`, `DESIGN.md`.
+- 공통 정본: `AGENTS.md`, `STATE.md`, `docs/project-guide.md`, 프로젝트 로컬 `templates/`, `docs/`, `DESIGN.md`.
 - 런타임별 대응 관계는 `docs/agent-runtime-matrix.md`, Codex 실행 기준은 `docs/codex-guide.md`, Claude 실행 기준은 `docs/claude-guide.md`를 따른다.
 
 ## 사용 방법
 
-1. 이 저장소를 새 프로젝트의 시작점으로 복제하거나, 위 install.sh로 설치한다.
+1. 이 저장소를 새 프로젝트의 시작점으로 복제하거나, 대상 상태에 맞는 설치 모드로 연결한다.
 2. Claude Code에서 자연어로 "새 프로젝트 시작하자"고 말하면 `start` skill이 자동 활성화되어 초기 설정 QnA를 진행한다.
 3. Codex에서는 `.codex/README.md`를 진입점으로 삼고, 작업 전 safety checklist와 작업 유형에 맞는 `.codex/workflows/*.md`를 따라 같은 템플릿을 읽는다.
 4. 특정 영역(예: UI, API)을 더 깊이 수집하려면 자연어로 토픽을 언급하면 `intake` skill이 활성화된다. 또는 `/intake tech` 같은 슬래시 커맨드로 명시 호출 가능.
 5. 작업 요청 시 "기능 추가", "버그 수정" 같은 키워드를 쓰면 해당 개별 skill이 자동 활성화된다. 또는 `/feature`, `/bugfix` 등 슬래시 커맨드로 명시 호출 가능.
 6. 유형이 모호하면 `request` skill이 자동으로 분류한다. 또는 `/request`로 명시 호출.
 7. 프로젝트 성격에 맞게 `AGENTS.md`를 커스텀한다.
-8. `agents/*.md`에서 필요한 역할만 남기고 세부 규칙을 조정한다.
-9. `templates/*.md`를 팀 작업 방식에 맞게 수정한다.
-10. 작업이 끝날 때마다 `STATE.md`를 업데이트한다.
+8. intake 결과를 `docs/project-guide.md`에 반영한다.
+9. `agents/*.md`에서 필요한 역할만 남기고 세부 규칙을 조정한다.
+10. `templates/*.md`를 팀 작업 방식에 맞게 수정한다.
+11. 작업이 끝날 때마다 `STATE.md`를 업데이트한다.
 
 ## Skills Layer (자동 활성화)
 

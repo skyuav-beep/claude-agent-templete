@@ -1,6 +1,6 @@
 # Project Guide Template
 
-이 문서는 intake 설문 답변을 정리하여 실제 개발 기준으로 사용하는 프로젝트 전용 가이드 템플릿이다.
+이 문서는 intake 설문 답변을 정리하는 구조 템플릿이다. 실제 프로젝트 기준은 이 구조를 참고해 `docs/project-guide.md`에 작성한다.
 
 ## 1. Project Summary
 

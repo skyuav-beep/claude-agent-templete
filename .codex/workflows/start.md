@@ -12,7 +12,7 @@
 1. `templates/startup-checklist.md`를 읽는다.
 2. 섹션 1~11을 순서대로 질문한다.
 3. 각 섹션 답변을 확정 사항, 미정 사항, 제외 사항으로 분류한다.
-4. 결과를 `docs/project-guide-template.md` 구조로 옮긴다.
+4. 결과를 `docs/project-guide-template.md` 구조를 참고해 `docs/project-guide.md`에 옮기고 프로젝트 가이드 정본으로 삼는다.
 5. 확정된 실행 명령은 `AGENTS.md ### Operational Commands`에 반영하도록 제안하거나 수정한다.
 6. 작업 종료 시 `STATE.md`에 현재 상태와 다음 작업을 기록한다.
 

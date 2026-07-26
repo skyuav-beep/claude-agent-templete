@@ -16,10 +16,13 @@
 Claude 전용 레이어는 실행 어댑터이며, 질문과 정책의 정본은 다음 파일에 둔다.
 
 - `AGENTS.md`: 공통 운영 규칙과 라우팅
+- `CLAUDE.md ## 답변 포맷`: 단계별 응답, 최종 통합, 내부 식별자 절제를 포함한 공통 응답 정책
 - `templates/`: intake 및 요청 양식
 - `docs/`: 개발/검증/운영 가이드
 - `DESIGN.md`: active 디자인 시스템 카탈로그
 - `STATE.md`: 현재 상태와 인계
+
+모든 skill, command, subagent는 실행 전에 `AGENTS.md ## 프로젝트 로컬 가이드 우선`을 적용한다. `docs/project-guide.md`와 더 구체적인 프로젝트 로컬 문서가 템플릿 기본값보다 우선하며, 런타임 어댑터에는 프로젝트 정책을 중복 정의하지 않는다.
 
 ## Codex와의 관계
 

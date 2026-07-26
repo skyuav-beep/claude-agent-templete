@@ -13,13 +13,29 @@
 
 에이전트 헌법(Core Philosophy, Golden Rules, 커뮤니케이션, 검증 원칙, Architecture Rules, Naming Conventions, Repo Map)은 `CLAUDE.md`에 정의되어 있다. 이 파일은 운영 프로세스, 라우팅, 작업 절차를 다룬다.
 
+## 공통 응답 정책 로딩
+
+- Claude Code와 Codex를 포함한 모든 런타임은 작업 시작 시 `CLAUDE.md ## 커뮤니케이션`과 `## 답변 포맷`을 반드시 읽고 답변에 적용한다.
+- 긴 답변의 단계 분할, 30행 권고, 단계별 확인 내용 유지, 최종 통합 기준의 정본은 `CLAUDE.md ### 단계별 응답 및 최종 통합`이다.
+- 런타임별 skill, workflow, agent 문서는 이 정책을 중복 정의하지 않고 정본을 참조한다.
+
+<!-- agent-template:project-guide-routing:start -->
+## 프로젝트 로컬 가이드 우선
+
+- 모든 작업은 `docs/project-guide.md`가 있으면 반드시 읽고, 현재 작업 영역의 하위 `AGENTS.md`와 관련 `docs/*.md`도 확인한다.
+- 적용 우선순위는 상위 런타임 규칙과 사용자의 최신 요청을 먼저 따르고, 그 범위 안에서 `프로젝트 로컬 가이드 및 더 구체적인 하위 문서 > 템플릿 기본값`으로 한다.
+- 프로젝트 로컬 가이드가 템플릿 기본값과 충돌하면 프로젝트 기준을 적용하고, 어떤 기준을 선택했는지 작업 보고에 남긴다.
+- `docs/project-guide.md`가 없거나 초기 템플릿 상태이면 관련 프로젝트 문서와 실제 구현을 우선 확인하고, 템플릿 기본값을 fallback으로 사용하며 가이드 작성 또는 갱신 필요를 알린다.
+- `.claude/*`와 `.codex/*`는 실행 어댑터다. 프로젝트 기술·업무 기준을 자체적으로 재정의하지 않고 이 섹션의 우선순위를 따른다.
+<!-- agent-template:project-guide-routing:end -->
+
 ## Execution Protocol
 
 프로젝트를 분석한 뒤에는 다음 순서로 문서를 만들고 갱신한다.
 
 1. 프로젝트 시작 전에는 intake 템플릿으로 목표, 범위, UI, 반응형, 기술 스택 정보를 먼저 수집한다.
 2. 수집된 답변은 확정 사항, 미정 사항, 제약 사항, 우선순위로 정리한다.
-3. 정리된 내용을 바탕으로 프로젝트 전용 가이드 문서를 작성한다.
+3. 정리된 내용을 바탕으로 `docs/project-guide.md`를 프로젝트 전용 가이드 정본으로 작성한다.
 4. 루트 `AGENTS.md`에는 공통 원칙, 운영 명령, 라우팅 규칙만 유지하고 세부 규칙은 하위 문서에 위임한다.
 5. 역할별 세부 규칙은 `agents/` 아래 문서로 분리한다.
 6. 작업 요청 형식은 `templates/` 아래 문서로 분리한다.
@@ -39,7 +55,7 @@
 - 현재 저장소는 문서 템플릿 저장소이므로 필수 빌드 명령은 없다.
 - 새 프로젝트로 복제된 뒤에는 루트 `AGENTS.md`에 반드시 실제 실행 명령을 명시한다.
 - 예시: `npm run dev`, `npm test`, `pnpm lint`, `python -m pytest`, `uv run pytest`
-- 로컬 검증은 Docker Desktop으로 진행한다. 개발 컨테이너 모델(상시 기동+bind mount+hot reload, 코드 수정은 rebuild 불필요)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단 기준은 `docs/local-dev-ci-guide.md §2`를 따른다 — agent는 로컬·commit까지 상시, **로컬 CI(§6.2)·push는 사용자 요청 시**(CI는 GitHub Actions가 아니라 로컬 실행), 머지·원격 브랜치 정리·배포 Action·`develop`/`production` migration은 사용자 수동.
+- 로컬 검증은 Docker Desktop으로 진행한다. 개발 컨테이너 모델(상시 기동+bind mount+hot reload, 코드 수정은 rebuild 불필요)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단 기준은 `docs/local-dev-ci-guide.md §2`를 따른다 — agent는 로컬·commit까지 상시, **로컬 CI(§6.2)·push·PR·머지·브랜치 정리는 사용자 명시 요청 시** 수행한다. 머지는 대상 PR/base 확정, 충돌 없음, 검증 통과, 보호 규칙 비우회를 확인한 경우에만 가능하다. 배포 Action·`develop`/`production` migration은 사용자 수동이다.
 - 환경 호칭은 `local`(내 PC Docker Desktop) / `develop`(원격 개발서버) / `production`(원격 운영서버) 3-tier로 통일한다(정의: `docs/local-dev-ci-guide.md §0`). migration은 `local`에만 자동 적용(명령명이 아니라 `DATABASE_URL` 연결 대상으로 판단)하고, "dev" 단독 표기는 쓰지 않는다.
 - 개발 세션 시작(PC 켜고 재개) 시 `docs/local-dev-ci-guide.md §2.0` 부트스트랩을 따른다 — 상태 브리핑 → `docker compose up -d`(항상, 멱등) → hot reload·UI/로직 점검. `dev-start` skill 또는 `/dev-start`로 호출.
 
@@ -55,8 +71,11 @@
 ### 공통 시작
 
 1. `AGENTS.md`
-2. `STATE.md`
-3. `README.md`
+2. `CLAUDE.md`의 `## 커뮤니케이션`, `## 답변 포맷`
+3. `STATE.md`
+4. `docs/project-guide.md`가 있으면 해당 문서
+5. 현재 작업 영역의 하위 `AGENTS.md`와 관련 `docs/*.md`
+6. `README.md`
 
 ### 작업 유형별 추가 문서
 
@@ -77,7 +96,7 @@
 2. 각 섹션이 끝나면 확정 / 미정 / 제외로 분류해서 요약한다.
 3. 전체 QnA가 끝나면 결과 요약을 작성하고 다음 액션을 제안한다.
 4. 확정된 기술 스택은 이 파일의 `Operational Commands` 섹션에 반영한다.
-5. 수집된 내용 전체는 `docs/project-guide-template.md` 기준으로 프로젝트 가이드 문서를 작성한다.
+5. 수집된 내용 전체는 `docs/project-guide-template.md` 구조를 참고해 `docs/project-guide.md`에 작성한다.
 
 ### 개발 세션 재개 시 (PC 켜고 시작)
 
@@ -113,7 +132,7 @@
 - 새로운 기능, 스크립트, 설정을 추가하면 필요한 최소 문서를 함께 갱신한다.
 - 하나의 논리적 작업이 끝나거나 세션이 종료될 때는 반드시 `STATE.md`를 업데이트하고 커밋한다. (여기서 커밋은 **로컬 커밋**이며, 곧바로 push를 뜻하지 않는다.)
 - 커밋 순서: `STATE.md` 갱신 → 변경 파일 스테이징 → `git commit` (STATE.md 미포함 시 hook 경고 발생).
-- `git commit`(로컬 누적)·**로컬 CI 실행**(검증)·`git push`(원격 노출)를 분리한다. **CI는 git(GitHub Actions)에서 자동 실행하지 않고 로컬에서 사용자 요청 시 실행하며**, push는 CI를 트리거하지 않는다. 로컬 CI 스위트·push·PR은 **사용자가 명시 지시할 때만** 수행하고, 그 전엔 로컬 commit 누적 + 모듈 단위 로컬 검증만으로 완료를 보고한다. 예외: 세션 종료 백업 push 1회(원격 자동 CI가 남아 있으면 `[skip ci]`). 정의·절차는 `docs/local-dev-ci-guide.md §1.1, §6`. 머지·원격 브랜치 정리는 agent 범위 밖(사용자 수동)이다.
+- `git commit`(로컬 누적)·**로컬 CI 실행**(검증)·`git push`(원격 노출)를 분리한다. **CI는 git(GitHub Actions)에서 자동 실행하지 않고 로컬에서 사용자 요청 시 실행하며**, push는 CI를 트리거하지 않는다. 로컬 CI 스위트·push·PR·머지·브랜치 정리는 **사용자가 명시 지시할 때만** 수행하고, 그 전엔 로컬 commit 누적 + 모듈 단위 로컬 검증만으로 완료를 보고한다. 예외: 세션 종료 백업 push 1회(원격 자동 CI가 남아 있으면 `[skip ci]`). 머지는 열린 비초안 PR, 확정된 base, 충돌 없음, 필수 검사 또는 프로젝트 로컬 검증 통과를 확인한 뒤 보호 규칙 우회 없이 수행하고 원격 base 반영까지 검증한다. 정의·절차는 `docs/local-dev-ci-guide.md §1.1, §6`. 배포·릴리스·원격 migration은 agent 범위 밖(사용자 수동)이다.
 - 초안 단계 문서는 이후 확장 가능하도록 짧고 명확하게 유지한다.
 - TODO는 실행 가능한 문장으로 남긴다.
 - 역할별 규칙은 공통 규칙과 중복하지 말고 차이점만 적는다.
@@ -159,7 +178,8 @@
 - **[라우팅 정책 설문](./templates/routing-intake.md)** - 파라미터 기반 상태 동기화 및 권한에 따른 라우팅 제어 기준을 수집할 때.
 - **[폼 유효성 설문](./templates/form-intake.md)** - 입력 폼 상태 관리 및 Zod 등 검증 스키마 사용 여부를 수집할 때.
 - **[QA/워크플로우 설문](./templates/qa-intake.md)** - 에이전트 테스트 강제 유무, Git 커밋 컨벤션, CI/CD 연동 정책을 수집할 때.
-- **[프로젝트 가이드 템플릿](./docs/project-guide-template.md)** - intake 답변을 바탕으로 실제 개발 기준 문서를 작성할 때.
+- **[프로젝트 가이드 정본](./docs/project-guide.md)** - 현재 프로젝트의 목표, 기술·업무·검증 기준을 확인할 때.
+- **[프로젝트 가이드 템플릿](./docs/project-guide-template.md)** - intake 답변을 프로젝트 가이드 구조로 옮길 때.
 - **[다국어 가이드](./docs/i18n-guidelines.md)** - i18n 구조, key 규칙, formatting, fallback 기준을 정리할 때.
 - **[비즈니스 로직 플레이북](./docs/business-logic-playbook.md)** - 요구사항, 시나리오, 구현, 검증, 빌드, Git 작업 기준을 확인할 때.
 - **[로컬/CI 실행 가이드](./docs/local-dev-ci-guide.md)** - 환경 호칭 3-tier(`local`/`develop`/`production`, §0), agent 실행 경계(`local` Docker Desktop·migration·commit·작업 브랜치까지 상시, 로컬 CI·push는 사용자 요청 시 — CI는 GitHub Actions가 아니라 로컬 실행), 개발 세션 부트스트랩(상태 브리핑+dev 컨테이너 기동+UI/로직 점검, §2.0), 개발 컨테이너 모델(상시 기동+bind mount+hot reload, §2.1)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단, 브랜치·로컬 CI·머지·정리 절차(§6), push 후 인계 요약을 확인할 때.

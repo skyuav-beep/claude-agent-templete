@@ -4,11 +4,11 @@
 
 ## 실행 방법
 
-1. `docs/local-dev-ci-guide.md §2.0`(개발 세션 부트스트랩)을 읽는다. 절차의 정본이다.
+1. `docs/local-dev-ci-guide.md`의 **개발 세션 부트스트랩** 절을 읽는다(자체 가이드가 없으면 `rules/docs/local-dev-ci-guide.md §2.0`). 절차의 정본이며, 섹션 번호가 아니라 절 이름으로 찾는다.
 2. 3단계를 순서대로 수행한다.
-   - 상태 브리핑: `STATE.md`의 `## 이번 세션에서 완료한 작업` + `## 다음 작업`을 읽고 직전 지점과 이어서 할 일을 요약한다.
-   - dev 컨테이너 기동: `docker compose up -d`(항상, 멱등) → `docker compose ps` → `logs`로 watcher 확인.
-   - UI/로직 점검 준비: 서비스 URL과 (있으면) preview HTML 경로 안내 + hot reload 반영 확인.
+   - 상태 브리핑: `STATE.md`의 최근 완료 사이클 + `## 다음 작업`을 읽고 직전 지점과 이어서 할 일을 요약한다.
+   - dev 기동: 가이드의 부트스트랩 절이 지정한 compose 명령으로 기동(멱등) → 상태 확인 → `logs`로 watcher 확인.
+   - UI/로직 점검 준비: 개발용 서비스 URL(hot reload가 걸린 포트)과 (있으면) preview HTML 경로 안내 + hot reload 반영 확인.
 3. 점검 후 `STATE.md ## 다음 작업`부터 이어간다.
 
 ## 인수 처리
@@ -18,5 +18,5 @@
 
 ## 진행 규칙
 
-- 컨테이너 기동은 항상 `docker compose up -d`(멱등). 세션 시작을 이유로 rebuild하지 않는다(§2.4).
+- 컨테이너 기동은 `up -d`(멱등). 세션 시작을 이유로 rebuild하지 않는다(판단은 가이드의 재빌드 결정 절). 단, 공유 패키지 dist·ORM 생성물처럼 이미지에 굽히는 산출물을 고친 뒤 첫 부팅이면 그 서비스만 `up -d --build`로 1회 재빌드한다.
 - 실제 명령·서비스명·포트는 `AGENTS.md ### Operational Commands`에서 치환한다. 미정이면 사용자에게 확인한다.

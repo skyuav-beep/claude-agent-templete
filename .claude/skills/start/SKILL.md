@@ -13,7 +13,7 @@ description: "사용자가 새 프로젝트 시작, 초기 설정, 프로젝트 
 3. 각 섹션의 질문을 한 번에 모아서 제시한다.
 4. 답변을 받으면 해당 섹션의 결과를 **확정 / 미정 / 제외**로 분류해서 요약한다.
 5. 모든 섹션이 완료되면 전체 결과를 하나의 요약으로 정리한다.
-6. `docs/project-guide-template.md` 기준으로 프로젝트 가이드 문서 작성을 제안한다.
+6. `docs/project-guide-template.md` 구조를 참고해 `docs/project-guide.md`를 프로젝트 가이드 정본으로 작성한다.
 
 ## 입력 처리
 
@@ -43,5 +43,5 @@ description: "사용자가 새 프로젝트 시작, 초기 설정, 프로젝트 
 ## 다음 액션
 - 특정 토픽을 더 깊이 수집하고 싶다면 토픽명을 말한다 -> `intake` skill이 활성화된다.
 - 작업을 시작하려면 작업 내용을 설명한다 -> `request` skill 또는 `feature` / `bugfix` / `refactor` / `review` / `business-logic` skill이 활성화된다.
-- `docs/project-guide-template.md` 기준으로 프로젝트 가이드 문서 작성을 제안한다.
+- `docs/project-guide-template.md` 구조를 참고한 `docs/project-guide.md` 작성을 제안한다.
 ```

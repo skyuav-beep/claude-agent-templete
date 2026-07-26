@@ -31,6 +31,46 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 사용자 명시 요청 기반 PR 머지·브랜치 정리 정책 추가. (2026-07-26)
+  - 대상 PR/base가 확정되고 open·비초안, 충돌 없음, 필수 검사 또는 프로젝트 로컬 검증 통과 조건을 충족하면 Claude와 Codex 모두 PR 머지를 수행할 수 있도록 공통 가이드와 workflow를 갱신했다.
+  - 자발적 머지와 branch protection·필수 review/check 우회는 금지하고, 머지 후 원격 base 반영을 검증한 뒤에만 브랜치를 정리하도록 했다.
+  - 배포·릴리스 workflow 실행과 `develop`/`production` migration은 계속 사용자 수동 영역으로 유지했다.
+
+- 설치기 v2 모드·소유권·해시 기반 안전 업데이트 추가. (2026-07-26)
+  - 기존 프로젝트 최초 연결과 후속 업데이트를 분리하기 위해 `--new`, `--adopt`, `--update` 명시 모드를 도입했다. 모드 생략 시 파일을 쓰지 않고 대상 상태에 맞는 명령만 안내한다.
+  - manifest `install_policy`에 `merge-block`, `project-owned`, `seed-only`, `managed`, `customizable` 분류를 추가하고 설치기가 이를 단일 정본으로 사용한다.
+  - `.claude/.template-install-state.json`에 파일별 템플릿/설치 해시와 상태를 기록한다. update는 이전 설치 해시와 같은 파일만 자동 갱신하고 로컬 수정 파일은 보존한 채 충돌로 보고한다.
+  - `AGENTS.md`·`CLAUDE.md` 관리 마커는 모든 쓰기 전에 `0/0` 또는 `1/1`인지 검사한다. 손상·중복이면 중단하며, 정상 블록만 병합한다.
+  - `.claude/settings.local.json`, 프로젝트 가이드, 상태, 디자인은 자동 덮어쓰지 않는다. `--force`는 `--update` 호환 alias로 유지하고 전체 프로젝트 파일 강제 교체 옵션은 폐기했다.
+  - 템플릿과 로컬이 함께 바뀐 충돌 파일은 수동 검토·병합 후 반복 가능한 `--accept-local <경로>`로 새 로컬 기준선을 승인할 수 있다.
+  - 설치 로직을 Python `install.py`로 분리하고 `install.sh`는 portable 실행 래퍼로 축소했다. plugin/manifest version을 `2.0.0`으로 올렸다.
+
+- 프로젝트 로컬 가이드 우선 적용 및 안전 업데이트 구조 추가. (2026-07-26)
+  - 표준 프로젝트 가이드 정본을 `docs/project-guide.md`로 확정하고, 모든 작업에서 해당 문서·하위 `AGENTS.md`·관련 로컬 문서를 템플릿 기본값보다 먼저 적용하도록 루트 규칙과 총괄 역할에 명시했다.
+  - 우선순위는 상위 런타임 규칙과 사용자 최신 요청을 먼저 따르고, 그 범위 안에서 프로젝트 로컬 기준과 더 구체적인 하위 문서를 우선하도록 정리했다. 충돌 시 적용 기준을 작업 보고에 남긴다.
+  - Claude skill·command·subagent와 Codex workflow·agent는 규칙을 복제하지 않고 루트 선행 규칙을 공통으로 적용하도록 런타임 가이드, 읽기 순서, 안전·종료 체크리스트를 연결했다.
+  - 설치기의 `--force`는 공용 어댑터만 갱신하고 `AGENTS.md`, `CLAUDE.md`, `STATE.md`, `DESIGN.md`, `docs/project-guide.md`는 보호하도록 변경했다. 프로젝트 소유 파일 교체는 백업 후 `--force-project-files`를 명시해야 한다.
+  - 기존 프로젝트에도 필수 로딩 규칙이 전달되도록 `--force` 실행 시 `AGENTS.md`와 `CLAUDE.md`의 `agent-template:project-guide-routing` 관리 블록만 삽입·갱신하고 나머지 프로젝트 내용은 보존하는 안전 병합을 추가했다.
+  - 일부 파일이 건너뛴 일반 설치에는 최신 버전 스탬프를 기록하지 않도록 수정하고 plugin/manifest version을 `1.2.0`으로 올렸다.
+
+- Codex 공통 응답 정책 필수 로딩 경로 보강. (2026-07-26)
+  - 점검 결과 Claude Code는 루트 `CLAUDE.md`를 통해 단계별 응답 정책을 직접 적용하지만, Codex 기본 읽기 순서에는 해당 정본이 없어 간접 참조에 의존하는 문제가 확인됐다.
+  - Codex가 자동 로드하는 `AGENTS.md`에 모든 런타임의 `CLAUDE.md ## 커뮤니케이션`, `## 답변 포맷` 필수 로딩 규칙을 추가하고 공통 시작 순서에 반영했다.
+  - `.codex/README.md`, `docs/codex-reading-order.md`, `docs/agent-runtime-matrix.md`의 진입 순서와 공통 정본 정의를 같은 기준으로 맞췄다. Claude 전용 자동화는 Codex 기능으로 간주하지 않고 공통 응답 섹션만 공유한다.
+  - 설치본에서 변경 버전을 식별할 수 있도록 plugin version과 manifest version을 `1.1.1`로 함께 올렸다.
+
+- 단계별 응답 및 최종 통합 정책 추가. (2026-07-26)
+  - 긴 분석·리포트·계획·결과 정리는 전체 구성을 먼저 안내한 뒤 한 번에 한 단계 또는 핵심 항목을 가급적 30행 이내로 제공하도록 `CLAUDE.md ## 답변 포맷`에 정본 규칙을 추가했다.
+  - 단계별 질문·답변·수정·결정을 구분해 유지하고, `"다음 단계"`에서는 마지막 확인 내용을 이어받으며, 전체 검토·최종 정리에서는 최초 초안보다 후속 결정을 우선해 충돌을 해소하도록 명시했다.
+  - 짧은 답변과 사용자가 처음부터 전체 결과를 요청한 경우는 불필요하게 분할하지 않는 예외를 두었다. 기존 표 강제 규칙은 비교·수치 확인에 유용한 경우로 범위를 좁혀 30행 권고와의 충돌을 해소했다.
+  - 총괄 역할, Claude/Codex 실행 가이드, Codex 종료 체크리스트에 정본 참조와 검증 항목을 연결했다.
+
+- Codex dev-start/review 어댑터와 비밀 파일 훅 보강. (2026-07-12)
+  - 배경: riderwebapp 점검에서 Codex dev-start workflow가 공용 템플릿의 예전 고정 `docker compose up -d` 모델을 들고 있어, 프로젝트별 `docs/local-dev-ci-guide.md` 부트스트랩 절과 어긋날 수 있음이 확인됨. Claude `dev-start` skill은 이미 절 이름 기반 위임으로 중립화되어 있었고, Codex 어댑터만 뒤처진 상태였다.
+  - 변경: `.codex/workflows/dev-start.md`를 섹션 번호/고정 명령 대신 `docs/local-dev-ci-guide.md`의 **개발 세션 부트스트랩** 절을 절 이름으로 찾아 따르도록 수정. `.codex/workflows/review.md`에는 프로젝트 `AGENTS.md`/가이드 override가 공용 reviewer 기준보다 우선임을 명시했다.
+  - 훅 보강: `.claude/hooks/block-secret-files.sh`가 기존 Write/Edit `file_path`뿐 아니라 Bash `command`도 검사한다. `.env*`, credential/key 파일 대상 redirection, `tee`, `cp`, `mv`, `install`, `sed -i` 쓰기 패턴을 차단한다.
+  - 검증: `bash -n .claude/hooks/block-secret-files.sh` 통과. 수동 프로브로 `echo SECRET > .env`, `file_path=/tmp/.env.local`, `printf x | tee .env.local`, `sed -i s/a/b/ credentials.json` 차단(exit 2) 확인. `sed -n 1,20p .env.example`, `echo ok > /tmp/not-secret.txt`는 통과(exit 0).
+
 - WorkNest 시안 Primary 서체 교체 — `IBM Plex Sans KR` → `Pretendard Variable`. (2026-07-10)
   - 배경: aiospace 사용자가 "폰트가 깔끔하지 않고 약간 깨지듯 보인다"고 진단. 타이포 토큰 레이어를 먼저 도입해 크기·행간·자간을 정본에 맞췄으나(구조 문제 해소) 서체 인상은 그대로여서 "눈에 확 안 띈다"는 후속 요청. 서체 4종(IBM Plex Sans KR·Pretendard·Noto Sans KR·Gothic A1)을 같은 문구·같은 타입 램프로 렌더해 비교한 뒤 사용자가 Pretendard를 선택.
   - 변경 토큰: `--font-sans: "Pretendard Variable", system-ui, sans-serif`. `### 서체 선택`의 Primary 항목과 개요 문장(휴머니스트 산세리프 → 한글 UI 산세리프) 갱신. 굵기 표기 `300–700` → 가변 `45–920`(실사용 400–700). Mono(`IBM Plex Mono`)·색·간격·라운드 토큰은 무변경.
@@ -615,6 +655,7 @@
 - 플러그인 가이드: `docs/plugin-guide.md`
 - 요청 템플릿: `templates/feature-request.md`, `templates/bugfix-request.md`, `templates/review-request.md`, `templates/refactor-request.md`, `templates/business-logic-request.md`
 - intake 템플릿: `templates/project-intake.md`, `templates/ui-intake.md`, `templates/responsive-intake.md`, `templates/tech-intake.md`, `templates/i18n-intake.md`, `templates/framework-structure-intake.md`, `templates/startup-checklist.md`, `templates/api-intake.md`, `templates/error-intake.md`, `templates/form-intake.md`, `templates/format-intake.md`, `templates/qa-intake.md`, `templates/routing-intake.md`
+- 프로젝트 가이드 정본: `docs/project-guide.md`
 - guide 템플릿: `docs/project-guide-template.md`, `docs/i18n-guidelines.md`, `docs/business-logic-playbook.md`, `docs/framework-structure-guide.md`, `docs/design-guidelines.md`, `docs/admin-fe-design-guide.md`, `docs/user-fe-design-guide.md`, `docs/user-fe-mobile-design-guide.md`, `docs/ui-decisions.md`
 - 디자인 시스템 카탈로그(active): `DESIGN.md`
 - 디자인 시안 라이브러리: `designs/README.md`, `designs/_alias-contract.md`, `designs/_template.md`, `designs/wanted.md`, `designs/minimal-mono.md`, `designs/toss-like.md`, `designs/material-3.md`, `designs/linear-like.md`

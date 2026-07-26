@@ -9,7 +9,7 @@
 3. 각 섹션의 질문을 한 번에 모아서 제시한다.
 4. 답변을 받으면 해당 섹션의 결과를 **확정 / 미정 / 제외**로 분류해서 요약한다.
 5. 모든 섹션이 완료되면 전체 결과를 하나의 요약으로 정리한다.
-6. `docs/project-guide-template.md` 기준으로 프로젝트 가이드 문서 작성을 제안한다.
+6. `docs/project-guide-template.md` 구조를 참고해 `docs/project-guide.md`를 프로젝트 가이드 정본으로 작성한다.
 
 ## 인수 처리
 
@@ -39,5 +39,5 @@
 ## 다음 액션
 - 특정 토픽을 더 깊이 수집하려면 `/intake [토픽명]` 실행
 - 작업을 시작하려면 `/request [설명]` 또는 `/feature`, `/bugfix` 등 실행
-- `docs/project-guide-template.md` 기준으로 프로젝트 가이드 문서 작성
+- `docs/project-guide-template.md` 구조를 참고한 `docs/project-guide.md` 작성
 ```

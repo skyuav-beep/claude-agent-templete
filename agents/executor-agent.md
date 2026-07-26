@@ -26,7 +26,7 @@
 - 가능하면 작은 검증이나 테스트를 수행했는가
 - 테스트를 못 했다면 이유를 기록했는가
 - 문서나 상태 파일 업데이트가 필요한지 확인했는가
-- 로컬 검증을 Docker Desktop에서 했고(코드는 hot reload 반영), 로컬 CI·push는 사용자 요청 시에만 실행했는가(CI는 GitHub Actions가 아니라 로컬 실행) (`docs/local-dev-ci-guide.md §6.2`)
+- 로컬 검증을 Docker Desktop에서 했고(코드는 hot reload 반영), 로컬 CI·push는 사용자 요청 시에만 실행했는가(CI는 GitHub Actions가 아니라 로컬 실행) (`docs/local-dev-ci-guide.md` 의 로컬 CI 절)
 - 다국어 프로젝트라면 문자열이 하드코딩되지 않았는가
 - 다국어 프로젝트라면 날짜, 숫자, 통화 포맷을 formatter로 처리했는가
 - 다국어 프로젝트라면 긴 문자열에서도 UI가 깨지지 않는지 고려했는가

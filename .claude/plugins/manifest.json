@@ -1,10 +1,24 @@
 {
   "name": "claude-agent-template",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
   "compatibility": {
     "claude_code": "full automation via .claude layers",
     "codex": "equivalent workflow via AGENTS.md and .codex documents"
+  },
+  "install_policy": {
+    "merge_block": ["AGENTS.md", "CLAUDE.md"],
+    "project_owned": ["STATE.md", "DESIGN.md", "docs/project-guide.md"],
+    "seed_only": [".claude/settings.template.json"],
+    "managed_prefixes": [
+      ".claude/skills/",
+      ".claude/commands/",
+      ".claude/hooks/",
+      ".claude/agents/",
+      ".codex/",
+      "designs/"
+    ],
+    "customizable_prefixes": ["agents/", "templates/", "docs/"]
   },
   "layers": {
     "L1_memory": {
@@ -137,6 +151,7 @@
     ],
     "docs": [
       "docs/project-guide-template.md",
+      "docs/project-guide.md",
       "docs/business-logic-playbook.md",
       "docs/local-dev-ci-guide.md",
       "docs/framework-structure-guide.md",

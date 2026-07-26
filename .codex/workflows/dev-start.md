@@ -4,16 +4,17 @@ PC를 켜고 개발을 재개할 때 이 절차를 따른다.
 
 ## 절차
 
-1. `docs/local-dev-ci-guide.md §2.0`(개발 세션 부트스트랩)을 읽는다. 절차의 정본이다.
-2. 상태 브리핑 — `STATE.md`의 `## 이번 세션에서 완료한 작업`과 `## 다음 작업`을 읽고 직전 지점과 이어서 할 일을 요약한다.
-3. dev 컨테이너 기동 — `docker compose up -d`(항상, 멱등) → `docker compose ps` 확인 → `docker compose logs -f <svc>`로 watcher 기동(HMR/reload) 확인. 컨테이너 모델·폴링·재빌드 판단은 §2.1~§2.4.
-4. UI/로직 점검 준비 — 서비스 URL(`localhost:<port>`)과 (있으면) preview HTML 경로 안내 + 트리비얼 변경으로 hot reload 반영 확인.
+1. `docs/local-dev-ci-guide.md`의 **개발 세션 부트스트랩** 절을 읽는다. 절차의 정본이다. 프로젝트가 자체 가이드를 두지 않았으면 공통 가이드(`rules/docs/local-dev-ci-guide.md §2.0`)를 쓴다. 섹션 번호가 아니라 절 이름으로 찾는다.
+2. 상태 브리핑 — `STATE.md`의 최근 완료 사이클과 `## 다음 작업`을 읽고 직전 지점과 이어서 할 일을 요약한다.
+3. dev 기동 — 가이드의 부트스트랩 절이 지정한 compose/host 명령으로 기동한다. 기동 대상, 컨테이너 모델, watcher 확인, 재빌드 판단은 가이드의 개발 루프/재빌드 절을 따른다. 가이드가 hot reload 대상에서 제외한 정적 serve 컨테이너는 세션 기동 대상이 아니다.
+4. UI/로직 점검 준비 — 개발용 서비스 URL(hot reload가 걸린 포트)과 (있으면) preview HTML 경로 안내 + 트리비얼 변경으로 hot reload 반영 확인.
 5. 점검 후 `STATE.md ## 다음 작업`부터 개발을 이어간다.
 
 ## 정책
 
-- 컨테이너 기동은 항상 `docker compose up -d`(멱등 — 이미 기동 중이면 재생성 안 함). 세션 시작을 이유로 rebuild하지 않는다(§2.4).
-- 모두 로컬 작업이라 agent 자동 실행 범위 안이다. 로컬 CI·push는 사용자 요청 시(CI는 GitHub Actions가 아니라 로컬 실행), 머지·원격 배포/migration은 사용자 수동(`docs/local-dev-ci-guide.md §1`, §6).
+- 컨테이너 기동은 상태 분기 없이 가이드가 지정한 `up -d` 계열 명령으로 한다(멱등 — 이미 기동 중이면 재생성하지 않음). 세션 시작을 이유로 rebuild하지 않는다.
+- 예외: 이미지 빌드 산출물에 들어가는 코드(공유 패키지 dist, ORM 생성 클라이언트 등)를 고친 뒤의 첫 부팅이면 컨테이너가 stale 산출물을 써서 실패할 수 있다. 그때만 해당 서비스를 증분 재빌드한다.
+- 모두 로컬 작업이라 agent 자동 실행 범위 안이다. 로컬 CI·push는 사용자 요청 시(CI는 GitHub Actions가 아니라 로컬 실행), 머지는 프로젝트 가이드의 실행 경계를 따른다. 원격 배포/migration은 사용자 수동이다.
 - 실제 명령·서비스명·포트는 `AGENTS.md ### Operational Commands`에서 치환한다.
 
 ## 산출물
