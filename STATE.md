@@ -31,6 +31,11 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 사용자 명시 요청 기반 PR 머지·브랜치 정리 정책 추가. (2026-07-26)
+  - 대상 PR/base가 확정되고 open·비초안, 충돌 없음, 필수 검사 또는 프로젝트 로컬 검증 통과 조건을 충족하면 Claude와 Codex 모두 PR 머지를 수행할 수 있도록 공통 가이드와 workflow를 갱신했다.
+  - 자발적 머지와 branch protection·필수 review/check 우회는 금지하고, 머지 후 원격 base 반영을 검증한 뒤에만 브랜치를 정리하도록 했다.
+  - 배포·릴리스 workflow 실행과 `develop`/`production` migration은 계속 사용자 수동 영역으로 유지했다.
+
 - 설치기 v2 모드·소유권·해시 기반 안전 업데이트 추가. (2026-07-26)
   - 기존 프로젝트 최초 연결과 후속 업데이트를 분리하기 위해 `--new`, `--adopt`, `--update` 명시 모드를 도입했다. 모드 생략 시 파일을 쓰지 않고 대상 상태에 맞는 명령만 안내한다.
   - manifest `install_policy`에 `merge-block`, `project-owned`, `seed-only`, `managed`, `customizable` 분류를 추가하고 설치기가 이를 단일 정본으로 사용한다.

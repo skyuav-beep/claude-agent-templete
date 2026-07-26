@@ -16,8 +16,8 @@
 ## Golden Rules
 
 - 사용자 요청 없이 파괴적 명령을 실행하지 않는다.
-- agent 자동 실행 범위는 로컬 검증(Docker Desktop)·`local` migration·commit·작업 브랜치 생성·**로컬 CI(요청 시)**·push까지다. **CI는 git(GitHub Actions)에서 자동 실행하지 않고 로컬에서 사용자 요청 시 실행하며, push는 CI를 트리거하지 않는다(§6.2). 머지·원격 브랜치 정리는 사용자 수동이다(§6).** 환경은 `local`(내 PC Docker) / `develop`(원격 개발서버) / `production`(원격 운영서버) 3-tier로 호칭하고 "dev" 단독 표기는 쓰지 않는다. migration은 `local`에만 자동 적용하고 `develop`·`production`은 사용자가 수동 진행하며, 판단은 명령명이 아니라 `DATABASE_URL` 연결 대상으로 한다. GitHub Actions 배포/릴리스도 agent는 트리거하지 않는다. (상세: `docs/local-dev-ci-guide.md §0`)
-- 로컬 commit은 자주 누적해도 되지만, **로컬 CI 전체 스위트 실행**·`git push`·`PR 생성`은 **사용자가 명시 지시할 때만** 수행한다(개발 루프 중 모듈 단위 로컬 검증은 상시). CI는 로컬에서 돌리고 push는 CI를 트리거하지 않는다. 예외: 세션 종료 백업 push 1회(원격 자동 CI가 남아 있으면 `[skip ci]`). 머지·원격 브랜치 정리는 사용자 수동이다. (정의: `docs/local-dev-ci-guide.md §1.1`, 절차: `§6`)
+- agent 자동 실행 범위는 로컬 검증(Docker Desktop)·`local` migration·commit·작업 브랜치 생성까지다. **로컬 CI·push·PR·머지·브랜치 정리는 사용자 명시 요청 시 수행하며, 머지는 검증 게이트를 통과하고 보호 규칙을 우회하지 않는 경우에만 가능하다(§6).** 환경은 `local`(내 PC Docker) / `develop`(원격 개발서버) / `production`(원격 운영서버) 3-tier로 호칭하고 "dev" 단독 표기는 쓰지 않는다. migration은 `local`에만 자동 적용하고 `develop`·`production`은 사용자가 수동 진행하며, 판단은 명령명이 아니라 `DATABASE_URL` 연결 대상으로 한다. GitHub Actions 배포/릴리스도 agent는 트리거하지 않는다. (상세: `docs/local-dev-ci-guide.md §0`)
+- 로컬 commit은 자주 누적해도 되지만, **로컬 CI 전체 스위트 실행**·`git push`·`PR 생성`·`PR 머지`·브랜치 정리는 **사용자가 명시 지시할 때만** 수행한다(개발 루프 중 모듈 단위 로컬 검증은 상시). 자발적 머지와 보호 규칙 우회는 금지하며 머지 후 원격 base 반영을 검증한다. 예외: 세션 종료 백업 push 1회(원격 자동 CI가 남아 있으면 `[skip ci]`). 배포·릴리스·원격 migration은 사용자 수동이다. (정의: `docs/local-dev-ci-guide.md §1.1`, 절차: `§6`)
 - 확인하지 않은 외부 의존성, 비밀값, API 키를 임의로 추가하지 않는다.
 - 관련 없는 파일 수정이나 목적과 무관한 구조 확장을 하지 않는다.
 - 확인되지 않은 사항을 사실처럼 단정하지 않는다.

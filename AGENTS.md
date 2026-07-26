@@ -55,7 +55,7 @@
 - 현재 저장소는 문서 템플릿 저장소이므로 필수 빌드 명령은 없다.
 - 새 프로젝트로 복제된 뒤에는 루트 `AGENTS.md`에 반드시 실제 실행 명령을 명시한다.
 - 예시: `npm run dev`, `npm test`, `pnpm lint`, `python -m pytest`, `uv run pytest`
-- 로컬 검증은 Docker Desktop으로 진행한다. 개발 컨테이너 모델(상시 기동+bind mount+hot reload, 코드 수정은 rebuild 불필요)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단 기준은 `docs/local-dev-ci-guide.md §2`를 따른다 — agent는 로컬·commit까지 상시, **로컬 CI(§6.2)·push는 사용자 요청 시**(CI는 GitHub Actions가 아니라 로컬 실행), 머지·원격 브랜치 정리·배포 Action·`develop`/`production` migration은 사용자 수동.
+- 로컬 검증은 Docker Desktop으로 진행한다. 개발 컨테이너 모델(상시 기동+bind mount+hot reload, 코드 수정은 rebuild 불필요)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단 기준은 `docs/local-dev-ci-guide.md §2`를 따른다 — agent는 로컬·commit까지 상시, **로컬 CI(§6.2)·push·PR·머지·브랜치 정리는 사용자 명시 요청 시** 수행한다. 머지는 대상 PR/base 확정, 충돌 없음, 검증 통과, 보호 규칙 비우회를 확인한 경우에만 가능하다. 배포 Action·`develop`/`production` migration은 사용자 수동이다.
 - 환경 호칭은 `local`(내 PC Docker Desktop) / `develop`(원격 개발서버) / `production`(원격 운영서버) 3-tier로 통일한다(정의: `docs/local-dev-ci-guide.md §0`). migration은 `local`에만 자동 적용(명령명이 아니라 `DATABASE_URL` 연결 대상으로 판단)하고, "dev" 단독 표기는 쓰지 않는다.
 - 개발 세션 시작(PC 켜고 재개) 시 `docs/local-dev-ci-guide.md §2.0` 부트스트랩을 따른다 — 상태 브리핑 → `docker compose up -d`(항상, 멱등) → hot reload·UI/로직 점검. `dev-start` skill 또는 `/dev-start`로 호출.
 
@@ -132,7 +132,7 @@
 - 새로운 기능, 스크립트, 설정을 추가하면 필요한 최소 문서를 함께 갱신한다.
 - 하나의 논리적 작업이 끝나거나 세션이 종료될 때는 반드시 `STATE.md`를 업데이트하고 커밋한다. (여기서 커밋은 **로컬 커밋**이며, 곧바로 push를 뜻하지 않는다.)
 - 커밋 순서: `STATE.md` 갱신 → 변경 파일 스테이징 → `git commit` (STATE.md 미포함 시 hook 경고 발생).
-- `git commit`(로컬 누적)·**로컬 CI 실행**(검증)·`git push`(원격 노출)를 분리한다. **CI는 git(GitHub Actions)에서 자동 실행하지 않고 로컬에서 사용자 요청 시 실행하며**, push는 CI를 트리거하지 않는다. 로컬 CI 스위트·push·PR은 **사용자가 명시 지시할 때만** 수행하고, 그 전엔 로컬 commit 누적 + 모듈 단위 로컬 검증만으로 완료를 보고한다. 예외: 세션 종료 백업 push 1회(원격 자동 CI가 남아 있으면 `[skip ci]`). 정의·절차는 `docs/local-dev-ci-guide.md §1.1, §6`. 머지·원격 브랜치 정리는 agent 범위 밖(사용자 수동)이다.
+- `git commit`(로컬 누적)·**로컬 CI 실행**(검증)·`git push`(원격 노출)를 분리한다. **CI는 git(GitHub Actions)에서 자동 실행하지 않고 로컬에서 사용자 요청 시 실행하며**, push는 CI를 트리거하지 않는다. 로컬 CI 스위트·push·PR·머지·브랜치 정리는 **사용자가 명시 지시할 때만** 수행하고, 그 전엔 로컬 commit 누적 + 모듈 단위 로컬 검증만으로 완료를 보고한다. 예외: 세션 종료 백업 push 1회(원격 자동 CI가 남아 있으면 `[skip ci]`). 머지는 열린 비초안 PR, 확정된 base, 충돌 없음, 필수 검사 또는 프로젝트 로컬 검증 통과를 확인한 뒤 보호 규칙 우회 없이 수행하고 원격 base 반영까지 검증한다. 정의·절차는 `docs/local-dev-ci-guide.md §1.1, §6`. 배포·릴리스·원격 migration은 agent 범위 밖(사용자 수동)이다.
 - 초안 단계 문서는 이후 확장 가능하도록 짧고 명확하게 유지한다.
 - TODO는 실행 가능한 문장으로 남긴다.
 - 역할별 규칙은 공통 규칙과 중복하지 말고 차이점만 적는다.

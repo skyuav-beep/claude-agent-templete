@@ -29,7 +29,7 @@ agent가 로컬 개발 루프에서 Docker Desktop을 다루는 방식과, **age
 
 ## 1. Agent 실행 경계 (핵심 규칙)
 
-기준선: **로컬(Docker Desktop) + commit + 작업 브랜치 생성 = agent 상시**, **로컬 CI 전체 스위트 실행 = 사용자 요청 시 로컬에서(§1.1, §6.2 — GitHub Actions 트리거 아님)**, **push / PR = 사용자 요청 시(§1.1)**, **머지 / 원격 브랜치 정리 / "GitHub 이상"(원격 배포·원격 migration·릴리스 Action) = 사용자 수동(§6)**.
+기준선: **로컬(Docker Desktop) + commit + 작업 브랜치 생성 = agent 상시**, **로컬 CI 전체 스위트 실행 / push / PR / 머지 / 브랜치 정리 = 사용자 명시 요청 시 agent(§1.1, §6)**, **원격 배포·원격 migration·릴리스 Action = 사용자 수동**이다.
 
 | 영역 | 담당 | 비고 |
 |---|---|---|
@@ -41,14 +41,14 @@ agent가 로컬 개발 루프에서 Docker Desktop을 다루는 방식과, **age
 | `git push` | **사용자 요청 시 agent** | 사용자가 지시할 때만(§1.1). **push는 CI를 트리거하지 않는다.** 예외: 세션 종료 백업 push 1회 |
 | `gh pr create` / PR 생성 | **사용자 요청 시 agent** | push와 함께 1회, slice마다 쪼개지 않음 (§1.1) |
 | 머지된 **로컬** 브랜치 삭제 (`git branch -d`) | **사용자 요청 시 agent** | unmerged면 git이 거부 — 안전. cleanup §6.5 |
+| 머지 (main/develop로) | **사용자 요청 시 agent** | 대상/base 확정, 검증 green, 충돌 없음, 보호 규칙 비우회. 절차 §6.3 |
+| 원격 브랜치 삭제 (`git push origin --delete`) | **사용자 요청 시 agent** | 머지 반영 검증 후 수행. §6.5 |
 | ───────── 경계선 ───────── | | agent는 여기서 종료하고 인계 요약을 남긴다 |
-| 머지 (main/develop로) | **사용자 수동** | 로컬 CI green이 게이트. 절차 §6.3 |
-| 원격 브랜치 삭제 (`git push origin --delete`) | **사용자 수동** | push 계열 — 요청 시 agent 보조 가능. §6.5 |
 | GitHub Actions 배포 / 릴리스 workflow 실행 | **사용자 수동** | agent는 dispatch/trigger 금지. push 자동 트리거 CI는 §6.4로 강등/제거 |
 | **`develop`/`production`** DB migration 적용 | **사용자 수동** | "GitHub 이상" — agent 적용 금지 (§0) |
 | 운영 반영 확인 / 롤백 판단 | **사용자 수동** | |
 
-핵심: agent는 **"GitHub 이상"의 원격 작업을 자동 실행하지 않는다.** push까지 마치면 `## 4. 인계 요약`을 남기고 종료한다. migration은 **로컬 Docker Desktop에서만** 적용하고, 원격 적용은 사용자에게 인계한다.
+핵심: agent는 자발적으로 push·PR·머지·브랜치 정리를 실행하지 않는다. 사용자의 명시 요청이 있으면 §6 게이트에 따라 수행할 수 있지만, 배포·릴리스·원격 migration은 실행하지 않는다.
 
 ## 1.1. 로컬 CI · push 게이트 (사용자 요청 기반)
 
@@ -67,7 +67,7 @@ agent가 로컬 개발 루프에서 Docker Desktop을 다루는 방식과, **age
 - 세션을 종료하며 작업을 원격에 보존해야 하면, 백업 목적으로 **1회 push를 허용**한다.
 - 로컬 CI 모델에서는 push가 워크플로를 트리거하지 않으므로 별도 조치가 필요 없다. 단, 프로젝트에 아직 push 자동 트리거 GitHub Actions가 남아 있다면(§6.4 강등 전), 마지막 commit 메시지에 skip 토큰(`[skip ci]` / `[ci skip]`)을 넣어 실행을 건너뛴다.
 
-머지·브랜치 정리는 §6을 따른다(머지 자체는 사용자 수동). 사용자가 별도 정책(작업당 PR, trunk-based 직접 push 등)을 지정하면 그 정책을 우선한다.
+머지·브랜치 정리는 §6을 따른다. 사용자가 별도 정책(작업당 PR, trunk-based 직접 push 등)을 지정하면 그 정책을 우선한다.
 
 ## 2. Docker Desktop 개발 루프 전략
 
@@ -195,9 +195,10 @@ services:
      → 로컬에서 실행, GitHub Actions 트리거 아님. green이어야 9 진행
 ─────────── 사용자가 "push/올려/PR"을 요청할 때만 (§1.1) ───────────
   9) git push (누적 commit 일괄) + 필요 시 PR 1개   ← 사용자 지시 시 (CI 트리거 안 함)
+────────── 사용자가 "머지/정리"를 요청할 때만 (§6.3 / §6.5) ──────────
+  10) agent가 게이트 확인 후 머지 + 원격 base 반영 검증 + 브랜치 정리
 ──────────────────── 경계선 ────────────────────
-[사용자 수동 — §6.3 / §6.5]
-  10) 머지 (로컬 CI green 게이트, squash 권장) + 브랜치 정리(로컬/원격)
+[사용자 수동 — 원격 운영]
   11) GitHub Actions 배포/릴리스 실행 (있다면)
   12) 원격(`develop`/`production`) migration 적용
   13) 운영 반영 확인 / 롤백 판단
@@ -262,20 +263,22 @@ git 작업(브랜치 생성 → 로컬 CI → push → 머지 → 정리)의 정
 
 원칙: 검증은 로컬에서 끝낸다. push가 원격 CI를 대신 돌리게 두지 않는다.
 
-### 6.3. 머지 (사용자 수동)
+### 6.3. 머지 (사용자 명시 요청 시)
 
-- 게이트: **로컬 CI(§6.2) green** + push/PR 완료가 전제. agent는 머지 자체를 자동 수행하지 않는다(§1 경계선).
-- 방식: 이력 단순화를 위해 **squash merge 권장**(작업 브랜치 commit들을 1개로 압축). 프로젝트가 merge-commit/rebase 정책을 지정하면 그쪽을 따른다.
-- 절차(사용자):
+- 권한: 사용자가 PR 번호와 base를 명시하거나 현재 PR을 모호하지 않게 지칭해 머지를 요청한 경우에만 agent가 수행한다. 자발적 머지는 금지한다.
+- 게이트: PR이 open·비초안이고, head/base가 의도와 일치하며, 충돌이 없고, 필수 검사 또는 프로젝트가 요구하는 로컬 CI(§6.2)가 green이어야 한다.
+- 금지: branch protection·필수 review·필수 check를 admin/force 옵션으로 우회하지 않는다. 게이트가 불명확하거나 실패하면 머지하지 않고 보고한다.
+- 방식: 프로젝트 또는 사용자가 지정한 전략을 우선한다. 별도 지정이 없으면 **squash merge를 권장**한다.
+- 절차:
   ```bash
   # PR 기반: GitHub UI 또는
   gh pr merge <num> --squash --delete-branch
-  # 로컬 직접 머지:
+  # 로컬 직접 머지(프로젝트 정책이 허용할 때):
   git checkout main && git pull --rebase origin main
   git merge --squash feat/orders-cancel-window && git commit
   git push origin main
   ```
-- 사용자가 명시 요청하면 agent가 머지를 보조할 수 있으나, 기본은 사용자 수동이다.
+- 완료 검증: PR 상태가 merged인지 확인하고 `git fetch origin` 후 원격 base가 머지 결과를 포함하는지 확인한다. 검증 전에는 완료로 보고하거나 브랜치를 삭제하지 않는다.
 
 ### 6.4. GitHub Actions 처리 (자동 CI 비활성)
 
@@ -300,4 +303,4 @@ git fetch --prune
 
 - 로컬 `git branch -d`는 머지 안 된 브랜치를 거부하므로 안전 — agent가 요청 시 수행 가능.
 - `git branch -D`(강제 삭제)는 미머지 작업을 잃으므로 사용자 확인 없이는 쓰지 않는다(`block-destructive.sh` 점검 대상).
-- 원격 삭제·`--prune`는 push 계열이라 사용자 요청 시 수행한다.
+- 원격 삭제·`--prune`는 사용자 요청이 있고 원격 base의 머지 반영을 검증한 뒤 수행한다.
