@@ -13,6 +13,12 @@
 
 에이전트 헌법(Core Philosophy, Golden Rules, 커뮤니케이션, 검증 원칙, Architecture Rules, Naming Conventions, Repo Map)은 `CLAUDE.md`에 정의되어 있다. 이 파일은 운영 프로세스, 라우팅, 작업 절차를 다룬다.
 
+## 공통 응답 정책 로딩
+
+- Claude Code와 Codex를 포함한 모든 런타임은 작업 시작 시 `CLAUDE.md ## 커뮤니케이션`과 `## 답변 포맷`을 반드시 읽고 답변에 적용한다.
+- 긴 답변의 단계 분할, 30행 권고, 단계별 확인 내용 유지, 최종 통합 기준의 정본은 `CLAUDE.md ### 단계별 응답 및 최종 통합`이다.
+- 런타임별 skill, workflow, agent 문서는 이 정책을 중복 정의하지 않고 정본을 참조한다.
+
 ## Execution Protocol
 
 프로젝트를 분석한 뒤에는 다음 순서로 문서를 만들고 갱신한다.
@@ -55,8 +61,9 @@
 ### 공통 시작
 
 1. `AGENTS.md`
-2. `STATE.md`
-3. `README.md`
+2. `CLAUDE.md`의 `## 커뮤니케이션`, `## 답변 포맷`
+3. `STATE.md`
+4. `README.md`
 
 ### 작업 유형별 추가 문서
 

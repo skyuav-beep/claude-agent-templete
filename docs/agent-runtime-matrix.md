@@ -4,7 +4,7 @@
 
 ## 기본 원칙
 
-- 공통 정본은 `AGENTS.md`, `STATE.md`, `templates/`, `docs/`, `DESIGN.md`다.
+- 공통 정본은 `AGENTS.md`, `CLAUDE.md`의 커뮤니케이션·답변 포맷, `STATE.md`, `templates/`, `docs/`, `DESIGN.md`다.
 - Claude Code 전용 자동화는 `.claude/` 아래에 둔다.
 - Codex 전용 실행 절차는 `.codex/` 아래에 둔다.
 - 한 런타임을 지원하기 위해 다른 런타임의 전용 파일을 약화하거나 일반화하지 않는다.
@@ -14,7 +14,7 @@
 
 | 영역 | Claude Code | Codex | 공통 정본 |
 |---|---|---|---|
-| 운영 규칙 | `CLAUDE.md` + `AGENTS.md` | `AGENTS.md` + `.codex/README.md` | `AGENTS.md` |
+| 운영 규칙 | `CLAUDE.md` + `AGENTS.md` | `AGENTS.md` 필수 로딩 지시 + `CLAUDE.md` 공통 응답 정책 + `.codex/README.md` | `AGENTS.md`, `CLAUDE.md ## 커뮤니케이션`, `CLAUDE.md ## 답변 포맷` |
 | 새 프로젝트 QnA | `.claude/skills/start/SKILL.md` 자동 활성화 | `.codex/workflows/start.md` 절차 실행 | `templates/startup-checklist.md` |
 | 개발 세션 부트스트랩 | `.claude/skills/dev-start/SKILL.md` 자동 활성화 | `.codex/workflows/dev-start.md` 절차 실행 | `docs/local-dev-ci-guide.md §2.0` |
 | 토픽 intake | `.claude/skills/intake/SKILL.md` | `.codex/workflows/intake.md` | `templates/*-intake.md` |
