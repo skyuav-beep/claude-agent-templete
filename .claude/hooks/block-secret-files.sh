@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 # PreToolUse/Write,Edit,Bash: 비밀 파일 쓰기 차단
 # Golden Rule: "확인하지 않은 비밀값, API 키를 임의로 추가하지 않는다"
+#
+# 입력 규약: stdin JSON({"tool_name":"...","tool_input":{...}})이 1차,
+# 구 규약 $CLAUDE_TOOL_INPUT는 폴백. 차단은 exit 2 + stderr.
 
-python3 - <<'PY'
+INPUT=$(cat 2>/dev/null)
+[ -z "$INPUT" ] && INPUT="${CLAUDE_TOOL_INPUT:-}"
+[ -z "$INPUT" ] && exit 0
+
+python3 - "$INPUT" <<'PY'
 import json
 import os
 import re
@@ -24,16 +31,26 @@ def is_secret_name(path: str) -> bool:
 
 
 def block(name: str) -> None:
-    print(f"[Hooks L3] 차단: '{name}' 은 비밀/인증 파일로 판단됩니다. 직접 확인 후 수동으로 생성하세요.")
+    print(
+        f"[Hooks L3] 차단: '{name}' 은 비밀/인증 파일로 판단됩니다. 직접 확인 후 수동으로 생성하세요.",
+        file=sys.stderr,
+    )
     sys.exit(2)
 
 
 try:
-    data = json.loads(os.environ.get("CLAUDE_TOOL_INPUT", "{}") or "{}")
+    payload = json.loads(sys.argv[1])
 except Exception:
     sys.exit(0)
 
-file_path = data.get("file_path") or ""
+if not isinstance(payload, dict):
+    sys.exit(0)
+
+# 현행 규약은 tool_input 중첩, 구 규약은 평면 구조였다. 둘 다 허용한다.
+tool_input = payload.get("tool_input")
+data = tool_input if isinstance(tool_input, dict) else payload
+
+file_path = data.get("file_path") or data.get("notebook_path") or ""
 if file_path and is_secret_name(file_path):
     block(os.path.basename(file_path))
 

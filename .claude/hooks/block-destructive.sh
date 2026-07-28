@@ -1,14 +1,30 @@
 #!/usr/bin/env bash
 # PreToolUse/Bash: 파괴적 명령 차단
 # Golden Rule: "사용자 요청 없이 파괴적 명령을 실행하지 않는다"
+#
+# 입력 규약: Claude Code는 훅에 stdin으로 JSON을 전달한다.
+#   {"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"..."}}
+# 구 규약($CLAUDE_TOOL_INPUT 환경변수)은 현행 CLI에 존재하지 않으므로 stdin이 1차,
+# 환경변수는 폴백으로만 둔다.
+# 차단 시 exit 2 + stderr 출력이 에이전트에게 전달되는 규약이다.
 
-COMMAND=$(python3 -c "
+INPUT=$(cat 2>/dev/null)
+[ -z "$INPUT" ] && INPUT="${CLAUDE_TOOL_INPUT:-}"
+[ -z "$INPUT" ] && exit 0
+
+COMMAND=$(python3 - "$INPUT" <<'PY' 2>/dev/null
 import json, sys
 try:
-    d = json.loads(sys.stdin.read())
-    print(d.get('command', ''))
-except: pass
-" <<< "$CLAUDE_TOOL_INPUT" 2>/dev/null)
+    d = json.loads(sys.argv[1])
+except Exception:
+    sys.exit(0)
+if not isinstance(d, dict):
+    sys.exit(0)
+ti = d.get('tool_input')
+ti = ti if isinstance(ti, dict) else {}
+print(ti.get('command') or d.get('command') or '')
+PY
+)
 [ -z "$COMMAND" ] && exit 0
 
 BLOCKED=""
@@ -26,7 +42,7 @@ echo "$COMMAND" | grep -qE 'git\s+clean\s+.*-[a-zA-Z]*f' && BLOCKED="git clean -
 echo "$COMMAND" | grep -qE 'git\s+checkout\s+\.\s*$' && BLOCKED="git checkout ."
 
 if [ -n "$BLOCKED" ]; then
-  echo "[Hooks L3] 차단: '$BLOCKED' 패턴이 감지되었습니다. 파괴적 명령은 사용자 확인 후 실행하세요."
+  echo "[Hooks L3] 차단: '$BLOCKED' 패턴이 감지되었습니다. 파괴적 명령은 사용자 확인 후 실행하세요." >&2
   exit 2
 fi
 

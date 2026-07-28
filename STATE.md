@@ -31,6 +31,13 @@
 
 ## 이번 세션에서 완료한 작업
 
+- L3 훅 3종의 입력 규약을 현행 Claude Code stdin 방식으로 수정. (2026-07-28)
+  - **문제**: `block-destructive.sh`, `block-secret-files.sh`, `state-reminder.sh`가 도구 입력을 `$CLAUDE_TOOL_INPUT` 환경변수에서 읽었다. 현행 CLI(2.1.220) 바이너리에 그 문자열은 **0건**이고 대신 `tool_input`·`hook_event_name`·`CLAUDE_PROJECT_DIR`을 쓴다. 즉 `settings.template.json`대로 배선해도 세 훅 모두 빈 입력으로 항상 `exit 0` — 가드레일이 켜진 것처럼 보이면서 아무것도 차단하지 못했다.
+  - **수정**: 입력을 stdin에서 읽고 `tool_input` 중첩을 우선 파싱하도록 교체했다. 구 규약(평면 JSON·환경변수)은 폴백으로 남겨 호환을 유지한다. 차단 메시지는 규약에 맞춰 stdout → **stderr**로 옮겼다(exit 2와 함께 에이전트에게 전달되는 경로).
+  - **검증**: 20케이스 단위 테스트(차단 8·통과 10·구규약 폴백 2) 20/20 통과, 배선 래퍼(`bash -lc` + root 탐색)의 stdin 전달 확인, signal2에서 실제 파괴적 명령이 차단되는 것까지 라이브 실증.
+  - **미수정**: `warn-design-tokens.sh`는 오탐 우려로 기본 미등록하도록 설계된 opt-in이라 손대지 않았다. **같은 입력 파싱 결함이 남아 있으므로 등록 전에 함께 고쳐야 한다.**
+  - **알려진 오탐**: `block-destructive.sh`는 명령 문자열을 줄 단위로 검사하므로, heredoc 본문 등 실행되지 않는 텍스트에 줄 시작 `rm -rf`가 포함되면 차단된다(커밋 메시지 작성 중 실제 발생). 정확도 개선은 후속 과제.
+
 - 커밋·푸시 상태 점검 후 미푸시 커밋 원격 반영 및 세션 종료. (2026-07-28)
   - 점검 시작 기준 워킹트리 클린·스테이징 없음·stash 없음, `main`이 `origin/main`보다 1커밋 앞선 상태였다.
   - 사용자 명시 요청으로 `git push origin main` 수행 — `aa28b3a..88fb32f`(직전 세션 종료 기록 커밋) 반영, 로컬/원격 동기화 확인.
