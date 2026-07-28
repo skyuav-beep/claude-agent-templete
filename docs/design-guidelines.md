@@ -101,6 +101,7 @@
 
 - 검출 대상: (1) hex 색상 직접 사용(`colors_and_type.css` 외 파일에서), (2) 비-4의 배수 px 값(6/10/14/18/22).
 - 적용 파일: `*.css`, `*.scss`, `*.less`, `*.tsx`, `*.jsx`, `*.ts`, `*.js`, `*.vue`, `*.svelte`. 그 외는 즉시 통과.
+- 검사 본문: Write는 `content`, Edit는 `new_string`, MultiEdit는 `edits[].new_string` 전체를 대상으로 한다.
 - 운영 정책: 경고만 출력하고 차단하지 않는다(항상 `exit 0`). false-positive 우려와 정적 검출의 한계로 인해 `settings.local.json`에는 기본 등록하지 않는다.
 - 활성화 방법: 디자인 토큰 강제가 필요한 프로젝트에서 `settings.local.json`의 `hooks.PreToolUse`에 다음 항목을 추가한다.
 

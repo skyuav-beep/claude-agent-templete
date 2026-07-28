@@ -12,16 +12,52 @@
 #
 # 적용 파일: *.css, *.scss, *.less, *.tsx, *.jsx, *.ts, *.js, *.vue, *.svelte
 # 외 파일은 즉시 통과.
+#
+# 입력 규약: 다른 L3 훅과 동일하게 stdin JSON이 1차, 구 규약 $CLAUDE_TOOL_INPUT은
+# 폴백이며 tool_input 중첩을 우선 파싱한다. payload를 파이썬 소스에 문자열로
+# 끼워 넣으면 파일 본문이 코드로 해석될 수 있으므로, 스크립트는 fd 3으로 주고
+# payload는 stdin으로만 전달한다.
 
-INPUT=$(cat)
+PARSED=$(python3 /dev/fd/3 3<<'PY' 2>/dev/null
+import json, os, sys
 
-FILE_PATH=$(python3 -c "
-import json, sys
+raw = sys.stdin.read()
+if not raw.strip():
+    raw = os.environ.get("CLAUDE_TOOL_INPUT", "")
+if not raw.strip():
+    sys.exit(0)
 try:
-    d = json.loads('''$INPUT''')
-    print(d.get('file_path') or d.get('path') or '')
-except: pass
-" 2>/dev/null)
+    payload = json.loads(raw)
+except Exception:
+    sys.exit(0)
+if not isinstance(payload, dict):
+    sys.exit(0)
+
+tool_input = payload.get("tool_input")
+data = tool_input if isinstance(tool_input, dict) else payload
+
+file_path = data.get("file_path") or data.get("path") or ""
+if not file_path:
+    sys.exit(0)
+
+# Write는 content, Edit는 new_string, MultiEdit는 edits[].new_string을 쓴다.
+chunks = []
+single = data.get("content") or data.get("new_string") or ""
+if single:
+    chunks.append(single)
+edits = data.get("edits")
+if isinstance(edits, list):
+    for edit in edits:
+        if isinstance(edit, dict) and edit.get("new_string"):
+            chunks.append(edit["new_string"])
+
+# 첫 줄은 파일 경로, 나머지는 검사 대상 본문.
+sys.stdout.write(file_path + "\n" + "\n".join(chunks))
+PY
+)
+
+[ -z "$PARSED" ] && exit 0
+FILE_PATH=$(printf '%s\n' "$PARSED" | head -n 1)
 
 [ -z "$FILE_PATH" ] && exit 0
 
@@ -34,13 +70,7 @@ esac
 # colors_and_type.css는 hex 정의 원본이므로 hex 검사에서 제외
 BASENAME=$(basename "$FILE_PATH")
 
-CONTENT=$(python3 -c "
-import json, sys
-try:
-    d = json.loads('''$INPUT''')
-    print(d.get('content') or d.get('new_string') or '')
-except: pass
-" 2>/dev/null)
+CONTENT=$(printf '%s\n' "$PARSED" | tail -n +2)
 
 [ -z "$CONTENT" ] && exit 0
 
