@@ -4,12 +4,12 @@
 #
 # 입력 규약: stdin JSON({"tool_name":"...","tool_input":{...}})이 1차,
 # 구 규약 $CLAUDE_TOOL_INPUT는 폴백. 차단은 exit 2 + stderr.
+#
+# payload는 argv/환경변수가 아니라 stdin으로 받는다. Write의 tool_input에는 파일
+# 본문 전체가 실려 MAX_ARG_STRLEN(128KB)을 넘기므로, 스크립트를 fd 3으로 주고
+# stdin을 payload 전용으로 남긴다.
 
-INPUT=$(cat 2>/dev/null)
-[ -z "$INPUT" ] && INPUT="${CLAUDE_TOOL_INPUT:-}"
-[ -z "$INPUT" ] && exit 0
-
-python3 - "$INPUT" <<'PY'
+python3 /dev/fd/3 3<<'PY'
 import json
 import os
 import re
@@ -17,10 +17,25 @@ import shlex
 import sys
 
 
+# 비밀값 없이 저장소에 커밋하는 공유용 예시 파일. 마지막 확장자로 판정하므로
+# .env.example, .env.local.example, config.key.sample 같은 형태를 모두 통과시킨다.
+SAMPLE_SUFFIXES = {"example", "sample", "template", "dist", "defaults"}
+
+
+def is_sample_name(base: str) -> bool:
+    parts = base.rsplit(".", 1)
+    return len(parts) == 2 and parts[1].lower() in SAMPLE_SUFFIXES
+
+
 def is_secret_name(path: str) -> bool:
     if not path:
         return False
-    base = os.path.basename(path.strip("'\""))
+    # 명령 문자열에서 뽑은 토큰에는 구두점이 붙어 있을 수 있다(예: 문장 안의
+    # ".env.example," 또는 "(.env.local)"). 앞뒤 구두점을 벗겨야 예시 파일 예외와
+    # 비밀 파일 판정이 모두 정확해진다. 선행 '.'은 벗기지 않는다(.env 자체가 대상).
+    base = os.path.basename(path.strip("'\"")).lstrip("([{'\"").rstrip(".,;:!?)]}'\"")
+    if is_sample_name(base):
+        return False
     if base in {".env", "credentials.json", "secrets.json", "id_rsa", "id_ed25519"}:
         return True
     if base.startswith(".env."):
@@ -38,8 +53,14 @@ def block(name: str) -> None:
     sys.exit(2)
 
 
+raw = sys.stdin.read()
+if not raw.strip():
+    raw = os.environ.get("CLAUDE_TOOL_INPUT", "")
+if not raw.strip():
+    sys.exit(0)
+
 try:
-    payload = json.loads(sys.argv[1])
+    payload = json.loads(raw)
 except Exception:
     sys.exit(0)
 

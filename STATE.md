@@ -31,6 +31,14 @@
 
 ## 이번 세션에서 완료한 작업
 
+- L3 훅 입력 규약 수정의 후속 결함 2건 해소 — 대용량 payload 처리와 예시 환경파일 오탐. (2026-07-28)
+  - **배경**: 직전 커밋(`085a2ab`)의 stdin 전환은 방향이 옳았으나, payload를 `python3 - "$INPUT"` 형태로 **argv에 실어** 넘겨 `MAX_ARG_STRLEN`(128KB)에 걸렸다. Write의 `tool_input`에는 파일 본문 전체가 실리므로 512KB 이상 파일 작성 시 훅이 `exit 126`으로 깨지고, 그 경로에서 비밀 파일 검사가 무력화됐다. 구버전/신버전 비교 실행으로 확인.
+  - **수정 1(대용량)**: 파이썬 스크립트를 `python3 /dev/fd/3 3<<'PY'`로 fd 3에 넘기고 **stdin을 payload 전용으로 남겼다**. heredoc 구조를 유지하면서 크기 제한이 사라진다. 4MB payload까지 정상 처리 확인. 환경변수 폴백은 파이썬 내부에서 처리한다.
+  - **수정 2(오탐)**: `block-secret-files.sh`가 `.env.` 접두를 전부 비밀로 판정해 `.env.example`·`.env.sample`·`.env.template`까지 차단했다. 마지막 확장자가 `example`/`sample`/`template`/`dist`/`defaults`면 통과하는 `is_sample_name()`을 추가했다. `.env.local.example`·`config.key.sample` 형태도 통과하며, `.env`·`.env.local`·`.pem`·`.key`·`credentials.json` 차단은 유지된다.
+  - **수정 3(구두점)**: 명령 문자열에서 뽑은 토큰에 구두점이 붙으면(`.env.example,` / `(.env.local)`) 예외·차단 판정이 모두 빗나갔다. 실제로 이 세션의 커밋 메시지 작성이 오차단됐다. 파일명 판정 시 앞뒤 구두점을 벗기되 선행 `.`은 보존한다(`.env` 자체가 차단 대상).
+  - **검증**: 회귀 스위트 47/47 통과(차단 5·통과 5·입력형식 4·대용량 5·파일명 15·리다이렉션 3·리마인더 3·구두점 7). 실제 배선 래퍼(`bash -lc` + root 탐색)로 2MB payload 통과와 파괴적 명령 차단(`exit 2`)을 라이브 확인. 이 세션에서 `.env.example` 실제 생성 성공.
+  - **미해결(후속)**: ① `warn-design-tokens.sh`는 argv 방식과 구 환경변수 파싱이 그대로 남아 있다(기본 미등록 opt-in이라 현재 영향 없음, 등록 전 동반 수정 필요). ② `block-destructive.sh`의 텍스트 기반 패턴 검사는 실행되지 않는 인용문에도 반응한다. ③ 연결 프로젝트 5곳(`aica2`·`riderapp-runtime`·`skim`·`trippass`·`vwallet`)은 훅 파일은 최신이나 `settings` 미등록이라 호출되지 않는다.
+
 - L3 훅 3종의 입력 규약을 현행 Claude Code stdin 방식으로 수정. (2026-07-28)
   - **문제**: `block-destructive.sh`, `block-secret-files.sh`, `state-reminder.sh`가 도구 입력을 `$CLAUDE_TOOL_INPUT` 환경변수에서 읽었다. 현행 CLI(2.1.220) 바이너리에 그 문자열은 **0건**이고 대신 `tool_input`·`hook_event_name`·`CLAUDE_PROJECT_DIR`을 쓴다. 즉 `settings.template.json`대로 배선해도 세 훅 모두 빈 입력으로 항상 `exit 0` — 가드레일이 켜진 것처럼 보이면서 아무것도 차단하지 못했다.
   - **수정**: 입력을 stdin에서 읽고 `tool_input` 중첩을 우선 파싱하도록 교체했다. 구 규약(평면 JSON·환경변수)은 폴백으로 남겨 호환을 유지한다. 차단 메시지는 규약에 맞춰 stdout → **stderr**로 옮겼다(exit 2와 함께 에이전트에게 전달되는 경로).

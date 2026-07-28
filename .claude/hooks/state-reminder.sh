@@ -6,22 +6,25 @@
 #
 # 입력 규약: stdin JSON({"tool_input":{"command":"..."}})이 1차,
 # 구 규약 $CLAUDE_TOOL_INPUT는 폴백.
+# payload는 argv가 아니라 stdin으로 받는다(대용량 tool_input 대응, block-destructive.sh 주석 참조).
 
-INPUT=$(cat 2>/dev/null)
-[ -z "$INPUT" ] && INPUT="${CLAUDE_TOOL_INPUT:-}"
-[ -z "$INPUT" ] && exit 0
+COMMAND=$(python3 /dev/fd/3 3<<'PY' 2>/dev/null
+import json, os, sys
 
-COMMAND=$(python3 - "$INPUT" <<'PY' 2>/dev/null
-import json, sys
+raw = sys.stdin.read()
+if not raw.strip():
+    raw = os.environ.get("CLAUDE_TOOL_INPUT", "")
+if not raw.strip():
+    sys.exit(0)
 try:
-    d = json.loads(sys.argv[1])
+    d = json.loads(raw)
 except Exception:
     sys.exit(0)
 if not isinstance(d, dict):
     sys.exit(0)
-ti = d.get('tool_input')
+ti = d.get("tool_input")
 ti = ti if isinstance(ti, dict) else {}
-print(ti.get('command') or d.get('command') or '')
+print(ti.get("command") or d.get("command") or "")
 PY
 )
 

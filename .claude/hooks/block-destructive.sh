@@ -7,22 +7,28 @@
 # 구 규약($CLAUDE_TOOL_INPUT 환경변수)은 현행 CLI에 존재하지 않으므로 stdin이 1차,
 # 환경변수는 폴백으로만 둔다.
 # 차단 시 exit 2 + stderr 출력이 에이전트에게 전달되는 규약이다.
+#
+# payload를 argv나 환경변수로 넘기면 MAX_ARG_STRLEN(128KB)에 걸린다. Write의
+# tool_input에는 파일 본문 전체가 실려 수백 KB가 되므로, 파이썬 스크립트는
+# fd 3으로 주고 stdin은 payload 전용으로 남긴다.
 
-INPUT=$(cat 2>/dev/null)
-[ -z "$INPUT" ] && INPUT="${CLAUDE_TOOL_INPUT:-}"
-[ -z "$INPUT" ] && exit 0
+COMMAND=$(python3 /dev/fd/3 3<<'PY' 2>/dev/null
+import json, os, sys
 
-COMMAND=$(python3 - "$INPUT" <<'PY' 2>/dev/null
-import json, sys
+raw = sys.stdin.read()
+if not raw.strip():
+    raw = os.environ.get("CLAUDE_TOOL_INPUT", "")
+if not raw.strip():
+    sys.exit(0)
 try:
-    d = json.loads(sys.argv[1])
+    d = json.loads(raw)
 except Exception:
     sys.exit(0)
 if not isinstance(d, dict):
     sys.exit(0)
-ti = d.get('tool_input')
+ti = d.get("tool_input")
 ti = ti if isinstance(ti, dict) else {}
-print(ti.get('command') or d.get('command') or '')
+print(ti.get("command") or d.get("command") or "")
 PY
 )
 [ -z "$COMMAND" ] && exit 0
