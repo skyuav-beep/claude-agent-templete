@@ -1,6 +1,13 @@
+---
+description: "작업 설명을 feature/bugfix/refactor/business-logic/review로 분류해 해당 흐름을 시작한다"
+argument-hint: "[작업 설명]"
+---
+
 # 작업 요청 유형 라우터
 
 사용자의 작업 설명을 분석해서 적절한 요청 유형으로 안내한다.
+
+> 경로 규칙: 아래 `templates/`·`agents/`·`docs/` 경로는 프로젝트 루트 기준이다. 프로젝트에 해당 파일이 없으면 `rules/` 아래 같은 경로를 읽는다(공통 템플릿을 `rules/` symlink로 연결한 프로젝트).
 
 ## 분류 기준
 

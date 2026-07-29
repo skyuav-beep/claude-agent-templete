@@ -6,6 +6,8 @@ description: "사용자가 버그, 에러, 오류, 안 된다, 깨졌다, 작동
 
 버그 수정 요청을 대화형으로 구조화한다.
 
+> 경로 규칙: 아래 `templates/`·`agents/`·`docs/` 경로는 프로젝트 루트 기준이다. 프로젝트에 해당 파일이 없으면 `rules/` 아래 같은 경로를 읽는다(공통 템플릿을 `rules/` symlink로 연결한 프로젝트).
+
 ## 실행 방법
 
 1. `templates/bugfix-request.md` 파일을 읽는다.

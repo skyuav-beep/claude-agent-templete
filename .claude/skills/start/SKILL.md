@@ -6,6 +6,8 @@ description: "사용자가 새 프로젝트 시작, 초기 설정, 프로젝트 
 
 새 프로젝트의 초기 설정을 위한 대화형 QnA를 진행한다.
 
+> 경로 규칙: 아래 `templates/`·`agents/`·`docs/` 경로는 프로젝트 루트 기준이다. 프로젝트에 해당 파일이 없으면 `rules/` 아래 같은 경로를 읽는다(공통 템플릿을 `rules/` symlink로 연결한 프로젝트).
+
 ## 실행 방법
 
 1. `templates/startup-checklist.md` 파일을 읽는다.

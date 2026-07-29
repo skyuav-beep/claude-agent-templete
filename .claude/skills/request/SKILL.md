@@ -6,6 +6,8 @@ description: "사용자가 작업 유형(feature/bugfix/refactor/business-logic/
 
 사용자의 작업 설명을 분석해서 적절한 요청 유형으로 안내한다.
 
+> 경로 규칙: 아래 `templates/`·`agents/`·`docs/` 경로는 프로젝트 루트 기준이다. 프로젝트에 해당 파일이 없으면 `rules/` 아래 같은 경로를 읽는다(공통 템플릿을 `rules/` symlink로 연결한 프로젝트).
+
 ## 우선순위 규칙
 
 - 사용자 메시지에 **명확한 유형 키워드**가 있으면 개별 skill(`feature`, `bugfix`, `refactor`, `review`, `business-logic`)이 우선 활성화된다. 이 경우 `request` skill은 활성화되지 않는다.

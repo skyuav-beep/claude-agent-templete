@@ -13,24 +13,30 @@
 
 set -euo pipefail
 
-# 프로젝트 루트(=DESIGN.md/designs/가 있는 곳) 결정
-# 우선순위: 환경변수 PROJECT_ROOT > 현재 작업 디렉터리 > 스크립트 위치 기준 추론
+# 프로젝트 루트(=DESIGN.md를 쓸 곳) 결정
+# 우선순위: 환경변수 PROJECT_ROOT > 현재 작업 디렉터리
+# 산출물(DESIGN.md/마커)은 항상 프로젝트 루트에 쓴다. 공통 템플릿을 오염시키지 않는다.
 ROOT="${PROJECT_ROOT:-$(pwd)}"
-if [ ! -d "$ROOT/designs" ]; then
-  # 스크립트가 .claude/plugins/ 안에서 실행됐으면 두 단계 위가 root
-  SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-  CANDIDATE="$(cd "$SCRIPT_DIR/../.." && pwd)"
-  if [ -d "$CANDIDATE/designs" ]; then
-    ROOT="$CANDIDATE"
-  fi
-fi
-
-DESIGNS_DIR="$ROOT/designs"
 ACTIVE_FILE="$ROOT/DESIGN.md"
 MARKER="$ROOT/.claude/.active-design"
 
+# 시안 라이브러리(소스) 결정: 프로젝트 자체 > rules/ symlink 공통 > 스크립트 위치 기준 추론
+DESIGNS_DIR="$ROOT/designs"
+if [ ! -d "$DESIGNS_DIR" ] && [ -d "$ROOT/rules/designs" ]; then
+  DESIGNS_DIR="$ROOT/rules/designs"
+fi
 if [ ! -d "$DESIGNS_DIR" ]; then
-  echo "오류: $ROOT/designs 디렉터리가 없습니다." >&2
+  # 스크립트가 .claude/plugins/ 안에서 실행됐으면 두 단계 위가 템플릿 root (symlink 실경로)
+  SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
+  CANDIDATE="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
+  if [ -d "$CANDIDATE/designs" ]; then
+    DESIGNS_DIR="$CANDIDATE/designs"
+  fi
+fi
+
+if [ ! -d "$DESIGNS_DIR" ]; then
+  echo "오류: 시안 라이브러리를 찾지 못했습니다." >&2
+  echo "  확인한 경로: $ROOT/designs, $ROOT/rules/designs" >&2
   echo "  install.sh로 템플릿을 먼저 설치하거나, PROJECT_ROOT 환경변수로 위치를 지정하세요." >&2
   exit 1
 fi

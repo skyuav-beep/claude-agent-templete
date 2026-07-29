@@ -6,6 +6,8 @@ description: "프로젝트의 특정 영역(UI, API, i18n, 라우팅, 폼, 에�
 
 프로젝트 특정 영역의 상세 정보를 대화형으로 수집한다.
 
+> 경로 규칙: 아래 `templates/`·`agents/`·`docs/` 경로는 프로젝트 루트 기준이다. 프로젝트에 해당 파일이 없으면 `rules/` 아래 같은 경로를 읽는다(공통 템플릿을 `rules/` symlink로 연결한 프로젝트).
+
 ## 토픽 매핑
 
 - `project` -> `templates/project-intake.md`

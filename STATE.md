@@ -56,6 +56,15 @@
   - 점검 시작 기준 워킹트리 클린·스테이징 없음·stash 없음. 미푸시 커밋을 사용자 요청으로 원격 반영했다.
   - 종료 점검: 열린 PR 없음, 로컬 브랜치 `main` 단일, `.github/workflows` 없음(원격 자동 CI 미보유 → `[skip ci]` 불필요).
 
+- 슬래시 커맨드 메타데이터 + 연결 프로젝트 경로 해석 정상화. (2026-07-29)
+  - **발단**: 슬래시 커맨드 설명과 디자인 정본 경로가 연결 프로젝트에서 실제로 해석되는지 점검 요청. 대상은 `rules/` symlink로 이 저장소를 참조하는 14개 프로젝트다.
+  - **문제 1(경로 해석)**: skill·command 본문이 `templates/`·`agents/`·`docs/`를 **프로젝트 루트 기준 상대경로**로 지시하는데, symlink로 연결되는 것은 `.claude/*`뿐이라 그 디렉터리들이 프로젝트에 없다. `templates/` 보유는 14곳 중 `makeupshop` 1곳, `docs/local-dev-ci-guide.md` 보유는 `riderwebapp` 1곳뿐이었다. `dev-start`만 유일하게 `rules/` fallback을 명시하고 있었고 나머지는 없었다.
+  - **문제 2(커맨드 메타)**: `.claude/commands/*.md` 9종 전부 frontmatter가 없어 `description`·`argument-hint`가 미정의였다. 등록·실행은 되지만 커맨드 목록에 본문 제목이 그대로 노출되고 인수 힌트가 뜨지 않았다.
+  - **문제 3(디자인 정본)**: `design` skill이 `DESIGN.md`만 지시하는데 루트에 파일이 있는 곳은 6/14였다. `select-design.sh`는 `designs/`가 없는 프로젝트(13곳)에서 에러 종료해 시안 스위치가 불가능했다.
+  - **수정**: ① command 9종에 `description`·`argument-hint` frontmatter 추가. ② command 9종 + skill 10종 본문에 `rules/` fallback 경로 규칙 블록 삽입, `design` skill은 실행 1·2단계에도 인라인 명시(공통본을 읽었으면 답변에 밝히도록). ③ `select-design.sh`의 라이브러리 소스와 산출물 경로를 분리 — 소스는 `프로젝트 designs/ > rules/designs/ > 스크립트 위치 추론`, 산출물(`DESIGN.md`·`.claude/.active-design`)은 항상 프로젝트 루트로 고정해 공통 템플릿 오염을 차단. ④ 원칙을 `AGENTS.md` 관리 블록(`project-guide-routing`)·`CLAUDE.md ## Design System`·`docs/design-guidelines.md`에 명문화. 관리 블록에 넣었으므로 이후 `install.py --update`로 각 프로젝트 `AGENTS.md`에 전파된다.
+  - **검증**: frontmatter YAML 파싱 19/19 통과, 경로 규칙 삽입 19/19 확인. `select-design.sh`는 자체 `designs/` 보유 프로젝트(`makeupshop`)·미보유 프로젝트(`goldlink`)·템플릿 자체 3케이스 정상, 임시 fake 프로젝트에서 시안 활성화 E2E 실행해 소스=`rules/designs/`, 산출물=프로젝트 루트임을 확인했다. `bash -n` 문법 검사 통과.
+  - **후속(프로젝트 쪽, 사용자 판단 필요)**: `aiospace`는 `.active-design=worknest` 마커만 있고 루트 `DESIGN.md`가 없다(AGENTS.md가 `rules/DESIGN.md`를 정본으로 지정 — 템플릿 활성 시안이 바뀌면 정본이 조용히 따라 바뀐다). `makeupshop`은 진입 문서가 `MAISON LUMÈ 브랜드 시스템`이라고 적었으나 실제 `DESIGN.md`는 `wanted` 시안이다. `design` skill은 있으나 대응 slash command는 없다(`commands` 9종 / `skills` 10종).
+
 ## 지난 세션 기록
 
 - 연결 프로젝트 최신 정책 전파 상태 점검 및 세션 종료. (2026-07-26)

@@ -79,6 +79,7 @@
 - `designs/` 폴더는 사용 가능한 디자인 시안 라이브러리다. root `DESIGN.md`는 라이브러리에서 선택된 시안의 활성 사본이다.
 - 라이브러리 목록 확인: `bash .claude/plugins/select-design.sh --list`
 - 시안 활성화(스위치): `bash .claude/plugins/select-design.sh <slug>` — `designs/<slug>.md` → `DESIGN.md` 복사 + `.claude/.active-design` 갱신.
+- **라이브러리 소스 결정 순서**: 프로젝트 `designs/` > `rules/designs/`(공통 템플릿 symlink) > 스크립트 위치 기준 추론. 산출물(`DESIGN.md`, `.claude/.active-design`)은 소스와 무관하게 **항상 프로젝트 루트**에 쓴다. 따라서 `designs/`를 복사하지 않고 `rules/` symlink만 연결한 프로젝트에서도 스위치가 동작하며, 공통 템플릿의 `DESIGN.md`는 덮어쓰지 않는다.
 - install 시 기본 시안 지정: `bash .claude/plugins/install.sh --design <slug> /target` (기본값 `wanted`).
 - 신규 시안 작성: `cp designs/_template.md designs/<slug>.md` 후 frontmatter + 본문 채움. `designs/_alias-contract.md`의 alias 25종 + 컴포넌트 7종 시그너처는 반드시 정의.
 - DESIGN.md를 직접 편집한 상태에서 select-design.sh를 실행하면 자동으로 `DESIGN.md.bak`을 만든 뒤 덮어쓴다.

@@ -116,6 +116,8 @@
 
 UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운영 메타 가이드는 `docs/design-guidelines.md`를 참조한다.
 
+정본 위치는 프로젝트 루트 `DESIGN.md`다. 없으면 `rules/DESIGN.md`(공통 템플릿의 활성 시안)를 쓰고 그 사실을 답변에 한 줄로 밝히며, 프로젝트 `AGENTS.md`가 정본 위치를 지정했으면 그 지정이 우선한다.
+
 - 색·간격·라운드·타이포는 hex/px를 직접 적지 않고 `DESIGN.md`의 토큰 호출 형식(`{colors.bg-brand}`, `{spacing.space-16}`, `{rounded.radius-8}`, `{typography.body1}`)으로 표기한다.
 - product surface 색은 시맨틱 alias(`bg-*`, `fg-*`, `border-*`)로, atomic ramp(`blue-800`, `neutral-700`)는 새 alias를 만들 때만 직접 호출한다.
 - `DESIGN.md`의 `## Do's and Don'ts`를 위반하지 않는다. 자주 위반되는 항목: 이모지를 product UI에 inline 사용, gradient를 chrome(CTA/헤더/풀-블리드)에 사용, `gray-*` 패밀리를 UI 표면 색으로 직접 사용, 6/10/14/18/22 같은 비-4의 배수 spacing·radius 도입, 카드에 그림자 적용, 격식체(`-습니다`) product 카피.

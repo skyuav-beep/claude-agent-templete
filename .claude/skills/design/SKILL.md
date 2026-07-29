@@ -6,10 +6,12 @@ description: "사용자가 UI, 디자인, 스타일, 토큰, 색상, 버튼, 카
 
 UI/스타일 산출물을 만들거나 검토할 때 `DESIGN.md`를 강제 로드하고 토큰 호출 형식으로 답변을 구성한다.
 
+> 경로 규칙: `DESIGN.md`·`docs/` 경로는 프로젝트 루트 기준이다. 프로젝트에 해당 파일이 없으면 `rules/` 아래 같은 경로를 읽는다(`rules/DESIGN.md`는 템플릿의 활성 시안이므로, 프로젝트 `AGENTS.md`가 정본 위치를 지정했으면 그 지정을 우선한다).
+
 ## 실행 방법
 
-1. `DESIGN.md` 파일을 먼저 읽는다. (1차 소스)
-2. 운영 메타 규칙이 필요하면 `docs/design-guidelines.md`를 읽는다.
+1. 프로젝트 루트 `DESIGN.md`를 먼저 읽는다. (1차 소스) 없으면 `rules/DESIGN.md`를 읽고, **공통 템플릿의 활성 시안을 쓰고 있다는 사실을 답변에 한 줄로 밝힌다.**
+2. 운영 메타 규칙이 필요하면 `docs/design-guidelines.md`를 읽는다(없으면 `rules/docs/design-guidelines.md`).
 3. 답변에서 색·간격·라운드·타이포 값을 직접 hex/px로 적지 않고 다음 형식으로 토큰을 호출한다.
    - 색: `{colors.bg-brand}`, `{colors.fg-default}`, `{colors.border-subtle}` (시맨틱 alias 우선, atomic은 새 alias를 만들 때만)
    - 간격: `{spacing.space-16}`, `{spacing.space-24}`
