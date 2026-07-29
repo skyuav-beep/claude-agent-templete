@@ -77,7 +77,7 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 
 `.claude/commands/`에 동일 이름의 slash command가 병존한다. 사용자가 직접 입력해 호출할 수 있다.
 
-- `/start`, `/dev-start`, `/intake [토픽]`, `/request [설명]`, `/feature [설명]`, `/bugfix [설명]`, `/refactor [설명]`, `/review [대상]`, `/business-logic [설명]`
+- `/start`, `/dev-start`, `/intake [토픽]`, `/request [설명]`, `/feature [설명]`, `/bugfix [설명]`, `/refactor [설명]`, `/review [대상]`, `/business-logic [설명]`, `/design [컴포넌트]`
 
 `[설명]` 인수를 주면 가능한 항목을 미리 채운다. skills와 동일 templates를 참조한다.
 
@@ -115,6 +115,11 @@ Codex에서는 자동 hook이 없으므로 `.codex/checks/safety-checklist.md`�
 - 에이전트가 읽는 1차 소스는 항상 `*.md`다.
 - HTML UI는 사람이 보는 보조 화면이며, md를 수정한 뒤 필요 시 HTML도 함께 갱신한다.
 - 동기화가 어긋났다고 판단되면 md를 기준으로 HTML을 다시 맞춘다.
+- HTML을 수정한 뒤에는 인라인 `<script>` 구문 검사를 실행한다. 외부 의존성 없이 Node 내장 모듈만 사용한다.
+
+```bash
+node scripts/check-html.mjs
+```
 
 ### 정적 서버로 열기
 
@@ -144,4 +149,4 @@ http.server.test(HandlerClass=H, port=8765, bind='127.0.0.1')
 - `templates/` 확장
 - intake 답변 예시와 guide 작성 예시 추가
 - 필요 시 `docs/` 아래에 템플릿 사용 예시 추가
-- HTML UI 추가 폼(현재는 5종) 확장 또는 md→HTML 자동 동기화 스크립트 도입
+- HTML UI(현재 6종) 확장 또는 md→HTML 자동 동기화 스크립트 도입
