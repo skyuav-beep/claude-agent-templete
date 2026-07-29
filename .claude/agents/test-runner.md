@@ -1,3 +1,9 @@
+---
+name: test-runner
+description: 테스트 스위트를 실행하고 실패 원인을 분석해 요약하는 에이전트. 코드를 수정하지 않고 실행과 분석만 수행한다 (test, run tests, failure analysis, 테스트 실행)
+tools: Read, Glob, Grep, Bash
+---
+
 # Test Runner 서브에이전트
 
 테스트 실행과 실패 분석을 위임받는 서브에이전트다.

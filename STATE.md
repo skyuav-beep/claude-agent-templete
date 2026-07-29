@@ -31,6 +31,14 @@
 
 ## 이번 세션에서 완료한 작업
 
+- L4 서브에이전트 6종 자동 등록 정상화 — frontmatter 부재로 인한 미등록 해소. (2026-07-29)
+  - **발단**: `aiospace` 세션에서 서브에이전트 6종이 사용 가능 목록에 하나도 뜨지 않는다는 보고로 착수했다. 사전 분석은 "템플릿이 각 프로젝트에 전파를 못 하고 있다"로 요약돼 있었으나, 실측 결과 **전파 경로는 정상**이었고 문제는 파일 형식이었다.
+  - **구조 확인**: 연결 프로젝트의 `.claude/agents`는 복사본이 아니라 `../rules/.claude/agents`를 가리키는 **심링크 디렉터리**다(`skills`·`commands`·`hooks`·`plugins`도 동일). 13개 프로젝트가 이 저장소 원본을 실시간으로 공유한다. inode 동일·git 추적 대상임을 확인했다.
+  - **근본 문제**: 6개 파일 전부 YAML frontmatter 없이 `# 제목`으로 시작했다. Claude Code는 `.claude/agents/*.md`의 `name`·`description` frontmatter로 에이전트를 등록하므로, 파일이 정상 공유돼도 **등록 자체가 되지 않았다**. 템플릿 저장소 자체 세션에서도 6종이 뜨지 않아 심링크와 무관한 형식 문제임을 특정했다.
+  - **수정**: 6개 파일 최상단에 `name`·`description`·`tools` frontmatter를 추가했다. `tools` 값은 각 파일의 기존 `## 도구 제한` 서술과 일치시켰다(읽기 전용 5종은 `Read, Glob, Grep, Bash`, `feature-dev`만 `Write, Edit` 포함). 본문은 무변경.
+  - **검증**: frontmatter YAML 파싱 6/6 통과. headless 세션 실측으로 템플릿 저장소와 심링크 경유 프로젝트(`aiospace`) 양쪽에서 `code-reviewer`·`design-reviewer`·`explorer`·`feature-dev`·`planner`·`test-runner` 6종 전부 등록 확인 — **Claude Code가 심링크 디렉터리를 따라간다는 점도 함께 실증**됐다.
+  - **후속 과제**: ① 각 에이전트 파일의 `## Agent 타입` 섹션과 `CLAUDE.md:184`·`docs/subagent-guide.md:98`이 "Agent 도구 호출 시 템플릿을 읽어 프롬프트에 포함한다 / `general-purpose` 타입으로 호출한다"는 **자동 등록 이전 전제**로 서술돼 있어 실제 동작과 어긋난다(8곳). ② `mlm_v1.0`은 `rules` 심링크 자체가 없어 전파 대상에서 빠져 있다.
+
 - L3 가드레일 훅 4종 정상화 — 입력 규약 교체와 후속 결함 3건 해소. (2026-07-28, 커밋 `085a2ab`·`21e62e9`·`35d91ef`)
   - **발단**: `signal2` 세션의 가이드 상태 점검에서 훅 미작동이 드러나 사용자 승인(`1,2번 업데이트 진행해`)으로 착수했다. 훅 파일은 13개 연결 프로젝트가 symlink로 공유하므로 어느 프로젝트에서 고쳐도 이 저장소 원본이 바뀐다.
   - **근본 문제**: 훅 4종 전부가 도구 입력을 `$CLAUDE_TOOL_INPUT` 환경변수에서 읽었다. 현행 CLI에 그 변수는 없고 stdin JSON(`tool_input` 중첩)이 전달된다. 즉 `settings`에 배선해도 **빈 입력으로 항상 통과** — 켜진 것처럼 보이면서 아무것도 막지 못했다. 구/신 비교 실행으로 실증(구버전 차단 0/5, 신버전 5/5).

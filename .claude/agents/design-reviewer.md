@@ -1,3 +1,9 @@
+---
+name: design-reviewer
+description: UI/스타일 산출물의 디자인 일관성을 점검하는 읽기 전용 에이전트. DESIGN.md 토큰 호출 규칙, Do/Don't 위반, 시그너처 패턴 누락을 검출한다 (design review, UI consistency, token, 디자인 점검)
+tools: Read, Glob, Grep, Bash
+---
+
 # Design Reviewer 서브에이전트
 
 UI/스타일 산출물의 디자인 일관성을 점검하는 전용 서브에이전트다.
