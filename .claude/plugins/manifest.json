@@ -56,7 +56,8 @@
         { "path": ".claude/commands/bugfix.md", "description": "/bugfix [desc] — explicit invocation" },
         { "path": ".claude/commands/refactor.md", "description": "/refactor [desc] — explicit invocation" },
         { "path": ".claude/commands/review.md", "description": "/review [target] — explicit invocation" },
-        { "path": ".claude/commands/business-logic.md", "description": "/business-logic [desc] — explicit invocation" }
+        { "path": ".claude/commands/business-logic.md", "description": "/business-logic [desc] — explicit invocation" },
+        { "path": ".claude/commands/design.md", "description": "/design [component] — explicit invocation" }
       ]
     },
     "L3_hooks": {

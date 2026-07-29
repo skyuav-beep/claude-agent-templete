@@ -31,6 +31,14 @@
 
 ## 이번 세션에서 완료한 작업
 
+- `/design` slash command 신설 — skills 10종 대비 commands 9종이던 비대칭 해소. (2026-07-29)
+  - **발단**: `riderwebapp` 연결 점검에서 발견. `design`은 skill(자동 활성화)과 Codex workflow(`.codex/workflows/design.md`)는 있는데 **명시 호출용 slash command만 없었다** — 사용자가 `/design`을 칠 수 없었다.
+  - **신설**: `.claude/commands/design.md`. 다른 command와 동일하게 `description`·`argument-hint` frontmatter를 두고, `DESIGN.md` 로드 → 토큰 호출 형식 → Do/Don't 확인 절차를 기술했다. **세부 진행 규칙(gradient 허용 위치·비-4의 배수 금지·이모지 금지·모달 닫기)은 중복 정의하지 않고 `.claude/skills/design/SKILL.md ## 진행 규칙`을 정본으로 참조**한다.
+  - **카운트 정합**: `CLAUDE.md` Repo Map, `AGENTS.md` Context Map, `README.md` Slash Commands 목록의 "9종" → "10종" + `/design` 등재. `manifest.json` `L2_commands`에도 추가.
+  - **검증**: manifest JSON 파싱 OK · `L2_commands` 10종 = `.claude/commands/*.md` 실제 파일 10개 일치 · 저장소 전체 "slash command 9종" 잔여 0.
+  - **연결 프로젝트 영향**: `.claude/commands`가 심링크라 13개 프로젝트에 즉시 전파된다. 각 프로젝트는 Claude Code 재시작 시 `/design`을 인식한다.
+  - **함께 해소(이전 세션 후속 과제)**: "`riderwebapp/AGENTS.md`에 공용 머지 정책을 과거 기준으로 설명한 문장이 남아 있다"는 지적을 프로젝트 쪽에서 정리했다. 공용 규칙도 현재 "머지는 사용자 명시 지시 시 수행"이라 프로젝트 규칙이 **덮어쓰기가 아니라 정합**임을 명시하고, 저장소 한정 추가분(agent 작성 PR도 대상 포함)만 남겼다.
+
 - 보류 항목 순차 정리 + 저장소명 정책 확인 + `intake.html` 12종 폼 확장. (2026-07-29)
   - **저장소명(사용자 질의)**: "PC마다 폴더명이 `claude-agent-template`/`claude-agent-templete`로 다른데 둘 다 못 쓰냐" → **둘 다 정상 동작**함을 실측 확인. hook은 폴더명을 하드코딩하지 않고 실행 시점 git 루트/상위 `.claude` 탐색으로 스크립트를 찾으며, 정본 식별자는 `manifest.json`의 `name`(`claude-agent-template`) 하나다. `docs/plugin-guide.md`에 "PC마다 다른 이름을 써도 된다"가 이미 명시돼 있었다. 즉 "표기 통일"은 폴더명 강제가 아니라 문서 지칭 표기 정리일 뿐. `todo.md` 아카이브(문서 자기일관성 TODO)에 "정본을 `templete`로 결정"이라 거꾸로 남은 오기록에 정정 메모를 덧붙였다(원문은 이력이라 보존).
   - **README**: 브라우저 UI "추가 폼(현재는 5종)" 노후 표현을 "HTML UI(현재 6종)"로 수정하고, 1차 소스 규칙에 HTML 수정 후 `node scripts/check-html.mjs` 실행 안내를 추가. 나머지(skills 10·commands 9·codex 10·HTML 6·intake 12·startup 11섹션)는 실측 대조 결과 이미 최신이었다.

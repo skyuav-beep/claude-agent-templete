@@ -77,7 +77,7 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 
 `.claude/commands/`에 동일 이름의 slash command가 병존한다. 사용자가 직접 입력해 호출할 수 있다.
 
-- `/start`, `/dev-start`, `/intake [토픽]`, `/request [설명]`, `/feature [설명]`, `/bugfix [설명]`, `/refactor [설명]`, `/review [대상]`, `/business-logic [설명]`
+- `/start`, `/dev-start`, `/intake [토픽]`, `/request [설명]`, `/feature [설명]`, `/bugfix [설명]`, `/refactor [설명]`, `/review [대상]`, `/business-logic [설명]`, `/design [컴포넌트]`
 
 `[설명]` 인수를 주면 가능한 항목을 미리 채운다. skills와 동일 templates를 참조한다.
 
