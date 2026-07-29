@@ -104,7 +104,7 @@
 - `designs/` — 디자인 시안 라이브러리. 시안 선택은 `bash .claude/plugins/select-design.sh <slug>`
 - `agents/` — 역할별 에이전트 행동 규칙 (main, executor, researcher, reviewer)
 - `templates/` — 작업 요청 5종 + intake 양식 14종 (`data-table-density.md` 포함)
-- `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타: `docs/design-guidelines.md`, admin FE: `docs/admin-fe-design-guide.md`, UI 결정 기록: `docs/ui-decisions.md`, 로컬/CI 실행 경계+Docker 재빌드: `docs/local-dev-ci-guide.md`)
+- `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타: `docs/design-guidelines.md`, admin FE: `docs/admin-fe-design-guide.md`, UI 결정 기록: `docs/ui-decisions.md`, 로컬/CI 실행 경계+Docker 재빌드: `docs/local-dev-ci-guide.md`, 금액·수량 처리: `docs/money-quantity-guidelines.md`)
 - `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 10종)
 - `.claude/commands/` — L2 보조 (명시적 slash command 9종, skills와 병존)
 - `.claude/hooks/` — L3 Guardrails (가드레일 스크립트 4종, opt-in 1종 포함)

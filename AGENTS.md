@@ -183,6 +183,7 @@
 - **[프로젝트 가이드 템플릿](./docs/project-guide-template.md)** - intake 답변을 프로젝트 가이드 구조로 옮길 때.
 - **[다국어 가이드](./docs/i18n-guidelines.md)** - i18n 구조, key 규칙, formatting, fallback 기준을 정리할 때.
 - **[비즈니스 로직 플레이북](./docs/business-logic-playbook.md)** - 요구사항, 시나리오, 구현, 검증, 빌드, Git 작업 기준을 확인할 때.
+- **[금액·수량 처리 기준](./docs/money-quantity-guidelines.md)** - 금액/수량의 계산·확정·표시·저장 계층 규칙, 잔차 배분, 통화 최소 단위, 실수 타입 금지 기준을 확인할 때.
 - **[로컬/CI 실행 가이드](./docs/local-dev-ci-guide.md)** - 환경 호칭 3-tier(`local`/`develop`/`production`, §0), agent 실행 경계(`local` Docker Desktop·migration·commit·작업 브랜치까지 상시, 로컬 CI·push는 사용자 요청 시 — CI는 GitHub Actions가 아니라 로컬 실행), 개발 세션 부트스트랩(상태 브리핑+dev 컨테이너 기동+UI/로직 점검, §2.0), 개발 컨테이너 모델(상시 기동+bind mount+hot reload, §2.1)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단, 브랜치·로컬 CI·머지·정리 절차(§6), push 후 인계 요약을 확인할 때.
 - **[프레임워크 구조 가이드](./docs/framework-structure-guide.md)** - 디렉터리 분리, 파일 크기, 레포 구조 기준을 확인할 때.
 - **[Codex 읽기 순서](./docs/codex-reading-order.md)** - Codex가 어떤 순서로 문맥을 읽는지 참고할 때.
