@@ -31,6 +31,13 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 서브에이전트 정의 5종에 `rules/` 경로 fallback 문구 추가 — L2(skills·commands)에만 있던 규칙을 L4까지 확장. (2026-07-29)
+  - **발단**: `signal2` 연결 점검에서 발견. 커밋 `8fbd515`가 링크 방식 프로젝트를 위해 fallback을 넣었지만 **`.claude/skills`·`.claude/commands` 20종에만 적용**됐고, `.claude/agents` 6종에는 `rules/` 언급이 0건이었다. 서브에이전트는 "상세 규칙은 `agents/reviewer-agent.md`를 따른다"처럼 프로젝트 루트 경로를 지시하는데, 링크 방식 프로젝트에는 `agents/`·`designs/`·`templates/`가 없어 **기준 문서를 못 찾은 채 작업**하게 된다.
+  - **변경**: `code-reviewer`·`explorer`·`feature-dev`·`planner`에 skills와 동일한 경로 규칙 1줄을 추가했다. `design-reviewer`는 참조 경로가 5종(`DESIGN.md`·`docs/`·`designs/`·`agents/`·`templates/`)이라 별도 문구를 쓰고, `rules/DESIGN.md`가 템플릿 활성 시안이라는 점과 **프로젝트가 토큰 값의 정본을 코드로 지정한 경우 문서 카탈로그 대신 그 코드를 기준으로 검출**한다는 조건을 명시했다.
+  - **제외**: `test-runner`는 참조하는 프로젝트 문서가 없어 대상이 아니다. Codex 레이어(`.codex/agents` 6종, `.codex/workflows` 9종)도 같은 결함이 있으나 이번 범위 밖으로 남겼다.
+  - **검증**: 5종 모두 `rules/` 언급 1건 반영 확인 · frontmatter `name`/`description` 무손상(자동 등록 조건) 확인.
+  - **연결 프로젝트 영향**: `.claude/agents`가 심링크라 14개 프로젝트에 즉시 전파된다. 프로젝트 루트에 파일이 있으면 종전대로 그쪽이 우선이므로 기존 동작은 바뀌지 않는다.
+
 - `/design` slash command 신설 — skills 10종 대비 commands 9종이던 비대칭 해소. (2026-07-29)
   - **발단**: `riderwebapp` 연결 점검에서 발견. `design`은 skill(자동 활성화)과 Codex workflow(`.codex/workflows/design.md`)는 있는데 **명시 호출용 slash command만 없었다** — 사용자가 `/design`을 칠 수 없었다.
   - **신설**: `.claude/commands/design.md`. 다른 command와 동일하게 `description`·`argument-hint` frontmatter를 두고, `DESIGN.md` 로드 → 토큰 호출 형식 → Do/Don't 확인 절차를 기술했다. **세부 진행 규칙(gradient 허용 위치·비-4의 배수 금지·이모지 금지·모달 닫기)은 중복 정의하지 않고 `.claude/skills/design/SKILL.md ## 진행 규칙`을 정본으로 참조**한다.

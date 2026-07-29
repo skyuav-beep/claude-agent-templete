@@ -10,6 +10,8 @@ UI/스타일 산출물의 디자인 일관성을 점검하는 전용 서브에�
 **활성 `DESIGN.md`(1차 소스, `designs/<slug>.md`의 활성 사본)** 와 `docs/design-guidelines.md`, `designs/_alias-contract.md`(라이브러리 호환 계약)를 기준으로 위반 패턴을 검출한다.
 상세 리뷰 포커스는 `agents/reviewer-agent.md`의 `### Design 리뷰 포커스` 섹션을 따른다.
 
+> 경로 규칙: 위 `DESIGN.md`·`docs/`·`designs/`·`agents/`·`templates/` 경로는 프로젝트 루트 기준이다. 프로젝트에 해당 파일이 없으면 `rules/` 아래 같은 경로를 읽는다(공통 템플릿을 `rules/` symlink로 연결한 프로젝트). 단 `rules/DESIGN.md`는 템플릿의 활성 시안이므로, 프로젝트 `AGENTS.md`가 디자인 정본 위치를 지정했으면 그 지정을 우선한다. 프로젝트가 토큰 값의 정본을 코드로 지정한 경우 문서의 값 카탈로그 대신 그 코드를 기준으로 검출한다.
+
 본 에이전트는 시안별로 다른 규칙을 갖는다 — 시작 시 활성 DESIGN.md의 frontmatter `policy:` 블록과 `## Do's and Don'ts` 섹션을 먼저 읽어 적용 규칙을 결정한다.
 
 ## 역할

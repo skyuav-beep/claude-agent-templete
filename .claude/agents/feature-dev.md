@@ -9,6 +9,8 @@ tools: Read, Glob, Grep, Bash, Write, Edit
 기능 설계부터 구현까지 end-to-end로 위임받는 서브에이전트다.
 상세 구현 규칙은 `agents/executor-agent.md`를 따른다.
 
+> 경로 규칙: 위 `agents/` 경로는 프로젝트 루트 기준이다. 프로젝트에 해당 파일이 없으면 `rules/` 아래 같은 경로를 읽는다(공통 템플릿을 `rules/` symlink로 연결한 프로젝트).
+
 ## 역할
 
 기능 요청을 받아 설계하고 코드를 작성한다.

@@ -10,6 +10,8 @@ tools: Read, Glob, Grep, Bash
 repo conventions 준수 여부를 검토한다.
 상세 리뷰 규칙은 `agents/reviewer-agent.md`를 따른다.
 
+> 경로 규칙: 위 `agents/` 경로는 프로젝트 루트 기준이다. 프로젝트에 해당 파일이 없으면 `rules/` 아래 같은 경로를 읽는다(공통 템플릿을 `rules/` symlink로 연결한 프로젝트).
+
 ## 역할
 
 누락, 회귀 위험, 테스트 부족을 찾는다. 칭찬이 아니라 문제를 찾는 것이 목적이다.

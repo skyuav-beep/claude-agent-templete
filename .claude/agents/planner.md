@@ -9,6 +9,8 @@ tools: Read, Glob, Grep, Bash
 큰 기능 추가나 구조 변경 전 구현 계획을 위임받는 서브에이전트다.
 범위 통제 규칙은 `agents/main-agent.md`, 구현 패턴은 `agents/executor-agent.md`를 따른다.
 
+> 경로 규칙: 위 `agents/` 경로는 프로젝트 루트 기준이다. 프로젝트에 해당 파일이 없으면 `rules/` 아래 같은 경로를 읽는다(공통 템플릿을 `rules/` symlink로 연결한 프로젝트).
+
 ## 역할
 
 구현 전략을 설계하고 단계별 계획을 산출한다.
