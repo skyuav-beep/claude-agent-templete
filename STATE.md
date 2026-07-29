@@ -31,6 +31,16 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 보류 항목 순차 정리 + 저장소명 정책 확인 + `intake.html` 12종 폼 확장. (2026-07-29)
+  - **저장소명(사용자 질의)**: "PC마다 폴더명이 `claude-agent-template`/`claude-agent-templete`로 다른데 둘 다 못 쓰냐" → **둘 다 정상 동작**함을 실측 확인. hook은 폴더명을 하드코딩하지 않고 실행 시점 git 루트/상위 `.claude` 탐색으로 스크립트를 찾으며, 정본 식별자는 `manifest.json`의 `name`(`claude-agent-template`) 하나다. `docs/plugin-guide.md`에 "PC마다 다른 이름을 써도 된다"가 이미 명시돼 있었다. 즉 "표기 통일"은 폴더명 강제가 아니라 문서 지칭 표기 정리일 뿐. `todo.md` 아카이브(문서 자기일관성 TODO)에 "정본을 `templete`로 결정"이라 거꾸로 남은 오기록에 정정 메모를 덧붙였다(원문은 이력이라 보존).
+  - **README**: 브라우저 UI "추가 폼(현재는 5종)" 노후 표현을 "HTML UI(현재 6종)"로 수정하고, 1차 소스 규칙에 HTML 수정 후 `node scripts/check-html.mjs` 실행 안내를 추가. 나머지(skills 10·commands 9·codex 10·HTML 6·intake 12·startup 11섹션)는 실측 대조 결과 이미 최신이었다.
+  - **HTML 검증 스크립트 신규**: `scripts/check-html.mjs`(신규 `scripts/` 디렉터리). `docs/*.html`의 인라인 `<script>`만 추출해 `vm.Script`로 컴파일(구문)만 검사한다. 실행 부작용 없음, Node 내장 모듈만 사용. 배경은 Node 22에서 `node --check docs/*.html`이 확장자 때문에 즉시 실패하는 문제. 검증: 정상 6개 통과(인라인 5)·고의 손상 시 exit 1 검출.
+  - **framework-structure-guide.md**: §4에 feature-first hybrid 예시 디렉터리 트리 + 승격 규칙(3회 반복 시 공용화)·경계 규칙(기능 간 `index.ts` 공개 표면만 import) 추가.
+  - **intake.html 12종 폼 확장(항목 9, 사용자 승인)**: 요청 템플릿 5종과 별개로 "Intake 템플릿" 사이드바 그룹을 신설하고 `INTAKE` 객체(project/ui/responsive/tech/i18n/format/api/error/form/qa/routing/framework-structure)를 추가. 렌더링 4곳 수정(nav 컨테이너·`getForm`·`renderSidebar` 헬퍼화·초기 hash 해석). 서브에이전트가 12개 템플릿을 폼 스키마로 변환, 본 에이전트가 검토 후 삽입. 검증: HTML 구문 통과 + 폼 12·필드 129·폼 내 id 중복 0·type/choices 이상 0.
+  - **todo.md**: 헤더 날짜 `2026-05-30` → `2026-07-29 기준`.
+  - **후속(낮은 우선순위 보류, 사용자 판단)**: `docs/template-usage.md` 신설, codex/AGENTS 읽기순서 중복 축소, md→HTML 자동 동기화 — 현재 불필요로 보고 보류 유지.
+  - **훅 미배선 5곳 과제 제거(사용자 지시)**: 연결 프로젝트 5곳(`aica2`·`riderapp-runtime`·`skim`·`trippass`·`vwallet`)의 `settings` 미등록 과제는 각 프로젝트 진행 시 처리하기로 하여 `## 다음 작업`·후속 과제에서 제거.
+
 - L4 서브에이전트 6종 자동 등록 정상화 — frontmatter 부재로 인한 미등록 해소. (2026-07-29)
   - **발단**: `aiospace` 세션에서 서브에이전트 6종이 사용 가능 목록에 하나도 뜨지 않는다는 보고로 착수했다. 사전 분석은 "템플릿이 각 프로젝트에 전파를 못 하고 있다"로 요약돼 있었으나, 실측 결과 **전파 경로는 정상**이었고 문제는 파일 형식이었다.
   - **구조 확인**: 연결 프로젝트의 `.claude/agents`는 복사본이 아니라 `../rules/.claude/agents`를 가리키는 **심링크 디렉터리**다(`skills`·`commands`·`hooks`·`plugins`도 동일). 13개 프로젝트가 이 저장소 원본을 실시간으로 공유한다. inode 동일·git 추적 대상임을 확인했다.
@@ -50,7 +60,7 @@
   - **수정 5(인젝션)**: `warn-design-tokens.sh`는 payload를 `json.loads('''$INPUT''')`로 **파이썬 소스에 문자열 삽입**했다. 파일 본문에 삼중따옴표가 있으면 문자열이 조기 종료되고 이어지는 텍스트가 표현식으로 평가된다 — **디자인 파일을 쓸 때마다 그 내용이 코드로 실행될 수 있었다.** `/tmp` 마커 생성으로 실행을 실증(구버전 실행됨·신버전 무해)했고 마커는 정리했다. 기본 미등록 opt-in이었던 점이 노출을 막았다. 나머지 3종과 같은 구조로 교체하고 MultiEdit `edits[].new_string`을 검사 대상에 포함했다(`docs/design-guidelines.md`의 활성화 안내와 동작 불일치 해소).
   - **검증**: 회귀 스위트 47/47(차단 5·통과 5·입력형식 4·대용량 5·파일명 15·리다이렉션 3·리마인더 3·구두점 7) + 디자인 훅 14/14(규약 4·제외 3·비차단 3·인젝션 1·대용량 2·MultiEdit 1). 실제 배선 래퍼(`bash -lc` + root 탐색)로 2MB payload 통과·파괴적 명령 `exit 2`·`.env.example` 생성 성공을 라이브 확인. 차단 규칙 자체는 무변경이라 보호 범위 축소 없음.
   - **정책 유지**: `warn-design-tokens.sh`의 기본 미등록은 그대로다. 정적 검출의 오탐 우려가 해소된 것은 아니므로 필요한 프로젝트만 명시 등록한다.
-  - **후속 과제**: ① `block-destructive.sh`의 텍스트 기반 패턴 검사는 실행되지 않는 인용문(heredoc 본문·문서 인용)에도 반응한다. ② 연결 프로젝트 5곳(`aica2`·`riderapp-runtime`·`skim`·`trippass`·`vwallet`)은 훅 파일은 최신이나 `settings` 미등록이라 호출되지 않는다.
+  - **후속 과제**: `block-destructive.sh`의 텍스트 기반 패턴 검사는 실행되지 않는 인용문(heredoc 본문·문서 인용)에도 반응한다. (연결 프로젝트 5곳의 `settings` 미배선 과제는 각 프로젝트 진행 시 처리하기로 하여 제거함 — 2026-07-29)
 
 - 커밋·푸시 상태 점검 및 원격 동기화. (2026-07-28, 커밋 `6662068`)
   - 점검 시작 기준 워킹트리 클린·스테이징 없음·stash 없음. 미푸시 커밋을 사용자 요청으로 원격 반영했다.
@@ -668,7 +678,7 @@
 
 ### L3 가드레일 후속 (2026-07-28)
 - **패턴 검사 정확도**: `block-destructive.sh`가 명령 문자열을 텍스트로 검사해, 실행되지 않는 인용문(heredoc 본문·문서 인용·테스트 데이터)에도 반응한다. 이번 세션에서 커밋 메시지 작성과 검증 스크립트 실행이 실제로 오차단됐다. 우회는 가능하나 반복되면 성가시다.
-- **연결 프로젝트 배선**: `aica2`·`riderapp-runtime`·`skim`·`trippass`·`vwallet` 5곳은 훅 파일이 symlink로 최신이지만 `settings`에 미등록이라 호출되지 않는다. 나머지 8곳(`GoldFX`·`aiospace`·`ccaa`·`goldlink`·`makeupshop`·`riderwebapp`·`signal2`·`tokendtu`)은 등록 완료.
+- ~~**연결 프로젝트 배선**: `aica2`·`riderapp-runtime`·`skim`·`trippass`·`vwallet` 5곳 `settings` 미등록~~ → 각 프로젝트 진행 시 처리하기로 하여 제거 (2026-07-29)
 - **STATE.md 분량**: 700줄 규모로 `CLAUDE.md Core Philosophy`의 500줄 목표를 넘는다. `## 지난 세션 기록`을 별도 아카이브 문서로 분리할지 사용자 판단 필요.
 
 ### 디자인 라이브러리 후속 (사용자 검수 대기)
@@ -684,16 +694,11 @@
 
 ### 기존 보류 항목
 
-- README의 Skills/Commands/Codex Workflows/브라우저 UI 설명을 최신 구조(`dev-start`, `design`, preview HTML 3종 포함)에 맞춘다.
-- 저장소명 표기를 `claude-agent-template` 또는 `claude-agent-templete` 중 하나로 결정하고 README, plugin-guide, manifest, 예시 경로를 통일한다.
-- `.claude/commands/dev-start.md`와 `docs/codex-reading-order.md`에 최신 `dev-start`/`design` 라우팅 및 push/CI 경계를 보강한다.
-- HTML 내부 `<script>` 추출 후 구문 검사하는 로컬 검증 스크립트(예: `scripts/check-docs.sh`) 도입을 검토한다.
-- `todo.md` 헤더 날짜를 최신 세션 기준으로 갱신한다.
-- 프레임워크 구조 intake 답변을 받아 만든 실제 디렉터리 트리 예시를 추가한다.
+2026-07-29 세션에서 7건 완료: README 최신화 · 저장소명 표기 정책 확인 · `dev-start`/codex 라우팅(이미 반영) · HTML 검증 스크립트 도입 · `todo.md` 헤더 날짜 · 프레임워크 디렉터리 트리 예시 · `intake.html` 12종 폼. 아래는 낮은 우선순위로 보류 유지.
+
 - 필요하면 `docs/template-usage.md` 또는 예시 프로젝트 문서를 추가한다.
 - 필요하면 `docs/codex-reading-order.md`와 루트 `AGENTS.md`의 빠른 읽기 순서 중복을 더 줄인다.
-- intake.html에 나머지 intake 템플릿(project/ui/responsive/tech/i18n/format/api/error/routing/form/qa/framework-structure)도 폼으로 추가한다.
-- md → HTML 자동 동기화 스크립트 또는 단일 진입점(`docs/index.html`) 도입을 검토한다.
+- md → HTML 자동 동기화 스크립트 또는 단일 진입점(`docs/index.html`) 도입을 검토한다. (HTML 인라인 `<script>` 구문 검증은 `scripts/check-html.mjs`로 확보됨.)
 
 ## 현재 기준 파일
 
@@ -717,6 +722,7 @@
 - 디자인 시안 라이브러리: `designs/README.md`, `designs/_alias-contract.md`, `designs/_template.md`, `designs/wanted.md`, `designs/minimal-mono.md`, `designs/toss-like.md`, `designs/material-3.md`, `designs/linear-like.md`
 - 디자인 시안 selector: `.claude/plugins/select-design.sh`
 - 운영 아티팩트: `docs/codex-reading-order.md`, `docs/subagent-guide.md`, `docs/development-process.md`, `docs/development-process.html`, `docs/intake.html`, `docs/admin-fe-preview.html`, `docs/user-fe-preview.html`, `docs/user-fe-mobile-preview.html`
+- 검증 스크립트: `scripts/check-html.mjs` (HTML 인라인 `<script>` 구문 검사, Node 내장 모듈만)
 - Codex 레이어: `.codex/README.md`, `.codex/workflows/start.md`, `.codex/workflows/dev-start.md`, `.codex/workflows/intake.md`, `.codex/workflows/feature.md`, `.codex/workflows/bugfix.md`, `.codex/workflows/refactor.md`, `.codex/workflows/review.md`, `.codex/workflows/business-logic.md`, `.codex/workflows/design.md`, `.codex/checks/safety-checklist.md`, `.codex/checks/finish-checklist.md`
 - 런타임 앱: `../riderapp-runtime/` (sibling 저장소)
 

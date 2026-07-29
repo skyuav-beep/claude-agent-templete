@@ -1,4 +1,4 @@
-# 다음 세션 해야 할 일 (2026-05-30 종료 시점 기준)
+# 다음 세션 해야 할 일 (2026-07-29 기준)
 
 상세 컨텍스트와 결정 사유는 `STATE.md ## 다음 작업` 섹션 참조. 본 파일은 STATE.md `## 다음 작업`의 빠른 체크리스트 사본이다.
 
@@ -12,12 +12,10 @@
 
 ### A. 문서·디렉터리 보강
 
-- [ ] `docs/framework-structure-guide.md` 또는 `templates/framework-structure-intake.md` 작성 예시에 **실제 디렉터리 트리** 예시 추가 (feature-first hybrid 시나리오 기준 트리 + 각 폴더의 역할 한 줄)
 - [ ] 필요 시 `docs/template-usage.md` 또는 예시 프로젝트 문서 신설 (낮은 우선순위)
 
 ### B. UI/HTML 도구
 
-- [ ] `docs/intake.html`에 나머지 intake 템플릿 폼 추가 — 현재 startup QnA + 요청 5종(feature/bugfix/refactor/review/business-logic)만 폼화됨. 남은 12종: project/ui/responsive/tech/i18n/format/api/error/routing/form/qa/framework-structure
 - [ ] md → HTML 자동 동기화 스크립트 또는 단일 진입점(`docs/index.html`) 도입 검토 (수동 동기화 부담 분석 후 결정)
 
 ### C. 정리·중복 축소
@@ -89,6 +87,7 @@ Codex 분석(2026-05-14)과 본 에이전트 재검증으로 확인된 루트/�
 
 - [x] `AGENTS.md:117-122`의 `Constraint 1: 표(Table) 형식은 사용하지 않는다.` 적용 범위를 문장으로 명시한다 — 옵션 A 적용(Context Map 섹션 한정으로 재서술). 다른 문서의 표 사용은 유지. 전역화(옵션 B)가 필요하다면 별도 결정.
 - [x] `docs/plugin-guide.md`의 `버전 확인` 예시 경로가 현재 저장소 디렉터리명(`claude-agent-templete`)과 일치하는지 검토 — 정본을 `claude-agent-templete`(GitHub 저장소명, manifest `name` 필드)로 결정. plugin-guide.md 3개 경로 + manifest.json `name` 필드 통일, 문서 첫 단락에 정본 표기 메모 추가.
+  - ※ 정정(2026-07-29): 이후 2026-06-14 세션에서 정본을 `claude-agent-template`로 **재확정**했다. 폴더명 비의존 설계(hook은 git 루트/상위 `.claude` 탐색, 정본 식별자는 manifest `name`=`claude-agent-template` 하나)로 전환했으므로 PC별 폴더명(`template`/`templete`/`rules`)이 달라도 동작한다. 위 `templete` 정본 결정은 무효.
 - [x] `STATE.md` `다음 작업`의 `docs/ui-decisions.md 템플릿 추가` 항목이 실제 완료될 때 `development-process.md:89`의 참조도 함께 살아나는지 확인하고, 둘 중 한쪽이 변경되면 다른 쪽도 동기화하는 운영 메모 추가. — `development-process.md` Phase 3 단계 6에 동기화 운영 메모 추가, `STATE.md` 다음 작업 항목에 동기화 메모 inline 추가.
 
 ## 에러/누락 처리
