@@ -93,33 +93,33 @@ Claude Code는 `Agent` 도구를 통해 독립적인 서브 에이전트를 실�
 - 서브 에이전트 결과를 그대로 노출하지 않고, 핵심만 요약해서 전달한다.
 - 서브 에이전트가 작성한 내용 중 의심스러운 부분은 직접 확인 후 사용한다.
 
-## 서브 에이전트 템플릿 디스패치
+## 서브 에이전트 디스패치
 
-Claude에서 본 에이전트가 Agent 도구를 호출할 때 `.claude/agents/`의 템플릿을 읽어 프롬프트에 포함한다. Codex에서 subagent를 사용할 때는 같은 역할의 `.codex/agents/` 문서를 읽어 프롬프트 기준으로 삼는다.
+Claude에서는 `.claude/agents/`의 정의 파일이 frontmatter로 자동 등록되므로, Agent 도구의 `subagent_type`에 에이전트 이름을 지정해 호출한다. 정의 파일 본문을 프롬프트에 복사할 필요는 없다. Codex에서 subagent를 사용할 때는 같은 역할의 `.codex/agents/` 문서를 읽어 프롬프트 기준으로 삼는다.
 
 ### 디스패치 기준
 
-- 조사/탐색 작업 -> Claude: `.claude/agents/explorer.md` (Explore 타입) / Codex: `.codex/agents/explorer.md`
+- 조사/탐색 작업 -> Claude: `subagent_type: explorer` / Codex: `.codex/agents/explorer.md`
   - 트리거: 기존 구조 파악, 중복 확인, 근거 수집, 영향 범위 조사
   - 병렬 가능: 독립된 두 영역을 동시에 탐색할 때
 
-- 코드 리뷰 작업 -> Claude: `.claude/agents/code-reviewer.md` (general-purpose 타입) / Codex: `.codex/agents/code-reviewer.md`
+- 코드 리뷰 작업 -> Claude: `subagent_type: code-reviewer` / Codex: `.codex/agents/code-reviewer.md`
   - 트리거: 구현 완료 후 리스크 점검, PR 리뷰, 회귀 확인, repo conventions 검토
   - 순차 필요: 구현이 끝난 뒤에만 의미 있음
 
-- 설계/계획 작업 -> Claude: `.claude/agents/planner.md` (Plan 타입) / Codex: `.codex/agents/planner.md`
+- 설계/계획 작업 -> Claude: `subagent_type: planner` / Codex: `.codex/agents/planner.md`
   - 트리거: 큰 기능 추가 전, 구조 변경 전, 복합 요청 분해 시
   - 순차 필요: 조사 결과가 있어야 정확한 계획 가능
 
-- 테스트 실행 작업 -> Claude: `.claude/agents/test-runner.md` (general-purpose 타입) / Codex: `.codex/agents/test-runner.md`
+- 테스트 실행 작업 -> Claude: `subagent_type: test-runner` / Codex: `.codex/agents/test-runner.md`
   - 트리거: 구현 완료 후 테스트 실행, 테스트 실패 분석, 회귀 테스트
   - 병렬 가능: 코드 리뷰와 동시에 실행 가능
 
-- 기능 구현 작업 -> Claude: `.claude/agents/feature-dev.md` (general-purpose 타입) / Codex: `.codex/agents/feature-dev.md`
+- 기능 구현 작업 -> Claude: `subagent_type: feature-dev` / Codex: `.codex/agents/feature-dev.md`
   - 트리거: 설계 완료 후 end-to-end 기능 구현 위임
   - 순차 필요: planner 결과가 있어야 정확한 구현 가능
 
-- 디자인 일관성 리뷰 -> Claude: `.claude/agents/design-reviewer.md` (general-purpose 타입) / Codex: `.codex/agents/design-reviewer.md`
+- 디자인 일관성 리뷰 -> Claude: `subagent_type: design-reviewer` / Codex: `.codex/agents/design-reviewer.md`
   - 트리거: UI 산출물 검토, `DESIGN.md` 토큰 호출 준수 검증, Do/Don't 위반 검출, 다크 모드 alias 누락 점검
   - 병렬 가능: `code-reviewer`와 직교(코드 품질과 디자인 일관성은 별도 축)이므로 동시에 실행 가능
   - 순차 필요: UI 산출물이 만들어진 뒤에 의미 있음

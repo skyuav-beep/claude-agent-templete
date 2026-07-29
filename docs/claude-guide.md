@@ -8,7 +8,7 @@
 - `.claude/skills/*/SKILL.md`: 자연어 트리거 기반 자동 활성화 레이어다.
 - `.claude/commands/*.md`: 사용자가 직접 호출하는 slash command 레이어다.
 - `.claude/hooks/*.sh`: PreToolUse 가드레일이다.
-- `.claude/agents/*.md`: Claude `Agent` 도구 호출 시 쓰는 서브에이전트 프롬프트 템플릿이다.
+- `.claude/agents/*.md`: frontmatter로 자동 등록되는 서브에이전트 정의다. `Agent` 도구의 `subagent_type`으로 호출한다.
 - `.claude/plugins/*`: 다른 프로젝트에 템플릿 파일을 설치하는 도구다.
 
 ## 공통 정본

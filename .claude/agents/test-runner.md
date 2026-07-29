@@ -15,11 +15,11 @@ tools: Read, Glob, Grep, Bash
 
 ## Agent 타입
 
-`general-purpose` 타입으로 호출한다.
+Agent 도구의 `subagent_type`에 `test-runner`를 지정해 호출한다.
 
 ## 호출 시 필수 포함 항목
 
-본 에이전트가 이 템플릿을 사용할 때 프롬프트에 반드시 포함할 것:
+이 에이전트를 호출할 때 프롬프트에 반드시 포함할 것:
 - 테스트 명령: 실행할 테스트 명령어 (예: `npm test`, `pytest`)
 - 범위: 전체 스위트 / 특정 파일 / 특정 패턴
 - 배경: 어떤 변경 후 테스트를 돌리는지

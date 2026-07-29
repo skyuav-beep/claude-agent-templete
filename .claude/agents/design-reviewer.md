@@ -20,11 +20,11 @@ UI/스타일 산출물의 디자인 일관성을 점검하는 전용 서브에�
 
 ## Agent 타입
 
-`general-purpose` 타입으로 호출한다.
+Agent 도구의 `subagent_type`에 `design-reviewer`를 지정해 호출한다.
 
 ## 호출 시 필수 포함 항목
 
-본 에이전트가 이 템플릿을 사용할 때 프롬프트에 반드시 포함할 것:
+이 에이전트를 호출할 때 프롬프트에 반드시 포함할 것:
 - 리뷰 대상: 파일 목록, PR 번호, 또는 diff 범위 (CSS/SCSS/Tailwind config/JSX/TSX/HTML/Markdown UI 문서 등)
 - DESIGN.md 위치: 절대 경로
 - 적용 범위: light only / dark only / both

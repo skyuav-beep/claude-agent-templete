@@ -17,11 +17,11 @@ repo conventions 준수 여부를 검토한다.
 
 ## Agent 타입
 
-`general-purpose` 타입으로 호출한다.
+Agent 도구의 `subagent_type`에 `code-reviewer`를 지정해 호출한다.
 
 ## 호출 시 필수 포함 항목
 
-본 에이전트가 이 템플릿을 사용할 때 프롬프트에 반드시 포함할 것:
+이 에이전트를 호출할 때 프롬프트에 반드시 포함할 것:
 - 리뷰 대상: 파일 목록, PR 번호, 또는 diff 범위
 - 작업 유형: Feature / Bugfix / Refactor / Business Logic / Review
 - 중점 항목: 성능, 보안, 가독성, 테스트 등

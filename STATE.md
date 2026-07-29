@@ -37,7 +37,8 @@
   - **근본 문제**: 6개 파일 전부 YAML frontmatter 없이 `# 제목`으로 시작했다. Claude Code는 `.claude/agents/*.md`의 `name`·`description` frontmatter로 에이전트를 등록하므로, 파일이 정상 공유돼도 **등록 자체가 되지 않았다**. 템플릿 저장소 자체 세션에서도 6종이 뜨지 않아 심링크와 무관한 형식 문제임을 특정했다.
   - **수정**: 6개 파일 최상단에 `name`·`description`·`tools` frontmatter를 추가했다. `tools` 값은 각 파일의 기존 `## 도구 제한` 서술과 일치시켰다(읽기 전용 5종은 `Read, Glob, Grep, Bash`, `feature-dev`만 `Write, Edit` 포함). 본문은 무변경.
   - **검증**: frontmatter YAML 파싱 6/6 통과. headless 세션 실측으로 템플릿 저장소와 심링크 경유 프로젝트(`aiospace`) 양쪽에서 `code-reviewer`·`design-reviewer`·`explorer`·`feature-dev`·`planner`·`test-runner` 6종 전부 등록 확인 — **Claude Code가 심링크 디렉터리를 따라간다는 점도 함께 실증**됐다.
-  - **후속 과제**: ① 각 에이전트 파일의 `## Agent 타입` 섹션과 `CLAUDE.md:184`·`docs/subagent-guide.md:98`이 "Agent 도구 호출 시 템플릿을 읽어 프롬프트에 포함한다 / `general-purpose` 타입으로 호출한다"는 **자동 등록 이전 전제**로 서술돼 있어 실제 동작과 어긋난다(8곳). ② `mlm_v1.0`은 `rules` 심링크 자체가 없어 전파 대상에서 빠져 있다.
+  - **후속 정리 ①(문서 서술)**: 자동 등록 이전 전제로 쓰인 서술 14곳을 정리했다. 각 에이전트 파일의 `## Agent 타입`(6곳)은 `subagent_type` 지정 방식으로, 호출 항목 리드 문장(6곳)은 템플릿 복사 전제를 뺀 표현으로 바꿨다. `CLAUDE.md`(서브 에이전트 정의 섹션·Repo Map), `AGENTS.md` Context Map, `docs/subagent-guide.md`(디스패치 기준 6항목 포함), `docs/claude-guide.md`, `docs/plugin-guide.md`도 함께 맞췄다. `STATE.md`·`todo.md`의 과거 기록은 이력이므로 유지한다.
+  - **후속 정리 ②(연결 보완)**: `mlm_v1.0`은 `rules` 심링크는 있었으나 `.claude/` 내부 레이어 배선이 하나도 없었다(직전 보고의 "심링크 자체가 없다"는 오류였다). 사용자 승인으로 `agents`·`skills`·`commands`·`hooks`·`plugins` 5종 심링크를 걸어 다른 12곳과 동일 구성으로 맞췄다. headless 실측으로 서브에이전트 6종 등록을 확인했다. `hooks`는 심링크만 걸고 `settings.local.json` 등록은 하지 않아 아직 미작동이다 — 활성화는 별도 판단 사항이다. `.claude/`가 해당 저장소 `.gitignore` 대상이라 커밋 영향은 없다.
 
 - L3 가드레일 훅 4종 정상화 — 입력 규약 교체와 후속 결함 3건 해소. (2026-07-28, 커밋 `085a2ab`·`21e62e9`·`35d91ef`)
   - **발단**: `signal2` 세션의 가이드 상태 점검에서 훅 미작동이 드러나 사용자 승인(`1,2번 업데이트 진행해`)으로 착수했다. 훅 파일은 13개 연결 프로젝트가 symlink로 공유하므로 어느 프로젝트에서 고쳐도 이 저장소 원본이 바뀐다.
@@ -689,7 +690,7 @@
 - Slash Commands (명시적 호출): `.claude/commands/start.md`, `.claude/commands/dev-start.md`, `.claude/commands/intake.md`, `.claude/commands/request.md`, `.claude/commands/feature.md`, `.claude/commands/bugfix.md`, `.claude/commands/refactor.md`, `.claude/commands/review.md`, `.claude/commands/business-logic.md`
 - 가드레일 hooks: `.claude/hooks/block-destructive.sh`, `.claude/hooks/block-secret-files.sh`, `.claude/hooks/state-reminder.sh`, `.claude/hooks/warn-design-tokens.sh` (opt-in)
 - hooks 설정: `.claude/settings.local.json`
-- 서브에이전트 템플릿: `.claude/agents/explorer.md`, `.claude/agents/code-reviewer.md`, `.claude/agents/planner.md`, `.claude/agents/test-runner.md`, `.claude/agents/feature-dev.md`, `.claude/agents/design-reviewer.md`
+- 서브에이전트 정의(frontmatter 자동 등록): `.claude/agents/explorer.md`, `.claude/agents/code-reviewer.md`, `.claude/agents/planner.md`, `.claude/agents/test-runner.md`, `.claude/agents/feature-dev.md`, `.claude/agents/design-reviewer.md`
 - 플러그인: `.claude/plugins/manifest.json`, `.claude/plugins/VERSION`, `.claude/plugins/install.sh`
 - 플러그인 가이드: `docs/plugin-guide.md`
 - 요청 템플릿: `templates/feature-request.md`, `templates/bugfix-request.md`, `templates/review-request.md`, `templates/refactor-request.md`, `templates/business-logic-request.md`

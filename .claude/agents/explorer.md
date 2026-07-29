@@ -16,11 +16,11 @@ tools: Read, Glob, Grep, Bash
 
 ## Agent 타입
 
-`Explore` 타입으로 호출한다.
+Agent 도구의 `subagent_type`에 `explorer`를 지정해 호출한다.
 
 ## 호출 시 필수 포함 항목
 
-본 에이전트가 이 템플릿을 사용할 때 프롬프트에 반드시 포함할 것:
+이 에이전트를 호출할 때 프롬프트에 반드시 포함할 것:
 - 목적: 무엇을 조사하는가
 - 배경: 이미 확인한 것, 제외할 것
 - 탐색 수준: `quick` / `medium` / `very thorough`

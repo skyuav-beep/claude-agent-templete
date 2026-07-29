@@ -46,7 +46,7 @@ install.sh는 `manifest.json`에 등록된 파일을 대상 프로젝트에 복�
 - L2 Skills: `.claude/skills/` (10개 `SKILL.md` — 자연어 키워드로 자동 활성화)
 - L2 Commands: `.claude/commands/` (9개 slash command — 사용자가 직접 호출)
 - L3 Hooks: `.claude/hooks/` (4개 가드레일 스크립트, opt-in 1개 포함) + `settings.template.json` -> 설치 대상의 `settings.local.json`
-- L4 Subagents: `.claude/agents/` (6개 프롬프트 템플릿 — explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
+- L4 Subagents: `.claude/agents/` (6개 정의 파일 — explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer. frontmatter로 자동 등록)
 - Design library: `designs/` (6개 시안 + alias contract + template) + `.claude/plugins/select-design.sh`
 - Codex Layer: `.codex/` (workflow 10종 + checks 2종 + subagent prompt guide 6종)
 - Supporting: `agents/` (4개 역할 지침), `templates/` (요청 5종 + intake 12종 + startup checklist + data-table density), `docs/` (가이드/플레이북/HTML UI/런타임 매트릭스)
@@ -100,7 +100,7 @@ bash .claude/plugins/install.sh --update \
 - `docs/project-guide.md`: 프로젝트 목표, 기술·업무·검증 기준의 정본
 - `.claude/commands/`: 커맨드 추가/수정/삭제
 - `.claude/hooks/`: 가드레일 스크립트 추가/수정
-- `.claude/agents/`: 서브에이전트 템플릿 추가/수정
+- `.claude/agents/`: 서브에이전트 정의 추가/수정 (frontmatter의 `name`·`description` 필수)
 - `.codex/`: Codex workflow/check/subagent guide 추가/수정
 - `agents/`: 역할별 체크리스트 프로젝트에 맞게 조정
 

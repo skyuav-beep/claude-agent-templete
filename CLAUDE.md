@@ -108,7 +108,7 @@
 - `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 10종)
 - `.claude/commands/` — L2 보조 (명시적 slash command 9종, skills와 병존)
 - `.claude/hooks/` — L3 Guardrails (가드레일 스크립트 4종, opt-in 1종 포함)
-- `.claude/agents/` — L4 서브에이전트 프롬프트 템플릿 6종 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
+- `.claude/agents/` — L4 서브에이전트 정의 6종, frontmatter로 자동 등록 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - `.claude/plugins/` — L5 배포 도구 (manifest, install)
 - `.codex/` — Codex runtime adapter (workflow 10종, checks 2종, subagent prompt guide 6종). Claude 자동화와 분리된 보완 레이어
 
@@ -178,17 +178,21 @@ Claude Code의 `Agent` 도구로 서브 에이전트를 실행할 수 있다.
 - 역할 분리가 명확히 필요한 경우에만 서브 에이전트를 활용한다.
 - 서브 에이전트 결과는 반드시 본 에이전트가 검토 후 사용자에게 전달한다.
 
-## 서브 에이전트 템플릿
+## 서브 에이전트 정의
 
-`.claude/agents/`에 역할별 프롬프트 템플릿이 있다.
-Agent 도구를 호출할 때 해당 템플릿을 읽어 프롬프트에 포함한다.
+`.claude/agents/`에 역할별 서브에이전트 정의가 있다.
+각 파일 최상단의 frontmatter(`name`, `description`, `tools`)로 Claude Code에 자동 등록되며,
+Agent 도구의 `subagent_type`에 `name` 값을 지정해 호출한다.
 디스패치 기준은 `docs/subagent-guide.md`를 참조한다.
 
-- 조사/탐색: `.claude/agents/explorer.md` (Explore 타입)
-- 코드 리뷰: `.claude/agents/code-reviewer.md` (general-purpose 타입)
-- 설계/계획: `.claude/agents/planner.md` (Plan 타입)
-- 테스트 실행: `.claude/agents/test-runner.md` (general-purpose 타입)
-- 기능 구현: `.claude/agents/feature-dev.md` (general-purpose 타입)
+- 조사/탐색: `explorer`
+- 코드 리뷰: `code-reviewer`
+- 설계/계획: `planner`
+- 테스트 실행: `test-runner`
+- 기능 구현: `feature-dev`
+- 디자인 리뷰: `design-reviewer`
+
+정의 파일을 추가하거나 수정할 때 frontmatter의 `name`, `description`은 반드시 유지한다. 없으면 등록되지 않는다.
 
 ## Plugins Layer (배포)
 
