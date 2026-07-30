@@ -31,6 +31,15 @@
 
 ## 이번 세션에서 완료한 작업
 
+- `mlm_v1.0` 가이드 연결 완결 + `block-secret-files.sh` `.env` 변형 커버·오탐 2종 해소. (2026-07-30)
+  - **발단**: `mlm_v1.0` 에이전트 가이드 연결 점검 요청. 심링크 6종(`rules`·`.codex`·`.claude/*` 5)은 전부 정상이었으나 **L1 문서 체인과 L3 훅 두 곳이 끊겨 있었다**. 어제(2026-07-29) 조치는 심링크 배선까지였고, 훅 `settings` 미등록은 "활성화는 별도 판단 사항"으로 남긴 상태였다(본 파일 `## 지난 세션 기록` 참조).
+  - **mlm 쪽 수리 3건**: ① `.claude/settings.json` 신규 — 가드레일 3종을 root 탐색 래퍼로 등록(Bash 3·Write 1·Edit 1). ② `CLAUDE.md`에 `## 🔗 공통 규칙 연결` 신설 — 8단계 읽기 순서(`rules/CLAUDE.md`·`rules/AGENTS.md`·`rules/agents/*`)와 배선 구조·정본 fallback 명시. 연결 14곳 중 유일하게 `rules/` 참조가 0건이던 문제를 해소(0 → 14건). ③ `AGENTS.md`에 `## Rule Precedence` 신설 — 적용 순서와 확정 충돌 3건(커밋 정책·6단계 파이프라인·디자인 정본)을 표로 고정. `.claude/`는 해당 저장소 `.gitignore` 대상이라 커밋 영향 없음, 문서 2건은 미커밋으로 두었다(해당 저장소는 사용자 지시 없이 커밋하지 않는 규칙).
+  - **공통 훅 결함(실측으로 발견)**: `block-secret-files.sh`가 비밀 파일을 `.env`·`.env.*` 정확 일치로만 판정해 `backend.env`(mlm의 DB 접속·JWT 서명키 보관 파일) 쓰기가 **통과**했다. 판정을 `.env` 자체 + `*.env` 접두 변형 + `*.env.*` 접미 변형으로 확장했다. 예시 파일 예외(`.example`/`.sample`/...)는 기존 로직이 선행 처리하므로 무변경.
+  - **확장이 만든 오탐 2종 동시 해소**: ① glob 토큰(`find -name "*.env"`)을 파일명으로 오인 → 토큰에 `*?[` 포함 시 판정 제외. ② heredoc 본문(`python3 - <<'PY' ... PY`)을 셸 명령으로 스캔해 스크립트 안의 `".env"` 문자열에 반응 → 본문을 걷어내고 명령줄만 검사. 더불어 `2>/dev/null` 리다이렉션만으로 쓰기성 판정되던 것도 제외했다. 셋 다 이번 세션에서 실제로 도구 실행이 막혀 드러난 건이다.
+  - **검증**: 회귀 52/52 통과(파일명 34·Bash 명령 17·2MB payload 1). 기존 보호 13종(`.env`·`id_rsa`·`*.pem`·`service-account*.json` 등) 전부 유지, 기존 예외 11종 전부 통과. `mlm_v1.0` 루트에서 실제 배선 래퍼 경유 라이브 실측 7/7(`backend.env` 차단 · `backend.env.example` 통과 · 파괴적 명령 2종 차단 · 정상 명령 통과).
+  - **영향 범위**: 연결 14곳 전수 스캔 결과 새로 보호 대상이 된 실재 파일은 `mlm_v1.0/backend.env` **1건**뿐 — 나머지 13곳은 무영향. 보호 범위는 넓어지기만 했다.
+  - **남은 후속**: `block-destructive.sh`도 같은 계열의 인용문 오탐(heredoc 본문·문서 인용)이 남아 있다. 이번 세션에서도 검증 명령이 1회 오차단됐다. 이번 수정은 `block-secret-files.sh` 한 파일 범위로 한정했다.
+
 - Codex 연결 프로젝트의 `rules/` 경로 fallback 완성 + 플러그인 v2.0.1. (2026-07-30)
   - **발단**: `goldlink` 적용 점검에서 Claude skills·commands·subagents는 프로젝트에 없는 `templates/`·`agents/`·`docs/`를 `rules/` 아래에서 찾지만, Codex workflows 10종·agent guides 6종은 프로젝트 루트 경로만 지시해 기준 문서를 놓칠 수 있음을 확인했다. 직전 기록에서 범위 밖으로 남긴 결함을 이번에 해소했다.
   - **변경**: 루트 경로 규칙 대상을 `skill·command·workflow·agent guide`로 확장하고 `designs/`도 포함했다. `.codex/README.md`·`docs/codex-guide.md`에 공통 해석 규칙을 추가했으며, workflow 10종과 agent guide 6종 각각에 프로젝트 우선 → `rules/` fallback → 공통본 사용 보고 규칙을 넣어 단독 로드 시에도 동작하게 했다. 디자인 문서는 프로젝트가 별도 정본이나 코드 토큰 정본을 지정한 경우 이를 우선하도록 명시했다.

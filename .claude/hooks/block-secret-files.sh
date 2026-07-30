@@ -36,9 +36,12 @@ def is_secret_name(path: str) -> bool:
     base = os.path.basename(path.strip("'\"")).lstrip("([{'\"").rstrip(".,;:!?)]}'\"")
     if is_sample_name(base):
         return False
-    if base in {".env", "credentials.json", "secrets.json", "id_rsa", "id_ed25519"}:
+    if base in {"credentials.json", "secrets.json", "id_rsa", "id_ed25519"}:
         return True
-    if base.startswith(".env."):
+    # .env 계열은 이름 변형이 많다. `.env` 자체, `backend.env`처럼 접두어가 붙은 형태,
+    # `.env.local`·`backend.env.production`처럼 접미어가 붙은 형태를 모두 비밀 파일로 본다.
+    # 예시 파일(.example/.sample/...)은 위 is_sample_name에서 이미 걸러진다.
+    if base == ".env" or base.endswith(".env") or ".env." in base:
         return True
     if base.startswith("service-account") and base.endswith(".json"):
         return True
@@ -79,6 +82,33 @@ command = data.get("command") or ""
 if not command:
     sys.exit(0)
 
+
+def strip_heredocs(cmd: str) -> str:
+    """heredoc 본문(<<'PY' ... PY)은 셸 명령이 아니라 데이터다.
+
+    python/node 스크립트를 heredoc으로 넘기면 본문 안의 `f == ".env"` 같은 문자열이
+    파일명 토큰으로 잡혀 오차단된다. 본문을 걷어내고 실제 명령줄만 남긴다.
+    """
+    lines = cmd.split("\n")
+    kept, i = [], 0
+    while i < len(lines):
+        line = lines[i]
+        kept.append(line)
+        i += 1
+        m = re.search(r"<<-?\s*['\"]?([A-Za-z_][A-Za-z0-9_]*)['\"]?", line)
+        if not m:
+            continue
+        delim = m.group(1)
+        while i < len(lines) and lines[i].strip() != delim:
+            i += 1
+        i += 1  # 종료 구분자 라인도 건너뛴다
+    return "\n".join(kept)
+
+
+# /dev/null 리다이렉션은 파일 쓰기가 아니다. `find ... 2>/dev/null` 같은 조회 명령이
+# 쓰기성으로 분류돼 뒤따르는 토큰 검사까지 도는 것을 막는다.
+command = re.sub(r"\d?>>?\s*/dev/null", " ", strip_heredocs(command))
+
 try:
     tokens = shlex.split(command, posix=True)
 except ValueError:
@@ -95,6 +125,11 @@ for token in tokens:
     candidate = token
     if candidate.startswith((">", ">>")):
         candidate = candidate.lstrip(">")
+    # glob 패턴은 실제 파일명이 아니다. `find -name "*.env"`, `ls *.env` 같은 조회
+    # 명령이 리다이렉션(2>/dev/null) 때문에 쓰기성으로 분류돼 오차단되는 것을 막는다.
+    # 도구 경로(Write/Edit의 file_path)는 항상 리터럴이라 이 예외의 영향을 받지 않는다.
+    if any(ch in candidate for ch in "*?["):
+        continue
     if is_secret_name(candidate):
         block(os.path.basename(candidate.strip("'\"")))
 
