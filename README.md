@@ -103,6 +103,7 @@ Codex에서는 자동 hook이 없으므로 `.codex/checks/safety-checklist.md`�
 
 문서 기반 운영을 보조하는 정적 HTML UI를 `docs/` 아래에 둔다. 모두 외부 의존성 없는 단일 파일이며, `file://` 또는 임의의 정적 서버에서 동작한다.
 
+- `docs/guide-browser.html` — 저장소의 모든 Markdown 문서를 탐색·검색·열람하는 가이드 브라우저. 사이드바 그룹 트리, 제목·섹션 검색(본문 검색 토글), 문서 내 목차, 문서 간 링크 이동을 제공한다. `scripts/build-docs-index.mjs`가 만든 `docs/docs-index.json`을 읽는다.
 - `docs/development-process.html` — 개발 프로세스 시각 가이드 + 단계별 체크리스트(`localStorage` 저장) + STATE 미니 대시보드.
 - `docs/development-strategy.html` — UI Mock First 기본 경로와 Logic/DB First 예외 경로를 비교하는 개발 전략 매뉴얼.
 - `docs/intake.html` — Startup QnA 11섹션 위저드 + 핵심 요청 템플릿 폼. 입력값을 Markdown으로 내보낸다.
@@ -121,27 +122,28 @@ Codex에서는 자동 hook이 없으므로 `.codex/checks/safety-checklist.md`�
 node scripts/check-html.mjs
 ```
 
-### 정적 서버로 열기
+### 로컬 서버로 열기
 
-`file://`로 열면 STATE 패널 fetch가 막히고, 일부 환경에서는 `.md` 응답 인코딩이 OS 기본값으로 떨어져 한글이 깨질 수 있다. 저장소 루트에서 아래 명령을 실행하면 charset 명시된 정적 서버가 뜬다.
+`file://`로 열면 브라우저가 fetch를 막아 가이드 브라우저와 STATE 패널이 동작하지 않고, 일부 환경에서는 `.md` 응답 인코딩이 OS 기본값으로 떨어져 한글이 깨진다. 저장소 루트에서 아래 명령을 실행한다.
 
 ```bash
-python3 -c "
-import http.server
-H = http.server.SimpleHTTPRequestHandler
-H.extensions_map.update({
-    '.md': 'text/markdown; charset=utf-8',
-    '.html': 'text/html; charset=utf-8',
-    '.txt': 'text/plain; charset=utf-8',
-    '.js': 'application/javascript; charset=utf-8',
-    '.css': 'text/css; charset=utf-8',
-    '.json': 'application/json; charset=utf-8',
-})
-http.server.test(HandlerClass=H, port=8765, bind='127.0.0.1')
-"
+node scripts/serve-docs.mjs            # 기본 8765 포트
+node scripts/serve-docs.mjs --port 9000
+node scripts/serve-docs.mjs --no-index # 문서 인덱스 재생성 없이 서버만
 ```
 
-접속 주소는 `http://localhost:8765/docs/development-process.html`, `http://localhost:8765/docs/development-strategy.html`, `http://localhost:8765/docs/intake.html`.
+시작할 때 `docs/docs-index.json`을 다시 만들고 `127.0.0.1`에만 바인딩한다. GET/HEAD만 받는 **읽기 전용** 서버이며 저장소 밖 경로 요청은 거부한다. 외부 의존성 없이 Node 내장 모듈만 쓴다.
+
+시작 주소는 `http://localhost:8765/docs/guide-browser.html`이고, 루트(`/`)로 접속해도 같은 화면으로 연결된다. 나머지 화면은 `http://localhost:8765/docs/<파일명>.html`.
+
+문서 인덱스만 따로 다루려면:
+
+```bash
+node scripts/build-docs-index.mjs          # 인덱스 생성
+node scripts/build-docs-index.mjs --check  # 갱신 필요 여부만 검사(쓰기 없음)
+```
+
+인덱스는 파생 산출물이라 git으로 추적하지 않는다. 다른 정적 서버를 쓰더라도 `.md`·`.json`에 `charset=utf-8`을 붙이고 저장소 루트를 문서 루트로 잡아야 한다.
 
 ## 권장 다음 단계
 
@@ -149,4 +151,4 @@ http.server.test(HandlerClass=H, port=8765, bind='127.0.0.1')
 - `templates/` 확장
 - intake 답변 예시와 guide 작성 예시 추가
 - 필요 시 `docs/` 아래에 템플릿 사용 예시 추가
-- HTML UI(현재 6종) 확장 또는 md→HTML 자동 동기화 스크립트 도입
+- HTML UI(현재 7종) 확장 또는 md→HTML 자동 동기화 스크립트 도입

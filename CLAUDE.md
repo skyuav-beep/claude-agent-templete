@@ -119,6 +119,7 @@
 - `.claude/agents/` — L4 서브에이전트 정의 6종, frontmatter로 자동 등록 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - `.claude/plugins/` — L5 배포 도구 (manifest, install)
 - `.codex/` — Codex runtime adapter (workflow 10종, checks 2종, subagent prompt guide 6종). Claude 자동화와 분리된 보완 레이어
+- `scripts/` — 저장소 유지보수 스크립트 (문서 인덱스 생성, 로컬 문서 서버, HTML 구문 검사). Node 내장 모듈만 사용하며 설치 배포 대상이 아니다. 문서 UI는 `node scripts/serve-docs.mjs`로 연다
 
 ## Design System
 
