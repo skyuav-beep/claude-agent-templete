@@ -12,7 +12,7 @@
 4. 기존 테스트나 사용 경로를 확인한다.
 5. 동작 변경 없이 구조만 정리한다.
 6. 검증 기준에 맞게 테스트 또는 정적 확인을 실행한다.
-7. 로컬 검증·Docker 재빌드 판단·Git 절차는 `docs/local-dev-ci-guide.md`를 따른다. 로컬 CI·push·PR·머지·브랜치 정리는 사용자 명시 요청 시 수행하며, 머지는 §6.3 게이트를 통과해야 한다. 배포/원격 migration은 사용자 수동이다.
+7. 승인·Git 수명주기는 `docs/approval-workflow.md`, 빠른 검증·Docker 판단은 `docs/local-dev-ci-guide.md`를 따른다.
 
 ## 산출물
 

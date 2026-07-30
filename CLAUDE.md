@@ -4,6 +4,7 @@
 운영 프로세스, Context Map, 작업 절차는 `AGENTS.md`를 참조한다.
 <!-- agent-template:project-guide-routing:start -->
 모든 작업에서 `AGENTS.md ## 프로젝트 로컬 가이드 우선`에 따라 프로젝트 가이드와 관련 로컬 문서를 템플릿 기본값보다 먼저 적용한다.
+단순 사실 조회를 제외한 분석·변경 작업은 `docs/approval-workflow.md`(없으면 `rules/docs/approval-workflow.md`)의 6단계 승인 절차를 따른다.
 <!-- agent-template:project-guide-routing:end -->
 
 ## Core Philosophy
@@ -16,8 +17,9 @@
 ## Golden Rules
 
 - 사용자 요청 없이 파괴적 명령을 실행하지 않는다.
-- agent 자동 실행 범위는 로컬 검증(Docker Desktop)·`local` migration·commit·작업 브랜치 생성까지다. **로컬 CI·push·PR·머지·브랜치 정리는 사용자 명시 요청 시 수행하며, 머지는 검증 게이트를 통과하고 보호 규칙을 우회하지 않는 경우에만 가능하다(§6).** 환경은 `local`(내 PC Docker) / `develop`(원격 개발서버) / `production`(원격 운영서버) 3-tier로 호칭하고 "dev" 단독 표기는 쓰지 않는다. migration은 `local`에만 자동 적용하고 `develop`·`production`은 사용자가 수동 진행하며, 판단은 명령명이 아니라 `DATABASE_URL` 연결 대상으로 한다. GitHub Actions 배포/릴리스도 agent는 트리거하지 않는다. (상세: `docs/local-dev-ci-guide.md §0`)
-- 로컬 commit은 자주 누적해도 되지만, **로컬 CI 전체 스위트 실행**·`git push`·`PR 생성`·`PR 머지`·브랜치 정리는 **사용자가 명시 지시할 때만** 수행한다(개발 루프 중 모듈 단위 로컬 검증은 상시). 자발적 머지와 보호 규칙 우회는 금지하며 머지 후 원격 base 반영을 검증한다. 예외: 세션 종료 백업 push 1회(원격 자동 CI가 남아 있으면 `[skip ci]`). 배포·릴리스·원격 migration은 사용자 수동이다. (정의: `docs/local-dev-ci-guide.md §1.1`, 절차: `§6`)
+- 작업은 `docs/approval-workflow.md`의 6단계 승인 절차를 따른다. 3단계에서 승인된 정확한 범위 안에서만 branch/worktree 생성, commit, push, ready PR, merge, 원격 base 검증과 cleanup을 수행한다.
+- 전체 로컬 CI는 작업별로 실행하지 않고 배치 대기열에 기록한다. 6단계에서는 빠른 범위 검증만 하되 인증·권한·결제·정산·migration 관련 필수 검증은 생략하지 않는다.
+- 보호 규칙 우회, 강제 push, 배포·릴리스, `develop`·`production` migration은 승인 범위에 포함하지 않으며 실행하지 않는다.
 - 확인하지 않은 외부 의존성, 비밀값, API 키를 임의로 추가하지 않는다.
 - 관련 없는 파일 수정이나 목적과 무관한 구조 확장을 하지 않는다.
 - 확인되지 않은 사항을 사실처럼 단정하지 않는다.
@@ -66,6 +68,14 @@
 - **절제 대상이 아닌 것**: 커밋 해시·버전·테스트/린트 카운트 등 검증 사실, 사용자가 실행할 명령, 서비스 URL·포트. 종전대로 정확히 남긴다.
 - **예외**: 코드 리뷰·리팩터링·버그 원인 분석처럼 **코드 자체가 대상**인 요청에서는 식별자가 설명의 본체이므로 종전대로 정확히 쓴다.
 
+### 보고 범위 한정 (물어본 것만)
+
+- 답변은 **사용자가 지정한 대상**(저장소·디렉터리·기능)으로 한정한다. 요청 대상이 명시되지 않으면 현재 세션이 열려 있는 저장소를 대상으로 본다.
+- 다른 저장소·연결 프로젝트의 상태(미커밋 변경, 미푸시 커밋, 대기 중인 작업, 열린 PR 등)는 **사용자가 물을 때만** 언급한다. 요약 말미에 "참고로 다른 저장소에는 …"을 덧붙이지 않는다. 대상이 섞이면 어느 저장소 이야기인지 혼동된다.
+- **반드시 말해야 하는 예외**: ① 이번 작업에서 **다른 저장소·범위 밖 파일을 실제로 변경**한 경우 ② 요청한 작업이 다른 대상의 상태 때문에 **막히거나 결과가 달라지는** 경우 ③ 사용자가 인지하지 못한 채 **데이터·이력이 사라질 위험**이 있는 경우. 이 셋은 범위와 무관하게 보고한다.
+- 범위 밖에 후속 작업이 남아 있다고 판단되면, 상태를 늘어놓는 대신 **한 줄 질문으로만** 열어 둔다(예: "다른 저장소도 확인할까요?"). 사용자가 요청하면 그때 전체를 보고한다.
+- 여러 대상을 한 번에 다뤄야 하는 작업(연결 프로젝트 일괄 점검 등)은 이 규칙의 대상이 아니다. 이때는 대상별로 구분해 보고한다.
+
 ## Architecture Rules
 
 <!-- CUSTOMIZE: 프로젝트 아키텍처에 맞게 수정 -->
@@ -111,6 +121,7 @@
 - `.claude/agents/` — L4 서브에이전트 정의 6종, frontmatter로 자동 등록 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - `.claude/plugins/` — L5 배포 도구 (manifest, install)
 - `.codex/` — Codex runtime adapter (workflow 10종, checks 2종, subagent prompt guide 6종). Claude 자동화와 분리된 보완 레이어
+- `scripts/` — 저장소 유지보수 스크립트 (문서 인덱스 생성, 로컬 문서 서버, HTML 구문 검사). Node 내장 모듈만 사용하며 설치 배포 대상이 아니다. 문서 UI는 `node scripts/serve-docs.mjs`로 연다
 
 ## Design System
 

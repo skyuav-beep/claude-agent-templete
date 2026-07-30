@@ -27,9 +27,27 @@ const files = readdirSync(targetDir)
 let checked = 0;
 let skipped = 0;
 const failures = [];
+const controlChars = [];
+
+// 원시 제어 문자는 파일을 바이너리로 만들어 grep 같은 텍스트 도구를 무력화한다.
+// 파서가 U+FFFD로 치환하면 문자열 값 자체가 달라지므로 sentinel 용도로도 위험하다.
+// 이스케이프 표기(\u0000 등)로 적어야 한다. 탭·개행·CR은 정상 문자다.
+const CONTROL_RE = /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g;
 
 for (const file of files) {
   const html = readFileSync(join(targetDir, file), 'utf8');
+
+  let ctrl;
+  const seen = new Set();
+  CONTROL_RE.lastIndex = 0;
+  while ((ctrl = CONTROL_RE.exec(html)) !== null) {
+    const code = ctrl[0].charCodeAt(0);
+    if (seen.has(code)) continue;
+    seen.add(code);
+    const line = html.slice(0, ctrl.index).split('\n').length;
+    controlChars.push({ file, code, line });
+  }
+
   let match;
   let idx = 0;
   while ((match = scriptRe.exec(html)) !== null) {
@@ -64,16 +82,25 @@ for (const file of files) {
   }
 }
 
+if (controlChars.length > 0) {
+  console.error('\n원시 제어 문자:');
+  for (const c of controlChars) {
+    const hex = c.code.toString(16).padStart(4, '0').toUpperCase();
+    console.error(`  ✗ ${c.file}:${c.line} — U+${hex} 가 그대로 들어 있습니다. \\u${hex} 표기로 바꾸세요.`);
+  }
+}
+
 if (failures.length > 0) {
   console.error('\n구문 오류:');
   for (const f of failures) {
     console.error(`  ✗ ${f.file} (script #${f.idx}): ${f.message}`);
   }
   console.error(`\n${failures.length}/${checked} 개 스크립트 블록이 구문 검사에 실패했습니다.`);
-  process.exit(1);
 }
 
+if (failures.length > 0 || controlChars.length > 0) process.exit(1);
+
 console.log(
-  `✓ HTML ${files.length}개의 인라인 스크립트 ${checked}개 구문 검사 통과` +
+  `✓ HTML ${files.length}개의 인라인 스크립트 ${checked}개 구문 검사 + 제어 문자 검사 통과` +
     (skipped ? ` (건너뜀 ${skipped}개)` : ''),
 );

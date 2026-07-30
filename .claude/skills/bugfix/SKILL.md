@@ -28,7 +28,7 @@ description: "사용자가 버그, 에러, 오류, 안 된다, 깨졌다, 작동
 
 ## 완료 후
 
-구조화된 bugfix-request 마크다운 블록을 출력하고, 바로 원인 조사를 시작할지 사용자에게 확인한다. 수정·검증 단계는 `docs/local-dev-ci-guide.md`를 따른다 — 로컬 Docker Desktop 검증, 로컬 CI·push는 사용자 요청 시(CI는 GitHub Actions가 아니라 로컬 실행 — 가이드의 로컬 CI 절).
+구조화된 bugfix-request 마크다운 블록을 1단계 산출물로 출력한다. 이후 `docs/approval-workflow.md`의 2단계 읽기 전용 분석과 3단계 승인을 거친 뒤 수정한다.
 
 ## 다른 skill과의 연계
 

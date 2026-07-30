@@ -35,4 +35,4 @@ description: "사용자가 비즈니스 로직 변경, 정책 변경, 시나리�
 
 ## 완료 후
 
-구조화된 business-logic-request 마크다운 블록을 출력하고, 바로 구현을 시작할지 사용자에게 확인한다.
+구조화된 business-logic-request 마크다운 블록을 1단계 산출물로 출력한다. 이후 `docs/approval-workflow.md`의 2단계 읽기 전용 분석과 3단계 승인을 거친 뒤 구현한다.

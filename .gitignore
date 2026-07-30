@@ -4,6 +4,11 @@ DESIGN.md.bak
 # install.sh가 대상 프로젝트에 생성하는 마커는 트래킹 (각 프로젝트가 자체 관리)
 # .claude/.active-design  ← 트래킹 함
 
+# guide-browser.html이 읽는 문서 인덱스. scripts/build-docs-index.mjs가 생성하며
+# serve-docs.mjs가 서버를 띄울 때 자동으로 다시 만든다. 문서를 고칠 때마다 바뀌는
+# 파생 산출물이라 추적하지 않는다.
+docs/docs-index.json
+
 # 일반적인 OS/에디터 노이즈
 .DS_Store
 Thumbs.db

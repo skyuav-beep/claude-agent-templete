@@ -11,7 +11,7 @@
 3. UI 영향이 있으면 `.codex/workflows/design.md`를 함께 적용한다.
 4. 구현 전 `agents/executor-agent.md`와 관련 `docs/`를 확인한다.
 5. 구현 후 테스트 가능 범위를 실행한다.
-6. 로컬 검증·Docker 재빌드 판단·Git 절차는 `docs/local-dev-ci-guide.md`를 따른다. 로컬 CI·push·PR·머지·브랜치 정리는 사용자 명시 요청 시 수행하며, 머지는 §6.3 게이트를 통과해야 한다. 배포/원격 migration은 사용자 수동이다.
+6. 승인·Git 수명주기는 `docs/approval-workflow.md`, 빠른 검증·Docker 판단은 `docs/local-dev-ci-guide.md`를 따른다.
 7. 문서나 운영 규칙이 바뀌면 `STATE.md`를 갱신한다.
 
 ## 산출물
