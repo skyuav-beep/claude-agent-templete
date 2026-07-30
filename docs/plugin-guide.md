@@ -44,7 +44,7 @@ install.sh는 `manifest.json`에 등록된 파일을 대상 프로젝트에 복�
 
 - L1 Memory: `CLAUDE.md`, `AGENTS.md`, `STATE.md`, `DESIGN.md`
 - L2 Skills: `.claude/skills/` (10개 `SKILL.md` — 자연어 키워드로 자동 활성화)
-- L2 Commands: `.claude/commands/` (9개 slash command — 사용자가 직접 호출)
+- L2 Commands: `.claude/commands/` (10개 slash command — 사용자가 직접 호출)
 - L3 Hooks: `.claude/hooks/` (4개 가드레일 스크립트, opt-in 1개 포함) + `settings.template.json` -> 설치 대상의 `settings.local.json`
 - L4 Subagents: `.claude/agents/` (6개 정의 파일 — explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer. frontmatter로 자동 등록)
 - Design library: `designs/` (6개 시안 + alias contract + template) + `.claude/plugins/select-design.sh`

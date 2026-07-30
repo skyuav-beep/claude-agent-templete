@@ -2,6 +2,8 @@
 
 개별 주제 intake 요청을 받으면 이 절차를 따른다.
 
+> 경로 규칙: 아래 `templates/`·`agents/`·`docs/`·`designs/`·`DESIGN.md`는 프로젝트 루트를 먼저 찾고, 없으면 `rules/` 아래 같은 경로를 읽는다. 프로젝트 로컬 파일이 우선이며 공통본을 사용했으면 작업 보고에 밝힌다.
+
 ## 토픽 매핑
 
 - project: `templates/project-intake.md`

@@ -10,7 +10,7 @@
 4. `docs/project-guide.md`가 있으면 읽고 현재 작업 영역의 하위 `AGENTS.md`와 관련 로컬 문서를 확인한다.
 5. `.codex/checks/safety-checklist.md`로 작업 전 사용자 확인 경계를 확인한다.
 6. 작업 유형에 맞는 `.codex/workflows/*.md`를 읽는다. 유형이 모호하면 `.codex/workflows/request.md`로 먼저 분류한다.
-7. workflow가 지시하는 프로젝트 로컬 `templates/`, `docs/`, `DESIGN.md`를 공통 정본으로 사용한다.
+7. workflow가 지시하는 `templates/`, `agents/`, `docs/`, `designs/`, `DESIGN.md`는 프로젝트 루트를 먼저 찾고, 없으면 `rules/` 아래 같은 경로를 읽는다. 프로젝트 로컬 파일이 우선이며 공통본을 사용했으면 작업 보고에 밝힌다.
 8. 작업이 끝나면 `.codex/checks/finish-checklist.md`를 기준으로 검증과 인계를 정리한다.
 
 ## Claude 기능의 Codex 대응
@@ -40,6 +40,7 @@
 
 - Codex는 실제 파일과 실행 결과를 우선한다.
 - 모든 workflow와 agent guide는 `AGENTS.md ## 프로젝트 로컬 가이드 우선`을 선행 기준으로 적용한다.
+- workflow나 agent guide를 단독으로 읽어도 같은 경로 규칙을 적용한다. 프로젝트에 참조 파일이 없다는 이유로 기준 문서를 생략하지 않는다.
 - 긴 답변의 분할, 단계 상태 유지, 최종 통합 기준은 `CLAUDE.md ## 답변 포맷`을 따른다.
 - Claude 전용 파일은 참고 가능하지만 Codex 자동화로 가정하지 않는다.
 - Codex agent guide는 Claude subagent와 같은 책임을 수행한다. 상세 점검 항목은 `.codex/agents/*.md`가 지정한 공통 문서와, 필요한 경우 같은 이름의 `.claude/agents/*.md`를 비교 기준으로 삼는다.

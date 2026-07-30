@@ -2,6 +2,12 @@
 
 이 디렉터리는 Codex가 Claude Code 전용 자동화 없이 같은 운영 절차를 수행하도록 돕는 런타임 어댑터다.
 
+## 경로 해석
+
+- workflow와 agent guide가 지시하는 `templates/`, `agents/`, `docs/`, `designs/`, `DESIGN.md`는 프로젝트 루트를 먼저 찾는다.
+- 프로젝트에 없고 루트 `rules/`가 있으면 `rules/` 아래 같은 경로를 읽는다.
+- 프로젝트 로컬 파일이 공통본보다 우선이며, `rules/` 공통본을 대신 읽었으면 작업 보고에 한 줄로 밝힌다.
+
 ## 읽기 순서
 
 1. `AGENTS.md`
@@ -10,7 +16,7 @@
 4. `docs/project-guide.md`가 있으면 해당 문서와 현재 작업 영역의 하위 `AGENTS.md`
 5. `.codex/checks/safety-checklist.md`
 6. `.codex/workflows/<작업유형>.md`
-7. workflow가 가리키는 프로젝트 로컬 `templates/`, `docs/`, `DESIGN.md`
+7. workflow가 가리키는 프로젝트 로컬 정본 또는 위 경로 규칙에 따른 `rules/` 공통본
 8. `.codex/checks/finish-checklist.md`
 
 ## 작업 라우팅

@@ -2,6 +2,8 @@
 
 Codex subagent로 조사 작업을 위임할 때 사용한다. Claude `.claude/agents/explorer.md`와 같은 조사 책임을 Codex 방식으로 수행한다.
 
+> 경로 규칙: 아래 `templates/`·`agents/`·`docs/`·`designs/`·`DESIGN.md`는 프로젝트 루트를 먼저 찾고, 없으면 `rules/` 아래 같은 경로를 읽는다. 프로젝트 로컬 파일이 우선이며 공통본을 사용했으면 작업 보고에 밝힌다.
+
 ## 기준 문서
 
 1. `agents/researcher-agent.md`

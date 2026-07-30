@@ -31,6 +31,12 @@
 
 ## 이번 세션에서 완료한 작업
 
+- Codex 연결 프로젝트의 `rules/` 경로 fallback 완성 + 플러그인 v2.0.1. (2026-07-30)
+  - **발단**: `goldlink` 적용 점검에서 Claude skills·commands·subagents는 프로젝트에 없는 `templates/`·`agents/`·`docs/`를 `rules/` 아래에서 찾지만, Codex workflows 10종·agent guides 6종은 프로젝트 루트 경로만 지시해 기준 문서를 놓칠 수 있음을 확인했다. 직전 기록에서 범위 밖으로 남긴 결함을 이번에 해소했다.
+  - **변경**: 루트 경로 규칙 대상을 `skill·command·workflow·agent guide`로 확장하고 `designs/`도 포함했다. `.codex/README.md`·`docs/codex-guide.md`에 공통 해석 규칙을 추가했으며, workflow 10종과 agent guide 6종 각각에 프로젝트 우선 → `rules/` fallback → 공통본 사용 보고 규칙을 넣어 단독 로드 시에도 동작하게 했다. 디자인 문서는 프로젝트가 별도 정본이나 코드 토큰 정본을 지정한 경우 이를 우선하도록 명시했다.
+  - **버전·정합**: `.claude/plugins/VERSION`과 manifest를 `2.0.1`로 올리고 `docs/plugin-guide.md`의 낡은 commands 9종 표기를 실제 10종으로 정정했다.
+  - **연결 프로젝트 영향**: `.codex -> rules/.codex` 또는 `rules/` symlink를 쓰는 프로젝트에 즉시 반영된다. 프로젝트 로컬 파일이 있으면 종전대로 그쪽이 우선이다.
+
 - 서브에이전트 정의 5종에 `rules/` 경로 fallback 문구 추가 — L2(skills·commands)에만 있던 규칙을 L4까지 확장. (2026-07-29)
   - **발단**: `signal2` 연결 점검에서 발견. 커밋 `8fbd515`가 링크 방식 프로젝트를 위해 fallback을 넣었지만 **`.claude/skills`·`.claude/commands` 20종에만 적용**됐고, `.claude/agents` 6종에는 `rules/` 언급이 0건이었다. 서브에이전트는 "상세 규칙은 `agents/reviewer-agent.md`를 따른다"처럼 프로젝트 루트 경로를 지시하는데, 링크 방식 프로젝트에는 `agents/`·`designs/`·`templates/`가 없어 **기준 문서를 못 찾은 채 작업**하게 된다.
   - **변경**: `code-reviewer`·`explorer`·`feature-dev`·`planner`에 skills와 동일한 경로 규칙 1줄을 추가했다. `design-reviewer`는 참조 경로가 5종(`DESIGN.md`·`docs/`·`designs/`·`agents/`·`templates/`)이라 별도 문구를 쓰고, `rules/DESIGN.md`가 템플릿 활성 시안이라는 점과 **프로젝트가 토큰 값의 정본을 코드로 지정한 경우 문서 카탈로그 대신 그 코드를 기준으로 검출**한다는 조건을 명시했다.

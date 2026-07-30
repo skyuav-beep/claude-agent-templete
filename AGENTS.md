@@ -27,7 +27,7 @@
 - 프로젝트 로컬 가이드가 템플릿 기본값과 충돌하면 프로젝트 기준을 적용하고, 어떤 기준을 선택했는지 작업 보고에 남긴다.
 - `docs/project-guide.md`가 없거나 초기 템플릿 상태이면 관련 프로젝트 문서와 실제 구현을 우선 확인하고, 템플릿 기본값을 fallback으로 사용하며 가이드 작성 또는 갱신 필요를 알린다.
 - `.claude/*`와 `.codex/*`는 실행 어댑터다. 프로젝트 기술·업무 기준을 자체적으로 재정의하지 않고 이 섹션의 우선순위를 따른다.
-- **경로 해석(rules/ fallback)**: skill·command가 지시하는 `templates/`·`agents/`·`docs/`·`DESIGN.md`는 프로젝트 루트를 먼저 찾고, 없으면 `rules/` 아래 같은 경로를 읽는다(공통 템플릿을 `rules/` symlink로 연결한 프로젝트). 프로젝트에 같은 파일이 있으면 항상 프로젝트 쪽이 우선이며, 공통본을 대신 읽었으면 그 사실을 작업 보고에 한 줄로 남긴다.
+- **경로 해석(rules/ fallback)**: skill·command·workflow·agent guide가 지시하는 `templates/`·`agents/`·`docs/`·`designs/`·`DESIGN.md`는 프로젝트 루트를 먼저 찾고, 없으면 `rules/` 아래 같은 경로를 읽는다(공통 템플릿을 `rules/` symlink로 연결한 프로젝트). 프로젝트에 같은 파일이 있으면 항상 프로젝트 쪽이 우선이며, 공통본을 대신 읽었으면 그 사실을 작업 보고에 한 줄로 남긴다.
 <!-- agent-template:project-guide-routing:end -->
 
 ## Execution Protocol
