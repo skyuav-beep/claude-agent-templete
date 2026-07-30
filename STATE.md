@@ -31,6 +31,10 @@
 
 ## 이번 세션에서 완료한 작업
 
+- GoldLink 연결 가이드·공통 훅 보강 배포 버전 v2.0.2. (2026-07-30)
+  - `rules/` 연결 프로젝트의 Claude subagent·Codex workflow/agent guide 경로 fallback과 `.env` 변형 보호, 파괴 명령의 비실행 텍스트 오탐 해소를 하나의 설치 배포 버전으로 묶었다.
+  - `.claude/plugins/VERSION`과 manifest를 `2.0.2`로 맞췄다. symlink 연결 프로젝트는 즉시 반영되고 복사 설치 프로젝트는 `install.sh --update`에서 새 버전을 인식한다.
+
 - `mlm_v1.0` 가이드 연결 완결 + `block-secret-files.sh` `.env` 변형 커버·오탐 2종 해소. (2026-07-30)
   - **발단**: `mlm_v1.0` 에이전트 가이드 연결 점검 요청. 심링크 6종(`rules`·`.codex`·`.claude/*` 5)은 전부 정상이었으나 **L1 문서 체인과 L3 훅 두 곳이 끊겨 있었다**. 어제(2026-07-29) 조치는 심링크 배선까지였고, 훅 `settings` 미등록은 "활성화는 별도 판단 사항"으로 남긴 상태였다(본 파일 `## 지난 세션 기록` 참조).
   - **mlm 쪽 수리 3건**: ① `.claude/settings.json` 신규 — 가드레일 3종을 root 탐색 래퍼로 등록(Bash 3·Write 1·Edit 1). ② `CLAUDE.md`에 `## 🔗 공통 규칙 연결` 신설 — 8단계 읽기 순서(`rules/CLAUDE.md`·`rules/AGENTS.md`·`rules/agents/*`)와 배선 구조·정본 fallback 명시. 연결 14곳 중 유일하게 `rules/` 참조가 0건이던 문제를 해소(0 → 14건). ③ `AGENTS.md`에 `## Rule Precedence` 신설 — 적용 순서와 확정 충돌 3건(커밋 정책·6단계 파이프라인·디자인 정본)을 표로 고정. `.claude/`는 해당 저장소 `.gitignore` 대상이라 커밋 영향 없음, 문서 2건은 미커밋으로 두었다(해당 저장소는 사용자 지시 없이 커밋하지 않는 규칙).
