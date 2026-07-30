@@ -20,20 +20,63 @@ const OUT = join(ROOT, 'docs', 'docs-index.json');
 const SKIP_DIRS = new Set(['.git', 'node_modules', '.cache', 'dist', 'build']);
 
 // 사이드바 그룹. 접두사가 긴 것부터 먼저 맞춰본다.
+// icon은 이모지가 아닌 단색 기호를 쓴다(다크 UI에서 색을 CSS로 통제하기 위해).
+// color는 계열로 묶어 소속을 드러낸다 — Codex 3종은 teal 계열.
 const GROUPS = [
-  { prefix: '.claude/skills/', label: 'Skills (자동 활성화)' },
-  { prefix: '.claude/commands/', label: 'Commands (슬래시 호출)' },
-  { prefix: '.claude/agents/', label: 'Subagents (역할 정의)' },
-  { prefix: '.claude/', label: 'Claude 실행 레이어' },
-  { prefix: '.codex/workflows/', label: 'Codex Workflows' },
-  { prefix: '.codex/agents/', label: 'Codex Agent Guides' },
-  { prefix: '.codex/', label: 'Codex 런타임' },
-  { prefix: 'agents/', label: '역할별 에이전트 규칙' },
-  { prefix: 'templates/', label: '요청·Intake 양식' },
-  { prefix: 'docs/', label: '가이드·플레이북' },
-  { prefix: 'designs/', label: '디자인 시안 라이브러리' },
-  { prefix: 'scripts/', label: '유지보수 스크립트' },
+  {
+    prefix: '.claude/skills/', label: 'Skills (자동 활성화)', icon: '✦', color: '#7c3aed',
+    desc: '대화 속 키워드를 감지해 스스로 켜지는 작업 흐름. 사용자가 부르지 않아도 동작한다.',
+  },
+  {
+    prefix: '.claude/commands/', label: 'Commands (슬래시 호출)', icon: '▸', color: '#ec4899',
+    desc: '사용자가 슬래시로 직접 호출하는 명령. 같은 이름의 Skill과 짝을 이룬다.',
+  },
+  {
+    prefix: '.claude/agents/', label: 'Subagents (역할 정의)', icon: '◉', color: '#f97316',
+    desc: '조사·리뷰·구현 등을 나눠 맡기는 보조 에이전트 정의. 파일 첫머리 설정으로 자동 등록된다.',
+  },
+  {
+    prefix: '.claude/', label: 'Claude 실행 레이어', icon: '⬡', color: '#94a3b8',
+    desc: '위 세 가지를 제외한 실행 계층 문서. 가드레일과 배포 도구 설명이 들어간다.',
+  },
+  {
+    prefix: '.codex/workflows/', label: 'Codex Workflows', icon: '▶', color: '#14b8a6',
+    desc: 'Codex 런타임에서 쓰는 작업 유형별 절차서. Claude 자동화와 분리된 보완 경로다.',
+  },
+  {
+    prefix: '.codex/agents/', label: 'Codex Agent Guides', icon: '◇', color: '#2dd4bf',
+    desc: 'Codex 쪽 보조 에이전트에게 주는 역할별 지침.',
+  },
+  {
+    prefix: '.codex/', label: 'Codex 런타임', icon: '⬢', color: '#5eead4',
+    desc: 'Codex 어댑터 자체의 구성과 사용법 설명.',
+  },
+  {
+    prefix: 'agents/', label: '역할별 에이전트 규칙', icon: '◆', color: '#5b6af5',
+    desc: '요청 해석·조사·구현·리뷰를 각각 어떻게 수행할지 정한 행동 규칙. 작업 유형에 맞춰 골라 읽는다.',
+  },
+  {
+    prefix: 'templates/', label: '요청·Intake 양식', icon: '▤', color: '#0ea5e9',
+    desc: '작업을 요청할 때 채우는 양식과, 프로젝트 정보를 캐묻는 질문지 모음.',
+  },
+  {
+    prefix: 'docs/', label: '가이드·플레이북', icon: '▣', color: '#10b981',
+    desc: '주제별 운영 가이드와 실행 절차. 디자인·로컬 개발·금액 처리 같은 판단 기준의 정본이다.',
+  },
+  {
+    prefix: 'designs/', label: '디자인 시안 라이브러리', icon: '◐', color: '#a78bfa',
+    desc: '고를 수 있는 디자인 시스템 시안들. 선택한 하나가 루트 디자인 문서의 활성 사본이 된다.',
+  },
+  {
+    prefix: 'scripts/', label: '유지보수 스크립트', icon: '✱', color: '#64748b',
+    desc: '이 저장소를 관리하는 도구 설명. 배포 대상이 아니다.',
+  },
 ];
+
+const ROOT_GROUP = {
+  label: '루트 문서', icon: '★', color: '#f59e0b',
+  desc: '항상 먼저 읽는 최상위 문서. 규칙·운영 절차·현재 상태·디자인 정본이 여기 있다.',
+};
 
 const ROOT_ORDER = ['CLAUDE.md', 'AGENTS.md', 'STATE.md', 'DESIGN.md', 'README.md', 'todo.md'];
 
@@ -93,7 +136,14 @@ function parse(text) {
 
 function groupOf(path) {
   for (const g of GROUPS) if (path.startsWith(g.prefix)) return g.label;
-  return path.includes('/') ? path.split('/')[0] : '루트 문서';
+  return path.includes('/') ? path.split('/')[0] : ROOT_GROUP.label;
+}
+
+/** 그룹 라벨에 붙는 아이콘·색·역할 설명. 정의가 없는 디렉터리는 중립값으로 채운다. */
+function groupMeta(label) {
+  if (label === ROOT_GROUP.label) return ROOT_GROUP;
+  const found = GROUPS.filter((g) => g.label === label)[0];
+  return found || { label, icon: '·', color: '#64748b', desc: '분류가 지정되지 않은 디렉터리.' };
 }
 
 const files = walk(ROOT)
@@ -133,7 +183,10 @@ docs.sort((a, b) => {
 const groups = [];
 for (const doc of docs) {
   let g = groups.find((x) => x.label === doc.group);
-  if (!g) groups.push((g = { label: doc.group, count: 0 }));
+  if (!g) {
+    const meta = groupMeta(doc.group);
+    groups.push((g = { label: meta.label, icon: meta.icon, color: meta.color, desc: meta.desc, count: 0 }));
+  }
   g.count++;
 }
 
@@ -141,7 +194,7 @@ const index = {
   generatedBy: 'scripts/build-docs-index.mjs',
   docCount: docs.length,
   totalBytes: docs.reduce((sum, d) => sum + d.bytes, 0),
-  groups: groups.map((g) => g.label),
+  groups,
   docs,
 };
 
