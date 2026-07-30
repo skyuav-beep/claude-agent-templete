@@ -36,4 +36,4 @@ argument-hint: "[변경할 로직]"
 
 ## 완료 후
 
-구조화된 business-logic-request 마크다운 블록을 출력하고, 바로 구현을 시작할지 사용자에게 확인한다.
+구조화된 business-logic-request 마크다운 블록을 1단계 산출물로 출력하고 `docs/approval-workflow.md`의 2단계부터 진행한다.

@@ -4,6 +4,7 @@
 운영 프로세스, Context Map, 작업 절차는 `AGENTS.md`를 참조한다.
 <!-- agent-template:project-guide-routing:start -->
 모든 작업에서 `AGENTS.md ## 프로젝트 로컬 가이드 우선`에 따라 프로젝트 가이드와 관련 로컬 문서를 템플릿 기본값보다 먼저 적용한다.
+단순 사실 조회를 제외한 분석·변경 작업은 `docs/approval-workflow.md`(없으면 `rules/docs/approval-workflow.md`)의 6단계 승인 절차를 따른다.
 <!-- agent-template:project-guide-routing:end -->
 
 ## Core Philosophy
@@ -16,8 +17,9 @@
 ## Golden Rules
 
 - 사용자 요청 없이 파괴적 명령을 실행하지 않는다.
-- agent 자동 실행 범위는 로컬 검증(Docker Desktop)·`local` migration·commit·작업 브랜치 생성까지다. **로컬 CI·push·PR·머지·브랜치 정리는 사용자 명시 요청 시 수행하며, 머지는 검증 게이트를 통과하고 보호 규칙을 우회하지 않는 경우에만 가능하다(§6).** 환경은 `local`(내 PC Docker) / `develop`(원격 개발서버) / `production`(원격 운영서버) 3-tier로 호칭하고 "dev" 단독 표기는 쓰지 않는다. migration은 `local`에만 자동 적용하고 `develop`·`production`은 사용자가 수동 진행하며, 판단은 명령명이 아니라 `DATABASE_URL` 연결 대상으로 한다. GitHub Actions 배포/릴리스도 agent는 트리거하지 않는다. (상세: `docs/local-dev-ci-guide.md §0`)
-- 로컬 commit은 자주 누적해도 되지만, **로컬 CI 전체 스위트 실행**·`git push`·`PR 생성`·`PR 머지`·브랜치 정리는 **사용자가 명시 지시할 때만** 수행한다(개발 루프 중 모듈 단위 로컬 검증은 상시). 자발적 머지와 보호 규칙 우회는 금지하며 머지 후 원격 base 반영을 검증한다. 예외: 세션 종료 백업 push 1회(원격 자동 CI가 남아 있으면 `[skip ci]`). 배포·릴리스·원격 migration은 사용자 수동이다. (정의: `docs/local-dev-ci-guide.md §1.1`, 절차: `§6`)
+- 작업은 `docs/approval-workflow.md`의 6단계 승인 절차를 따른다. 3단계에서 승인된 정확한 범위 안에서만 branch/worktree 생성, commit, push, ready PR, merge, 원격 base 검증과 cleanup을 수행한다.
+- 전체 로컬 CI는 작업별로 실행하지 않고 배치 대기열에 기록한다. 6단계에서는 빠른 범위 검증만 하되 인증·권한·결제·정산·migration 관련 필수 검증은 생략하지 않는다.
+- 보호 규칙 우회, 강제 push, 배포·릴리스, `develop`·`production` migration은 승인 범위에 포함하지 않으며 실행하지 않는다.
 - 확인하지 않은 외부 의존성, 비밀값, API 키를 임의로 추가하지 않는다.
 - 관련 없는 파일 수정이나 목적과 무관한 구조 확장을 하지 않는다.
 - 확인되지 않은 사항을 사실처럼 단정하지 않는다.

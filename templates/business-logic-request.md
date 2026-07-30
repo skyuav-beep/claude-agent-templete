@@ -105,5 +105,5 @@
 - 로컬 CI (사용자 "CI 돌려" 시): `pnpm lint && pnpm typecheck && pnpm test && pnpm build` (또는 `act`) — 로컬 실행, GitHub Actions 아님(§6.2). green이 push 게이트.
 - push (사용자 요청 시 1회): `git push -u origin feat/orders-cancel-window` → `gh pr create` — 매 commit이 아니라 사용자가 push를 지시할 때 누적 commit 일괄. push는 CI를 트리거하지 않는다 (`docs/local-dev-ci-guide.md §1.1`)
 - PR 본문 필수 항목: 변경 요약 / 검증 통과 결과 / Docker rebuild 여부 + 사유 / rollback 방법(코드 상수만 되돌리면 즉시 복귀 가능)
-- [사용자 수동] 머지(squash) 후 브랜치 정리: `git branch -d` + `git push origin --delete` + `git fetch --prune` (§6.5)
+- 3단계 전체 수명주기 승인 시 6단계에서 머지(squash) 후 브랜치/worktree 정리까지 수행 (§6.5)
 ```

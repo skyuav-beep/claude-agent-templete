@@ -29,4 +29,4 @@ argument-hint: "[버그 현상]"
 
 ## 완료 후
 
-구조화된 bugfix-request 마크다운 블록을 출력하고, 바로 원인 조사를 시작할지 사용자에게 확인한다.
+구조화된 bugfix-request 마크다운 블록을 1단계 산출물로 출력하고 `docs/approval-workflow.md`의 2단계부터 진행한다.

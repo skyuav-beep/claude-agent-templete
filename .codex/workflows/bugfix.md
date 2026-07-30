@@ -11,7 +11,7 @@
 3. 재현 가능한 최소 범위를 먼저 찾는다.
 4. 원인 수정은 좁게 한다.
 5. 회귀 검증을 실행한다.
-6. 로컬 검증·Docker 재빌드 판단·Git 절차는 `docs/local-dev-ci-guide.md`를 따른다. 로컬 CI·push·PR·머지·브랜치 정리는 사용자 명시 요청 시 수행하며, 머지는 §6.3 게이트를 통과해야 한다. 배포/원격 migration은 사용자 수동이다.
+6. 승인·Git 수명주기는 `docs/approval-workflow.md`, 빠른 검증·Docker 판단은 `docs/local-dev-ci-guide.md`를 따른다.
 7. 검증이 불가능하면 환경/데이터/권한 등 이유를 명확히 남긴다.
 
 ## 산출물

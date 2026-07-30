@@ -28,6 +28,13 @@
 - `docs/project-guide.md`가 없거나 초기 템플릿 상태이면 관련 프로젝트 문서와 실제 구현을 우선 확인하고, 템플릿 기본값을 fallback으로 사용하며 가이드 작성 또는 갱신 필요를 알린다.
 - `.claude/*`와 `.codex/*`는 실행 어댑터다. 프로젝트 기술·업무 기준을 자체적으로 재정의하지 않고 이 섹션의 우선순위를 따른다.
 - **경로 해석(rules/ fallback)**: skill·command·workflow·agent guide가 지시하는 `templates/`·`agents/`·`docs/`·`designs/`·`DESIGN.md`는 프로젝트 루트를 먼저 찾고, 없으면 `rules/` 아래 같은 경로를 읽는다(공통 템플릿을 `rules/` symlink로 연결한 프로젝트). 프로젝트에 같은 파일이 있으면 항상 프로젝트 쪽이 우선이며, 공통본을 대신 읽었으면 그 사실을 작업 보고에 한 줄로 남긴다.
+
+## 6단계 승인 절차
+
+- 단순 사실 조회를 제외한 분석·변경 작업은 `docs/approval-workflow.md`를 정본으로 적용한다. 프로젝트 루트에 없으면 `rules/docs/approval-workflow.md`를 읽는다.
+- 1단계 요청 정리 → 2단계 읽기 전용 분석과 작업 브랜치·worktree·Git 수명주기 계획 → 3단계 명시 승인 → 4단계 구현 → 5단계 읽기 전용 사후 감사 → 6단계 빠른 검증·STATE·commit·push·ready PR·merge·원격 base 검증·브랜치/worktree 정리 순서를 지킨다.
+- 한 턴에는 한 단계만 진행한다. 3단계에서 2단계에 명시한 전체 Git 수명주기를 승인받은 경우 4~6단계의 Git 작업을 다시 묻지 않지만, 범위 확대·보호 규칙 우회·배포·원격 migration은 별도 승인 대상이거나 실행 금지다.
+- 전체 로컬 CI는 매 작업에서 제외하고 3~5개 작업 누적, 하루 종료, 릴리스 전 또는 사용자 요청 시 배치 실행한다. 6단계에서는 5분 이내의 변경 범위 검증만 수행하고 미실행 전체 CI를 `STATE.md`에 기록한다. 인증·권한·결제·정산·migration 관련 필수 검증은 미루지 않는다.
 <!-- agent-template:project-guide-routing:end -->
 
 ## Execution Protocol
@@ -56,14 +63,14 @@
 - 현재 저장소는 문서 템플릿 저장소이므로 필수 빌드 명령은 없다.
 - 새 프로젝트로 복제된 뒤에는 루트 `AGENTS.md`에 반드시 실제 실행 명령을 명시한다.
 - 예시: `npm run dev`, `npm test`, `pnpm lint`, `python -m pytest`, `uv run pytest`
-- 로컬 검증은 Docker Desktop으로 진행한다. 개발 컨테이너 모델(상시 기동+bind mount+hot reload, 코드 수정은 rebuild 불필요)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단 기준은 `docs/local-dev-ci-guide.md §2`를 따른다 — agent는 로컬·commit까지 상시, **로컬 CI(§6.2)·push·PR·머지·브랜치 정리는 사용자 명시 요청 시** 수행한다. 머지는 대상 PR/base 확정, 충돌 없음, 검증 통과, 보호 규칙 비우회를 확인한 경우에만 가능하다. 배포 Action·`develop`/`production` migration은 사용자 수동이다.
+- 로컬 검증은 Docker Desktop으로 진행한다. 개발 컨테이너와 Docker 재빌드 기준은 `docs/local-dev-ci-guide.md §2`를 따르고, Git 작업 경계는 `docs/approval-workflow.md`를 따른다.
 - 환경 호칭은 `local`(내 PC Docker Desktop) / `develop`(원격 개발서버) / `production`(원격 운영서버) 3-tier로 통일한다(정의: `docs/local-dev-ci-guide.md §0`). migration은 `local`에만 자동 적용(명령명이 아니라 `DATABASE_URL` 연결 대상으로 판단)하고, "dev" 단독 표기는 쓰지 않는다.
 - 개발 세션 시작(PC 켜고 재개) 시 `docs/local-dev-ci-guide.md §2.0` 부트스트랩을 따른다 — 상태 브리핑 → `docker compose up -d`(항상, 멱등) → hot reload·UI/로직 점검. `dev-start` skill 또는 `/dev-start`로 호출.
 
 ## 요청 해석 규칙
 
 - 먼저 사용자의 요청에서 `목표`, `산출물`, `제약`, `우선순위`를 분리해서 이해한다.
-- 요청이 모호해도 현재 저장소 문맥으로 합리적으로 해석 가능한 수준이면 우선 진행한다.
+- 요청이 모호하면 1단계에서 범위를 정리하고, 2단계 읽기 전용 분석 뒤 3단계에서 실행 범위를 승인받는다.
 - 파괴적 변경, 구조 변경, 범위가 큰 리팩터링은 수행 전에 반드시 재확인한다.
 - 요청이 문서 수정인지 코드 수정인지, 또는 둘 다인지 먼저 구분한다.
 
@@ -131,9 +138,8 @@
 ## 문서화 원칙
 
 - 새로운 기능, 스크립트, 설정을 추가하면 필요한 최소 문서를 함께 갱신한다.
-- 하나의 논리적 작업이 끝나거나 세션이 종료될 때는 반드시 `STATE.md`를 업데이트하고 커밋한다. (여기서 커밋은 **로컬 커밋**이며, 곧바로 push를 뜻하지 않는다.)
-- 커밋 순서: `STATE.md` 갱신 → 변경 파일 스테이징 → `git commit` (STATE.md 미포함 시 hook 경고 발생).
-- `git commit`(로컬 누적)·**로컬 CI 실행**(검증)·`git push`(원격 노출)를 분리한다. **CI는 git(GitHub Actions)에서 자동 실행하지 않고 로컬에서 사용자 요청 시 실행하며**, push는 CI를 트리거하지 않는다. 로컬 CI 스위트·push·PR·머지·브랜치 정리는 **사용자가 명시 지시할 때만** 수행하고, 그 전엔 로컬 commit 누적 + 모듈 단위 로컬 검증만으로 완료를 보고한다. 예외: 세션 종료 백업 push 1회(원격 자동 CI가 남아 있으면 `[skip ci]`). 머지는 열린 비초안 PR, 확정된 base, 충돌 없음, 필수 검사 또는 프로젝트 로컬 검증 통과를 확인한 뒤 보호 규칙 우회 없이 수행하고 원격 base 반영까지 검증한다. 정의·절차는 `docs/local-dev-ci-guide.md §1.1, §6`. 배포·릴리스·원격 migration은 agent 범위 밖(사용자 수동)이다.
+- 하나의 논리적 작업이 끝나면 6단계에서 `STATE.md`를 갱신한 뒤 승인된 파일만 stage하고 commit한다.
+- commit·push·PR·머지·브랜치/worktree 정리는 3단계에서 승인된 Git 수명주기 범위 안에서만 수행한다. 상세 게이트와 전체 CI 배치 정책은 `docs/approval-workflow.md`와 `docs/local-dev-ci-guide.md §6`을 따른다.
 - 초안 단계 문서는 이후 확장 가능하도록 짧고 명확하게 유지한다.
 - TODO는 실행 가능한 문장으로 남긴다.
 - 역할별 규칙은 공통 규칙과 중복하지 말고 차이점만 적는다.
@@ -184,7 +190,8 @@
 - **[다국어 가이드](./docs/i18n-guidelines.md)** - i18n 구조, key 규칙, formatting, fallback 기준을 정리할 때.
 - **[비즈니스 로직 플레이북](./docs/business-logic-playbook.md)** - 요구사항, 시나리오, 구현, 검증, 빌드, Git 작업 기준을 확인할 때.
 - **[금액·수량 처리 기준](./docs/money-quantity-guidelines.md)** - 금액/수량의 계산·확정·표시·저장 계층 규칙, 잔차 배분, 통화 최소 단위, 실수 타입 금지 기준을 확인할 때.
-- **[로컬/CI 실행 가이드](./docs/local-dev-ci-guide.md)** - 환경 호칭 3-tier(`local`/`develop`/`production`, §0), agent 실행 경계(`local` Docker Desktop·migration·commit·작업 브랜치까지 상시, 로컬 CI·push는 사용자 요청 시 — CI는 GitHub Actions가 아니라 로컬 실행), 개발 세션 부트스트랩(상태 브리핑+dev 컨테이너 기동+UI/로직 점검, §2.0), 개발 컨테이너 모델(상시 기동+bind mount+hot reload, §2.1)과 Docker 재빌드 2모드(증분/강력 no-cache) 판단, 브랜치·로컬 CI·머지·정리 절차(§6), push 후 인계 요약을 확인할 때.
+- **[로컬/CI 실행 가이드](./docs/local-dev-ci-guide.md)** - 환경 호칭 3-tier, 승인 후 Docker 개발 루프, 빠른 범위 검증, 전체 CI 배치, 머지·정리 게이트를 확인할 때.
+- **[6단계 승인 워크플로](./docs/approval-workflow.md)** - 요청 정리부터 작업 브랜치 점검, 실행 승인, 구현, 사후 감사, 빠른 검증과 Git 수명주기 마무리까지의 정본.
 - **[프레임워크 구조 가이드](./docs/framework-structure-guide.md)** - 디렉터리 분리, 파일 크기, 레포 구조 기준을 확인할 때.
 - **[Codex 읽기 순서](./docs/codex-reading-order.md)** - Codex가 어떤 순서로 문맥을 읽는지 참고할 때.
 - **[에이전트 런타임 매트릭스](./docs/agent-runtime-matrix.md)** - Claude Code와 Codex의 기능 대응 관계, 공통 정본, 런타임별 어댑터 경계를 확인할 때.

@@ -31,6 +31,17 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 공통 에이전트 템플릿 v3.0.0에 6단계 승인 워크플로를 도입했다. (2026-07-30)
+  - 정본 `docs/approval-workflow.md`: 요청 정리 → 읽기 전용 분석과 branch/worktree/Git 수명주기 계획 → 명시 승인 → 구현 → 읽기 전용 사후 감사 → 빠른 검증과 STATE·commit·push·ready PR·merge·원격 base 검증·cleanup.
+  - 3단계에서 2단계에 적은 전체 Git 수명주기를 승인하면 6단계까지 다시 묻지 않고 마무리하되, 범위 확대·보호 규칙 우회·배포·릴리스·원격 migration·데이터 삭제는 포함하지 않는다.
+  - 전체 로컬 CI는 작업마다 돌리지 않고 3~5개 작업 누적·하루 종료·릴리스 전·사용자 요청 시 배치 실행한다. 6단계는 기본 5분 이내의 범위 검증만 수행하며 인증·권한·결제·정산·migration 검증은 미루지 않는다.
+  - AGENTS/CLAUDE managed block, Claude skills/commands, Codex 진입점/checklist/workflow, 역할 문서, 개발·비즈니스 로직 가이드의 충돌 문구를 정리했다.
+  - 배포 버전과 manifest를 `3.0.0`으로 올리고 신규 정본 문서를 설치 대상에 포함했다.
+
+## 전체 CI 배치 대기열
+
+- `agent/approval-workflow-v3`: 문서·설정 변경이므로 이번 작업에서는 전체 CI 제외. 빠른 marker/manifest/install dry-run/링크 검증만 수행하고, 다음 3~5개 프로젝트 적용 후 누적 검증한다.
+
 - 문서 탐색 UI(`guide-browser.html`) + 로컬 문서 서버 신설. (2026-07-30)
   - **발단**: "가이드를 서버로 띄워 UI로 확인하고 추가 내용도 작성할 수 있게 할 수 있나" 분석 요청. 1단계 진단 결과 **서버 실행·UI 확인은 이미 가능**했으나(README의 정적 서버 안내 + HTML 6종), 브라우저로 볼 수 있는 건 6개 화면뿐이고 문서 104개 대부분은 에디터로만 열 수 있었다. 작성·저장(write-back)은 전무. 사용자 선택에 따라 **읽기 전용 탐색 범위를 먼저 완성**하고 작성·저장은 다음 단계로 미뤘다.
   - **`scripts/build-docs-index.mjs` 신규**: 저장소의 md 전체를 훑어 `docs/docs-index.json`을 만든다. 문서별 제목·frontmatter description·헤딩(H2/H3)·줄수·바이트·수정일과 사이드바 그룹(루트/Skills/Commands/Subagents/Codex/역할 규칙/양식/가이드/시안/스크립트 11종)을 담는다. 코드펜스 안의 `#`은 헤딩으로 세지 않는다. `--check`는 쓰기 없이 갱신 필요 여부만 알린다. 루트 문서는 읽기 순서(`CLAUDE`→`AGENTS`→`STATE`→`DESIGN`→`README`→`todo`)로 정렬.
