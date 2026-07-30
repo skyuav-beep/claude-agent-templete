@@ -13,7 +13,49 @@
 # fd 3으로 주고 stdin은 payload 전용으로 남긴다.
 
 COMMAND=$(python3 /dev/fd/3 3<<'PY' 2>/dev/null
-import json, os, sys
+import json, os, re, sys
+
+# 아래 패턴 검사는 명령 문자열 전체를 훑는다. 그대로 두면 "실행되지 않는 텍스트"
+# (heredoc으로 넘기는 스크립트 본문, 인용부호 안의 데이터)에도 반응해 오차단된다.
+# 실행 문맥만 남기고 데이터 문맥을 걷어낸 뒤 검사한다.
+
+# 인용문이 곧 코드가 되는 호출(`bash -c '...'`, eval, xargs). 이때는 원문을 그대로
+# 검사해야 우회를 막는다. `bash -n script.sh`나 `x.sh` 같은 파일명에는 반응하지 않도록
+# 셸이 실제 명령 위치에 오고 -c 계열 플래그가 붙은 경우만 본다.
+SHELL_EVAL = re.compile(
+    r"(?:^|[|;&]\s*)(?:ba|z|k|da)?sh\s+(?:-[A-Za-z]+\s+)*-[A-Za-z]*c\b"
+    r"|\b(?:eval|xargs|ssh)\b",
+    re.M,
+)
+
+# heredoc 본문이 코드가 되는 경우(`bash <<'EOF'`)는 -c 없이도 성립한다.
+SHELL_HEREDOC = re.compile(r"(?:^|[|;&]\s*)(?:ba|z|k|da)?sh\b|\b(?:eval|xargs)\b", re.M)
+
+
+def strip_heredocs(cmd: str) -> str:
+    """heredoc 본문은 데이터다. 단 셸에 그대로 먹이는 경우는 본문도 명령이므로 남긴다."""
+    lines = cmd.split("\n")
+    kept, i = [], 0
+    while i < len(lines):
+        line = lines[i]
+        kept.append(line)
+        i += 1
+        m = re.search(r"<<-?\s*['\"]?([A-Za-z_][A-Za-z0-9_]*)['\"]?", line)
+        if not m or SHELL_HEREDOC.search(line):
+            continue
+        delim = m.group(1)
+        while i < len(lines) and lines[i].strip() != delim:
+            i += 1
+        i += 1  # 종료 구분자 라인도 건너뛴다
+    return "\n".join(kept)
+
+
+def strip_quoted(cmd: str) -> str:
+    """인용부호 안 문자열은 데이터로 본다. 셸 호출이 섞여 있으면 보수적으로 원문 유지."""
+    if SHELL_EVAL.search(cmd):
+        return cmd
+    return re.sub(r"'[^']*'|\"[^\"]*\"", " ", cmd)
+
 
 raw = sys.stdin.read()
 if not raw.strip():
@@ -28,15 +70,18 @@ if not isinstance(d, dict):
     sys.exit(0)
 ti = d.get("tool_input")
 ti = ti if isinstance(ti, dict) else {}
-print(ti.get("command") or d.get("command") or "")
+print(strip_quoted(strip_heredocs(ti.get("command") or d.get("command") or "")))
 PY
 )
 [ -z "$COMMAND" ] && exit 0
 
 BLOCKED=""
 
-# rm: -r과 -f가 같은 그룹이든 분리되어 있든 모두 차단
-if echo "$COMMAND" | grep -qE '^rm\s' || echo "$COMMAND" | grep -qE ';\s*rm\s|&&\s*rm\s|\|\|\s*rm\s'; then
+# rm: -r과 -f가 같은 그룹이든 분리되어 있든 모두 차단.
+# 위치 제약(줄 시작/체인 뒤)을 두면 `find ... -exec rm -rf {}`나 `sh -c "rm -rf /"`를
+# 놓친다. 데이터 문맥은 앞 단계에서 제거되므로 위치 제약 없이 검사하되, `docker run --rm`
+# 처럼 '-'가 앞에 붙은 플래그는 제외한다.
+if echo "$COMMAND" | grep -qE "(^|[[:space:];&|(\"'])rm[[:space:]]"; then
   if echo "$COMMAND" | grep -qE '\s-[a-zA-Z]*r' && echo "$COMMAND" | grep -qE '\s-[a-zA-Z]*f'; then
     BLOCKED="rm -rf"
   fi
