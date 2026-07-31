@@ -8,7 +8,7 @@ Codex는 Claude Code hooks를 자동 실행하지 않으므로 작업 전에 아
 - `rm -rf`, `git reset --hard`, `git clean -f`, 강제 push
 - `docker compose down -v`처럼 로컬 데이터를 삭제하는 명령
 - GitHub Actions 배포/릴리스 실행
-- 원격(`develop`/`production`) migration 적용 (호칭 정의: `docs/local-dev-ci-guide.md §0`)
+- 원격(`staging`/`production`) migration 적용 (호칭 정의: `docs/local-dev-ci-guide.md §0`)
 - 비밀 파일(`.env`, `*.pem`, `*.key`, `credentials.json`) 생성 또는 수정
 
 ## 기본 방침

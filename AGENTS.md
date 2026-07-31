@@ -64,7 +64,7 @@
 - 새 프로젝트로 복제된 뒤에는 루트 `AGENTS.md`에 반드시 실제 실행 명령을 명시한다.
 - 예시: `npm run dev`, `npm test`, `pnpm lint`, `python -m pytest`, `uv run pytest`
 - 로컬 검증은 Docker Desktop으로 진행한다. 개발 컨테이너와 Docker 재빌드 기준은 `docs/local-dev-ci-guide.md §2`를 따르고, Git 작업 경계는 `docs/approval-workflow.md`를 따른다.
-- 환경 호칭은 `local`(내 PC Docker Desktop) / `develop`(원격 개발서버) / `production`(원격 운영서버) 3-tier로 통일한다(정의: `docs/local-dev-ci-guide.md §0`). migration은 `local`에만 자동 적용(명령명이 아니라 `DATABASE_URL` 연결 대상으로 판단)하고, "dev" 단독 표기는 쓰지 않는다.
+- 환경 호칭은 `local`(현재 PC의 Docker 개발환경) / `staging`(원격 검증 서버) / `production`(원격 운영 서버) 3-tier로 통일한다(정의: `docs/local-dev-ci-guide.md §0`). migration은 `local`에만 자동 적용(명령명이 아니라 `DATABASE_URL` 연결 대상으로 판단)하고, "dev" 단독 표기와 원격 환경의 `develop` 호칭은 쓰지 않는다.
 - 개발 세션 시작(PC 켜고 재개) 시 `docs/local-dev-ci-guide.md §2.0` 부트스트랩을 따른다 — 상태 브리핑 → `docker compose up -d`(항상, 멱등) → hot reload·UI/로직 점검. `dev-start` skill 또는 `/dev-start`로 호출.
 
 ## 요청 해석 규칙
@@ -220,7 +220,7 @@
 - 기존 구현을 뒤집는 리팩터링이 필요한 경우
 - 요구사항 해석에 따라 결과가 크게 달라질 수 있는 경우
 - 테스트 실패 원인이 코드인지 환경인지 불분명한 경우
-- GitHub Actions 배포/릴리스 실행, 원격(`develop`/`production`) migration 적용 등 "GitHub 이상"의 원격 작업이 필요한 경우 — agent는 실행하지 않고 사용자에게 인계한다 (`docs/local-dev-ci-guide.md §0`)
+- GitHub Actions 배포/릴리스 실행, 원격(`staging`/`production`) migration 적용 등 "GitHub 이상"의 원격 작업이 필요한 경우 — agent는 실행하지 않고 사용자에게 인계한다 (`docs/local-dev-ci-guide.md §0`)
 - `docker compose down -v` 등 로컬 DB 데이터를 삭제하는 재빌드가 필요한 경우
 
 ## 초기 프로젝트 기본 가정
