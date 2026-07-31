@@ -31,6 +31,12 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 환경 호칭 개정 세션을 종료했다. (2026-07-31)
+  - 이 세션의 작업 범위는 아래 `환경 호칭 3-tier의 중간 계층을 develop -> staging으로 개정했다` 항목이다. 같은 날 `main`에 들어온 PR #10·#11은 다른 세션의 작업이다.
+  - 템플릿 PR #9(`77ab0cc`)과 `goldlink` PR #258(`09695fe`)은 머지 완료. 종료 시점 로컬 `main`·`origin/main`은 `ee03bd9`로 일치하고 워킹트리는 클린이다.
+  - 미완료 2건(`signal2` 미push, `aiospace` 미커밋)은 아래 `## 다음 작업`의 `환경 호칭 개정 후속`으로 인계한다.
+  - 이 종료 기록은 `agent/state-session-close` 전용 worktree에서 `STATE.md`만 수정했다. 전체 CI는 문서 전용 변경이라 제외했다.
+
 - STATE 리마인더 훅이 아무에게도 도달하지 않던 출력 규약 결함을 고쳤다. (2026-07-31)
   - Claude Code는 `exit 0`의 stderr를 버리고 `exit 2`의 stderr만 모델에게 전달한다. 이 훅은 차단하지 않는 경고라 `exit 0` + stderr로 작성되어 있었고, 결과적으로 경고가 모델·사용자 누구에게도 전달되지 않았다. 배선은 되어 있었지만 효과는 0이었다.
   - stdout JSON의 `hookSpecificOutput.additionalContext`로 교체했다. 차단하지 않으면서 모델에게만 전달된다. 검사 기준 디렉터리도 훅 프로세스의 cwd가 아니라 도구가 실행되는 cwd(`payload.cwd`)로 바꿔 worktree에서 정확히 판정한다.
@@ -50,7 +56,11 @@
   - 보존: 브랜치명 `develop`(force-push 금지 대상·base 정렬 예시) 4곳, Compose `develop.watch` 키 1곳, `NODE_ENV=development` 2곳, `STATE.md` 과거 이력은 당시 결정 기록이므로 소급 수정하지 않았다.
   - 검증: 환경 호칭 문맥의 `develop` 잔존 0 확인(`grep` 전수). `docs/docs-index.json`은 문서 크기·수정일도 색인하므로 로컬 생성물을 재생성하고 `--check`로 정합성을 확인한다.
   - 전체 CI 대기열: 문서 전용 변경으로 lint/test 대상 없음. 별도 배치 항목 없음.
-  - 연결 프로젝트 전파: `rules/` symlink 보유 14개를 스캔해 규칙 문서에 구 호칭이 남은 3개를 개정했다. `goldlink` 7개 파일 11곳(브랜치 `docs/environment-tier-naming`, 커밋 `cf16328` — 배포 런북이 이미 GitHub Environment 이름으로 `staging`을 써서 상단 선언과 어긋나 있던 불일치도 해소), `signal2` 오버라이드 해소(worktree `signal2-wt-common-override`, 커밋 `f970539` — 공통과 기준이 일치해 해석 규칙이 불필요해짐), `aiospace` 6곳(다른 세션이 e2e 작업 중인 브랜치라 개정만 하고 커밋 보류). 나머지 11개는 규칙 문서 잔존 0건.
+  - 템플릿 본체는 PR #9(`77ab0cc`)로 squash merge 완료. 원격 `main`에 반영을 확인했다.
+  - 연결 프로젝트 전파: `rules/` symlink 보유 14개를 스캔해 규칙 문서에 구 호칭이 남은 3개를 개정했다. 나머지 11개는 규칙 문서 잔존 0건.
+    - `goldlink` 7개 파일 11곳 → PR #258(`09695fe`) 머지 완료. 배포 런북이 이미 GitHub Environment 이름으로 `staging`을 쓰고 있어 문서 상단 선언(`develop`)과 본문이 어긋나 있던 불일치도 함께 해소했다.
+    - `signal2` 오버라이드 해소 → **미완료**. worktree `signal2-wt-common-override`(브랜치 `docs/common-override-cleanup`)에 커밋 `f970539`가 push 없이 대기 중이다. signal2는 같은 날 PR #50으로 자체 호칭을 이미 `staging`으로 확정했고, 공통과 기준이 같아져 "공통 문서의 `develop`은 signal2에서 `staging`으로 해석한다"는 해석 규칙이 불필요해진 것이 이 작업의 내용이다.
+    - `aiospace` 6곳(`AGENTS.md` 2 + `docs/notion-stack-comparison-and-update-plan.md` 4) → **미커밋**. 착수 시점에 다른 세션의 e2e 미커밋 변경과 브랜치가 겹쳐 커밋을 보류했다.
 
 - Codex 세션 종료 상태를 정리했다. (2026-07-30)
   - 공통 템플릿 `3.0.0`과 6단계 승인 워크플로가 원격 `main`에 반영된 상태를 확인했다.
@@ -778,6 +788,12 @@
 - 템플릿 자체의 빠른 검증(manifest JSON, managed marker, 신규 설치, 문서 참조, `git diff --check`)은 통과했다. 전체 CI가 필요하면 다음 명시 요청에서 누적 변경 기준으로 별도 실행한다.
 
 ## 다음 작업
+
+### 환경 호칭 개정 후속 (2026-07-31, 사용자 결정 대기)
+
+- **`signal2` 오버라이드 해소 미push**: worktree `~/projects/signal2-wt-common-override`(브랜치 `docs/common-override-cleanup`, 커밋 `f970539`)가 push 없이 대기 중이다. `AGENTS.md` 오버라이드 표의 공통값 인용과 `docs/local-dev-ci-guide.md`의 해석 문구를 정리한 2곳 변경이다.
+  - ⚠️ 착수 전 확인: 다른 세션이 `~/projects/signal2-wt-rule-docs`(브랜치 `docs/agent-rule-alignment`)에서 같은 `AGENTS.md`를 수정 중이고, 그 worktree의 `STATE.md`는 머지 충돌 미해결(`UU`) 상태였다. 그 작업 결과에 따라 이 개정이 불필요해질 수 있으므로 충돌이 풀린 뒤 재확인한다.
+- **`aiospace` 미커밋**: 브랜치 `codex/chore-u0-production-baseline`의 워킹트리에 `AGENTS.md`·`docs/notion-stack-comparison-and-update-plan.md` 2개 파일 변경이 남아 있다. 착수 시점의 e2e 미커밋 변경은 그 사이 커밋됐으므로 현재는 이 문서 변경만 남은 상태다. 같은 브랜치에 담을지 별도 브랜치로 분리할지 결정이 필요하다.
 
 ### L3 가드레일 후속 (2026-07-28)
 - ~~**패턴 검사 정확도**: `block-destructive.sh`가 실행되지 않는 인용문·heredoc 본문에도 반응해 오차단된다~~ → 해소 (2026-07-30). 데이터 문맥(heredoc 본문·인용문)을 걷어낸 뒤 검사하고, 인용문이 코드가 되는 셸 호출은 원문을 유지한다. 같은 작업에서 `rm` 탐지 위치 제약도 제거해 `-exec rm -rf`·`sh -c "rm -rf /"` 공백을 메웠다. 회귀 33/33. **남은 한계**: 주석(`#`) 안의 텍스트는 여전히 검사 대상이다(`#`이 URL·포맷 지정자에도 쓰여 일괄 제거가 위험).
