@@ -783,7 +783,7 @@ secondary:
   link:    {component.button-ghost} inline (예: "비밀번호를 잊으셨나요?")
 ```
 
-카피 패턴: 헤더는 격식 없는 단문(`로그인`, `다시 만나서 반가워요`), 에러는 `이메일 또는 비밀번호가 일치하지 않아요`, secondary 액션은 동사형(`비밀번호 찾기`, `회원가입`). admin 전용 표면이면 우측 상단에 환경 표시 chip(`{component.chip}` 변형, "운영"/"스테이징"/"개발")을 둘 수 있다.
+카피 패턴: 헤더는 격식 없는 단문(`로그인`, `다시 만나서 반가워요`), 에러는 `이메일 또는 비밀번호가 일치하지 않아요`, secondary 액션은 동사형(`비밀번호 찾기`, `회원가입`). admin 전용 표면이면 우측 상단에 환경 표시 chip(`{component.chip}` 변형, "운영"/"스테이징"/"로컬")을 둘 수 있다.
 
 ### sidebar-nav
 
@@ -842,7 +842,7 @@ left-cluster:
 right-cluster:
   gap:          {spacing.space-12}
   search:       optional, {component.search} max-width 320
-  env-chip:     운영/스테이징/개발 식별 (운영=neutral, 스테이징={colors.bg-warning-subtle}, 개발={colors.bg-success-subtle})
+  env-chip:     운영/스테이징/로컬 식별 (운영=neutral, 스테이징={colors.bg-warning-subtle}, 로컬={colors.bg-success-subtle})
   notification: {component.icon-button} + 우상단 6px {colors.bg-danger} dot
   avatar:       {component.avatar} 32px, 우측 끝
   user-menu:    avatar 클릭 시 popover dropdown ({elevation.shadow-pop})

@@ -62,7 +62,7 @@ admin의 표준 골격은 3개 영역으로 구성된다.
 
 - 카드 너비 400(min), padding `{spacing.space-32}`, radius `{rounded.radius-12}`.
 - 에러 inline: 입력 하단에 `{component.alert}` inline. 카피 예 (ko-friendly): `이메일 또는 비밀번호가 일치하지 않아요`. (en-sentence: `Email or password is incorrect`)
-- 다중 환경(운영/스테이징/개발) 운영 시 우측 상단에 `{component.chip}` 변형으로 환경 표시.
+- 다중 환경(운영/스테이징/로컬) 운영 시 우측 상단에 `{component.chip}` 변형으로 환경 표시.
 - 다크 모드 대응: 카드 `{colors.bg-surface}` alias가 light/dark 자동 분기.
 
 ## 대시보드 (홈) 패턴

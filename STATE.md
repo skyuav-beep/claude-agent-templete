@@ -31,6 +31,15 @@
 
 ## 이번 세션에서 완료한 작업
 
+- 환경 호칭 3-tier의 중간 계층을 `develop` -> `staging`으로 개정했다. (2026-07-31)
+  - 배경: 사용자가 `local`(현재 PC의 Docker 개발환경) / `staging`(원격 검증 서버) / `production`(원격 운영 서버) 기준으로 가이드 호칭 정합을 요청. 기존 `develop`은 브랜치명과 표기가 겹쳐 환경 축과 브랜치 축이 혼동됐다.
+  - 결정: (1) 중간 계층 호칭 `staging`, 약어 `stg` 허용(`prod`와 대칭), (2) 원격 검증 서버를 `dev`/`develop`으로 부르지 않는다 — `dev`는 `migrate dev` 명령 모드와, `develop`은 브랜치명과 충돌, (3) admin 환경 표시 chip 카피를 운영/스테이징/로컬로 통일.
+  - 정본 `docs/local-dev-ci-guide.md §0` 표·용어 규칙·자동화 경계를 재작성하고, `CLAUDE.md`, `AGENTS.md`(호칭 요약·인계 경계), `docs/approval-workflow.md`, `docs/business-logic-playbook.md`(§5.1 흐름 7)·13), §5.2 표), `.codex/checks/safety-checklist.md`의 참조를 동기화했다. 총 8개 파일 21행.
+  - 보존: 브랜치명 `develop`(force-push 금지 대상·base 정렬 예시) 4곳, Compose `develop.watch` 키 1곳, `NODE_ENV=development` 2곳, `STATE.md` 과거 이력은 당시 결정 기록이므로 소급 수정하지 않았다.
+  - 검증: 환경 호칭 문맥의 `develop` 잔존 0 확인(`grep` 전수). `docs/docs-index.json`은 헤딩만 색인하고 §0 제목이 불변이라 재생성 불필요.
+  - 전체 CI 대기열: 문서 전용 변경으로 lint/test 대상 없음. 별도 배치 항목 없음.
+  - 연결 프로젝트 전파: `rules/` symlink 보유 14개를 스캔해 규칙 문서에 구 호칭이 남은 3개를 개정했다. `goldlink` 7개 파일 11곳(브랜치 `docs/environment-tier-naming`, 커밋 `cf16328` — 배포 런북이 이미 GitHub Environment 이름으로 `staging`을 써서 상단 선언과 어긋나 있던 불일치도 해소), `signal2` 오버라이드 해소(worktree `signal2-wt-common-override`, 커밋 `f970539` — 공통과 기준이 일치해 해석 규칙이 불필요해짐), `aiospace` 6곳(다른 세션이 e2e 작업 중인 브랜치라 개정만 하고 커밋 보류). 나머지 11개는 규칙 문서 잔존 0건.
+
 - Codex 세션 종료 상태를 정리했다. (2026-07-30)
   - 공통 템플릿 `3.0.0`과 6단계 승인 워크플로가 원격 `main`에 반영된 상태를 확인했다.
   - 승인 워크플로 작업은 PR #7로 squash merge됐고, 이후 상태 정리 커밋까지 포함한 로컬 `main`·로컬 `origin/main`·실제 원격 `main`이 `5595434`로 일치했다.

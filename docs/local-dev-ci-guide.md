@@ -12,19 +12,19 @@ agent가 로컬 개발 루프에서 Docker Desktop을 다루는 방식과 Git �
 
 | 호칭 | 실체 | 자동화 | 마이그레이션 명령(예: Prisma) |
 |---|---|---|---|
-| `local` | 내 PC Docker Desktop (로컬) | agent 상시 자동 | `prisma migrate dev` (생성+적용) |
-| `develop` | 원격 개발서버 | 사용자 수동 | `prisma migrate deploy` (적용만) |
-| `production` (`prod`) | 원격 운영서버 | 사용자 수동 | `prisma migrate deploy` (적용만) |
+| `local` | 현재 PC의 Docker 개발환경 | agent 상시 자동 | `prisma migrate dev` (생성+적용) |
+| `staging` (`stg`) | 원격 검증 서버 | 사용자 수동 | `prisma migrate deploy` (적용만) |
+| `production` (`prod`) | 원격 운영 서버 | 사용자 수동 | `prisma migrate deploy` (적용만) |
 
 용어 규칙:
 
-- **"dev" 단독 표기를 쓰지 않는다.** 환경은 `local` / `develop` / `production`으로, 명령은 항상 풀로(`prisma migrate dev` / `prisma migrate deploy`) 적는다. Prisma의 `migrate dev`에서 "dev"는 환경이 아니라 "개발 워크플로우 모드"이며, 환경 축과 직교한다.
-- **개발서버 약어로 `dev`를 쓰지 않는다.** `migrate dev` 명령과 충돌하므로 `develop` 풀네임만 쓴다. (`prod`는 충돌 없어 허용)
-- 본 문서에서 "dev 컨테이너 / dev 모드 / `pnpm dev` / `target: dev`"는 모두 **`local`(로컬 개발 컨테이너·명령)**을 가리키며, 원격 `develop` 환경과 무관하다.
+- **"dev" 단독 표기를 쓰지 않는다.** 환경은 `local` / `staging` / `production`으로, 명령은 항상 풀로(`prisma migrate dev` / `prisma migrate deploy`) 적는다. Prisma의 `migrate dev`에서 "dev"는 환경이 아니라 "개발 워크플로우 모드"이며, 환경 축과 직교한다.
+- **원격 검증 서버를 `dev`/`develop`으로 부르지 않는다.** `dev`는 `migrate dev` 명령 모드와, `develop`은 브랜치명과 충돌하므로 환경 호칭은 `staging`만 쓴다. 약어 `stg`·`prod`는 충돌이 없어 허용한다.
+- 본 문서에서 "dev 컨테이너 / dev 모드 / `pnpm dev` / `target: dev`"는 모두 **`local`(로컬 개발 컨테이너·명령)**을 가리키며, 원격 `staging` 환경과 무관하다.
 
 자동화 경계 (마이그레이션):
 
-- agent는 **`local`(내 PC Docker Desktop)에만** 마이그레이션을 적용한다. `develop`·`production`은 명령 종류와 무관하게 사용자 수동이다.
+- agent는 **`local`(현재 PC의 Docker 개발환경)에만** 마이그레이션을 적용한다. `staging`·`production`은 명령 종류와 무관하게 사용자 수동이다.
 - 판단 기준은 **명령 이름이 아니라 연결 대상**이다. 실행 전 `DATABASE_URL`(또는 동등 연결 설정)이 `local` Docker를 가리키는지 확인한다. 원격을 가리키면 명령이 `migrate dev`라도 실행하지 않는다.
 
 ## 1. Agent 실행 경계 (핵심 규칙)
@@ -41,7 +41,7 @@ agent가 로컬 개발 루프에서 Docker Desktop을 다루는 방식과 Git �
 | commit / push / ready PR / merge / cleanup | **3단계 승인 범위 안에서 agent** | 6단계에서 연속 수행, 게이트 실패 시 중단 |
 | ───────── 경계선 ───────── | | agent는 여기서 종료하고 인계 요약을 남긴다 |
 | GitHub Actions 배포 / 릴리스 workflow 실행 | **사용자 수동** | agent는 dispatch/trigger 금지. push 자동 트리거 CI는 §6.4로 강등/제거 |
-| **`develop`/`production`** DB migration 적용 | **사용자 수동** | "GitHub 이상" — agent 적용 금지 (§0) |
+| **`staging`/`production`** DB migration 적용 | **사용자 수동** | "GitHub 이상" — agent 적용 금지 (§0) |
 | 운영 반영 확인 / 롤백 판단 | **사용자 수동** | |
 
 핵심: 3단계의 명시 승인이 없으면 파일 수정과 Git 쓰기를 실행하지 않는다. 2단계에 전체 Git 수명주기를 구체적으로 적고 승인받았다면 6단계에서 별도 재질문 없이 마무리한다. 배포·릴리스·원격 migration은 실행하지 않는다.
@@ -184,7 +184,7 @@ services:
 ──────────────────── 경계선 ────────────────────
 [사용자 수동 — 원격 운영]
   10) GitHub Actions 배포/릴리스 실행 (있다면)
-  11) 원격(`develop`/`production`) migration 적용
+  11) 원격(`staging`/`production`) migration 적용
   12) 운영 반영 확인 / 롤백 판단
 ```
 
@@ -209,7 +209,7 @@ agent는 로컬 검증을 마친 뒤(또는 사용자 요청으로 push한 뒤) 
 
 - agent는 GitHub Actions 배포/릴리스 workflow를 trigger/dispatch하지 않는다 (`gh workflow run`, `gh release create`, 배포 스크립트 직접 실행 등 금지).
 - agent는 검증을 **로컬 CI**(§6.2)로 한다. push로 원격 GitHub Actions CI를 트리거해 검증을 대신하지 않는다. push 자동 트리거 워크플로가 있으면 §6.4로 강등·제거한다.
-- agent는 원격(`develop`/`production`) DB에 migration을 적용하지 않는다. migration 적용은 **`local`(Docker Desktop)까지만**. 실행 전 `DATABASE_URL`이 `local`을 가리키는지 확인하고, 원격을 가리키면 명령이 `migrate dev`라도 실행하지 않는다(§0).
+- agent는 원격(`staging`/`production`) DB에 migration을 적용하지 않는다. migration 적용은 **`local`(Docker Desktop)까지만**. 실행 전 `DATABASE_URL`이 `local`을 가리키는지 확인하고, 원격을 가리키면 명령이 `migrate dev`라도 실행하지 않는다(§0).
 - `docker compose down -v` 등 로컬 DB 데이터를 삭제하는 명령은 사용자 확인 없이 실행하지 않는다.
 - `git push --force`는 본인 작업 브랜치에서 `--force-with-lease`로만. `main`/`master`/`develop`에는 금지 (`block-destructive.sh` hook이 차단).
 

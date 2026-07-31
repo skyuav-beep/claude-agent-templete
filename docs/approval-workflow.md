@@ -55,7 +55,7 @@
 7. 원격 base가 머지 결과를 포함하는지 SHA로 검증한다.
 8. 원격 작업 브랜치, worktree, 로컬 작업 브랜치를 안전 삭제하고 prune한다.
 
-검증 실패, 충돌, 필수 review/check 미충족이면 우회하지 않고 중단해 보고한다. 배포·릴리스 Action과 `develop`/`production` migration은 항상 사용자 수동이다.
+검증 실패, 충돌, 필수 review/check 미충족이면 우회하지 않고 중단해 보고한다. 배포·릴리스 Action과 `staging`/`production` migration은 항상 사용자 수동이다.
 
 ## 빠른 검증 기준
 

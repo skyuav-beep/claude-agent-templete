@@ -147,14 +147,14 @@
 4) build                                 → 타입 오류·번들 실패 차단
 5) e2e (선택, happy path 1~2개)          → 가능한 경우만, 환경 미구성이면 사유 기록
 6) docker rebuild 판단 (5.2)             → 증분/강력 판단 후 rebuild + smoke
-7) DB migration (해당 시)                → `local`(Docker Desktop)에만 적용·검증 (`develop`/`production`은 수동, §0)
+7) DB migration (해당 시)                → `local`(Docker Desktop)에만 적용·검증 (`staging`/`production`은 수동, §0)
 8) git commit (로컬 누적)                → 1~7 반복하며 commit만 쌓는다 (push 아님)
 9) 사용자 "CI 돌려" 시 로컬 CI 스위트    → lint+typecheck+unit+build[+e2e/smoke] 또는 `act`. 로컬 실행(GitHub Actions 아님). green이 게이트 (§6.2)
 10) 사용자 "push" 시 push + PR 1개        → 누적 commit 일괄. push는 CI 트리거 안 함 (`docs/local-dev-ci-guide.md §1.1`)
 ──────── 3단계 승인 범위의 6단계 마무리 / 원격 운영은 인계 ────────
 11) 게이트 확인 후 머지 + 원격 base 반영 검증 + 브랜치/worktree 정리 (§6.3/§6.5)
 12) [수동] GitHub Actions 배포·릴리스 실행 (있다면)
-13) [수동] 원격(`develop`/`production`) migration 적용
+13) [수동] 원격(`staging`/`production`) migration 적용
 ```
 
 각 단계의 통과 기준:
@@ -176,7 +176,7 @@ Docker를 쓰는 프로젝트에서 (hot reload로 해결되지 않는) 변경�
 | `package.json` / `pnpm-lock.yaml` / `requirements.txt` 의존성 | **필요**. 이미지 레이어가 의존성 설치 단계에서 시작 | `docker compose build --no-cache <service>` |
 | `Dockerfile` / `docker-compose.yml` / `.dockerignore` | **필요**. 이미지 정의 자체 변경 | `docker compose build <service>` |
 | 환경 변수(`.env`, `compose` env) | rebuild 불필요. 컨테이너만 재시작 | `docker compose up -d <service>` |
-| migration SQL · seed 데이터 | rebuild 불필요. **`local`(Docker Desktop)에만 적용**(agent), `develop`/`production`은 사용자 수동 (§0) | `docker compose exec <service> <migration cmd>` (`local` 한정) |
+| migration SQL · seed 데이터 | rebuild 불필요. **`local`(Docker Desktop)에만 적용**(agent), `staging`/`production`은 사용자 수동 (§0) | `docker compose exec <service> <migration cmd>` (`local` 한정) |
 | nginx/reverse-proxy 설정 | proxy 컨테이너만 rebuild + restart | `docker compose build proxy && docker compose up -d proxy` |
 
 판단 후 PR 본문 `## 검증 계획`에 "Docker rebuild: 불필요 (src/만 변경)" 또는 "필요 (pnpm-lock.yaml 갱신 → `docker compose build --no-cache api`)" 같이 사유를 명시한다.
