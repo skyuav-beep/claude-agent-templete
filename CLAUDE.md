@@ -114,10 +114,10 @@
 - `designs/` — 디자인 시안 라이브러리. 시안 선택은 `bash .claude/plugins/select-design.sh <slug>`
 - `agents/` — 역할별 에이전트 행동 규칙 (main, executor, researcher, reviewer)
 - `templates/` — 작업 요청 5종 + intake 양식 14종 (`data-table-density.md` 포함)
-- `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타: `docs/design-guidelines.md`, admin FE: `docs/admin-fe-design-guide.md`, UI 결정 기록: `docs/ui-decisions.md`, 로컬/CI 실행 경계+Docker 재빌드: `docs/local-dev-ci-guide.md`, 금액·수량 처리: `docs/money-quantity-guidelines.md`)
+- `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타: `docs/design-guidelines.md`, admin FE: `docs/admin-fe-design-guide.md`, UI 결정 기록: `docs/ui-decisions.md`, 로컬/CI 실행 경계+Docker 재빌드: `docs/local-dev-ci-guide.md`, 금액·수량 처리: `docs/money-quantity-guidelines.md`, 작업 알림: `docs/notification-guide.md`)
 - `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 10종)
 - `.claude/commands/` — L2 보조 (명시적 slash command 10종, skills와 병존)
-- `.claude/hooks/` — L3 Guardrails (가드레일 스크립트 4종, opt-in 1종 포함)
+- `.claude/hooks/` — L3 Guardrails (가드레일 4종 + 작업 알림 3종, opt-in 1종 포함). 상태줄은 `.claude/statusline-notify.sh`
 - `.claude/agents/` — L4 서브에이전트 정의 6종, frontmatter로 자동 등록 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - `.claude/plugins/` — L5 배포 도구 (manifest, install)
 - `.codex/` — Codex runtime adapter (workflow 10종, checks 2종, subagent prompt guide 6종). Claude 자동화와 분리된 보완 레이어
@@ -179,6 +179,14 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 - `block-secret-files.sh` — `.env`, `*.pem`, `*.key`, `credentials.json` 등 비밀 파일 쓰기 차단
 - `state-reminder.sh` — `git commit` 시 STATE.md 미갱신 경고 (차단하지 않음)
 - `warn-design-tokens.sh` — opt-in: hex 색/비-4의 배수 px 사용 경고 (기본 미등록, 활성화 방법은 `docs/design-guidelines.md` 참조)
+
+작업 알림 훅은 여러 창을 동시에 쓸 때 완료·응답 요청을 놓치지 않기 위한 것이다.
+
+- `notify-pending.sh` — `Stop`/`Notification` 진입점. 완료·응답 요청을 소리와 데스크톱 알림으로 알리고, 확인할 때까지 반복한다. 반드시 `"async": true`로 등록한다
+- `notify-ack.sh` — `UserPromptSubmit`/`SessionEnd` 진입점. 그 창에 입력이 들어오면 대기 상태를 해제하고 반복 알림을 멈춘다
+- `notify-desktop.sh` — 플랫폼별 알림 발사기. 훅 진입점이 아니라 위 두 스크립트가 호출한다
+
+알림 종류·소리·간격 조정과 되돌리기는 `docs/notification-guide.md`를 참조한다. 모든 창에서 받으려면 사용자 전역 설정에 등록하고, 특정 저장소에서만 받으려면 그 저장소의 `settings.local.json`에 등록한다. 양쪽에 모두 등록하면 두 번 울린다.
 
 hook을 추가하거나 수정할 때는 `.claude/hooks/`에 스크립트를 작성하고 `settings.local.json`에 등록한다.
 
