@@ -25,6 +25,9 @@
 | 디자인 규칙 | `.claude/skills/design/SKILL.md` 자동 로드 | `.codex/workflows/design.md` 강제 참조 | `DESIGN.md`, `docs/design-guidelines.md` |
 | 파괴적 명령 차단 | `.claude/hooks/block-destructive.sh` | Codex 승인/샌드박스 + `.codex/checks/safety-checklist.md` | `AGENTS.md` 사용자 확인 규칙 |
 | STATE 리마인더 | `.claude/hooks/state-reminder.sh` | `.codex/checks/finish-checklist.md` | `STATE.md` |
+| 작업 완료 알림 | `Stop` 훅 -> `.claude/hooks/notify-pending.sh` | `notify` 설정 -> `.codex/hooks/notify-codex.sh` -> 같은 스크립트 | `docs/notification-guide.md` |
+| 확인(ACK) 추적 | `UserPromptSubmit`/`SessionEnd` 훅 | 해당 훅 없음. rollout 기록 파일 갱신 감시로 판정 | 상태 파일 `~/.claude/notify-state/` 공유 |
+| 대기 현황 표시 | `statusLine` (다른 창 대기 상시 표시) | Codex TUI에 커스텀 상태줄 없음. Claude 창의 상태줄이 Codex 대기도 함께 표시 | 상태 파일 공유 |
 | 서브에이전트 | Claude `Agent` 도구 + `.claude/agents/*` | Codex subagent 사용 시 `.codex/agents/*` | `agents/*`, `docs/subagent-guide.md` |
 | 설치 | `.claude/plugins/install.sh` | 동일 설치기로 연결·업데이트 | manifest 소유권 + `.claude/.template-install-state.json` 해시 상태 |
 

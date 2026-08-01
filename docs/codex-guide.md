@@ -22,6 +22,9 @@
 | PreToolUse hook | Codex 승인/샌드박스와 safety checklist로 대체한다 |
 | Agent subagent template | Codex subagent가 필요할 때 `.codex/agents/*.md`를 프롬프트 기준으로 쓴다 |
 | state reminder hook | 작업 종료 전 finish checklist를 수행한다 |
+| Stop hook 작업 완료 알림 | `notify` 설정에 `.codex/hooks/notify-codex.sh`를 등록한다. 어댑터가 Claude 알림 훅을 그대로 호출한다 |
+| UserPromptSubmit hook 확인 추적 | 해당 훅이 없다. rollout 기록 파일의 갱신을 감시해 확인 여부를 판정한다 |
+| statusLine 대기 현황 | Codex TUI에는 없다. Claude Code 창을 하나 띄워 두면 그 상태줄에 Codex 대기까지 함께 보인다 |
 
 ## 작업 유형 라우팅
 

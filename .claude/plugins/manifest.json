@@ -61,12 +61,16 @@
       ]
     },
     "L3_hooks": {
-      "description": "도구 실행 전 자동 가드레일 스크립트",
+      "description": "자동 가드레일 스크립트와 작업 알림 스크립트",
       "files": [
         { "path": ".claude/hooks/block-destructive.sh", "description": "Block rm -rf, git reset --hard, etc." },
         { "path": ".claude/hooks/block-secret-files.sh", "description": "Block writing to .env, *.pem, *.key" },
         { "path": ".claude/hooks/state-reminder.sh", "description": "Warn if STATE.md not updated on commit" },
-        { "path": ".claude/hooks/warn-design-tokens.sh", "description": "Opt-in: warn on hex/non-4px usage in CSS/JSX (not registered by default)" }
+        { "path": ".claude/hooks/warn-design-tokens.sh", "description": "Opt-in: warn on hex/non-4px usage in CSS/JSX (not registered by default)" },
+        { "path": ".claude/hooks/notify-desktop.sh", "description": "Desktop toast + sound dispatcher (WSL/Windows, macOS, Linux)" },
+        { "path": ".claude/hooks/notify-pending.sh", "description": "Stop/Notification: register waiting state, alert, repeat until acknowledged (async hook)" },
+        { "path": ".claude/hooks/notify-ack.sh", "description": "UserPromptSubmit/SessionEnd: clear waiting state and stop repeat alerts" },
+        { "path": ".claude/statusline-notify.sh", "description": "Status line: show which other windows are waiting for a response" }
       ],
       "settings": ".claude/settings.template.json"
     },
@@ -102,6 +106,7 @@
     "description": "Codex runtime adapter — mirrors Claude workflows as explicit Codex procedures",
     "files": [
       { "path": ".codex/README.md", "description": "Codex entrypoint and reading order" },
+      { "path": ".codex/hooks/notify-codex.sh", "description": "Codex notify adapter — bridges turn-complete events to the shared notification hooks" },
       { "path": ".codex/checks/safety-checklist.md", "description": "Safety checks replacing Claude hooks in Codex" },
       { "path": ".codex/checks/finish-checklist.md", "description": "Finish checks replacing state reminder hook in Codex" },
       { "path": ".codex/workflows/start.md", "description": "Codex start workflow" },
