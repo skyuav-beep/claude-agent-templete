@@ -106,6 +106,7 @@
     "description": "Codex runtime adapter — mirrors Claude workflows as explicit Codex procedures",
     "files": [
       { "path": ".codex/README.md", "description": "Codex entrypoint and reading order" },
+      { "path": ".codex/hooks/notify-codex.sh", "description": "Codex notify adapter — bridges turn-complete events to the shared notification hooks" },
       { "path": ".codex/checks/safety-checklist.md", "description": "Safety checks replacing Claude hooks in Codex" },
       { "path": ".codex/checks/finish-checklist.md", "description": "Finish checks replacing state reminder hook in Codex" },
       { "path": ".codex/workflows/start.md", "description": "Codex start workflow" },

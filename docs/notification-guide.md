@@ -11,6 +11,7 @@
 | `.claude/hooks/notify-pending.sh` | `Stop`·`Notification` 훅 진입점. 대기 상태 등록, 알림, 미확인 반복 |
 | `.claude/hooks/notify-ack.sh` | `UserPromptSubmit`·`SessionEnd` 훅 진입점. 확인 처리와 정리 |
 | `.claude/statusline-notify.sh` | 상태줄. 다른 창의 대기 현황을 상시 표시 |
+| `.codex/hooks/notify-codex.sh` | Codex `notify` 어댑터. Codex 페이로드를 위 훅 형식으로 변환 |
 
 상태 파일은 `~/.claude/notify-state/`에 세션 단위로 쌓인다(`<session_id>.pending`, `.watcher`, `.start`).
 하루 이상 지난 찌꺼기는 `notify-ack.sh`가 실행될 때 자동 정리한다.
@@ -89,10 +90,41 @@ Windows 기본 소리는 `C:\Windows\Media\`에 71개가 있고, 직접 준비�
 특정 저장소에서만 받으려면 그 저장소의 `.claude/settings.local.json`에 등록한다.
 양쪽에 모두 등록하면 알림이 두 번 울린다.
 
+## Codex에서 쓰기
+
+Codex도 같은 알림을 받는다. `~/.codex/config.toml`에 한 줄을 넣는다.
+
+```toml
+notify = ["/절대경로/claude-agent-template/.codex/hooks/notify-codex.sh"]
+```
+
+두 런타임의 호출 규약이 달라 어댑터를 거친다. Claude Code는 payload를 stdin JSON으로 주고 이벤트를
+`hook_event_name`으로 구분하지만, Codex는 payload를 마지막 argv로 주고 `type`으로 구분한다.
+어댑터가 이 차이만 흡수하므로 알림·반복·확인 로직은 두 런타임이 같은 스크립트를 공유한다.
+
+| 기능 | Claude Code | Codex |
+| --- | --- | --- |
+| 완료 알림 | `Stop` 훅 | `notify` 설정 (`agent-turn-complete`) |
+| 확인(ACK) | `UserPromptSubmit` 훅으로 즉시 해제 | 해당 훅 없음. rollout 기록 갱신으로 판정 |
+| 턴 소요 시간 | `UserPromptSubmit`에서 시작 시각 기록 | rollout의 마지막 `task_started` 시각에서 계산 |
+| 세션 종료 정리 | `SessionEnd` 훅 | 해당 훅 미등록. 하루 지난 찌꺼기는 자동 정리 |
+| 대기 현황 표시 | 상태줄 | Codex TUI에 없음. Claude 창 상태줄이 함께 표시 |
+
+상태 파일을 공유하므로 Claude Code 창을 하나라도 띄워 두면 그 상태줄에 **Codex 창의 대기까지 함께** 나온다.
+
+Codex `notify`는 동기 호출이라 어댑터가 반복 알림을 백그라운드로 분리한다. 어댑터가 직접 대기하면
+그 시간만큼 Codex가 멈춘다. 페이로드 형태를 직접 확인하려면 `CLAUDE_NOTIFY_DEBUG=1`을 켜고
+`~/.claude/notify-state/codex-payload.log`를 본다.
+
+Codex는 `PreToolUse`, `PostToolUse`, `PermissionRequest`, `SessionStart`, `SessionEnd`, `PreCompact`,
+`PostCompact` lifecycle 훅도 지원한다. 승인 대기 알림이 필요하면 `PermissionRequest`에 훅을 걸 수 있지만,
+`approval_policy = "never"` 설정에서는 승인 요청 자체가 발생하지 않는다.
+
 ## 되돌리기
 
 전역 설정에서 위 `hooks`의 `Stop`·`Notification`·`UserPromptSubmit`·`SessionEnd` 항목과
 `statusLine` 블록을 지우면 원래대로 돌아간다. 스크립트 파일은 남아 있어도 호출되지 않는다.
+Codex는 `~/.codex/config.toml`의 `notify` 줄을 지운다.
 
 일시적으로 끄려면 `CLAUDE_NOTIFY_DISABLE=1`을 설정한다.
 

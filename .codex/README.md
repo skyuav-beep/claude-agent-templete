@@ -41,6 +41,14 @@
 - 문서/운영 규칙 변경 시 `STATE.md`를 갱신한다.
 - 3단계에서 승인된 Git 수명주기는 6단계에서 commit부터 cleanup까지 완료한다.
 
+## 작업 알림
+
+- 턴이 끝나면 소리와 데스크톱 알림으로 알린다. 여러 창을 동시에 쓸 때 완료를 놓치지 않기 위한 것이다.
+- `~/.codex/config.toml`에 `notify = ["<절대경로>/.codex/hooks/notify-codex.sh"]`를 등록한다.
+- 어댑터가 Codex 페이로드를 Claude 훅 형식으로 바꿔 `.claude/hooks/notify-pending.sh`를 호출한다. 알림 로직은 두 런타임이 같은 스크립트를 쓴다.
+- 확인(ACK)은 rollout 기록 파일이 갱신되면 성립한다. 즉 그 창에서 다음 작업을 진행하면 반복 알림이 멈춘다.
+- 소리·간격 조정과 되돌리기는 `docs/notification-guide.md`를 참조한다.
+
 ## 동등성 기준
 
 - `.codex/workflows/*`는 `.claude/skills/*`와 `.claude/commands/*`가 수행하는 절차를 Codex에서 명시적으로 재현한다.
