@@ -17,12 +17,19 @@
 
 ## 알림 종류
 
-| 종류 | 언제 | 소리(Windows) | 제목 |
+| 종류(kind) | 언제 | 소리(Windows) | 제목 |
 | --- | --- | --- | --- |
-| 작업 완료 | 답변이 끝나고 다음 지시를 기다릴 때 | `Windows Notify System Generic.wav` | `작업 완료 · <폴더명>` |
-| 응답 필요 | 권한 승인, 질문, 유휴 대기 | `Windows Message Nudge.wav` | `승인 필요 / 응답 필요 / 대기 중 · <폴더명>` |
+| `done` | 답변이 끝나고 다음 지시를 기다릴 때 | `tada.wav` | `작업 완료 · <폴더명>` |
+| `attention` | 권한 승인, 질문, 유휴 대기 | `Alarm03.wav` | `승인 필요 / 응답 필요 / 대기 중 · <폴더명>` |
+| `escalate` | 재알림이 `ESCALATE_AFTER`회에 도달했을 때 | `Ring06.wav` | 위 제목에 `(N분 대기)` 추가 |
 
 제목의 `<폴더명>`은 그 창의 작업 디렉터리 이름이다. 여러 창을 띄워도 어느 프로젝트인지 바로 구분된다.
+
+같은 소리를 여러 번 반복하면 귀가 익어 놓치게 되므로, 기본 3회째 재알림부터 가장 길고 강한 소리로 격상한다.
+macOS는 `Glass` / `Sosumi` / `Basso`, Linux는 `notify-send` 긴급도 `normal` / `critical` / `critical`로 대응한다.
+
+소리를 바꾸려면 `notify-desktop.sh`의 `case "$kind"` 블록에서 파일명을 교체한다.
+Windows 기본 소리는 `C:\Windows\Media\`에 71개가 있고, 직접 준비한 wav 파일 경로를 써도 된다.
 
 ## 확인(ACK) 판정
 
@@ -42,6 +49,7 @@
 | `CLAUDE_NOTIFY_MIN_SECONDS` | `60` | 완료 알림 최소 소요 시간. 이보다 짧은 턴은 조용히 넘어간다 |
 | `CLAUDE_NOTIFY_REPEAT_SECONDS` | `90` | 미확인 재알림 간격 |
 | `CLAUDE_NOTIFY_REPEAT_MAX` | `6` | 재알림 최대 횟수 |
+| `CLAUDE_NOTIFY_ESCALATE_AFTER` | `3` | 이 횟수째 재알림부터 더 강한 소리로 격상 |
 | `CLAUDE_NOTIFY_STATE_DIR` | `~/.claude/notify-state` | 상태 파일 위치 |
 
 재알림 총 지속 시간(`REPEAT_SECONDS × REPEAT_MAX`)이 async 훅 타임아웃 기본값 600초를 넘으면

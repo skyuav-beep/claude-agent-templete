@@ -16,6 +16,7 @@
 #   CLAUDE_NOTIFY_MIN_SECONDS    60   완료 알림 최소 소요 시간. 짧은 턴은 조용히 넘긴다
 #   CLAUDE_NOTIFY_REPEAT_SECONDS 90   미확인 재알림 간격
 #   CLAUDE_NOTIFY_REPEAT_MAX     6    재알림 최대 횟수
+#   CLAUDE_NOTIFY_ESCALATE_AFTER 3    이 횟수째 재알림부터 더 강한 소리로 격상
 #   CLAUDE_NOTIFY_STATE_DIR      ~/.claude/notify-state
 
 set -u
@@ -30,6 +31,7 @@ send="$here/notify-desktop.sh"
 min_seconds="${CLAUDE_NOTIFY_MIN_SECONDS:-60}"
 repeat_every="${CLAUDE_NOTIFY_REPEAT_SECONDS:-90}"
 repeat_max="${CLAUDE_NOTIFY_REPEAT_MAX:-6}"
+escalate_after="${CLAUDE_NOTIFY_ESCALATE_AFTER:-3}"
 state_dir="${CLAUDE_NOTIFY_STATE_DIR:-$HOME/.claude/notify-state}"
 
 payload=$(cat 2>/dev/null || true)
@@ -121,7 +123,10 @@ while [ "$i" -lt "$repeat_max" ]; do
   [ "$(mtime_of "$transcript")" != "$base_mtime" ] && { rm -f "$pend" 2>/dev/null; break; }
   i=$((i + 1))
   waited=$(fmt_dur $((i * repeat_every)))
-  bash "$send" "$kind" "$title ($waited 대기)" "$body"
+  # 여러 번 놓친 뒤에는 같은 소리를 반복해도 잘 들리지 않으므로 더 강한 소리로 바꾼다.
+  nag_kind="$kind"
+  [ "$i" -ge "$escalate_after" ] && nag_kind="escalate"
+  bash "$send" "$nag_kind" "$title ($waited 대기)" "$body"
 done
 rm -f "$pidf" 2>/dev/null
 
