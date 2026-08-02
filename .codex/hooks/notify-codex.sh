@@ -78,6 +78,14 @@ converted=$(jq -n \
   '{session_id: $sid, cwd: $cwd, transcript_path: $tp, hook_event_name: "Stop", last_assistant_message: $msg}' 2>/dev/null)
 [ -n "$converted" ] || exit 0
 
-printf '%s' "$converted" | setsid nohup bash "$pending" >/dev/null 2>&1 &
+# setsid로 분리하면 부모를 거슬러 올라가는 경로가 끊기므로 여기서 세션 프로세스를 짚어 넘긴다.
+# Codex가 이 어댑터를 직접 실행한 경우에만 부모가 codex다. 확인되지 않으면 넘기지 않는다
+# (상태줄이 소유자 검증을 건너뛰고 종전대로 표시한다).
+owner=""
+case "$(ps -p "$PPID" -o comm= 2>/dev/null | tr -d ' ')" in
+  codex) owner="$PPID" ;;
+esac
+
+printf '%s' "$converted" | CLAUDE_NOTIFY_OWNER_PID="$owner" setsid nohup bash "$pending" >/dev/null 2>&1 &
 
 exit 0

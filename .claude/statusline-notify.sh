@@ -33,6 +33,18 @@ fmt_ago() {
   else printf '%d시간' "$((s / 3600))"; fi
 }
 
+mtime_of() {
+  [ -n "${1:-}" ] && [ -e "$1" ] || { printf '0'; return; }
+  stat -c %Y "$1" 2>/dev/null || stat -f %m "$1" 2>/dev/null || printf '0'
+}
+
+alive() {
+  case "${1:-}" in
+    ''|*[!0-9]*) return 1 ;;
+    *) kill -0 "$1" 2>/dev/null ;;
+  esac
+}
+
 now=$(date +%s)
 waiting=""
 count=0
@@ -44,9 +56,29 @@ if [ -d "$state_dir" ]; then
     sid=$(basename "$f" .pending)
     [ -n "$self_id" ] && [ "$sid" = "$self_id" ] && continue
 
-    IFS=$'\t' read -r label kind ts < "$f" 2>/dev/null || continue
+    IFS=$'\t' read -r label kind ts pid pcomm bmtime tpath < "$f" 2>/dev/null || continue
     [ -n "${label:-}" ] || continue
     case "${ts:-}" in ''|*[!0-9]*) ts=$now ;; esac
+
+    # 소유 프로세스가 사라진 표식은 누구도 확인해 줄 수 없다. 그 창에 입력이 들어올 일이 없으니
+    # 명시적 확인(notify-ack.sh)도 영영 오지 않는다. 여기서 걷어내지 않으면 하루 동안 유령으로 남는다.
+    # PID가 없는 예전 형식의 표식은 판정 근거가 없으므로 종전대로 표시한다.
+    if [ -n "${pid:-}" ] && [ -n "${pcomm:-}" ]; then
+      if [ "$(ps -p "$pid" -o comm= 2>/dev/null | tr -d ' ')" != "$pcomm" ]; then
+        rm -f "$f" 2>/dev/null
+        continue
+      fi
+    fi
+
+    # 반복 알림 워처가 살아 있는 동안은 그쪽이 확인 여부를 감시하므로 관여하지 않는다.
+    # 워처는 재알림 횟수를 소진하면 끝나는데, 그 뒤로는 감시자가 없어 표식이 그대로 남는다.
+    # 명시적 확인 훅이 없는 런타임(Codex)은 이 경로가 유일한 회수 수단이므로 상태줄이 이어받는다.
+    if [ -n "${tpath:-}" ] && [ -n "${bmtime:-}" ] && ! alive "$(cat "$state_dir/$sid.watcher" 2>/dev/null)"; then
+      if [ "$(mtime_of "$tpath")" != "$bmtime" ]; then
+        rm -f "$f" 2>/dev/null
+        continue
+      fi
+    fi
 
     count=$((count + 1))
     [ "$shown" -ge 3 ] && continue
