@@ -374,6 +374,20 @@ interactive: hover bg-subtle
   --shadow-1:   0 1px 2px oklch(0 0 0 / 0.04);
   --shadow-2:   0 4px 8px oklch(0 0 0 / 0.06);
   --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.10);
+
+  /* Typography */
+  --font-size-display1: 48px;   --font-weight-display1: 700;    --line-height-display1: 1.1;    --letter-spacing-display1: -0.030em;
+  --font-size-display2: 40px;   --font-weight-display2: 700;    --line-height-display2: 1.15;   --letter-spacing-display2: -0.025em;
+  --font-size-display3: 32px;   --font-weight-display3: 700;    --line-height-display3: 1.2;    --letter-spacing-display3: -0.020em;
+  --font-size-title1: 28px;     --font-weight-title1: 700;      --line-height-title1: 1.25;     --letter-spacing-title1: -0.018em;
+  --font-size-title2: 22px;     --font-weight-title2: 700;      --line-height-title2: 1.3;      --letter-spacing-title2: -0.015em;
+  --font-size-title3: 18px;     --font-weight-title3: 700;      --line-height-title3: 1.35;     --letter-spacing-title3: -0.010em;
+  --font-size-label1: 14px;     --font-weight-label1: 600;      --line-height-label1: 1.4;      --letter-spacing-label1: -0.005em;
+  --font-size-label2: 13px;     --font-weight-label2: 600;      --line-height-label2: 1.4;      --letter-spacing-label2: -0.005em;
+  --font-size-body1: 16px;      --font-weight-body1: 500;       --line-height-body1: 1.5;       --letter-spacing-body1: -0.005em;
+  --font-size-body1-read: 16px; --font-weight-body1-read: 500;  --line-height-body1-read: 1.625;--letter-spacing-body1-read: -0.005em;
+  --font-size-body2: 14px;      --font-weight-body2: 500;       --line-height-body2: 1.45;      --letter-spacing-body2: -0.005em;
+  --font-size-caption1: 12px;   --font-weight-caption1: 600;    --line-height-caption1: 1.4;    --letter-spacing-caption1: 0;
 }
 
 :root[data-design="minimal-mono"][data-theme="dark"] {

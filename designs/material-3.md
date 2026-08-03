@@ -398,6 +398,20 @@ M3는 **5 window size class** — compact(<600) / medium(600-839) / expanded(840
   --shadow-3: 0 4px 8px 3px oklch(0 0 0 / 0.15), 0 1px 3px oklch(0 0 0 / 0.30);   /* catalog-only: M3 level 3 (FAB, dialog) */
   --shadow-4: 0 6px 10px 4px oklch(0 0 0 / 0.15), 0 2px 3px oklch(0 0 0 / 0.30);  /* catalog-only: M3 level 4 (nav drawer) */
   --shadow-pop: 0 8px 12px 6px oklch(0 0 0 / 0.15), 0 4px 4px oklch(0 0 0 / 0.30);
+
+  /* Typography */
+  --font-size-display1: 57px;   --font-weight-display1: 400;    --line-height-display1: 1.12;   --letter-spacing-display1: -0.025em;
+  --font-size-display2: 45px;   --font-weight-display2: 400;    --line-height-display2: 1.16;   --letter-spacing-display2: 0;
+  --font-size-display3: 36px;   --font-weight-display3: 400;    --line-height-display3: 1.22;   --letter-spacing-display3: 0;
+  --font-size-title1: 32px;     --font-weight-title1: 400;      --line-height-title1: 1.25;     --letter-spacing-title1: 0;
+  --font-size-title2: 28px;     --font-weight-title2: 400;      --line-height-title2: 1.28;     --letter-spacing-title2: 0;
+  --font-size-title3: 22px;     --font-weight-title3: 400;      --line-height-title3: 1.27;     --letter-spacing-title3: 0;
+  --font-size-label1: 14px;     --font-weight-label1: 500;      --line-height-label1: 1.43;     --letter-spacing-label1: 0.10em;
+  --font-size-label2: 12px;     --font-weight-label2: 500;      --line-height-label2: 1.33;     --letter-spacing-label2: 0.05em;
+  --font-size-body1: 16px;      --font-weight-body1: 400;       --line-height-body1: 1.50;      --letter-spacing-body1: 0.03em;
+  --font-size-body1-read: 16px; --font-weight-body1-read: 400;  --line-height-body1-read: 1.65; --letter-spacing-body1-read: 0.03em;
+  --font-size-body2: 14px;      --font-weight-body2: 400;       --line-height-body2: 1.43;      --letter-spacing-body2: 0.03em;
+  --font-size-caption1: 11px;   --font-weight-caption1: 500;    --line-height-caption1: 1.45;   --letter-spacing-caption1: 0.05em;
 }
 
 :root[data-design="material-3"][data-theme="dark"] {
