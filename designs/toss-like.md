@@ -373,6 +373,20 @@ bg: bg-muted
   --shadow-2:   0 4px 12px oklch(0 0 0 / 0.08);
   --shadow-cta: 0 8px 24px oklch(0.620 0.180 245 / 0.30);        /* catalog-only: brand color glow */
   --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.12);
+
+  /* Typography */
+  --font-size-display1: 44px;   --font-weight-display1: 700;    --line-height-display1: 1.1;    --letter-spacing-display1: -0.028em;
+  --font-size-display2: 36px;   --font-weight-display2: 700;    --line-height-display2: 1.15;   --letter-spacing-display2: -0.022em;
+  --font-size-display3: 28px;   --font-weight-display3: 700;    --line-height-display3: 1.2;    --letter-spacing-display3: -0.018em;
+  --font-size-title1: 24px;     --font-weight-title1: 700;      --line-height-title1: 1.25;     --letter-spacing-title1: -0.015em;
+  --font-size-title2: 20px;     --font-weight-title2: 700;      --line-height-title2: 1.3;      --letter-spacing-title2: -0.012em;
+  --font-size-title3: 17px;     --font-weight-title3: 700;      --line-height-title3: 1.35;     --letter-spacing-title3: -0.008em;
+  --font-size-label1: 14px;     --font-weight-label1: 600;      --line-height-label1: 1.4;      --letter-spacing-label1: -0.005em;
+  --font-size-label2: 13px;     --font-weight-label2: 600;      --line-height-label2: 1.4;      --letter-spacing-label2: -0.005em;
+  --font-size-body1: 16px;      --font-weight-body1: 500;       --line-height-body1: 1.55;      --letter-spacing-body1: -0.005em;
+  --font-size-body1-read: 16px; --font-weight-body1-read: 500;  --line-height-body1-read: 1.65; --letter-spacing-body1-read: -0.005em;
+  --font-size-body2: 14px;      --font-weight-body2: 500;       --line-height-body2: 1.5;       --letter-spacing-body2: -0.005em;
+  --font-size-caption1: 12px;   --font-weight-caption1: 600;    --line-height-caption1: 1.4;    --letter-spacing-caption1: 0;
 }
 
 :root[data-design="toss-like"][data-theme="dark"] {

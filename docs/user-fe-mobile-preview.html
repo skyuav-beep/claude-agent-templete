@@ -41,6 +41,70 @@
       --shadow-1:   0 1px 2px oklch(0 0 0 / 0.04);
       --shadow-2:   0 4px 8px oklch(0 0 0 / 0.06);
       --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.10);
+
+
+      /* Typography */
+      --font-size-display1: 56px;   --font-weight-display1: 700;    --line-height-display1: 1.286;  --letter-spacing-display1: -0.0319em;
+      --font-size-display2: 40px;   --font-weight-display2: 700;    --line-height-display2: 1.300;  --letter-spacing-display2: -0.0282em;
+      --font-size-display3: 36px;   --font-weight-display3: 700;    --line-height-display3: 1.334;  --letter-spacing-display3: -0.0270em;
+      --font-size-title1: 32px;     --font-weight-title1: 700;      --line-height-title1: 1.375;    --letter-spacing-title1: -0.0253em;
+      --font-size-title2: 28px;     --font-weight-title2: 700;      --line-height-title2: 1.358;    --letter-spacing-title2: -0.0236em;
+      --font-size-title3: 24px;     --font-weight-title3: 700;      --line-height-title3: 1.334;    --letter-spacing-title3: -0.0230em;
+      --font-size-label1: 14px;     --font-weight-label1: 500;      --line-height-label1: 1.429;    --letter-spacing-label1: 0.0145em;
+      --font-size-label2: 13px;     --font-weight-label2: 500;      --line-height-label2: 1.385;    --letter-spacing-label2: 0.0194em;
+      --font-size-body1: 16px;      --font-weight-body1: 500;       --line-height-body1: 1.500;     --letter-spacing-body1: 0.0057em;
+      --font-size-body1-read: 16px; --font-weight-body1-read: 500;  --line-height-body1-read: 1.625;--letter-spacing-body1-read: 0.0057em;
+      --font-size-body2: 15px;      --font-weight-body2: 500;       --line-height-body2: 1.467;     --letter-spacing-body2: 0.0096em;
+      --font-size-caption1: 12px;   --font-weight-caption1: 500;    --line-height-caption1: 1.334;  --letter-spacing-caption1: 0.0252em;
+      }
+
+      :root[data-design="wanted"][data-theme="dark"] {
+      --bg-canvas:        oklch(0.148 0.004 277);
+      --bg-surface:       oklch(0.166 0.005 271);
+      --bg-subtle:        oklch(0.135 0.002 286);
+      --bg-muted:         oklch(0.196 0.008 273);
+      --bg-elevated:      oklch(0.237 0.008 273);
+      --bg-inverse:       oklch(1 0 0);
+      --bg-scrim:         oklch(0 0 0 / 0.6);                         /* catalog-only: modal/sheet backdrop */
+      --bg-brand:         oklch(0.563 0.232 257);
+      --bg-brand-subtle:  oklch(0.149 0.069 257);
+      --bg-danger-subtle: oklch(0.298 0.10 22 / 0.32);
+      --bg-success-subtle:oklch(0.298 0.10 144 / 0.28);
+      --bg-warning-subtle:oklch(0.298 0.10 56 / 0.32);
+
+      --fg-strong:    oklch(1 0 0);
+      --fg-default:   oklch(1 0 0 / 0.88);
+      --fg-secondary: oklch(1 0 0 / 0.61);
+      --fg-tertiary:  oklch(1 0 0 / 0.43);
+      --fg-disabled:  oklch(1 0 0 / 0.28);
+      --fg-on-brand:  oklch(1 0 0);
+      --fg-brand:     oklch(0.715 0.155 255);
+      --fg-success:   oklch(0.760 0.180 144);
+      --fg-warning:   oklch(0.778 0.158 64);
+      --fg-danger:    oklch(0.715 0.220 27);
+      --fg-link:      oklch(0.715 0.155 255);                       /* catalog-only synthesized */
+
+      --border-subtle:  oklch(1 0 0 / 0.08);
+      --border-default: oklch(1 0 0 / 0.22);
+      --border-strong:  oklch(1 0 0 / 0.35);
+      --border-brand:   oklch(0.715 0.155 255);
+      --border-inverse: oklch(0 0 0 / 0.32);                         /* catalog-only synthesized */
+
+      /* spacing/radius는 light와 동일 — 상속 */
+      --shadow-1:   0 1px 2px oklch(0 0 0 / 0.20);
+      --shadow-2:   0 4px 8px oklch(0 0 0 / 0.32);
+      --shadow-3:   var(--shadow-2);                                 /* catalog-only fallback */
+      --shadow-4:   var(--shadow-pop);                               /* catalog-only fallback */
+      --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.48);
+      }
+      ```
+
+      frontmatter `policy:` 블록:
+      - `shadow_on_cards: false` — 카드 그림자 금지(헤어라인 보더가 표준)
+      - `gradient_locations: ["symbol", "avatar", "thumbnail", "hero"]` — 4곳 한정
+      - `copy_tone: "ko-friendly"` — `-요`/`-어요`/`-아요` 종결, 동사형 버튼 라벨
+      - `dark_mode: "supported"` — light/dark 양쪽 정의
+      - `non_4_spacing: false` — 4의 배수만 (button sm radius 6, lg 10 같은 컴포넌트 로컬값은 예외)
     }
 
     /* ----- linear-like (light) ----- */
@@ -73,6 +137,59 @@
       --shadow-1:   0 1px 2px oklch(0 0 0 / 0.06);
       --shadow-2:   0 4px 12px oklch(0 0 0 / 0.08);
       --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.14);
+
+
+      /* Typography */
+      --font-size-display1: 44px;   --font-weight-display1: 700;    --line-height-display1: 1.1;    --letter-spacing-display1: -0.030em;
+      --font-size-display2: 36px;   --font-weight-display2: 700;    --line-height-display2: 1.15;   --letter-spacing-display2: -0.025em;
+      --font-size-display3: 28px;   --font-weight-display3: 700;    --line-height-display3: 1.2;    --letter-spacing-display3: -0.020em;
+      --font-size-title1: 22px;     --font-weight-title1: 600;      --line-height-title1: 1.25;     --letter-spacing-title1: -0.015em;
+      --font-size-title2: 18px;     --font-weight-title2: 600;      --line-height-title2: 1.3;      --letter-spacing-title2: -0.012em;
+      --font-size-title3: 15px;     --font-weight-title3: 600;      --line-height-title3: 1.35;     --letter-spacing-title3: -0.008em;
+      --font-size-label1: 13px;     --font-weight-label1: 500;      --line-height-label1: 1.4;      --letter-spacing-label1: -0.005em;
+      --font-size-label2: 12px;     --font-weight-label2: 500;      --line-height-label2: 1.4;      --letter-spacing-label2: -0.005em;
+      --font-size-body1: 14px;      --font-weight-body1: 400;       --line-height-body1: 1.5;       --letter-spacing-body1: -0.005em;
+      --font-size-body1-read: 14px; --font-weight-body1-read: 400;  --line-height-body1-read: 1.65; --letter-spacing-body1-read: -0.005em;
+      --font-size-body2: 13px;      --font-weight-body2: 400;       --line-height-body2: 1.45;      --letter-spacing-body2: -0.005em;
+      --font-size-caption1: 11px;   --font-weight-caption1: 600;    --line-height-caption1: 1.4;    --letter-spacing-caption1: 0;
+      }
+
+      :root[data-design="linear-like"][data-theme="dark"] {
+      --bg-canvas:        oklch(0.140 0.018 270);
+      --bg-surface:       oklch(0.170 0.020 270);
+      --bg-subtle:        oklch(0.120 0.015 270);
+      --bg-muted:         oklch(0.205 0.022 270);
+      --bg-elevated:      oklch(0.240 0.025 270);
+      --bg-inverse:       oklch(1 0 0);
+      --bg-brand:         oklch(0.620 0.180 268);
+      --bg-brand-subtle:  oklch(0.220 0.080 268);
+      --bg-danger-subtle: oklch(0.298 0.10 22 / 0.34);
+      --bg-success-subtle:oklch(0.298 0.10 144 / 0.30);
+      --bg-warning-subtle:oklch(0.298 0.10 56 / 0.34);
+
+      --fg-strong:    oklch(0.985 0.005 270);
+      --fg-default:   oklch(0.985 0.005 270 / 0.90);
+      --fg-secondary: oklch(0.985 0.005 270 / 0.60);
+      --fg-tertiary:  oklch(0.985 0.005 270 / 0.42);
+      --fg-disabled:  oklch(0.985 0.005 270 / 0.28);
+      --fg-on-brand:  oklch(1 0 0);
+      --fg-brand:     oklch(0.740 0.155 268);                       /* synthesized — dark 1차 시안 */
+      --fg-success:   oklch(0.740 0.165 144);                       /* synthesized */
+      --fg-warning:   oklch(0.770 0.150 64);                        /* synthesized */
+      --fg-danger:    oklch(0.720 0.215 27);                        /* synthesized */
+
+      --border-subtle:  oklch(0.985 0.005 270 / 0.08);
+      --border-default: oklch(0.985 0.005 270 / 0.18);
+      --border-strong:  oklch(0.985 0.005 270 / 0.30);
+      --border-brand:   oklch(0.740 0.155 268);
+
+      /* spacing/radius/font-mono는 light와 동일 — 상속 */
+
+      --shadow-1:   0 1px 2px oklch(0 0 0 / 0.16);
+      --shadow-2:   0 4px 12px oklch(0 0 0 / 0.24);
+      --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.40);
+      }
+      ```
     }
 
     /* ----- linear-like (dark) ----- */
@@ -137,6 +254,61 @@
       --shadow-1: 0 1px 2px oklch(0 0 0 / 0.30), 0 1px 3px 1px oklch(0 0 0 / 0.15);
       --shadow-2: 0 1px 2px oklch(0 0 0 / 0.30), 0 2px 6px 2px oklch(0 0 0 / 0.15);
       --shadow-pop: 0 8px 12px 6px oklch(0 0 0 / 0.15), 0 4px 4px oklch(0 0 0 / 0.30);
+
+
+      /* Typography */
+      --font-size-display1: 57px;   --font-weight-display1: 400;    --line-height-display1: 1.12;   --letter-spacing-display1: -0.025em;
+      --font-size-display2: 45px;   --font-weight-display2: 400;    --line-height-display2: 1.16;   --letter-spacing-display2: 0;
+      --font-size-display3: 36px;   --font-weight-display3: 400;    --line-height-display3: 1.22;   --letter-spacing-display3: 0;
+      --font-size-title1: 32px;     --font-weight-title1: 400;      --line-height-title1: 1.25;     --letter-spacing-title1: 0;
+      --font-size-title2: 28px;     --font-weight-title2: 400;      --line-height-title2: 1.28;     --letter-spacing-title2: 0;
+      --font-size-title3: 22px;     --font-weight-title3: 400;      --line-height-title3: 1.27;     --letter-spacing-title3: 0;
+      --font-size-label1: 14px;     --font-weight-label1: 500;      --line-height-label1: 1.43;     --letter-spacing-label1: 0.10em;
+      --font-size-label2: 12px;     --font-weight-label2: 500;      --line-height-label2: 1.33;     --letter-spacing-label2: 0.05em;
+      --font-size-body1: 16px;      --font-weight-body1: 400;       --line-height-body1: 1.50;      --letter-spacing-body1: 0.03em;
+      --font-size-body1-read: 16px; --font-weight-body1-read: 400;  --line-height-body1-read: 1.65; --letter-spacing-body1-read: 0.03em;
+      --font-size-body2: 14px;      --font-weight-body2: 400;       --line-height-body2: 1.43;      --letter-spacing-body2: 0.03em;
+      --font-size-caption1: 11px;   --font-weight-caption1: 500;    --line-height-caption1: 1.45;   --letter-spacing-caption1: 0.05em;
+      }
+
+      :root[data-design="material-3"][data-theme="dark"] {
+      --bg-canvas:        oklch(0.155 0.015 295);
+      --bg-surface:       oklch(0.155 0.015 295);
+      --bg-subtle:        oklch(0.135 0.013 295);
+      --bg-muted:         oklch(0.195 0.020 295);
+      --bg-elevated:      oklch(0.235 0.025 295);
+      --bg-inverse:       oklch(0.920 0.010 295);
+      --bg-brand:         oklch(0.795 0.130 295);
+      --bg-brand-subtle:  oklch(0.330 0.080 295);
+      --bg-danger-subtle: oklch(0.298 0.10 22 / 0.40);
+      --bg-success-subtle:oklch(0.298 0.10 144 / 0.34);
+      --bg-warning-subtle:oklch(0.298 0.10 56 / 0.40);
+
+      --fg-strong:    oklch(0.965 0.005 295);
+      --fg-default:   oklch(0.965 0.005 295 / 0.95);
+      --fg-secondary: oklch(0.965 0.005 295 / 0.70);
+      --fg-tertiary:  oklch(0.965 0.005 295 / 0.48);
+      --fg-disabled:  oklch(0.965 0.005 295 / 0.32);
+      --fg-on-brand:  oklch(0.220 0.020 295);
+      --fg-brand:     oklch(0.795 0.130 295);                       /* M3 tonal 80 */
+      --fg-success:   oklch(0.760 0.165 144);                       /* synthesized */
+      --fg-warning:   oklch(0.785 0.150 64);                        /* synthesized */
+      --fg-danger:    oklch(0.720 0.215 27);                        /* synthesized */
+
+      --border-subtle:  oklch(0.965 0.005 295 / 0.12);
+      --border-default: oklch(0.965 0.005 295 / 0.25);
+      --border-strong:  oklch(0.965 0.005 295 / 0.40);
+      --border-brand:   oklch(0.795 0.130 295);
+
+      /* spacing/radius는 light와 동일 — 상속 */
+
+      --shadow-1: 0 1px 2px oklch(0 0 0 / 0.50), 0 1px 3px 1px oklch(0 0 0 / 0.30);
+      --shadow-2: 0 1px 2px oklch(0 0 0 / 0.50), 0 2px 6px 2px oklch(0 0 0 / 0.30);
+      --shadow-3: 0 4px 8px 3px oklch(0 0 0 / 0.30), 0 1px 3px oklch(0 0 0 / 0.50);   /* catalog-only dark */
+      --shadow-4: 0 6px 10px 4px oklch(0 0 0 / 0.30), 0 2px 3px oklch(0 0 0 / 0.50);  /* catalog-only dark */
+      --shadow-pop: 0 8px 12px 6px oklch(0 0 0 / 0.30), 0 4px 4px oklch(0 0 0 / 0.50);
+      }
+      ```
     }
 
     /* ----- material-3 (dark) ----- */
@@ -201,6 +373,60 @@
       --shadow-1:   0 1px 3px oklch(0 0 0 / 0.06);
       --shadow-2:   0 4px 12px oklch(0 0 0 / 0.08);
       --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.12);
+
+
+      /* Typography */
+      --font-size-display1: 44px;   --font-weight-display1: 700;    --line-height-display1: 1.1;    --letter-spacing-display1: -0.028em;
+      --font-size-display2: 36px;   --font-weight-display2: 700;    --line-height-display2: 1.15;   --letter-spacing-display2: -0.022em;
+      --font-size-display3: 28px;   --font-weight-display3: 700;    --line-height-display3: 1.2;    --letter-spacing-display3: -0.018em;
+      --font-size-title1: 24px;     --font-weight-title1: 700;      --line-height-title1: 1.25;     --letter-spacing-title1: -0.015em;
+      --font-size-title2: 20px;     --font-weight-title2: 700;      --line-height-title2: 1.3;      --letter-spacing-title2: -0.012em;
+      --font-size-title3: 17px;     --font-weight-title3: 700;      --line-height-title3: 1.35;     --letter-spacing-title3: -0.008em;
+      --font-size-label1: 14px;     --font-weight-label1: 600;      --line-height-label1: 1.4;      --letter-spacing-label1: -0.005em;
+      --font-size-label2: 13px;     --font-weight-label2: 600;      --line-height-label2: 1.4;      --letter-spacing-label2: -0.005em;
+      --font-size-body1: 16px;      --font-weight-body1: 500;       --line-height-body1: 1.55;      --letter-spacing-body1: -0.005em;
+      --font-size-body1-read: 16px; --font-weight-body1-read: 500;  --line-height-body1-read: 1.65; --letter-spacing-body1-read: -0.005em;
+      --font-size-body2: 14px;      --font-weight-body2: 500;       --line-height-body2: 1.5;       --letter-spacing-body2: -0.005em;
+      --font-size-caption1: 12px;   --font-weight-caption1: 600;    --line-height-caption1: 1.4;    --letter-spacing-caption1: 0;
+      }
+
+      :root[data-design="toss-like"][data-theme="dark"] {
+      --bg-canvas:        oklch(0.145 0.020 245);
+      --bg-surface:       oklch(0.180 0.025 245);
+      --bg-subtle:        oklch(0.125 0.020 245);
+      --bg-muted:         oklch(0.215 0.025 245);
+      --bg-elevated:      oklch(0.250 0.025 245);
+      --bg-inverse:       oklch(1 0 0);
+      --bg-brand:         oklch(0.620 0.180 245);
+      --bg-brand-subtle:  oklch(0.180 0.085 245);
+      --bg-danger-subtle: oklch(0.298 0.10 22 / 0.34);
+      --bg-success-subtle:oklch(0.298 0.10 144 / 0.30);
+      --bg-warning-subtle:oklch(0.298 0.10 56 / 0.34);
+
+      --fg-strong:    oklch(1 0 0);
+      --fg-default:   oklch(1 0 0 / 0.92);
+      --fg-secondary: oklch(1 0 0 / 0.62);
+      --fg-tertiary:  oklch(1 0 0 / 0.44);
+      --fg-disabled:  oklch(1 0 0 / 0.28);
+      --fg-on-brand:  oklch(1 0 0);
+      --fg-brand:     oklch(0.730 0.155 245);                       /* synthesized */
+      --fg-success:   oklch(0.740 0.165 144);                       /* synthesized */
+      --fg-warning:   oklch(0.770 0.150 64);                        /* synthesized */
+      --fg-danger:    oklch(0.720 0.215 27);                        /* synthesized */
+
+      --border-subtle:  oklch(1 0 0 / 0.10);
+      --border-default: oklch(1 0 0 / 0.22);
+      --border-strong:  oklch(1 0 0 / 0.34);
+      --border-brand:   oklch(0.730 0.155 245);
+
+      /* spacing/radius는 light와 동일 — 상속 */
+
+      --shadow-1:   0 1px 3px oklch(0 0 0 / 0.24);
+      --shadow-2:   0 4px 12px oklch(0 0 0 / 0.36);
+      --shadow-cta: 0 8px 24px oklch(0.620 0.180 245 / 0.50);        /* catalog-only: brand glow dark */
+      --shadow-pop: 0 12px 32px oklch(0 0 0 / 0.50);
+      }
+      ```
     }
 
     /* ----- toss-like (dark) ----- */
@@ -265,6 +491,59 @@
       --shadow-1:   0 1px 2px oklch(0 0 0 / 0.04);
       --shadow-2:   0 4px 8px oklch(0 0 0 / 0.06);
       --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.10);
+
+
+      /* Typography */
+      --font-size-display1: 48px;   --font-weight-display1: 700;    --line-height-display1: 1.1;    --letter-spacing-display1: -0.030em;
+      --font-size-display2: 40px;   --font-weight-display2: 700;    --line-height-display2: 1.15;   --letter-spacing-display2: -0.025em;
+      --font-size-display3: 32px;   --font-weight-display3: 700;    --line-height-display3: 1.2;    --letter-spacing-display3: -0.020em;
+      --font-size-title1: 28px;     --font-weight-title1: 700;      --line-height-title1: 1.25;     --letter-spacing-title1: -0.018em;
+      --font-size-title2: 22px;     --font-weight-title2: 700;      --line-height-title2: 1.3;      --letter-spacing-title2: -0.015em;
+      --font-size-title3: 18px;     --font-weight-title3: 700;      --line-height-title3: 1.35;     --letter-spacing-title3: -0.010em;
+      --font-size-label1: 14px;     --font-weight-label1: 600;      --line-height-label1: 1.4;      --letter-spacing-label1: -0.005em;
+      --font-size-label2: 13px;     --font-weight-label2: 600;      --line-height-label2: 1.4;      --letter-spacing-label2: -0.005em;
+      --font-size-body1: 16px;      --font-weight-body1: 500;       --line-height-body1: 1.5;       --letter-spacing-body1: -0.005em;
+      --font-size-body1-read: 16px; --font-weight-body1-read: 500;  --line-height-body1-read: 1.625;--letter-spacing-body1-read: -0.005em;
+      --font-size-body2: 14px;      --font-weight-body2: 500;       --line-height-body2: 1.45;      --letter-spacing-body2: -0.005em;
+      --font-size-caption1: 12px;   --font-weight-caption1: 600;    --line-height-caption1: 1.4;    --letter-spacing-caption1: 0;
+      }
+
+      :root[data-design="minimal-mono"][data-theme="dark"] {
+      --bg-canvas:        oklch(0.145 0 0);
+      --bg-surface:       oklch(0.175 0 0);
+      --bg-subtle:        oklch(0.125 0 0);
+      --bg-muted:         oklch(0.205 0 0);
+      --bg-elevated:      oklch(0.235 0 0);
+      --bg-inverse:       oklch(1 0 0);
+      --bg-brand:         oklch(0.940 0 0);
+      --bg-brand-subtle:  oklch(0.235 0 0);
+      --bg-danger-subtle: oklch(0.298 0.10 22 / 0.32);
+      --bg-success-subtle:oklch(0.298 0.10 144 / 0.28);
+      --bg-warning-subtle:oklch(0.298 0.10 56 / 0.32);
+
+      --fg-strong:    oklch(1 0 0);
+      --fg-default:   oklch(1 0 0 / 0.88);
+      --fg-secondary: oklch(1 0 0 / 0.60);
+      --fg-tertiary:  oklch(1 0 0 / 0.42);
+      --fg-disabled:  oklch(1 0 0 / 0.28);
+      --fg-on-brand:  oklch(0.145 0 0);
+      --fg-brand:     oklch(1 0 0);
+      --fg-success:   oklch(0.740 0.165 144);                       /* synthesized */
+      --fg-warning:   oklch(0.770 0.150 64);                        /* synthesized */
+      --fg-danger:    oklch(0.720 0.215 27);                        /* synthesized */
+
+      --border-subtle:  oklch(1 0 0 / 0.08);
+      --border-default: oklch(1 0 0 / 0.20);
+      --border-strong:  oklch(1 0 0 / 0.32);
+      --border-brand:   oklch(1 0 0);
+
+      /* spacing/radius는 light와 동일 — 상속 */
+
+      --shadow-1:   0 1px 2px oklch(0 0 0 / 0.20);
+      --shadow-2:   0 4px 8px oklch(0 0 0 / 0.32);
+      --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.48);
+      }
+      ```
     }
 
     /* ----- minimal-mono (dark) ----- */

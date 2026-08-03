@@ -1119,6 +1119,20 @@ C/D 채택 시 시안별 스크롤 affordance 정책(`policy.gradient_locations`
   --shadow-3:   var(--shadow-2);                                 /* catalog-only fallback */
   --shadow-4:   var(--shadow-pop);                               /* catalog-only fallback */
   --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.10);
+
+  /* Typography */
+  --font-size-display1: 56px;   --font-weight-display1: 700;    --line-height-display1: 1.286;  --letter-spacing-display1: -0.0319em;
+  --font-size-display2: 40px;   --font-weight-display2: 700;    --line-height-display2: 1.300;  --letter-spacing-display2: -0.0282em;
+  --font-size-display3: 36px;   --font-weight-display3: 700;    --line-height-display3: 1.334;  --letter-spacing-display3: -0.0270em;
+  --font-size-title1: 32px;     --font-weight-title1: 700;      --line-height-title1: 1.375;    --letter-spacing-title1: -0.0253em;
+  --font-size-title2: 28px;     --font-weight-title2: 700;      --line-height-title2: 1.358;    --letter-spacing-title2: -0.0236em;
+  --font-size-title3: 24px;     --font-weight-title3: 700;      --line-height-title3: 1.334;    --letter-spacing-title3: -0.0230em;
+  --font-size-label1: 14px;     --font-weight-label1: 500;      --line-height-label1: 1.429;    --letter-spacing-label1: 0.0145em;
+  --font-size-label2: 13px;     --font-weight-label2: 500;      --line-height-label2: 1.385;    --letter-spacing-label2: 0.0194em;
+  --font-size-body1: 16px;      --font-weight-body1: 500;       --line-height-body1: 1.500;     --letter-spacing-body1: 0.0057em;
+  --font-size-body1-read: 16px; --font-weight-body1-read: 500;  --line-height-body1-read: 1.625;--letter-spacing-body1-read: 0.0057em;
+  --font-size-body2: 15px;      --font-weight-body2: 500;       --line-height-body2: 1.467;     --letter-spacing-body2: 0.0096em;
+  --font-size-caption1: 12px;   --font-weight-caption1: 500;    --line-height-caption1: 1.334;  --letter-spacing-caption1: 0.0252em;
 }
 
 :root[data-design="wanted"][data-theme="dark"] {
