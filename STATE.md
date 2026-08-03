@@ -29,6 +29,15 @@
   - 검증: `install.py` 구문, `--link`/`--link-claude-dir` dry-run과 실제 실행, 재실행 멱등성(`keep`), 프로젝트 고유 `settings.json` 보존과 기존 실체 백업 이동, manifest 소스 122건 존재, 문서 인덱스 109개, HTML 7개 구문 검사. 새 Claude 세션에서 `.claude/CLAUDE.md` 자동 로드와 6단계 섹션 전달을 실측했다.
   - 전체 CI 대기열: 문서·설치 스크립트 변경으로 lint/test/build 대상 없음.
 
+- 연결 프로젝트 15곳에 Claude 실행 게이트를 배포하고 가드레일 미등록 6곳을 보정했다. (2026-08-03)
+  - `--link`로 14곳(연결 프로젝트 13곳 + worktree `vwallet-wt-approval-v3`)에 `.claude/CLAUDE.md`와 `.claude/statusline-notify.sh`를 연결했다. 나머지 실행 레이어는 이미 공통본 symlink였고 백업 발생 0건으로 손실이 없었다.
+  - `riderwebapp`은 `.codex`가 git에 추적되는 실체 디렉터리라 `--link`가 백업·교체를 일으켜 그 저장소 상태를 바꾼다. 신규 파일 2건만 수동 연결하고 `.codex`는 현행 유지했다. 내용은 템플릿과 완전 동일해 기능 차이가 없다.
+  - 가드레일(`PreToolUse`)이 어디에도 등록되지 않은 6곳(`vwallet`, `trippass`, `skim`, `aica2`, `riderapp-runtime`, `vwallet-wt-approval-v3`)에 훅 등록을 병합했다. 기존 설정이 있던 2곳은 `settings.local.json.bak-20260803`으로 백업하고 다른 키는 건드리지 않았다. 사용자 전역 설정에는 알림 훅만 있어 파괴적 명령·비밀 파일 차단이 그동안 동작하지 않았다.
+  - `goldlink-wt-member-pv` worktree는 이번 작업 시점에 이미 존재하지 않아 대상에서 제외했다.
+  - 배포 방식은 `.claude` 전체 symlink(`--link-claude-dir`) 대신 실행 게이트 연결로 확정했다. 조사 정정으로 전체 symlink의 추가 이득이 없고 고유 자산 손실만 남기 때문이다.
+  - 검증: 15곳 전부 `.claude/CLAUDE.md` 읽기와 첫 줄 확인, `PreToolUse` 등록 확인, 각 저장소 git 상태 영향 확인.
+  - 전체 CI 대기열: 배선·설정 변경으로 lint/test/build 대상 없음.
+
 - 연결 프로젝트 반영 상태를 점검하고 구버전 사본 1건을 동기화했다. (2026-08-03)
   - `rules/` 심볼릭 링크로 연결된 프로젝트 14개와 worktree 3개를 전수 점검했다. 진입 문서에 승인 문구를 복사해 둔 곳은 없었고 `docs/approval-workflow.md` 로컬 사본도 없어 아래 개정이 그대로 적용된다.
   - `makeupshop`만 역할 지침 4종을 자체 사본으로 갖고 있었고, 6단계 승인 절차 라우팅·프로젝트 로컬 가이드 우선·단계별 응답 규칙이 빠진 구버전이었다. 프로젝트 고유 추가분이 없어 최신본으로 교체하고 그 저장소 상태 기록과 함께 커밋·push했다(`e8f165a`). 그 저장소에 쌓여 있던 이전 세션 미푸시 커밋 2건도 같은 브랜치라 함께 올라갔다.
@@ -117,10 +126,9 @@
 
 ### Claude 레이어 배포 후속
 
-- 연결 프로젝트 14곳에 `--link`를 적용해 `.claude/CLAUDE.md`를 연결한다. 나머지 실행 레이어는 이미 공통본 symlink이므로 실질 추가는 이 파일 하나다.
-- `.claude/settings.local.json`이 없어 가드레일 훅이 등록되지 않은 4곳(`signal2`, `skim`, `vwallet`, `riderapp-runtime`)에 등록 파일을 배포한다.
-- `.claude` 배선이 없는 worktree 2곳(`goldlink-wt-member-pv`, `vwallet-wt-approval-v3`)을 연결한다.
-- `.claude` 전체를 symlink로 만드는 `--link-claude-dir` 적용 여부는 프로젝트별로 판단한다. `aiospace`(`.claude/worktrees/admin-sep`), `signal2`(세션 격리 훅·승인 상태), `riderwebapp`(머지 권한 정책), `GoldFX`(절대경로 훅 등록)는 고유 자산이 있어 적용 시 해당 기능이 멈춘다.
+- 각 저장소에 추가된 `.claude/CLAUDE.md`와 `.claude/statusline-notify.sh` symlink는 아직 untracked다. 커밋 여부는 저장소별로 판단한다. `.claude/`를 gitignore한 프로젝트는 그대로 두면 된다.
+- `--link-claude-dir`(`.claude` 전체 symlink)는 적용하지 않기로 했다. 실행 게이트 연결만으로 목적이 달성되고, `aiospace`(`.claude/worktrees/admin-sep`), `signal2`(세션 격리 훅·승인 상태), `riderwebapp`(머지 권한 정책), `GoldFX`(절대경로 훅 등록)의 고유 자산이 사라지기 때문이다.
+- `riderwebapp`은 `.codex`가 추적되는 실체 디렉터리라 `--link` 대신 신규 파일 2건만 수동 연결했다. 정리하려면 그 저장소에서 별도 작업으로 진행한다.
 
 ### L3 가드레일 후속
 
