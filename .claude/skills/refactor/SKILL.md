@@ -34,3 +34,9 @@ description: "사용자가 리팩터링, 구조 개선, 코드 정리, 동작 �
 
 - 리팩터링 범위에 UI 컴포넌트, 스타일 파일(CSS/SCSS/Tailwind), 디자인 토큰 호출부, 다크 모드 대응 코드가 포함되면 `design` skill로 연계해 `DESIGN.md`의 토큰/Do-Don't 위반이 없는지 점검한다.
 - 동작 불변 조건이 시각적 회귀(visual regression) 방지를 포함한다면 design skill의 alias/atomic 선택 규칙을 유지 조건으로 명시한다.
+
+## 승인 절차 연결
+
+- 이 흐름의 산출물은 `docs/approval-workflow.md` 1단계에 해당한다. 한 턴에는 한 단계만 진행한다.
+- 이후 2단계 읽기 전용 분석과 Git 계획, 3단계 실행 승인, 4단계 구현, 5단계 읽기 전용 사후 감사, 6단계 빠른 검증과 `STATE.md` 기록·Git 마무리로 이어간다.
+- 시작·종료 게이트는 `.claude/CLAUDE.md`, 종료 확인 목록은 `docs/finish-checklist.md`를 적용한다.

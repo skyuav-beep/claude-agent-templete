@@ -1,5 +1,7 @@
 # Finish Checklist
 
+정본은 `docs/finish-checklist.md`(없으면 `rules/docs/finish-checklist.md`)이며, 아래는 Codex 읽기 순서에서 바로 쓰는 실행용 목록이다. 두 문서가 어긋나면 정본을 기준으로 맞춘다.
+
 작업 종료 전 다음을 확인한다.
 
 - `docs/approval-workflow.md`의 현재 단계와 승인 범위를 지켰다.

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime
 import hashlib
 import json
 import os
@@ -16,6 +17,19 @@ import tempfile
 MARKER = "agent-template:project-guide-routing"
 STATE_PATH = Path(".claude/.template-install-state.json")
 VERSION_PATH = Path(".claude/.plugin-version")
+
+# --link 모드에서 rules/ 아래 공통본으로 연결하는 실행 레이어.
+# 개정이 즉시 전파되고 git worktree에도 상속된다.
+LINK_TARGETS = (
+    ".claude/CLAUDE.md",
+    ".claude/skills",
+    ".claude/commands",
+    ".claude/agents",
+    ".claude/hooks",
+    ".claude/plugins",
+    ".claude/statusline-notify.sh",
+    ".codex",
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -31,6 +45,16 @@ def parse_args() -> argparse.Namespace:
         help="지원 중단: 프로젝트 파일 전체 교체는 수동 병합",
     )
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--link",
+        action="store_true",
+        help="실행 레이어를 복사 대신 rules/ symlink로 연결 (개정 즉시 전파)",
+    )
+    parser.add_argument(
+        "--link-claude-dir",
+        action="store_true",
+        help="--link와 함께: .claude 디렉터리 전체를 symlink로 연결 (프로젝트 고유 설정 불가)",
+    )
     parser.add_argument("--design", default="wanted")
     parser.add_argument(
         "--accept-local",
@@ -168,6 +192,77 @@ def empty_enough(target: Path) -> bool:
     return not any(item.name != ".git" for item in target.iterdir())
 
 
+def relative_link(rel: str) -> str:
+    """대상 안에서 rules/ 아래 같은 경로를 가리키는 상대 symlink 문자열."""
+    return "../" * rel.count("/") + "rules/" + rel
+
+
+def link_layers(
+    target: Path, template_root: Path, whole_dir: bool, dry_run: bool
+) -> int:
+    """실행 레이어를 복사 대신 rules/ symlink로 연결한다."""
+    actions: list[tuple[str, str]] = []
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    backup_root = target / f".agent-template-backup-{stamp}"
+    rules = target / "rules"
+    want_rules = os.path.relpath(template_root, target)
+
+    if rules.is_symlink():
+        current = (target / os.readlink(rules)).resolve()
+        if current == template_root:
+            actions.append(("keep", "rules"))
+        else:
+            actions.append(("relink", "rules"))
+            if not dry_run:
+                rules.unlink()
+                rules.symlink_to(want_rules)
+    elif rules.exists():
+        print("오류: rules가 이미 존재하지만 symlink가 아닙니다.", file=sys.stderr)
+        return 2
+    else:
+        actions.append(("link", "rules"))
+        if not dry_run:
+            rules.symlink_to(want_rules)
+
+    entries = (".claude",) if whole_dir else LINK_TARGETS
+    for rel in entries:
+        if not (template_root / rel).exists():
+            actions.append(("skip", rel))
+            continue
+        link = target / rel
+        want = relative_link(rel)
+        if link.is_symlink():
+            if os.readlink(link) == want:
+                actions.append(("keep", rel))
+                continue
+            actions.append(("relink", rel))
+            if not dry_run:
+                link.unlink()
+        elif link.exists():
+            actions.append(("backup", rel))
+            if not dry_run:
+                moved = backup_root / rel
+                moved.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(link), str(moved))
+        else:
+            actions.append(("link", rel))
+        if not dry_run:
+            link.parent.mkdir(parents=True, exist_ok=True)
+            link.symlink_to(want)
+
+    for action, rel in actions:
+        print(f"{action:>15}: {rel}")
+    backed = [rel for action, rel in actions if action == "backup"]
+    print(
+        f"요약: 작업 {len(actions)} | 백업 {len(backed)}"
+        + (" | DRY-RUN" if dry_run else "")
+    )
+    if backed and not dry_run:
+        print(f"백업 위치: {backup_root}")
+        print("백업에는 프로젝트 고유 설정이 들어 있을 수 있습니다. 확인 후 삭제하세요.")
+    return 0
+
+
 def diagnose(target: Path, state: dict | None) -> int:
     if state:
         print(f"진단: 연결된 프로젝트입니다. 권장: --update {target}")
@@ -216,6 +311,11 @@ def main() -> int:
             file=sys.stderr,
         )
         return 2
+    if args.link_claude_dir and not args.link:
+        print("오류: --link-claude-dir는 --link와 함께 사용합니다.", file=sys.stderr)
+        return 2
+    if args.link:
+        return link_layers(target, template_root, args.link_claude_dir, args.dry_run)
 
     mode = "update" if args.force else next(
         (name for name in ("new", "adopt", "update") if getattr(args, name)), None

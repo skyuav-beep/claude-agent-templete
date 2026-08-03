@@ -48,3 +48,8 @@ description: "사용자가 작업 유형(feature/bugfix/refactor/business-logic/
 ## 완료 후
 
 해당 유형의 `templates/*-request.md` 구조에 맞는 마크다운 블록을 출력한다.
+
+## 승인 절차 연결
+
+- 이 흐름은 단독 작업이 아니라 다른 작업 유형과 함께 적용된다. 단계 진행은 그 작업 유형을 따르며 `docs/approval-workflow.md`의 6단계 승인 절차와 한 턴 한 단계 원칙을 유지한다.
+- 시작·종료 게이트는 `.claude/CLAUDE.md`, 종료 확인 목록은 `docs/finish-checklist.md`를 적용한다.

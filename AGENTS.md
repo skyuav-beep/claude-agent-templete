@@ -192,6 +192,8 @@
 - **[금액·수량 처리 기준](./docs/money-quantity-guidelines.md)** - 금액/수량의 계산·확정·표시·저장 계층 규칙, 잔차 배분, 통화 최소 단위, 실수 타입 금지 기준을 확인할 때.
 - **[로컬/CI 실행 가이드](./docs/local-dev-ci-guide.md)** - 환경 호칭 3-tier, 승인 후 Docker 개발 루프, 빠른 범위 검증, 전체 CI 배치, 머지·정리 게이트를 확인할 때.
 - **[6단계 승인 워크플로](./docs/approval-workflow.md)** - 요청 정리부터 작업 브랜치 점검, 실행 승인, 구현, 사후 감사, 빠른 검증과 Git 수명주기 마무리까지의 정본.
+- **[종료 체크리스트](./docs/finish-checklist.md)** - 작업 종료 전 절차, 검증, 기록, 응답 형식 확인 항목의 공통 정본. Claude는 `.claude/CLAUDE.md`, Codex는 `.codex/checks/finish-checklist.md`가 이 문서를 참조한다.
+- **[Claude 실행 게이트](./.claude/CLAUDE.md)** - 루트 `CLAUDE.md`와 함께 자동 로드되어 읽기 순서, 6단계 절차, 시작·종료 게이트를 Claude 런타임에 주입.
 - **[프레임워크 구조 가이드](./docs/framework-structure-guide.md)** - 디렉터리 분리, 파일 크기, 레포 구조 기준을 확인할 때.
 - **[Codex 읽기 순서](./docs/codex-reading-order.md)** - Codex가 어떤 순서로 문맥을 읽는지 참고할 때.
 - **[에이전트 런타임 매트릭스](./docs/agent-runtime-matrix.md)** - Claude Code와 Codex의 기능 대응 관계, 공통 정본, 런타임별 어댑터 경계를 확인할 때.

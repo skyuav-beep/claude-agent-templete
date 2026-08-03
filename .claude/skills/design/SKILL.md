@@ -45,3 +45,8 @@ UI/스타일 산출물을 만들거나 검토할 때 `DESIGN.md`를 강제 로�
 
 - 답변에서 사용한 토큰 목록을 끝에 짧게 정리한다(예: `사용 토큰: {colors.bg-brand}, {spacing.space-16}, {rounded.radius-8}`).
 - `DESIGN.md` 자체를 갱신했다면 `STATE.md`에 토큰/컴포넌트 변경 이력을 직접 남긴다. 기록 여부를 사용자에게 확인받지 않는다.
+
+## 승인 절차 연결
+
+- 이 흐름은 단독 작업이 아니라 다른 작업 유형과 함께 적용된다. 단계 진행은 그 작업 유형을 따르며 `docs/approval-workflow.md`의 6단계 승인 절차와 한 턴 한 단계 원칙을 유지한다.
+- 시작·종료 게이트는 `.claude/CLAUDE.md`, 종료 확인 목록은 `docs/finish-checklist.md`를 적용한다.

@@ -31,3 +31,8 @@ description: "사용자가 PC를 켜고 개발 세션을 재개할 때 활성화
 ## 우선순위
 
 - "개발 시작"이 **무엇을 만들지**(기능/버그/로직)를 설명하는 맥락이면 `feature` / `bugfix` / `business-logic` skill을 우선한다. 본 skill은 **환경 부팅·상태 재개** 맥락에 한정한다.
+
+## 승인 절차 연결
+
+- 수집·점검 결과를 문서로 남기거나 코드를 바꾸는 단계부터 `docs/approval-workflow.md`의 6단계 승인 절차를 적용한다. 한 턴에는 한 단계만 진행한다.
+- 시작·종료 게이트는 `.claude/CLAUDE.md`, 종료 확인 목록은 `docs/finish-checklist.md`를 적용한다.

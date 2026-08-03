@@ -34,3 +34,9 @@ description: "사용자가 기능 추가, 새 기능, 신규 화면/엔드포인
 
 - 기능 설명에 UI/화면/스타일/컴포넌트/색·spacing·radius·typography 등 디자인 키워드가 포함되거나, 검증 기준에 시각적 기준(레이아웃·간격·다크 모드 대응 등)이 들어가면 `design` skill로 연계해 `DESIGN.md`를 1차 소스로 강제 로드한다.
 - `templates/feature-request.md`의 `## 디자인 토큰 참조` 섹션이 채워졌는지 확인한다. 비어 있으면 design skill에서 토큰 호출 형식(`{group.name}`)으로 보강한다.
+
+## 승인 절차 연결
+
+- 이 흐름의 산출물은 `docs/approval-workflow.md` 1단계에 해당한다. 한 턴에는 한 단계만 진행한다.
+- 이후 2단계 읽기 전용 분석과 Git 계획, 3단계 실행 승인, 4단계 구현, 5단계 읽기 전용 사후 감사, 6단계 빠른 검증과 `STATE.md` 기록·Git 마무리로 이어간다.
+- 시작·종료 게이트는 `.claude/CLAUDE.md`, 종료 확인 목록은 `docs/finish-checklist.md`를 적용한다.

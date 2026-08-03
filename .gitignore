@@ -16,3 +16,6 @@ Thumbs.db
 *.swo
 .vscode/
 .idea/
+
+# install.py 실행 부산물
+__pycache__/

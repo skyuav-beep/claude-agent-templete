@@ -29,3 +29,9 @@ description: "사용자가 코드 리뷰, PR 검토, 변경 점검을 요청할 
 ## 완료 후
 
 구조화된 review-request 마크다운 블록을 1단계 산출물로 출력한다. 이후 `docs/approval-workflow.md`의 2단계 읽기 전용 리뷰를 수행한다. 수정이 필요하면 3단계 승인을 받는다.
+
+## 승인 절차 연결
+
+- 이 흐름의 산출물은 `docs/approval-workflow.md` 1단계에 해당한다. 한 턴에는 한 단계만 진행한다.
+- 이후 2단계 읽기 전용 분석과 Git 계획, 3단계 실행 승인, 4단계 구현, 5단계 읽기 전용 사후 감사, 6단계 빠른 검증과 `STATE.md` 기록·Git 마무리로 이어간다.
+- 시작·종료 게이트는 `.claude/CLAUDE.md`, 종료 확인 목록은 `docs/finish-checklist.md`를 적용한다.
