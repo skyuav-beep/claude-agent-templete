@@ -2,7 +2,9 @@
 # PreToolUse/Bash: git commit 시 STATE.md 갱신 리마인더
 # Golden Rule: "작업이 끝나면 STATE.md를 갱신한다"
 # 의도: 차단하지 않고 경고만 전달한다 (항상 exit 0).
-# STATE.md 갱신이 불필요한 경우도 있으므로 판단은 에이전트/사용자에게 맡긴다.
+# STATE.md 갱신이 불필요한 경우도 있으므로 판단은 에이전트에게 맡긴다.
+# 갱신이 필요한 경우에는 사용자에게 되묻지 않고 바로 반영한다
+# (docs/approval-workflow.md "재확인하지 않는 작업").
 #
 # 입력 규약: stdin JSON({"cwd":"...","tool_input":{"command":"..."}})이 1차,
 # 구 규약 $CLAUDE_TOOL_INPUT는 폴백.
@@ -58,7 +60,8 @@ print(json.dumps({
         "hookEventName": "PreToolUse",
         "additionalContext": (
             "STATE.md가 이번 커밋에 포함되지 않았습니다. 작업 내용을 STATE.md에 반영했는지 "
-            "확인하세요. 단순 질의·일회성 분석처럼 갱신 대상이 아닌 작업이면 그대로 진행하면 됩니다."
+            "점검하고, 필요하면 사용자에게 되묻지 말고 바로 갱신해 이번 커밋에 포함하세요. "
+            "단순 질의·일회성 분석처럼 갱신 대상이 아닌 작업이면 그대로 진행하면 됩니다."
         ),
     }
 }, ensure_ascii=False))

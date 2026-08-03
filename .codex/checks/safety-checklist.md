@@ -11,6 +11,13 @@ Codex는 Claude Code hooks를 자동 실행하지 않으므로 작업 전에 아
 - 원격(`staging`/`production`) migration 적용 (호칭 정의: `docs/local-dev-ci-guide.md §0`)
 - 비밀 파일(`.env`, `*.pem`, `*.key`, `credentials.json`) 생성 또는 수정
 
+## 사용자 확인 불필요
+
+3단계 승인 안에 이미 포함된 사실 기록이므로 매번 다시 묻지 않는다. 상세는 `docs/approval-workflow.md ## 재확인하지 않는 작업`.
+
+- `STATE.md`의 완료 이력, 다음 작업, 알려진 TODO, 전체 CI 대기열 갱신
+- `DESIGN.md`나 가이드 문서 변경에 따른 `STATE.md` 변경 이력 기록
+
 ## 기본 방침
 
 - 단순 사실 조회 외 작업은 `docs/approval-workflow.md`의 현재 단계와 3단계 승인 여부를 먼저 확인한다.
