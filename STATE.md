@@ -19,6 +19,14 @@
 
 - 아래 최근 요약을 제외한 전체 완료 이력과 상세 검증 근거는 [2026-07-31 전체 스냅샷](docs/archive/STATE-2026-07-31.md)에서 확인한다.
 
+- 미리보기 3종에 활성 시안을 추가하고 디자인 검수 사전 점검을 마쳤다. (2026-08-03)
+  - 결함: 활성 시안 `worknest`가 `docs/admin-fe-preview.html`, `docs/user-fe-preview.html`, `docs/user-fe-mobile-preview.html` 어디에도 없어, 정작 현재 쓰는 디자인을 미리보기로 볼 수 없었다. 세 화면 모두 이전 5종만 등록돼 있었다.
+  - 카탈로그의 `## CSS Variables` light/dark 블록을 그대로 옮기고 시안 메타데이터에 정책 5종을 등록했다. 삭제 없이 각 파일에 125줄씩 추가했고 기존 5종 블록은 그대로 유지된다. `user-fe-preview.html`은 들여쓰기 규칙이 달라 삽입 후 정정했다.
+  - 계약 준수 점검 결과 시안 6종 모두 색 alias 25종, spacing 14단, radius 6단, 필수 컴포넌트 7종 시그너처, light/dark 양쪽 정의를 갖췄다. `shadow-3`·`shadow-4`·`shadow-cta`는 시안 전용 토큰이라 누락이 아니다.
+  - 확인된 불일치 1건: 계약은 타이포를 CSS 변수로 ship하라고 하지만 preview는 공통 root 값을 쓰고 `worknest`만 변수까지 정의한다. 화면이 깨지지 않아 후속 정리 대상으로 남겼다.
+  - 검증: HTML 7개 인라인 스크립트 구문 검사, 세 화면의 시안 6종 등록과 색 alias 25종 light/dark 전수 대조, 변경 전후 기존 블록 수 일치, 삭제 0줄.
+  - 전체 CI 대기열: 문서 화면 변경으로 lint/test/build 대상 없음.
+
 - 환경 호칭 개정의 연결 프로젝트 잔여 2건을 정리했다. (2026-08-03)
   - `signal2`는 조치가 필요 없었다. 대기 중이라고 기록돼 있던 worktree 2개와 브랜치는 이미 삭제됐고, 커밋 `f970539`가 하려던 오버라이드 제거는 이미 `main`에 반영돼 있었다. 그 커밋 시점의 진입 문서와 현재 `main`을 대조해 환경 호칭 관련 차이가 0건임을 확인했다. 상태 문서에 남은 `develop` 한 건은 오버라이드가 제거됐다는 과거 이력 서술이라 대상이 아니다. 미참조로 남은 커밋 객체는 내용이 중복이라 정리로 사라져도 손실이 없다.
   - `aiospace`는 이미 머지되고 원격에서 삭제된 브랜치 위에 미커밋 변경 3건이 남아 있었다. `main` 기준 새 브랜치 `docs/env-naming-cleanup`으로 분리해 커밋(`e5957a5`)하고 push, PR 39까지 진행했다. 머지는 그 저장소 판단이라 하지 않았다. 변경은 운영 문서 2건의 `develop` → `staging` 호칭 정정과 상태 문서의 세션 인계 기록이다.
@@ -170,8 +178,11 @@
 
 ### 디자인 라이브러리 검수
 
-- `docs/admin-fe-preview.html`, `docs/user-fe-preview.html`, `docs/user-fe-mobile-preview.html`의 시안 5종과 light/dark·viewport 조합을 사용자 검수한다.
+- `docs/admin-fe-preview.html`, `docs/user-fe-preview.html`, `docs/user-fe-mobile-preview.html`의 시안 6종과 light/dark·viewport 조합을 사용자 검수한다. 활성 시안 `worknest`를 포함한 사전 점검은 끝났고 남은 것은 시각 확인이다.
+- 검수 시작 방법: `node scripts/serve-docs.mjs`로 서버를 띄우고 세 화면의 시안 셀렉터에서 6종을 순회한다. 문서를 바로 고치려면 `--edit`을 붙인다.
+- 중점 확인: 활성 시안 `worknest`의 light/dark 대비, 카드 헤어라인 보더와 그림자 정책(hover lift·overlay 한정), gradient 전면 금지 준수, 사이드바·active 채움 전용 토큰 렌더링.
 - 의도와 다른 부분이 확인되면 관련 카탈로그와 `DESIGN.md`, `STATE.md`를 같은 작업에서 갱신한다.
+- 후속 정리 대상: 타이포 CSS 변수는 계약상 시안이 ship하도록 되어 있으나 실제 preview는 공통 root 값을 쓰고 `worknest`만 변수까지 갖췄다. 화면은 깨지지 않으므로 계약 문구와 구현 중 어느 쪽에 맞출지 별도로 정한다.
 
 ### 낮은 우선순위
 

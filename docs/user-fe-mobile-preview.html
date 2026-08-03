@@ -331,6 +331,121 @@
       --shadow-pop: 0 8px 24px oklch(0 0 0 / 0.48);
     }
 
+    :root[data-design="worknest"][data-theme="light"] {
+      /* Background */
+      --bg-canvas:         #F7F8FA;
+      --bg-surface:        #FFFFFF;
+      --bg-subtle:         #FBFBFC;
+      --bg-muted:          #F3F4F6;
+      --bg-elevated:       #FFFFFF;
+      --bg-inverse:        #1F2937;
+      --bg-brand:          #4F46E5;
+      --bg-brand-subtle:   #EEF0FE;
+      --bg-success-subtle: #E7F6EF;
+      --bg-warning-subtle: #FEF6E7;
+      --bg-danger-subtle:  #FDECEC;
+
+      /* Foreground */
+      --fg-strong:    #111827;
+      --fg-default:   #1F2937;
+      --fg-secondary: #6B7280;
+      --fg-tertiary:  #9AA1AC;
+      --fg-disabled:  #B6BCC6;
+      --fg-on-brand:  #FFFFFF;
+      --fg-brand:     #4F46E5;
+      --fg-success:   #059669;
+      --fg-warning:   #D97706;
+      --fg-danger:    #EF4444;
+
+      /* Border */
+      --border-subtle:  #E7E9EC;
+      --border-default: #DCDEE3;
+      --border-strong:  #C9CDD4;
+      --border-brand:   #4F46E5;
+
+      /* 시안 전용 */
+      --sidebar-bg: #F4F5F7;
+      --bg-active:  #ECEEF1;
+      --bg-scrim:   rgba(17, 24, 39, 0.32);
+      --topbar-h:   46px;
+      --font-sans:  "Pretendard Variable", system-ui, sans-serif;
+      --font-mono:  "IBM Plex Mono", ui-monospace, monospace;
+
+      /* Spacing */
+      --space-4: 4px;    --space-8: 8px;    --space-12: 12px;   --space-16: 16px;
+      --space-20: 20px;  --space-24: 24px;  --space-32: 32px;   --space-40: 40px;
+      --space-48: 48px;  --space-56: 56px;  --space-64: 64px;   --space-80: 80px;
+      --space-96: 96px;  --space-128: 128px;
+
+      /* Rounded */
+      --radius-2: 2px;   --radius-4: 4px;   --radius-8: 8px;
+      --radius-12: 12px; --radius-16: 16px; --radius-full: 9999px;
+
+      /* Typography */
+      --font-size-display1: 30px;   --font-weight-display1: 700; --line-height-display1: 1.30; --letter-spacing-display1: -0.025em;
+      --font-size-display2: 28px;   --font-weight-display2: 700; --line-height-display2: 1.30; --letter-spacing-display2: -0.025em;
+      --font-size-display3: 24px;   --font-weight-display3: 700; --line-height-display3: 1.35; --letter-spacing-display3: -0.02em;
+      --font-size-title1: 21px;     --font-weight-title1: 700;   --line-height-title1: 1.40;   --letter-spacing-title1: -0.02em;
+      --font-size-title2: 17px;     --font-weight-title2: 600;   --line-height-title2: 1.45;   --letter-spacing-title2: -0.015em;
+      --font-size-title3: 15px;     --font-weight-title3: 600;   --line-height-title3: 1.50;   --letter-spacing-title3: -0.01em;
+      --font-size-label1: 13.5px;   --font-weight-label1: 600;   --line-height-label1: 1.40;   --letter-spacing-label1: -0.01em;
+      --font-size-label2: 12.5px;   --font-weight-label2: 500;   --line-height-label2: 1.40;   --letter-spacing-label2: -0.005em;
+      --font-size-body1: 13.5px;    --font-weight-body1: 400;    --line-height-body1: 1.50;    --letter-spacing-body1: -0.01em;
+      --font-size-body1-read: 15px; --font-weight-body1-read: 400; --line-height-body1-read: 1.65; --letter-spacing-body1-read: -0.005em;
+      --font-size-body2: 13px;      --font-weight-body2: 400;    --line-height-body2: 1.50;    --letter-spacing-body2: -0.01em;
+      --font-size-caption1: 11.5px; --font-weight-caption1: 600; --line-height-caption1: 1.35; --letter-spacing-caption1: 0.03em;
+
+      /* Elevation */
+      --shadow-1:   0 1px 2px rgba(17, 24, 39, 0.05);
+      --shadow-2:   0 2px 8px rgba(17, 24, 39, 0.07), 0 1px 2px rgba(17, 24, 39, 0.04);
+      --shadow-pop: 0 8px 28px rgba(17, 24, 39, 0.16), 0 1px 3px rgba(17, 24, 39, 0.08);
+      --shadow-3:   0 12px 32px rgba(17, 24, 39, 0.13), 0 2px 8px rgba(17, 24, 39, 0.06);
+    }
+
+    :root[data-design="worknest"][data-theme="dark"] {
+      /* Background */
+      --bg-canvas:         #0F172A;
+      --bg-surface:        #131C30;
+      --bg-subtle:         #18223A;
+      --bg-muted:          #1E2A45;
+      --bg-elevated:       #18223A;
+      --bg-inverse:        #F1F5F9;
+      --bg-brand:          #38BDF8;
+      --bg-brand-subtle:   #15293D;
+      --bg-success-subtle: #123528;
+      --bg-warning-subtle: #3A2E12;
+      --bg-danger-subtle:  #3B1A1E;
+
+      /* Foreground */
+      --fg-strong:    #F8FAFC;
+      --fg-default:   #F1F5F9;
+      --fg-secondary: #98A4B8;
+      --fg-tertiary:  #64748B;
+      --fg-disabled:  #4B5B73;
+      --fg-on-brand:  #07121F;
+      --fg-brand:     #38BDF8;
+      --fg-success:   #34D399;
+      --fg-warning:   #FBBF24;
+      --fg-danger:    #F87171;
+
+      /* Border */
+      --border-subtle:  #243049;
+      --border-default: #2E3B57;
+      --border-strong:  #3A4866;
+      --border-brand:   #38BDF8;
+
+      /* 시안 전용 */
+      --sidebar-bg: #0C1424;
+      --bg-active:  #243151;
+      --bg-scrim:   rgba(0, 0, 0, 0.55);
+
+      /* Elevation — 다크 전용 강도 */
+      --shadow-1:   0 1px 2px rgba(0, 0, 0, 0.4);
+      --shadow-2:   0 2px 10px rgba(0, 0, 0, 0.45);
+      --shadow-pop: 0 10px 30px rgba(0, 0, 0, 0.55);
+      --shadow-3:   0 14px 36px rgba(0, 0, 0, 0.6);
+    }
+
     /* spacing/radius/typography 토큰 (시안·테마 무관, 모든 시안 공통) */
     :root {
       --space-4: 4px;  --space-8: 8px;   --space-12: 12px; --space-16: 16px;
@@ -2790,6 +2905,16 @@
      policy: 활성 시안의 frontmatter policy 블록과 동기 유지.
      ============================================================ */
   const DESIGNS = {
+    worknest: {
+      label: 'worknest',
+      policy: {
+        shadow_on_cards: false,
+        gradient_locations: [],
+        copy_tone: 'ko-friendly',
+        dark_mode: 'supported',
+        non_4_spacing: false,
+      },
+    },
     wanted: {
       label: 'wanted',
       policy: {
