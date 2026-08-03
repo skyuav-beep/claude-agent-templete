@@ -2,6 +2,8 @@
 # PreToolUse/Write+Edit: 디자인 토큰 외 값 사용 정적 경고 (opt-in)
 #
 # 운영 정책: 경고만 출력하고 차단하지 않는다 (항상 exit 0).
+# 출력 규약: 경고는 stdout JSON의 additionalContext로 전달한다. exit 0의 stderr는
+# Claude Code가 버려서 모델에게 도달하지 않는다(state-reminder.sh와 같은 규약).
 # false-positive 우려와 정적 검출의 한계 때문에 settings.local.json에는
 # 기본 등록하지 않는다. 프로젝트가 디자인 토큰 강제를 원할 때만 PreToolUse
 # Write/Edit/MultiEdit hook으로 추가 등록한다.
@@ -74,24 +76,38 @@ CONTENT=$(printf '%s\n' "$PARSED" | tail -n +2)
 
 [ -z "$CONTENT" ] && exit 0
 
-WARNED=0
+WARN_TEXT=""
 
 # 1) hex 색상 직접 사용 (colors_and_type.css 제외)
 if [ "$BASENAME" != "colors_and_type.css" ]; then
   HEX_HITS=$(echo "$CONTENT" | grep -oE '#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?' | head -3)
   if [ -n "$HEX_HITS" ]; then
-    echo "[Hooks L3 warn] $FILE_PATH: hex 색상 직접 사용 감지. DESIGN.md 토큰 호출({colors.*}) 또는 alias 사용을 검토하세요." >&2
-    echo "$HEX_HITS" | sed 's/^/  /' >&2
-    WARNED=1
+    WARN_TEXT="[Hooks L3 warn] $FILE_PATH: hex 색상 직접 사용 감지. DESIGN.md 토큰 호출({colors.*}) 또는 alias 사용을 검토하세요.
+$(echo "$HEX_HITS" | sed 's/^/  /')"
   fi
 fi
 
 # 2) 비-4의 배수 px 값 (6, 10, 14, 18, 22)
 NON4_HITS=$(echo "$CONTENT" | grep -oE '\b(6|10|14|18|22)px\b' | head -3)
 if [ -n "$NON4_HITS" ]; then
-  echo "[Hooks L3 warn] $FILE_PATH: 비-4의 배수 px 값 감지(6/10/14/18/22). DESIGN.md spacing/radius 사다리 사용을 검토하세요." >&2
-  echo "$NON4_HITS" | sed 's/^/  /' >&2
-  WARNED=1
+  [ -n "$WARN_TEXT" ] && WARN_TEXT="$WARN_TEXT
+"
+  WARN_TEXT="$WARN_TEXT[Hooks L3 warn] $FILE_PATH: 비-4의 배수 px 값 감지(6/10/14/18/22). DESIGN.md spacing/radius 사다리 사용을 검토하세요.
+$(echo "$NON4_HITS" | sed 's/^/  /')"
+fi
+
+# 경고는 stdout JSON의 additionalContext로 전달한다. exit 0의 stderr는
+# Claude Code가 버려서 모델에게 도달하지 않는다(state-reminder.sh와 같은 규약).
+if [ -n "$WARN_TEXT" ]; then
+  WARN_TEXT="$WARN_TEXT" python3 -c '
+import json, os, sys
+sys.stdout.write(json.dumps({
+    "hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "additionalContext": os.environ.get("WARN_TEXT", ""),
+    }
+}, ensure_ascii=False))
+'
 fi
 
 # 항상 exit 0 (경고 only, 차단하지 않음)
