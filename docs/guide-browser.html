@@ -251,6 +251,42 @@
     }
     .chip.raw { cursor: pointer; color: var(--accent3); border-color: rgba(14,165,233,0.4); }
     .chip.raw:hover { background: rgba(14,165,233,0.12); }
+    .chip.edit { cursor: pointer; font-family: inherit; color: var(--green); border-color: rgba(16,185,129,0.4); }
+    .chip.edit:hover { background: rgba(16,185,129,0.12); }
+
+    /* ── Editor (serve-docs.mjs --edit 으로 띄웠을 때만 노출) ──── */
+    .editor { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+    .editor textarea {
+      width: 100%;
+      min-height: 60vh;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      resize: vertical;
+      tab-size: 2;
+    }
+    .editor textarea:focus { outline: none; border-color: var(--accent); }
+    .editor-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .editor-bar button {
+      font: inherit;
+      font-size: 13px;
+      padding: 7px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .editor-bar button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .editor-bar button:disabled { opacity: 0.5; cursor: default; }
+    .editor-msg { font-size: 13px; color: var(--text-dim); }
+    .editor-msg.ok { color: var(--green); }
+    .editor-msg.err { color: var(--red); }
 
     /* ── Markdown body ────────────────────────────────────────── */
     .md h1, .md h2, .md h3, .md h4 { line-height: 1.4; font-weight: 700; scroll-margin-top: 24px; }
@@ -483,6 +519,10 @@
     sidebar: document.getElementById('sidebar'),
     menuBtn: document.getElementById('menuBtn')
   };
+
+  // 편집은 서버를 --edit 으로 띄웠을 때만 열린다. 읽기 전용이면 버튼 자체가 나오지 않는다.
+  var canEdit = false;
+  var editMtime = null;
 
   /* ── 유틸 ────────────────────────────────────────────────── */
   function esc(s) {
@@ -843,7 +883,11 @@
       '<span class="chip">수정 ' + esc(doc.mtime) + '</span>' +
       '<span class="chip">' + esc(doc.group) + '</span>' +
       '<a class="chip raw" href="' + fetchUrl(path) + '" target="_blank" rel="noopener">원문 열기 ↗</a>' +
+      (canEdit ? '<button class="chip edit" id="editBtn" type="button">편집</button>' : '') +
       '</div></div><div class="md">불러오는 중…</div>';
+
+    var editBtn = document.getElementById('editBtn');
+    if (editBtn) editBtn.addEventListener('click', function () { startEdit(path); });
 
     loadDoc(path).then(function (text) {
       el.article.querySelector('.md').innerHTML = renderMarkdown(text);
@@ -863,6 +907,66 @@
         '<p>정적 서버 없이 <code>file://</code>로 열면 브라우저가 파일 읽기를 막습니다. 아래 명령으로 서버를 띄운 뒤 접속해 주세요.</p>' +
         '<pre>node scripts/serve-docs.mjs</pre></div>';
     });
+  }
+
+  /* ── 편집 (서버가 --edit 일 때만) ────────────────────────── */
+  function startEdit(path) {
+    var md = el.article.querySelector('.md');
+    if (!md) return;
+    md.innerHTML = '<div class="editor">' +
+      '<div class="editor-bar">' +
+        '<button class="primary" id="edSave" type="button" disabled>저장</button>' +
+        '<button id="edCancel" type="button">취소</button>' +
+        '<span class="editor-msg" id="edMsg">원문을 불러오는 중…</span>' +
+      '</div>' +
+      '<textarea id="edText" spellcheck="false"></textarea></div>';
+
+    var area = document.getElementById('edText');
+    var msg = document.getElementById('edMsg');
+    var saveBtn = document.getElementById('edSave');
+    el.toc.innerHTML = '';
+
+    document.getElementById('edCancel').addEventListener('click', function () { showDoc(path); });
+    saveBtn.addEventListener('click', function () { saveEdit(path, area, msg, saveBtn); });
+
+    fetch('/api/doc?path=' + encodeURIComponent(path))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.ok) throw new Error(data.error || '원문을 불러오지 못했습니다.');
+        // 값은 innerHTML이 아니라 value로 넣는다. 문서 본문이 마크업으로 해석되지 않게 한다.
+        area.value = data.content;
+        editMtime = data.mtimeMs;
+        saveBtn.disabled = false;
+        msg.className = 'editor-msg';
+        msg.textContent = '원문을 고친 뒤 저장하세요. 파일에만 반영되며 커밋은 따로 진행합니다.';
+      })['catch'](function (err) {
+        msg.className = 'editor-msg err';
+        msg.textContent = String(err.message || err);
+      });
+  }
+
+  function saveEdit(path, area, msg, saveBtn) {
+    saveBtn.disabled = true;
+    msg.className = 'editor-msg';
+    msg.textContent = '저장 중…';
+    fetch('/api/doc?path=' + encodeURIComponent(path), {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ content: area.value, mtimeMs: editMtime })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.ok) throw new Error(data.error || '저장하지 못했습니다.');
+        editMtime = data.mtimeMs;
+        bodyCache.set(path, area.value);
+        msg.className = 'editor-msg ok';
+        msg.textContent = '저장했습니다. 커밋은 따로 진행하세요.';
+        saveBtn.disabled = false;
+      })['catch'](function (err) {
+        msg.className = 'editor-msg err';
+        msg.textContent = String(err.message || err);
+        saveBtn.disabled = false;
+      });
   }
 
   function showHome(message) {
@@ -1021,7 +1125,14 @@
   }, { passive: true });
 
   /* ── 시작 ────────────────────────────────────────────────── */
-  fetch(INDEX_URL)
+  // 편집 가능 여부를 먼저 확인한다. 읽기 전용 서버이거나 file://로 열었으면 false로 둔다.
+  fetch('/api/capabilities')
+    .then(function (r) { return r.ok ? r.json() : null; })
+    ['catch'](function () { return null; })
+    .then(function (caps) {
+      canEdit = !!(caps && caps.edit);
+      return fetch(INDEX_URL);
+    })
     .then(function (r) {
       if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
       return r.json();
