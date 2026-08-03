@@ -50,6 +50,17 @@ def strip_heredocs(cmd: str) -> str:
     return "\n".join(kept)
 
 
+def strip_comments(cmd: str) -> str:
+    """셸 주석은 실행되지 않는 텍스트다.
+
+    설명문에 적어 둔 `# rm -rf 금지` 같은 문구에 반응해 오차단되는 것을 막는다.
+    셸과 같은 규칙으로 단어 시작 위치(줄 처음 또는 공백 뒤)의 `#`만 주석으로 본다.
+    그래서 `$#`, `${#var}`, `sed 's#a#b#'`, URL의 `#fragment`는 앞이 공백이 아니라
+    그대로 남는다. 인용부호 안의 `#`도 잘리지만 그 부분은 어차피 데이터다.
+    """
+    return re.sub(r"(?m)(?:(?<=^)|(?<=\s))#.*$", " ", cmd)
+
+
 def strip_quoted(cmd: str) -> str:
     """인용부호 안 문자열은 데이터로 본다. 셸 호출이 섞여 있으면 보수적으로 원문 유지."""
     if SHELL_EVAL.search(cmd):
@@ -70,7 +81,7 @@ if not isinstance(d, dict):
     sys.exit(0)
 ti = d.get("tool_input")
 ti = ti if isinstance(ti, dict) else {}
-print(strip_quoted(strip_heredocs(ti.get("command") or d.get("command") or "")))
+print(strip_quoted(strip_comments(strip_heredocs(ti.get("command") or d.get("command") or ""))))
 PY
 )
 [ -z "$COMMAND" ] && exit 0
