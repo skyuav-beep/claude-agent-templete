@@ -29,6 +29,23 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 
 모드를 생략하면 파일을 변경하지 않고 대상 상태에 맞는 명령을 안내한다.
 
+### symlink 연결 모드 (`--link`)
+
+복사 대신 공통본을 가리키는 symlink로 연결한다. 템플릿 개정이 즉시 반영되고 git worktree에도 상속된다.
+
+```bash
+bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --link --dry-run "$TARGET_ROOT"
+bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --link "$TARGET_ROOT"
+```
+
+- 연결 대상: `rules`, `.claude/CLAUDE.md`, `.claude/{skills,commands,agents,hooks,plugins}`, `.claude/statusline-notify.sh`, `.codex`
+- `.claude/settings.json`, `.claude/settings.local.json`, `.claude/.active-design`처럼 프로젝트가 소유하는 파일은 건드리지 않는다.
+- 기존 실체 파일·디렉터리가 있으면 `.agent-template-backup-<타임스탬프>/`로 옮긴 뒤 연결한다. 백업에 프로젝트 고유 설정이 들어 있을 수 있으므로 확인 후 삭제한다.
+- 같은 명령을 다시 실행해도 이미 올바른 링크는 `keep`으로 건너뛴다.
+- `--link-claude-dir`를 함께 주면 `.claude` 디렉터리 전체를 하나의 symlink로 만든다. 개정 전파 범위가 가장 넓지만 그 프로젝트는 자체 `settings.json`, `.active-design`, 프로젝트 전용 훅을 둘 수 없다.
+
+`--link`는 실행 레이어만 연결한다. `templates/`, `docs/`, `agents/` 같은 공통 문서는 `rules/` 경로 규칙으로 참조하므로 별도 복사가 필요 없다.
+
 ### 2.0.0 이전 설치 마이그레이션
 
 `.claude/.plugin-version`은 있지만 `.claude/.template-install-state.json`이 없는 프로젝트는 한 번 `--adopt`로 연결 상태와 해시 기준선을 생성한다. 이후부터 `--update`를 사용한다.

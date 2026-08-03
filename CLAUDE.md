@@ -5,6 +5,8 @@
 <!-- agent-template:project-guide-routing:start -->
 모든 작업에서 `AGENTS.md ## 프로젝트 로컬 가이드 우선`에 따라 프로젝트 가이드와 관련 로컬 문서를 템플릿 기본값보다 먼저 적용한다.
 단순 사실 조회를 제외한 분석·변경 작업은 `docs/approval-workflow.md`(없으면 `rules/docs/approval-workflow.md`)의 6단계 승인 절차를 따른다.
+한 턴에는 한 단계만 진행한다. 1단계 요청 정리, 2단계 읽기 전용 분석과 Git 계획, 3단계 실행 승인, 4단계 구현, 5단계 읽기 전용 사후 감사, 6단계 빠른 검증과 Git 마무리 순서다.
+단계별 세부 지침과 시작·종료 게이트는 `.claude/CLAUDE.md`가 함께 자동 로드되어 제공한다. 종료 전 확인은 `docs/finish-checklist.md`를 적용한다.
 <!-- agent-template:project-guide-routing:end -->
 
 ## Core Philosophy
@@ -115,6 +117,7 @@
 - `agents/` — 역할별 에이전트 행동 규칙 (main, executor, researcher, reviewer)
 - `templates/` — 작업 요청 5종 + intake 양식 14종 (`data-table-density.md` 포함)
 - `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타: `docs/design-guidelines.md`, admin FE: `docs/admin-fe-design-guide.md`, UI 결정 기록: `docs/ui-decisions.md`, 로컬/CI 실행 경계+Docker 재빌드: `docs/local-dev-ci-guide.md`, 금액·수량 처리: `docs/money-quantity-guidelines.md`, 작업 알림: `docs/notification-guide.md`)
+- `.claude/CLAUDE.md` — Claude 실행 게이트. 루트 `CLAUDE.md`와 함께 자동 로드되어 읽기 순서, 6단계 승인 절차, 시작·종료 게이트를 주입한다 (`.codex/README.md` 대응)
 - `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 10종)
 - `.claude/commands/` — L2 보조 (명시적 slash command 10종, skills와 병존)
 - `.claude/hooks/` — L3 Guardrails (가드레일 4종 + 작업 알림 3종, opt-in 1종 포함). 상태줄은 `.claude/statusline-notify.sh`

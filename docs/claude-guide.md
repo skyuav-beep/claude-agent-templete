@@ -5,7 +5,8 @@
 ## 자동화 레이어
 
 - `CLAUDE.md`: Claude Code가 우선 읽는 프로젝트 운영 설정이다.
-- `.claude/skills/*/SKILL.md`: 자연어 트리거 기반 자동 활성화 레이어다.
+- `.claude/CLAUDE.md`: 루트 `CLAUDE.md`와 함께 자동 로드되는 실행 게이트다. 읽기 순서, 6단계 승인 절차, 시작·종료 게이트를 런타임에 직접 주입하며 `.codex/README.md`와 대응한다. 연결 프로젝트에서는 이 파일이 공통본 symlink이므로 템플릿 개정이 즉시 반영된다.
+- `.claude/skills/*/SKILL.md`: 자연어 트리거 기반 자동 활성화 레이어다. 각 파일 끝의 `## 승인 절차 연결`이 6단계 절차로 이어준다.
 - `.claude/commands/*.md`: 사용자가 직접 호출하는 slash command 레이어다.
 - `.claude/hooks/*.sh`: PreToolUse 가드레일이다.
 - `.claude/agents/*.md`: frontmatter로 자동 등록되는 서브에이전트 정의다. `Agent` 도구의 `subagent_type`으로 호출한다.

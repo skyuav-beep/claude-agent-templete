@@ -48,3 +48,8 @@ argument-hint: "[시작할 섹션 번호]"
 - 작업을 시작하려면 `/request [설명]` 또는 `/feature`, `/bugfix` 등 실행
 - `docs/project-guide-template.md` 구조를 참고한 `docs/project-guide.md` 작성
 ```
+
+## 승인 절차 연결
+
+- 수집·점검 결과를 문서로 남기거나 코드를 바꾸는 단계부터 `docs/approval-workflow.md`의 6단계 승인 절차를 적용한다. 한 턴에는 한 단계만 진행한다.
+- 시작·종료 게이트는 `.claude/CLAUDE.md`, 종료 확인 목록은 `docs/finish-checklist.md`를 적용한다.

@@ -27,3 +27,8 @@ argument-hint: "[서비스명 | 포트 | 작업 지점]"
 
 - 컨테이너 기동은 `up -d`(멱등). 세션 시작을 이유로 rebuild하지 않는다(판단은 가이드의 재빌드 결정 절). 단, 공유 패키지 dist·ORM 생성물처럼 이미지에 굽히는 산출물을 고친 뒤 첫 부팅이면 그 서비스만 `up -d --build`로 1회 재빌드한다.
 - 실제 명령·서비스명·포트는 `AGENTS.md ### Operational Commands`에서 치환한다. 미정이면 사용자에게 확인한다.
+
+## 승인 절차 연결
+
+- 수집·점검 결과를 문서로 남기거나 코드를 바꾸는 단계부터 `docs/approval-workflow.md`의 6단계 승인 절차를 적용한다. 한 턴에는 한 단계만 진행한다.
+- 시작·종료 게이트는 `.claude/CLAUDE.md`, 종료 확인 목록은 `docs/finish-checklist.md`를 적용한다.

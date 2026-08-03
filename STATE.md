@@ -19,6 +19,16 @@
 
 - 아래 최근 요약을 제외한 전체 완료 이력과 상세 검증 근거는 [2026-07-31 전체 스냅샷](docs/archive/STATE-2026-07-31.md)에서 확인한다.
 
+- Claude 레이어에 6단계 절차 게이트를 신설하고 설치기에 symlink 연결 모드를 추가했다. (2026-08-03)
+  - 원인: Claude Code가 자동 로드하는 파일은 `CLAUDE.md`뿐인데 6단계 목록과 한 턴 한 단계 원칙은 `AGENTS.md`와 `docs/approval-workflow.md`에만 있었다. 연결 프로젝트 14곳은 `CLAUDE.md`·`AGENTS.md` 어디에도 승인 절차 참조가 없어(관리 마커도 0) Claude 세션이 절차를 모른 채 시작했다. Codex는 `.codex/README.md` 읽기 순서와 checks 2종이 시작·종료 게이트로 작동해 절차가 유지됐다.
+  - `.claude/CLAUDE.md`를 신설했다. 루트 `CLAUDE.md`와 함께 자동 로드되며 경로 규칙, 읽기 순서, 6단계 절차, 시작·종료 게이트를 담는다. `.codex/README.md`와 대응한다.
+  - `docs/finish-checklist.md`를 공통 종료 정본으로 신설하고, `.codex/checks/finish-checklist.md`가 정본을 가리키게 했다. Codex 실행용 목록은 그대로 두어 읽기 순서를 약화하지 않았다.
+  - skill 10종과 command 10종 끝에 `## 승인 절차 연결`을 추가해 요청 구조화에서 절차가 끊기지 않게 했다. 작업형·수집형·보조형 3가지 문구로 구분했다.
+  - 설치기에 `--link` 모드를 추가했다. `rules`, `.claude/CLAUDE.md`, `.claude/{skills,commands,agents,hooks,plugins}`, `.claude/statusline-notify.sh`, `.codex`를 공통본 symlink로 연결하고 기존 실체는 `.agent-template-backup-<타임스탬프>/`로 옮긴다. `--link-claude-dir`는 `.claude` 전체를 하나의 symlink로 만들며, 그 프로젝트는 자체 `settings.json`·`.active-design`·전용 훅을 둘 수 없다.
+  - 조사 정정: 연결 프로젝트 14곳은 이미 `.claude/{skills,commands,agents,hooks,plugins}`가 공통본 symlink였다. 세션 초기에 복사본으로 판단한 것은 오류이며, 개정 자동 전파는 이미 동작하고 있었다. 실제 결손은 `.claude/CLAUDE.md` 부재였다.
+  - 검증: `install.py` 구문, `--link`/`--link-claude-dir` dry-run과 실제 실행, 재실행 멱등성(`keep`), 프로젝트 고유 `settings.json` 보존과 기존 실체 백업 이동, manifest 소스 122건 존재, 문서 인덱스 109개, HTML 7개 구문 검사. 새 Claude 세션에서 `.claude/CLAUDE.md` 자동 로드와 6단계 섹션 전달을 실측했다.
+  - 전체 CI 대기열: 문서·설치 스크립트 변경으로 lint/test/build 대상 없음.
+
 - 연결 프로젝트 반영 상태를 점검하고 구버전 사본 1건을 동기화했다. (2026-08-03)
   - `rules/` 심볼릭 링크로 연결된 프로젝트 14개와 worktree 3개를 전수 점검했다. 진입 문서에 승인 문구를 복사해 둔 곳은 없었고 `docs/approval-workflow.md` 로컬 사본도 없어 아래 개정이 그대로 적용된다.
   - `makeupshop`만 역할 지침 4종을 자체 사본으로 갖고 있었고, 6단계 승인 절차 라우팅·프로젝트 로컬 가이드 우선·단계별 응답 규칙이 빠진 구버전이었다. 프로젝트 고유 추가분이 없어 최신본으로 교체하고 그 저장소 상태 기록과 함께 커밋·push했다(`e8f165a`). 그 저장소에 쌓여 있던 이전 세션 미푸시 커밋 2건도 같은 브랜치라 함께 올라갔다.
@@ -104,6 +114,13 @@
   - 같은 파일을 수정하는 `~/projects/signal2-wt-rule-docs`의 충돌이 해결된 뒤 변경 필요성을 재확인한다.
 - `aiospace`: 브랜치 `codex/chore-u0-production-baseline`에 환경 호칭 관련 문서 2개 변경이 미커밋 상태다.
   - 기존 브랜치에 포함할지 별도 브랜치로 분리할지 결정한 뒤 진행한다.
+
+### Claude 레이어 배포 후속
+
+- 연결 프로젝트 14곳에 `--link`를 적용해 `.claude/CLAUDE.md`를 연결한다. 나머지 실행 레이어는 이미 공통본 symlink이므로 실질 추가는 이 파일 하나다.
+- `.claude/settings.local.json`이 없어 가드레일 훅이 등록되지 않은 4곳(`signal2`, `skim`, `vwallet`, `riderapp-runtime`)에 등록 파일을 배포한다.
+- `.claude` 배선이 없는 worktree 2곳(`goldlink-wt-member-pv`, `vwallet-wt-approval-v3`)을 연결한다.
+- `.claude` 전체를 symlink로 만드는 `--link-claude-dir` 적용 여부는 프로젝트별로 판단한다. `aiospace`(`.claude/worktrees/admin-sep`), `signal2`(세션 격리 훅·승인 상태), `riderwebapp`(머지 권한 정책), `GoldFX`(절대경로 훅 등록)는 고유 자산이 있어 적용 시 해당 기능이 멈춘다.
 
 ### L3 가드레일 후속
 

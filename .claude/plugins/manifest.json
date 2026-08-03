@@ -1,15 +1,24 @@
 {
   "name": "claude-agent-template",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
   "compatibility": {
     "claude_code": "full automation via .claude layers",
     "codex": "equivalent workflow via AGENTS.md and .codex documents"
   },
   "install_policy": {
-    "merge_block": ["AGENTS.md", "CLAUDE.md"],
-    "project_owned": ["STATE.md", "DESIGN.md", "docs/project-guide.md"],
-    "seed_only": [".claude/settings.template.json"],
+    "merge_block": [
+      "AGENTS.md",
+      "CLAUDE.md"
+    ],
+    "project_owned": [
+      "STATE.md",
+      "DESIGN.md",
+      "docs/project-guide.md"
+    ],
+    "seed_only": [
+      ".claude/settings.template.json"
+    ],
     "managed_prefixes": [
       ".claude/skills/",
       ".claude/commands/",
@@ -18,71 +27,193 @@
       ".codex/",
       "designs/"
     ],
-    "customizable_prefixes": ["agents/", "templates/", "docs/"]
+    "customizable_prefixes": [
+      "agents/",
+      "templates/",
+      "docs/"
+    ]
   },
   "layers": {
     "L1_memory": {
       "description": "프로젝트 메모리 및 상태 관리 파일",
       "files": [
-        { "path": "CLAUDE.md", "description": "Claude Code CLI operation settings" },
-        { "path": "AGENTS.md", "description": "Common agent operation rules" },
-        { "path": "STATE.md", "description": "Current state and handoff record" },
-        { "path": "DESIGN.md", "description": "Design system catalog — 1st source for UI/style work (tokens, components, Do/Don't, dark alias)" }
+        {
+          "path": "CLAUDE.md",
+          "description": "Claude Code CLI operation settings"
+        },
+        {
+          "path": ".claude/CLAUDE.md",
+          "description": "Claude execution gate — auto-loaded alongside root CLAUDE.md (6-stage approval, start/finish gates)"
+        },
+        {
+          "path": "AGENTS.md",
+          "description": "Common agent operation rules"
+        },
+        {
+          "path": "STATE.md",
+          "description": "Current state and handoff record"
+        },
+        {
+          "path": "DESIGN.md",
+          "description": "Design system catalog — 1st source for UI/style work (tokens, components, Do/Don't, dark alias)"
+        }
       ]
     },
     "L2_skills": {
       "description": "자연어 트리거 기반 자동 활성화 SKILL.md (description 키워드 매칭)",
       "files": [
-        { "path": ".claude/skills/start/SKILL.md", "description": "New project setup QnA" },
-        { "path": ".claude/skills/dev-start/SKILL.md", "description": "Dev session bootstrap — state briefing + dev container up + hot reload/UI·logic check" },
-        { "path": ".claude/skills/intake/SKILL.md", "description": "Topic intake router (12 types)" },
-        { "path": ".claude/skills/request/SKILL.md", "description": "Auto-classify work request type (activates only when ambiguous)" },
-        { "path": ".claude/skills/feature/SKILL.md", "description": "Feature request form" },
-        { "path": ".claude/skills/bugfix/SKILL.md", "description": "Bug fix request form" },
-        { "path": ".claude/skills/refactor/SKILL.md", "description": "Refactor request form" },
-        { "path": ".claude/skills/review/SKILL.md", "description": "Code review request form" },
-        { "path": ".claude/skills/business-logic/SKILL.md", "description": "Business logic change request" },
-        { "path": ".claude/skills/design/SKILL.md", "description": "Design system enforcement — auto-loads DESIGN.md on UI keywords" }
+        {
+          "path": ".claude/skills/start/SKILL.md",
+          "description": "New project setup QnA"
+        },
+        {
+          "path": ".claude/skills/dev-start/SKILL.md",
+          "description": "Dev session bootstrap — state briefing + dev container up + hot reload/UI·logic check"
+        },
+        {
+          "path": ".claude/skills/intake/SKILL.md",
+          "description": "Topic intake router (12 types)"
+        },
+        {
+          "path": ".claude/skills/request/SKILL.md",
+          "description": "Auto-classify work request type (activates only when ambiguous)"
+        },
+        {
+          "path": ".claude/skills/feature/SKILL.md",
+          "description": "Feature request form"
+        },
+        {
+          "path": ".claude/skills/bugfix/SKILL.md",
+          "description": "Bug fix request form"
+        },
+        {
+          "path": ".claude/skills/refactor/SKILL.md",
+          "description": "Refactor request form"
+        },
+        {
+          "path": ".claude/skills/review/SKILL.md",
+          "description": "Code review request form"
+        },
+        {
+          "path": ".claude/skills/business-logic/SKILL.md",
+          "description": "Business logic change request"
+        },
+        {
+          "path": ".claude/skills/design/SKILL.md",
+          "description": "Design system enforcement — auto-loads DESIGN.md on UI keywords"
+        }
       ]
     },
     "L2_commands": {
       "description": "skills와 병존하는 명시적 slash command (사용자가 직접 호출)",
       "files": [
-        { "path": ".claude/commands/start.md", "description": "/start — explicit invocation" },
-        { "path": ".claude/commands/dev-start.md", "description": "/dev-start — explicit invocation" },
-        { "path": ".claude/commands/intake.md", "description": "/intake [topic] — explicit invocation" },
-        { "path": ".claude/commands/request.md", "description": "/request [desc] — explicit invocation" },
-        { "path": ".claude/commands/feature.md", "description": "/feature [desc] — explicit invocation" },
-        { "path": ".claude/commands/bugfix.md", "description": "/bugfix [desc] — explicit invocation" },
-        { "path": ".claude/commands/refactor.md", "description": "/refactor [desc] — explicit invocation" },
-        { "path": ".claude/commands/review.md", "description": "/review [target] — explicit invocation" },
-        { "path": ".claude/commands/business-logic.md", "description": "/business-logic [desc] — explicit invocation" },
-        { "path": ".claude/commands/design.md", "description": "/design [component] — explicit invocation" }
+        {
+          "path": ".claude/commands/start.md",
+          "description": "/start — explicit invocation"
+        },
+        {
+          "path": ".claude/commands/dev-start.md",
+          "description": "/dev-start — explicit invocation"
+        },
+        {
+          "path": ".claude/commands/intake.md",
+          "description": "/intake [topic] — explicit invocation"
+        },
+        {
+          "path": ".claude/commands/request.md",
+          "description": "/request [desc] — explicit invocation"
+        },
+        {
+          "path": ".claude/commands/feature.md",
+          "description": "/feature [desc] — explicit invocation"
+        },
+        {
+          "path": ".claude/commands/bugfix.md",
+          "description": "/bugfix [desc] — explicit invocation"
+        },
+        {
+          "path": ".claude/commands/refactor.md",
+          "description": "/refactor [desc] — explicit invocation"
+        },
+        {
+          "path": ".claude/commands/review.md",
+          "description": "/review [target] — explicit invocation"
+        },
+        {
+          "path": ".claude/commands/business-logic.md",
+          "description": "/business-logic [desc] — explicit invocation"
+        },
+        {
+          "path": ".claude/commands/design.md",
+          "description": "/design [component] — explicit invocation"
+        }
       ]
     },
     "L3_hooks": {
       "description": "자동 가드레일 스크립트와 작업 알림 스크립트",
       "files": [
-        { "path": ".claude/hooks/block-destructive.sh", "description": "Block rm -rf, git reset --hard, etc." },
-        { "path": ".claude/hooks/block-secret-files.sh", "description": "Block writing to .env, *.pem, *.key" },
-        { "path": ".claude/hooks/state-reminder.sh", "description": "Warn if STATE.md not updated on commit" },
-        { "path": ".claude/hooks/warn-design-tokens.sh", "description": "Opt-in: warn on hex/non-4px usage in CSS/JSX (not registered by default)" },
-        { "path": ".claude/hooks/notify-desktop.sh", "description": "Desktop toast + sound dispatcher (WSL/Windows, macOS, Linux)" },
-        { "path": ".claude/hooks/notify-pending.sh", "description": "Stop/Notification: register waiting state, alert, repeat until acknowledged (async hook)" },
-        { "path": ".claude/hooks/notify-ack.sh", "description": "UserPromptSubmit/SessionEnd: clear waiting state and stop repeat alerts" },
-        { "path": ".claude/statusline-notify.sh", "description": "Status line: show which other windows are waiting for a response" }
+        {
+          "path": ".claude/hooks/block-destructive.sh",
+          "description": "Block rm -rf, git reset --hard, etc."
+        },
+        {
+          "path": ".claude/hooks/block-secret-files.sh",
+          "description": "Block writing to .env, *.pem, *.key"
+        },
+        {
+          "path": ".claude/hooks/state-reminder.sh",
+          "description": "Warn if STATE.md not updated on commit"
+        },
+        {
+          "path": ".claude/hooks/warn-design-tokens.sh",
+          "description": "Opt-in: warn on hex/non-4px usage in CSS/JSX (not registered by default)"
+        },
+        {
+          "path": ".claude/hooks/notify-desktop.sh",
+          "description": "Desktop toast + sound dispatcher (WSL/Windows, macOS, Linux)"
+        },
+        {
+          "path": ".claude/hooks/notify-pending.sh",
+          "description": "Stop/Notification: register waiting state, alert, repeat until acknowledged (async hook)"
+        },
+        {
+          "path": ".claude/hooks/notify-ack.sh",
+          "description": "UserPromptSubmit/SessionEnd: clear waiting state and stop repeat alerts"
+        },
+        {
+          "path": ".claude/statusline-notify.sh",
+          "description": "Status line: show which other windows are waiting for a response"
+        }
       ],
       "settings": ".claude/settings.template.json"
     },
     "L4_subagents": {
       "description": "Agent 도구 호출용 프롬프트 템플릿",
       "files": [
-        { "path": ".claude/agents/explorer.md", "description": "Investigation/exploration agent" },
-        { "path": ".claude/agents/code-reviewer.md", "description": "Code review against repo conventions" },
-        { "path": ".claude/agents/planner.md", "description": "Design/planning agent" },
-        { "path": ".claude/agents/test-runner.md", "description": "Test execution and failure analysis" },
-        { "path": ".claude/agents/feature-dev.md", "description": "End-to-end feature implementation" },
-        { "path": ".claude/agents/design-reviewer.md", "description": "Design consistency review against DESIGN.md tokens and Do/Don't" }
+        {
+          "path": ".claude/agents/explorer.md",
+          "description": "Investigation/exploration agent"
+        },
+        {
+          "path": ".claude/agents/code-reviewer.md",
+          "description": "Code review against repo conventions"
+        },
+        {
+          "path": ".claude/agents/planner.md",
+          "description": "Design/planning agent"
+        },
+        {
+          "path": ".claude/agents/test-runner.md",
+          "description": "Test execution and failure analysis"
+        },
+        {
+          "path": ".claude/agents/feature-dev.md",
+          "description": "End-to-end feature implementation"
+        },
+        {
+          "path": ".claude/agents/design-reviewer.md",
+          "description": "Design consistency review against DESIGN.md tokens and Do/Don't"
+        }
       ]
     }
   },
@@ -90,41 +221,128 @@
     "description": "Design system catalog library — root DESIGN.md는 라이브러리에서 선택된 시안의 활성 사본",
     "default": "wanted",
     "files": [
-      { "path": "designs/README.md", "description": "Library usage and selection flow" },
-      { "path": "designs/_alias-contract.md", "description": "Required alias tokens every catalog must define" },
-      { "path": "designs/_template.md", "description": "Skeleton for new catalog authoring" },
-      { "path": "designs/wanted.md", "description": "Wanted catalog (default active)" },
-      { "path": "designs/minimal-mono.md", "description": "Minimal mono starter — 흑백 단색, gradient 전면 금지, 도구/admin UI 기본 시안" },
-      { "path": "designs/toss-like.md", "description": "Toss-like fintech — 단일 강조 파랑, 큰 라운드, 카드 그림자 허용, hero gradient" },
-      { "path": "designs/material-3.md", "description": "Material 3 — tonal palette, button radius-full, elevation 5단, en-sentence" },
-      { "path": "designs/linear-like.md", "description": "Linear-like productivity — 다크 우선, gradient accent 적극, 컴팩트 밀도, kbd 시그너처" },
-      { "path": "designs/worknest.md", "description": "WorkNest productivity — 헤어라인 보더 카드(그림자 제한), gradient 전면 금지, ko-friendly 카피, 반응형+모바일 컴포넌트 5종(현재 활성 시안)" }
+      {
+        "path": "designs/README.md",
+        "description": "Library usage and selection flow"
+      },
+      {
+        "path": "designs/_alias-contract.md",
+        "description": "Required alias tokens every catalog must define"
+      },
+      {
+        "path": "designs/_template.md",
+        "description": "Skeleton for new catalog authoring"
+      },
+      {
+        "path": "designs/wanted.md",
+        "description": "Wanted catalog (default active)"
+      },
+      {
+        "path": "designs/minimal-mono.md",
+        "description": "Minimal mono starter — 흑백 단색, gradient 전면 금지, 도구/admin UI 기본 시안"
+      },
+      {
+        "path": "designs/toss-like.md",
+        "description": "Toss-like fintech — 단일 강조 파랑, 큰 라운드, 카드 그림자 허용, hero gradient"
+      },
+      {
+        "path": "designs/material-3.md",
+        "description": "Material 3 — tonal palette, button radius-full, elevation 5단, en-sentence"
+      },
+      {
+        "path": "designs/linear-like.md",
+        "description": "Linear-like productivity — 다크 우선, gradient accent 적극, 컴팩트 밀도, kbd 시그너처"
+      },
+      {
+        "path": "designs/worknest.md",
+        "description": "WorkNest productivity — 헤어라인 보더 카드(그림자 제한), gradient 전면 금지, ko-friendly 카피, 반응형+모바일 컴포넌트 5종(현재 활성 시안)"
+      }
     ],
     "selector": ".claude/plugins/select-design.sh"
   },
   "codex": {
     "description": "Codex runtime adapter — mirrors Claude workflows as explicit Codex procedures",
     "files": [
-      { "path": ".codex/README.md", "description": "Codex entrypoint and reading order" },
-      { "path": ".codex/hooks/notify-codex.sh", "description": "Codex notify adapter — bridges turn-complete events to the shared notification hooks" },
-      { "path": ".codex/checks/safety-checklist.md", "description": "Safety checks replacing Claude hooks in Codex" },
-      { "path": ".codex/checks/finish-checklist.md", "description": "Finish checks replacing state reminder hook in Codex" },
-      { "path": ".codex/workflows/start.md", "description": "Codex start workflow" },
-      { "path": ".codex/workflows/dev-start.md", "description": "Codex dev session bootstrap workflow" },
-      { "path": ".codex/workflows/intake.md", "description": "Codex intake workflow" },
-      { "path": ".codex/workflows/request.md", "description": "Codex ambiguous request routing workflow" },
-      { "path": ".codex/workflows/feature.md", "description": "Codex feature workflow" },
-      { "path": ".codex/workflows/bugfix.md", "description": "Codex bugfix workflow" },
-      { "path": ".codex/workflows/refactor.md", "description": "Codex refactor workflow" },
-      { "path": ".codex/workflows/review.md", "description": "Codex review workflow" },
-      { "path": ".codex/workflows/business-logic.md", "description": "Codex business logic workflow" },
-      { "path": ".codex/workflows/design.md", "description": "Codex design workflow" },
-      { "path": ".codex/agents/explorer.md", "description": "Codex explorer subagent prompt guide" },
-      { "path": ".codex/agents/code-reviewer.md", "description": "Codex code reviewer subagent prompt guide" },
-      { "path": ".codex/agents/planner.md", "description": "Codex planner subagent prompt guide" },
-      { "path": ".codex/agents/test-runner.md", "description": "Codex test runner subagent prompt guide" },
-      { "path": ".codex/agents/feature-dev.md", "description": "Codex feature implementation subagent prompt guide" },
-      { "path": ".codex/agents/design-reviewer.md", "description": "Codex design reviewer subagent prompt guide" }
+      {
+        "path": ".codex/README.md",
+        "description": "Codex entrypoint and reading order"
+      },
+      {
+        "path": ".codex/hooks/notify-codex.sh",
+        "description": "Codex notify adapter — bridges turn-complete events to the shared notification hooks"
+      },
+      {
+        "path": ".codex/checks/safety-checklist.md",
+        "description": "Safety checks replacing Claude hooks in Codex"
+      },
+      {
+        "path": ".codex/checks/finish-checklist.md",
+        "description": "Finish checks replacing state reminder hook in Codex"
+      },
+      {
+        "path": ".codex/workflows/start.md",
+        "description": "Codex start workflow"
+      },
+      {
+        "path": ".codex/workflows/dev-start.md",
+        "description": "Codex dev session bootstrap workflow"
+      },
+      {
+        "path": ".codex/workflows/intake.md",
+        "description": "Codex intake workflow"
+      },
+      {
+        "path": ".codex/workflows/request.md",
+        "description": "Codex ambiguous request routing workflow"
+      },
+      {
+        "path": ".codex/workflows/feature.md",
+        "description": "Codex feature workflow"
+      },
+      {
+        "path": ".codex/workflows/bugfix.md",
+        "description": "Codex bugfix workflow"
+      },
+      {
+        "path": ".codex/workflows/refactor.md",
+        "description": "Codex refactor workflow"
+      },
+      {
+        "path": ".codex/workflows/review.md",
+        "description": "Codex review workflow"
+      },
+      {
+        "path": ".codex/workflows/business-logic.md",
+        "description": "Codex business logic workflow"
+      },
+      {
+        "path": ".codex/workflows/design.md",
+        "description": "Codex design workflow"
+      },
+      {
+        "path": ".codex/agents/explorer.md",
+        "description": "Codex explorer subagent prompt guide"
+      },
+      {
+        "path": ".codex/agents/code-reviewer.md",
+        "description": "Codex code reviewer subagent prompt guide"
+      },
+      {
+        "path": ".codex/agents/planner.md",
+        "description": "Codex planner subagent prompt guide"
+      },
+      {
+        "path": ".codex/agents/test-runner.md",
+        "description": "Codex test runner subagent prompt guide"
+      },
+      {
+        "path": ".codex/agents/feature-dev.md",
+        "description": "Codex feature implementation subagent prompt guide"
+      },
+      {
+        "path": ".codex/agents/design-reviewer.md",
+        "description": "Codex design reviewer subagent prompt guide"
+      }
     ]
   },
   "supporting": {
@@ -159,6 +377,7 @@
       "docs/project-guide-template.md",
       "docs/project-guide.md",
       "docs/approval-workflow.md",
+      "docs/finish-checklist.md",
       "docs/business-logic-playbook.md",
       "docs/money-quantity-guidelines.md",
       "docs/local-dev-ci-guide.md",

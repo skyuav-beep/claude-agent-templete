@@ -16,6 +16,9 @@
 | 영역 | Claude Code | Codex | 공통 정본 |
 |---|---|---|---|
 | 운영 규칙 | `CLAUDE.md` + `AGENTS.md` | `AGENTS.md` 필수 로딩 지시 + `CLAUDE.md` 공통 응답 정책 + `.codex/README.md` | `AGENTS.md`, `CLAUDE.md ## 커뮤니케이션`, `CLAUDE.md ## 답변 포맷` |
+| 실행 게이트 로딩 | `.claude/CLAUDE.md` 자동 로드 (루트 `CLAUDE.md`와 함께). 읽기 순서·6단계 절차·시작/종료 게이트 | `.codex/README.md` 읽기 순서와 종료 규칙 | `docs/approval-workflow.md` |
+| 종료 전 확인 | `.claude/CLAUDE.md ## 종료 전 확인` | `.codex/checks/finish-checklist.md` | `docs/finish-checklist.md` |
+| 작업 절차 연결 | 각 skill·command의 `## 승인 절차 연결` | 각 workflow 절차 + `.codex/README.md` 종료 규칙 | `docs/approval-workflow.md` |
 | 프로젝트 기준 | `AGENTS.md` 라우팅을 통해 로컬 가이드 선행 로드 | `AGENTS.md` 필수 로딩 + `.codex/README.md` | `docs/project-guide.md`, 하위 `AGENTS.md`, 관련 프로젝트 로컬 문서 |
 | 새 프로젝트 QnA | `.claude/skills/start/SKILL.md` 자동 활성화 | `.codex/workflows/start.md` 절차 실행 | `templates/startup-checklist.md` |
 | 개발 세션 부트스트랩 | `.claude/skills/dev-start/SKILL.md` 자동 활성화 | `.codex/workflows/dev-start.md` 절차 실행 | `docs/local-dev-ci-guide.md §2.0` |
