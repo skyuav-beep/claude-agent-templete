@@ -20,6 +20,13 @@
 
 ## 이번 세션에서 완료한 작업
 
+- Claude/Codex 단계 실행 경계를 정리하고 Claude 승인 게이트를 공통 설치 레이어에 추가했다. (2026-08-11)
+  - `docs/approval-workflow.md`에 런타임별 강제 범위, 단계 응답 봉투, 승인 범위와 Git 수명주기 구분을 명시했다.
+  - `.codex/README.md`와 safety/finish checklist에 현재 단계·산출물·다음 단계·쓰기 가능 여부를 선언하는 Codex 단계 계약을 추가했다. Codex 호스트가 저장소 훅을 자동 실행하지 않는 한 파일 수정 자체를 강제 차단할 수 없다는 경계도 명시했다.
+  - `.claude/hooks/phase-approval.sh`와 `settings.template.json`을 추가해 Claude Code에서 Step 3 승인 마커 없는 Edit/Write와 main worktree 편집을 차단하도록 했다. manifest에 새 훅을 등록했다.
+  - 검증: JSON·bash 구문, 승인 전 차단 동작, 템플릿 `--dry-run --adopt`(충돌 0) 통과. 기존 프로젝트의 보호된 `settings.local.json`은 자동 덮어쓰지 않으므로 설치 시 hook 병합이 필요하다.
+  - 전체 CI 대기열: 문서·Claude/Codex 설정·셸 훅 변경으로 애플리케이션 lint/test/build 대상 없음.
+
 - 아래 최근 요약을 제외한 전체 완료 이력과 상세 검증 근거는 [2026-07-31 전체 스냅샷](docs/archive/STATE-2026-07-31.md)에서 확인한다.
 
 ### 2026-08-04 세션 요약 (파일 수정 확인 요청 원인 규명)

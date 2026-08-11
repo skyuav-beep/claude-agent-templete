@@ -165,6 +165,10 @@
           "description": "Warn if STATE.md not updated on commit"
         },
         {
+          "path": ".claude/hooks/phase-approval.sh",
+          "description": "Block Claude edits before Step 3 approval and from main worktree"
+        },
+        {
           "path": ".claude/hooks/warn-design-tokens.sh",
           "description": "Opt-in: warn on hex/non-4px usage in CSS/JSX (not registered by default)"
         },
