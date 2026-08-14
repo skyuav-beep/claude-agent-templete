@@ -20,6 +20,14 @@
 
 ## 이번 세션에서 완료한 작업
 
+- Claude 승인 게이트를 강제 차단에서 사용자 확인 요청으로 바꾸고 연결 프로젝트 12곳에 적용했다. (2026-08-14)
+  - 원인: 훅은 3단계 승인 마커를 요구했지만 절차 문서 어디에도 마커 생성 시점이 없어, 절차를 지켜도 세션마다 첫 Edit에서 반드시 차단이 발생했다. 거부 사유가 에이전트에게 마커 생성을 지시하는 문장이어서 게이트가 자가 통과될 수 있는 구조이기도 했다.
+  - `.claude/hooks/phase-approval.sh`의 `permissionDecision`을 `deny`에서 `ask`로 바꾸고, 마커 검사를 메인 트리 검사보다 먼저 수행하도록 순서를 바꿨다. 마커가 있으면 어느 트리에서 작업하든 통과하므로 세션당 확인은 1회다.
+  - `docs/approval-workflow.md` 4단계에 마커 생성 시점을, 런타임 경계에 마커 임의 생성 금지를 명시했다. `.claude/CLAUDE.md` 4단계와 `CLAUDE.md`·`AGENTS.md` 훅 목록을 동기화했다(가드레일 4종 → 5종).
+  - 연결 프로젝트 12곳(`aica2`, `aiospace`, `ccaa`, `goldlink`, `makeupshop`, `mlm_v1.0`, `riderwebapp`, `skim`, `tokendtu`, `trippass`, `vwallet`, `vwallet-wt-approval-v3`)의 `.claude/settings.local.json`에 훅을 등록했다. 모두 gitignore 대상이라 git 변경은 0건이며 이 PC에만 적용된다. worktree를 쓰지 않는 9곳도 마커 1회 생성으로 마찰 없이 작업할 수 있다.
+  - 검증: `bash -n` 구문, 훅 5케이스(마커 유무 × 메인/worktree, 저장소 밖 파일), 12곳 JSON 파싱 통과.
+  - 전체 CI 대기열: 문서·셸 훅·로컬 설정 변경으로 애플리케이션 lint/test/build 대상 없음.
+
 - Claude/Codex 단계 실행 경계를 정리하고 Claude 승인 게이트를 공통 설치 레이어에 추가했다. (2026-08-11)
   - `docs/approval-workflow.md`에 런타임별 강제 범위, 단계 응답 봉투, 승인 범위와 Git 수명주기 구분을 명시했다.
   - `.codex/README.md`와 safety/finish checklist에 현재 단계·산출물·다음 단계·쓰기 가능 여부를 선언하는 Codex 단계 계약을 추가했다. Codex 호스트가 저장소 훅을 자동 실행하지 않는 한 파일 수정 자체를 강제 차단할 수 없다는 경계도 명시했다.
