@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# PreToolUse/Edit,Write: 승인 전 파일 수정 차단
+# PreToolUse/Edit,Write: 승인 전 파일 수정에 사용자 확인 요청
 #
 # Claude Code 전용 게이트다. Codex는 저장소 훅을 자동 실행하지 않으므로
 # .codex/workflows와 체크리스트의 단계 계약을 별도로 적용한다.
@@ -45,27 +45,33 @@ target_git = git(target_dir, "rev-parse", "--path-format=absolute", "--git-commo
 if os.path.realpath(target_git) != project_git:
     sys.exit(0)
 
+# The Step 3 marker is checked first: once the session is approved the user
+# should not be asked again, whichever tree the change lands in.
+session_id = payload.get("session_id") or "<session_id>"
+marker = os.path.join(os.path.dirname(project_git), ".claude", ".approval", session_id)
+if os.path.exists(marker):
+    sys.exit(0)
+
 # A worktree has its own git-dir. The main checkout points directly at the
-# common git directory and is never an implementation target.
+# common git directory, so flag it separately in the confirmation message.
 target_repo_git = git(target_dir, "rev-parse", "--path-format=absolute", "--git-dir")
 if os.path.realpath(target_repo_git) == project_git:
-    reason = "메인 트리 직접 수정은 허용하지 않습니다. 구현은 세션 전용 worktree에서 진행하세요."
+    reason = (
+        "Step 3 사용자 승인 마커가 없고, 메인 체크아웃을 직접 수정하려 합니다. "
+        "절차상 구현은 세션 전용 worktree에서 진행합니다. 이미 승인한 작업이면 허용해 주세요. "
+        f"마커 경로: {marker}"
+    )
 else:
-    session_id = payload.get("session_id") or "<session_id>"
-    marker = os.path.join(os.path.dirname(project_git), ".claude", ".approval", session_id)
-    if not os.path.exists(marker):
-        reason = (
-            "Step 3 사용자 승인 마커가 없어 파일 수정을 차단했습니다. "
-            "분석·Git 계획을 먼저 제시하고 사용자의 승인을 받은 뒤, "
-            f"승인된 세션 마커를 생성하세요: {marker}"
-        )
-    else:
-        sys.exit(0)
+    reason = (
+        "Step 3 사용자 승인 마커가 없습니다. 이미 승인한 작업이면 허용하고, "
+        "아직 승인 전이면 거부한 뒤 분석·Git 계획부터 받으세요. "
+        f"마커 경로: {marker}"
+    )
 
 print(json.dumps({
     "hookSpecificOutput": {
         "hookEventName": "PreToolUse",
-        "permissionDecision": "deny",
+        "permissionDecision": "ask",
         "permissionDecisionReason": reason,
     }
 }, ensure_ascii=False))
