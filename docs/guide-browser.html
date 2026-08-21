@@ -474,6 +474,50 @@
   </style>
 </head>
 <body>
+<!-- agent-nav:start — scripts/build-nav.mjs 가 생성한다. 이 구간은 직접 고치지 말 것 -->
+<nav class="agent-nav" aria-label="화면 이동">
+  <span class="an-home" aria-current="page">가이드 브라우저</span>
+  <span class="an-sep" aria-hidden="true"></span>
+  <a href="./admin-fe-preview.html">관리자</a>
+  <a href="./user-fe-preview.html">사용자</a>
+  <a href="./user-fe-mobile-preview.html">모바일</a>
+  <a href="./development-process.html">프로세스</a>
+  <a href="./development-strategy.html">전략</a>
+  <a href="./intake.html">Intake</a>
+</nav>
+<style>
+:root{
+  --an-h:40px;
+}
+.agent-nav{
+  --an-bg:#111827; --an-fg:#E7E9EC; --an-fg-dim:#6B7280;
+  --an-active-bg:#1F2937; --an-active-fg:#FFFFFF; --an-line:#1F2937;
+  position:sticky; top:0; z-index:900;
+  display:flex; align-items:center; gap:var(--an-gap,8px);
+  height:var(--an-h); padding:0 12px; box-sizing:border-box;
+  background:var(--an-bg); border-bottom:1px solid var(--an-line);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  font-size:12px; line-height:1; overflow-x:auto; scrollbar-width:none;
+}
+.agent-nav::-webkit-scrollbar{display:none;}
+.agent-nav a,.agent-nav span{
+  display:inline-flex; align-items:center; white-space:nowrap;
+  padding:8px 12px; border-radius:8px; text-decoration:none;
+  color:var(--an-fg); font-weight:500;
+}
+.agent-nav a:hover{background:var(--an-active-bg); color:var(--an-active-fg);}
+.agent-nav a:focus-visible{outline:2px solid #FFFFFF; outline-offset:-2px;}
+.agent-nav [aria-current="page"]{background:var(--an-active-bg); color:var(--an-active-fg); font-weight:600;}
+.agent-nav .an-home{font-weight:600;}
+.agent-nav .an-sep{
+  flex:0 0 1px; width:1px; height:16px; padding:0; margin:0 4px;
+  background:var(--an-line); border-radius:0;
+}
+@media print{.agent-nav{display:none;}}
+.shell{min-height:calc(100vh - var(--an-h));}.shell > .sidebar{height:calc(100vh - var(--an-h));top:var(--an-h);}
+</style>
+<!-- agent-nav:end -->
+
   <div class="shell">
     <aside class="sidebar" id="sidebar">
       <div class="brand">
