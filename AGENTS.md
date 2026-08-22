@@ -212,12 +212,13 @@
 - **[개발 프로세스 시각화](./docs/development-process.html)** - 브라우저에서 시각 가이드, 단계별 체크리스트, STATE 미니 대시보드 확인 시.
 - **[개발 전략 매뉴얼](./docs/development-strategy.html)** - 브라우저에서 UI-first 기본 경로와 DB/로직 우선 예외 경로를 비교할 때.
 - **[Intake 폼 UI](./docs/intake.html)** - 브라우저에서 Startup QnA 위저드 또는 요청 템플릿(feature/bugfix/refactor/review/business-logic/knowledge) 입력 후 Markdown으로 내보낼 때.
-- **[Skills Layer](./.claude/skills/)** - 자연어 트리거 기반 자동 활성화 SKILL.md 11종. `start`, `dev-start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`, `stack-upgrade`. 우선순위와 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
-- **[Slash Commands](./.claude/commands/)** - skills와 동일 이름의 명시적 slash command 11종. `/start`, `/dev-start`, `/intake`, `/request`, `/feature`, `/bugfix`, `/refactor`, `/review`, `/business-logic`, `/design`, `/stack-upgrade`. 사용자가 직접 호출할 때만 동작.
-- **[Hooks Layer](./.claude/hooks/)** - 파괴적 명령 차단, 비밀 파일 쓰기 차단, STATE.md 갱신 리마인더, 3단계 승인 전 파일 수정 확인, 세션 파일 겹침 조정. 설정은 `.claude/settings.local.json`.
+- **[Skills Layer](./.claude/skills/)** - 자연어 트리거 기반 자동 활성화 SKILL.md 12종. `start`, `dev-start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`, `stack-upgrade`, `git-cleanup`. 우선순위와 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
+- **[Slash Commands](./.claude/commands/)** - skills와 동일 이름의 명시적 slash command 12종. `/start`, `/dev-start`, `/intake`, `/request`, `/feature`, `/bugfix`, `/refactor`, `/review`, `/business-logic`, `/design`, `/stack-upgrade`, `/git-cleanup`. 사용자가 직접 호출할 때만 동작.
+- **[Hooks Layer](./.claude/hooks/)** - 파괴적 명령 차단, 배포·릴리스 명령 차단, 비밀 파일 쓰기 차단, STATE.md 갱신 리마인더, 3단계 승인 전 파일 수정 확인, 세션 파일 겹침 조정. 설정은 `.claude/settings.local.json`.
 - **[서브에이전트 정의](./.claude/agents/)** - frontmatter로 자동 등록되는 역할별 서브에이전트 6종 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer). Agent 도구의 `subagent_type`에 이름을 지정해 호출한다. 디스패치 기준은 `docs/subagent-guide.md`.
 - **[Plugins Layer](./.claude/plugins/)** - manifest.json, VERSION, install.sh. 다른 프로젝트에 설치 시 `docs/plugin-guide.md` 참조.
-- **[Codex Layer](./.codex/)** - Codex용 workflow 12종(`start`, `dev-start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`, `stack-upgrade`, `session-coordination`), safety/finish checklist, subagent prompt guide. Claude 전용 자동화와 분리된 보완 레이어.
+- **[Codex Layer](./.codex/)** - Codex용 workflow 13종(`start`, `dev-start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`, `stack-upgrade`, `session-coordination`, `git-cleanup`), safety/finish checklist, subagent prompt guide. Claude 전용 자동화와 분리된 보완 레이어.
+- **[미완료 Git 작업 정리](./.claude/skills/git-cleanup/SKILL.md)** - 커밋·push·PR·머지·브랜치·worktree 중 덜 끝난 것을 점검하고 마무리할 때. 배포·릴리스는 실행하지 않고 사용자에게 인계한다.
 - **[세션 충돌 조정](./docs/session-coordination-guide.md)** - Claude/Codex 세션 등록, 파일 점유 확인, 겹침 시 대기·사용자 확인 기준.
 - **[Plugin 가이드](./docs/plugin-guide.md)** - 설치, 업데이트, 커스텀, 버전 관리 방법.
 - **[디자인 운영 가이드](./docs/design-guidelines.md)** - `DESIGN.md` 토큰 호출 규칙, alias/atomic 선택, 컴포넌트 추가 절차, dark alias 합성 표기.

@@ -24,6 +24,14 @@
 
 ## 최근 완료 작업
 
+- 배포 차단 가드레일과 `git-cleanup` 스킬을 추가했다. (2026-08-22)
+  - 배포·릴리스는 문서 규칙에만 있고 실제 차단 장치가 없었다. `.claude/hooks/block-deploy.sh`가 `gh workflow run`, `gh release`, `vercel`/`fly`/`netlify deploy`, `kubectl apply`, `helm upgrade`, `terraform apply`, `docker push`, 패키지 publish, `prisma migrate deploy`, `staging`/`production` 환경 지정 명령을 차단한다. `git push`, `gh pr merge`, `docker compose up`, `prisma migrate dev` 같은 로컬 작업은 그대로 통과한다.
+  - `git-cleanup` 스킬을 Claude/Codex 양쪽에 추가했다. 미커밋 변경·미push 커밋·열린 PR·머지 후 남은 브랜치와 worktree·`STATE.md` 미기록을 점검하고, 정리 계획보다 **개발 내용 요약을 먼저** 보여 준 뒤 승인을 받아 마무리한다.
+  - 자연어 트리거: 깃 정리, git 정리, 커밋 정리, PR 정리, 브랜치 정리, 정리 안 된 것, 마무리해줘. slash command는 `/git-cleanup`.
+  - `CLAUDE.md` Golden Rules에 GitHub Actions 실행과 배포가 항상 사용자 수동이라는 점과 훅이 이를 차단한다는 사실을 명시했다.
+  - 플러그인 버전 `3.5.0`. skills 12종, commands 12종, 가드레일 7종, Codex workflow 13종.
+  - 검증: 배포 차단 25건(차단 13 / 허용 12) 판정 테스트 전부 기대대로 동작, 훅 10종 `bash -n`, manifest 146개 경로 존재·중복 없음, JSON 파싱, 링크 검사 통과.
+
 - 저장소 위생 정리 2건. (2026-08-22)
   - 3단계 승인 마커 디렉터리를 `.gitignore`에 추가했다. 세션마다 untracked로 노출되어 `git status`가 지저분해지던 문제를 없앤다.
   - `docs/archive/STATE-2026-08-14.md`의 이전 스냅샷 링크 3곳이 루트 기준 경로를 그대로 써서 깨져 있었다. 같은 디렉터리 기준으로 고쳤다.

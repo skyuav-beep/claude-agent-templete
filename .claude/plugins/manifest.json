@@ -1,6 +1,6 @@
 {
   "name": "claude-agent-template",
-  "version": "3.4.1",
+  "version": "3.5.0",
   "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
   "compatibility": {
     "claude_code": "full automation via .claude layers",
@@ -105,6 +105,10 @@
         {
           "path": ".claude/skills/stack-upgrade/SKILL.md",
           "description": "Stack version audit and safe dependency/infrastructure upgrades"
+        },
+        {
+          "path": ".claude/skills/git-cleanup/SKILL.md",
+          "description": "Audit and finish unfinished commit/push/PR/merge/branch work"
         }
       ]
     },
@@ -154,6 +158,10 @@
         {
           "path": ".claude/commands/stack-upgrade.md",
           "description": "/stack-upgrade [target] — explicit invocation"
+        },
+        {
+          "path": ".claude/commands/git-cleanup.md",
+          "description": "/git-cleanup [branch|PR] — explicit invocation"
         }
       ]
     },
@@ -163,6 +171,10 @@
         {
           "path": ".claude/hooks/block-destructive.sh",
           "description": "Block rm -rf, git reset --hard, etc."
+        },
+        {
+          "path": ".claude/hooks/block-deploy.sh",
+          "description": "Block deploy/release commands — deployment is always manual"
         },
         {
           "path": ".claude/hooks/block-secret-files.sh",
@@ -342,6 +354,10 @@
       {
         "path": ".codex/workflows/session-coordination.md",
         "description": "Codex session overlap coordination workflow"
+      },
+      {
+        "path": ".codex/workflows/git-cleanup.md",
+        "description": "Codex unfinished git work cleanup workflow"
       },
       {
         "path": ".codex/agents/explorer.md",

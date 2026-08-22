@@ -60,12 +60,12 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --adopt "$TARGET_ROOT"
 install.sh는 `manifest.json`에 등록된 파일을 대상 프로젝트에 복사한다.
 
 - L1 Memory: `CLAUDE.md`, `AGENTS.md`, `STATE.md`, `DESIGN.md`
-- L2 Skills: `.claude/skills/` (11개 `SKILL.md` — 자연어 키워드로 자동 활성화)
-- L2 Commands: `.claude/commands/` (11개 slash command — 사용자가 직접 호출)
-- L3 Hooks: `.claude/hooks/` (승인·파괴 명령·비밀 파일·STATE·세션 충돌 가드레일과 알림 훅) + `settings.template.json` -> 설치 대상의 `settings.local.json`
+- L2 Skills: `.claude/skills/` (12개 `SKILL.md` — 자연어 키워드로 자동 활성화)
+- L2 Commands: `.claude/commands/` (12개 slash command — 사용자가 직접 호출)
+- L3 Hooks: `.claude/hooks/` (승인·파괴 명령·배포 명령·비밀 파일·STATE·세션 충돌 가드레일과 알림 훅) + `settings.template.json` -> 설치 대상의 `settings.local.json`
 - L4 Subagents: `.claude/agents/` (6개 정의 파일 — explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer. frontmatter로 자동 등록)
 - Design library: `designs/` (6개 시안 + alias contract + template) + `.claude/plugins/select-design.sh`
-- Codex Layer: `.codex/` (workflow 12종 + checks 2종 + subagent prompt guide 6종)
+- Codex Layer: `.codex/` (workflow 13종 + checks 2종 + subagent prompt guide 6종)
 - Supporting: `agents/` (4개 역할 지침), `templates/` (요청 5종 + intake 12종 + 지식 관리 4종 + startup checklist + data-table density), `docs/` (가이드/플레이북/HTML UI/런타임 매트릭스 + 지식 관리·세션 조정 가이드 + `docs/00-inbox/`~`docs/99-archive/` 지식 영역)
 
 L2의 skills와 commands는 병존한다. skills는 자연어 키워드 매칭으로 자동 활성화되고, commands는 사용자가 슬래시 입력으로 명시 호출한다.

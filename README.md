@@ -64,7 +64,7 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 
 - `start` — 새 프로젝트 초기 설정 QnA (startup-checklist 11섹션)
 - `dev-start` — 개발 세션 재개 상태 브리핑 + dev 컨테이너 기동 + hot reload 점검
-- `intake` — 개별 토픽 수집 (project, tech, ui, responsive, i18n, framework, api, error, form, format, routing, qa)
+- `intake` — 개별 토픽 수집 (project, tech, ui, responsive, i18n, framework, api, error, form, format, routing, qa, knowledge)
 - `request` — 작업 유형이 모호할 때만 활성화, 자동 분류
 - `feature` — 기능 요청 구조화
 - `bugfix` — 버그 수정 요청 구조화
@@ -72,6 +72,8 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 - `review` — 코드 리뷰 요청 구조화
 - `business-logic` — 비즈니스 로직 변경 요청 구조화
 - `design` — UI/스타일/토큰 작업 시 `DESIGN.md` 강제 참조
+- `stack-upgrade` — 라이브러리·런타임·Docker·개발 인프라 버전 점검과 안전한 업데이트
+- `git-cleanup` — 커밋·push·PR·머지·브랜치·worktree 중 덜 끝난 작업 점검과 마무리
 
 각 skill은 `templates/`의 원본을 읽어서 대화형으로 진행하며, 사용자 메시지의 설명을 미리 파싱해 가능한 항목을 채운다.
 우선순위 규칙과 skill 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
@@ -80,7 +82,7 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 
 `.claude/commands/`에 동일 이름의 slash command가 병존한다. 사용자가 직접 입력해 호출할 수 있다.
 
-- `/start`, `/dev-start`, `/intake [토픽]`, `/request [설명]`, `/feature [설명]`, `/bugfix [설명]`, `/refactor [설명]`, `/review [대상]`, `/business-logic [설명]`, `/design [컴포넌트]`
+- `/start`, `/dev-start`, `/intake [토픽]`, `/request [설명]`, `/feature [설명]`, `/bugfix [설명]`, `/refactor [설명]`, `/review [대상]`, `/business-logic [설명]`, `/design [컴포넌트]`, `/stack-upgrade [대상]`, `/git-cleanup [브랜치|PR]`
 
 `[설명]` 인수를 주면 가능한 항목을 미리 채운다. skills와 동일 templates를 참조한다.
 
@@ -92,6 +94,7 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 - `request` — 모호하거나 복합적인 작업 요청을 개별 workflow로 분류
 - `feature` / `bugfix` / `refactor` / `review` / `business-logic` — 작업 요청 처리
 - `design` — UI/디자인 작업 시 `DESIGN.md`와 디자인 가이드 강제 참조
+- `stack-upgrade` / `session-coordination` / `git-cleanup` — 버전 업그레이드, 세션 겹침 조정, 미완료 Git 작업 정리
 
 Codex에서는 자동 hook이 없으므로 `.codex/checks/safety-checklist.md`와 `.codex/checks/finish-checklist.md`를 작업 전후 체크리스트로 사용한다. `.codex/agents/*`는 `.claude/agents/*`와 같은 책임을 Codex 도구·승인 모델에 맞춰 수행하는 prompt guide다.
 
