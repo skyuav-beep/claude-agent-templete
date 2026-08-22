@@ -7,7 +7,7 @@
 - 역할별 지침은 `agents/`, 요청·intake 양식은 `templates/`, 프로젝트·검증 가이드는 `docs/`에 둔다.
 - Claude Code 자동화는 `.claude/`, Codex 네이티브 Skill은 `.agents/skills/`, Codex 승인·검증 어댑터는 `.codex/`에 둔다.
 - 프로젝트 가이드는 템플릿 배포 원본에서 초기 scaffold를 유지하고 소비 프로젝트가 intake 결과로 교체한다.
-- 본 템플릿을 소비하는 런타임 앱은 sibling 저장소 `../riderapp-runtime/`이다.
+- 이 템플릿을 `rules/` symlink로 참조하는 연결 프로젝트는 2026-08-22 실측 기준 17개다(GoldFX, aica2, aiospace, ccaa, goldlink, icnft, icwp2p, makeupshop, mlm_v1.0, riderapp-runtime, riderwebapp, signal2, skim, sos_sccl, tokendtu, trippass, vwallet. 작업용 worktree 2개는 별도). 전원 `.claude/` 하위 7종 symlink 배선이 끝나 있어 템플릿 개정이 즉시 반영된다. 초기 런타임 앱이던 sibling `../riderapp-runtime/`은 현재 git 저장소가 아니고 활동이 없어 참조 구현으로 삼지 않는다.
 - 작업 알림은 Claude Code 사용자 전역 설정과 Codex `notify`에 등록되어 두 런타임 모두 동작 중이다. 구성·조정·되돌리기는 `docs/notification-guide.md`.
 - Claude와 Codex는 각각 `.claude/CLAUDE.md`와 `.codex/README.md`를 실행 게이트로 삼아 같은 6단계 절차를 적용한다. 연결 프로젝트는 이 파일들을 공통본 symlink로 참조하므로 템플릿 개정이 즉시 반영된다.
 - 프로젝트에 들어오는 개념·백서·요구사항·설계·개발계획을 시간순과 주제별로 보관하는 공통 지식 관리 체계를 `docs/knowledge-management-guide.md`와 `templates/` 양식으로 정의했다.
@@ -15,7 +15,9 @@
 - 여러 세션이 같은 저장소를 쓸 때의 파일 점유 조정은 `docs/session-coordination-guide.md`를 따른다. 세션 식별자는 `eval "$(bash .claude/hooks/session-coordination.sh resource)"`로 고정하는 경로가 기본이다.
 - 커밋·push·PR·머지·브랜치 정리가 덜 끝난 작업은 `git-cleanup` 스킬(`/git-cleanup`)로 한 번에 점검한다.
 
-**세션 종료 (2026-08-22)** — 세션 초반에 만든 stack-upgrade·세션 조정·지식 관리 3건을 감사하고, 거기서 나온 문제를 모두 고친 뒤 배포 차단 가드레일과 `git-cleanup` 스킬까지 추가했다(PR #39 `c06933d`, #40 `aa9f239`, #41 `8dd48de`). 감사에서 가장 컸던 것은 세션 조정 훅이 문서에 적힌 방식으로 전혀 동작하지 않던 점이다 — 터미널에서 실행하면 입력을 기다리며 멈췄고, 세션 식별자가 호출마다 갈라져 등록 해제가 되지 않았다. 배포 금지는 문서 3곳에 적혀 있었지만 실제 차단 장치가 없어 훅으로 막았다. 진행 중이던 작업이나 미완료 worktree, 열린 PR은 없다. 재개 지점은 `## 다음 작업` 1순위(디자인 시안 6종 시각 검수)로 그대로다. 배포 차단 훅은 이 창을 재시작해야 적용되고, 다른 개발 환경에서는 로컬 설정에 따로 등록해야 한다.
+**세션 종료 (2026-08-22, 마지막)** — 저장소 파일은 이 기록 외에 변경하지 않았다. Claude Code 프로젝트 메모리(`~/.claude/projects/-home-skyua-projects-claude-agent-template/memory/`)를 9건에서 4건으로 정리했다. 낡음의 원인은 진행 상태 스냅샷을 메모리에 복사해 둔 것이어서, goldlink·vwallet 상세와 비활성 앱의 승인 정책을 지우고 저장소 구조·연결 프로젝트·런타임 앱 3건을 실측 기반 1건으로 합쳤다. 남긴 4건은 구조·연결 방식·작업 지침처럼 잘 변하지 않는 사실이다. 통합본에 "개별 프로젝트의 진행 상태는 그 프로젝트의 `STATE.md`와 그 프로젝트 메모리가 정본이며 여기에 복사하지 않는다"는 기준을 함께 넣었다. 실측으로 정정한 값 4건: 연결 프로젝트 11 → 17개, `.claude/` 배선 5 → 7종, riderwebapp은 상대경로가 아니라 symlink 참조, riderapp-runtime은 git 저장소가 아님. 삭제 전 백업은 이 세션 스크래치패드에만 있어 세션이 끝나면 사라진다. 미커밋 변경·열린 PR·미완료 worktree는 없고 재개 지점은 `## 다음 작업` 1순위 그대로다.
+
+이전 세션(2026-08-22): 세션 초반에 만든 stack-upgrade·세션 조정·지식 관리 3건을 감사하고, 거기서 나온 문제를 모두 고친 뒤 배포 차단 가드레일과 `git-cleanup` 스킬까지 추가했다(PR #39 `c06933d`, #40 `aa9f239`, #41 `8dd48de`). 감사에서 가장 컸던 것은 세션 조정 훅이 문서에 적힌 방식으로 전혀 동작하지 않던 점이다 — 터미널에서 실행하면 입력을 기다리며 멈췄고, 세션 식별자가 호출마다 갈라져 등록 해제가 되지 않았다. 배포 금지는 문서 3곳에 적혀 있었지만 실제 차단 장치가 없어 훅으로 막았다. 진행 중이던 작업이나 미완료 worktree, 열린 PR은 없다. 재개 지점은 `## 다음 작업` 1순위(디자인 시안 6종 시각 검수)로 그대로다. 배포 차단 훅은 이 창을 재시작해야 적용되고, 다른 개발 환경에서는 로컬 설정에 따로 등록해야 한다.
 
 이전 세션(2026-08-21): `docs/` 화면 7종에 공통 상단 이동 바를 넣어 가이드 브라우저를 허브로 오갈 수 있게 했다(PR #34, `3cb3b00`).
 
