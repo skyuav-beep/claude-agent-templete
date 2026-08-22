@@ -1,6 +1,6 @@
 {
   "name": "claude-agent-template",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
   "compatibility": {
     "claude_code": "full automation via .claude layers",
@@ -395,7 +395,11 @@
       "templates/bugfix-request.md",
       "templates/refactor-request.md",
       "templates/review-request.md",
-      "templates/business-logic-request.md"
+      "templates/business-logic-request.md",
+      "templates/knowledge-entry.md",
+      "templates/whitepaper-note.md",
+      "templates/development-plan.md",
+      "templates/decision-record.md"
     ],
     "docs": [
       "docs/project-guide-template.md",
@@ -426,7 +430,8 @@
       "docs/user-fe-mobile-design-guide.md",
       "docs/user-fe-mobile-preview.html",
       "docs/ui-decisions.md",
-      "docs/plugin-guide.md"
+      "docs/plugin-guide.md",
+      "docs/knowledge-management-guide.md"
     ]
   }
 }

@@ -18,6 +18,7 @@
 - format: `templates/format-intake.md`
 - routing: `templates/routing-intake.md`
 - qa: `templates/qa-intake.md`
+- knowledge: `templates/knowledge-entry.md`
 
 ## 절차
 

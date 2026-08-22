@@ -1040,6 +1040,28 @@
           { id: 'antipatterns', type: 'textarea', label: '피하고 싶은 구조 (giant component, god service, utils 남용 등)' }
         ]}
       ]
+    },
+    'knowledge-entry': {
+      title: 'Knowledge Entry',
+      file: 'templates/knowledge-entry.md',
+      desc: '사용자 입력 원문을 보관하고 개념·백서·요구사항·설계·개발계획으로 승격할 정보를 정리한다.',
+      sections: [
+        { heading: '원문과 요약', fields: [
+          { id: 'title', type: 'text', label: '문서 제목' },
+          { id: 'source_text', type: 'textarea', label: '사용자 입력 또는 원자료' },
+          { id: 'summary', type: 'textarea', label: '핵심 요약' }
+        ]},
+        { heading: '확정·미정·영향', fields: [
+          { id: 'confirmed', type: 'textarea', label: '확정 사항' },
+          { id: 'undecided', type: 'textarea', label: '미정 사항' },
+          { id: 'impact', type: 'textarea', label: '영향 범위' }
+        ]},
+        { heading: '분류와 다음 작업', fields: [
+          { id: 'target_area', type: 'text', label: '대상 영역 (concept/whitepaper/product/design/development/operations/decision/report)' },
+          { id: 'destination', type: 'text', label: '정식 문서로 승격할 위치' },
+          { id: 'next_action', type: 'textarea', label: '다음 작업' }
+        ]}
+      ]
     }
   };
 

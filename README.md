@@ -14,6 +14,8 @@
 - `templates/i18n-intake.md`, `docs/i18n-guidelines.md`: 다국어 프로젝트용 초기 설문과 기준 문서
 - `templates/business-logic-request.md`, `docs/business-logic-playbook.md`: 비즈니스 로직 변경용 요청 템플릿과 프로세스 가이드
 - `templates/framework-structure-intake.md`, `docs/framework-structure-guide.md`: 초기 프레임워크/디렉터리/파일 분리 기준 문서
+- `docs/knowledge-management-guide.md`, `templates/knowledge-entry.md`: 사용자 입력부터 개발계획까지의 문서 분류·명명·생명주기 기준
+- `templates/whitepaper-note.md`, `templates/development-plan.md`, `templates/decision-record.md`: 개념·백서·개발계획·의사결정 기록 양식
 
 ## 다른 프로젝트에 설치
 
@@ -54,6 +56,7 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 9. `agents/*.md`에서 필요한 역할만 남기고 세부 규칙을 조정한다.
 10. `templates/*.md`를 팀 작업 방식에 맞게 수정한다.
 11. 작업이 끝날 때마다 `STATE.md`를 업데이트한다.
+12. 프로젝트에 들어오는 정보는 `docs/00-inbox/`에 기록한 뒤 지식 관리 가이드에 따라 주제별 문서로 승격한다.
 
 ## Skills Layer (자동 활성화)
 
