@@ -1,5 +1,5 @@
 ---
-description: "프로젝트의 특정 영역(UI, API, i18n, 라우팅, 폼, 에러 등) 상세 정보 수집이 필요할 때 활성화 (intake, topic deep-dive)"
+description: "프로젝트의 특정 영역(UI, API, i18n, 라우팅, 폼, 에러, 지식 문서 등) 상세 정보 수집이 필요할 때 활성화 (intake, topic deep-dive)"
 ---
 
 # 개별 Intake 토픽 수집
@@ -22,6 +22,7 @@ description: "프로젝트의 특정 영역(UI, API, i18n, 라우팅, 폼, 에�
 - `format` -> `templates/format-intake.md`
 - `routing` -> `templates/routing-intake.md`
 - `qa` -> `templates/qa-intake.md`
+- `knowledge` -> `templates/knowledge-entry.md`
 
 ## 입력 처리
 
@@ -53,6 +54,7 @@ description: "프로젝트의 특정 영역(UI, API, i18n, 라우팅, 폼, 에�
 - format: UTC, 화폐, 천 단위 구분자 등 포맷 설정
 - routing: URL 상태 동기화, 권한별 라우팅 제어
 - qa: 테스트 강제 유무, Git 커밋 컨벤션, CI/CD
+- knowledge: 사용자 입력 원문, 개념·백서·요구사항·설계·개발계획 분류
 ```
 
 ## 진행 규칙

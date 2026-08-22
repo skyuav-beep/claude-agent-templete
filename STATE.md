@@ -10,6 +10,7 @@
 - 본 템플릿을 소비하는 런타임 앱은 sibling 저장소 `../riderapp-runtime/`이다.
 - 작업 알림은 Claude Code 사용자 전역 설정과 Codex `notify`에 등록되어 두 런타임 모두 동작 중이다. 구성·조정·되돌리기는 `docs/notification-guide.md`.
 - Claude와 Codex는 각각 `.claude/CLAUDE.md`와 `.codex/README.md`를 실행 게이트로 삼아 같은 6단계 절차를 적용한다. 연결 프로젝트는 이 파일들을 공통본 symlink로 참조하므로 템플릿 개정이 즉시 반영된다.
+- 프로젝트에 들어오는 개념·백서·요구사항·설계·개발계획을 시간순과 주제별로 보관하는 공통 지식 관리 체계를 `docs/knowledge-management-guide.md`와 `templates/` 양식으로 정의했다.
 
 **세션 종료 (2026-08-21)** — `docs/` 화면 7종에 공통 상단 이동 바를 넣어 가이드 브라우저를 허브로 오갈 수 있게 했다(PR #34, `3cb3b00`). 화면마다 주소를 직접 입력하던 마찰이 없어져 1순위 시각 검수가 한결 쉬워졌다. 진행 중이던 작업이나 미완료 worktree는 없다. 재개 지점은 `## 다음 작업` 1순위(디자인 시안 6종 시각 검수)로, 이제 서버를 띄우고 상단 바로 세 프리뷰 화면을 순회하면 된다. 2순위의 권한 모드 적용은 여전히 사용자 직접 실행 대기다. 원격 작업 브랜치 `docs/screen-nav-bar`는 병합 후에도 남아 있다 — 삭제 명령이 가드레일에 `git push --force`로 오탐 차단됐고 사용자 판단을 받지 못한 채 세션이 끝났다. 이미 병합됐으므로 지워도 안전하다.
 
@@ -34,6 +35,12 @@
   - `.claude/skills/stack-upgrade`, `.claude/commands/stack-upgrade`, `.codex/workflows/stack-upgrade`를 추가하고 manifest와 런타임 라우팅 문서를 갱신했다.
   - 승인 전 읽기 전용 조사, 후보 버전·breaking change·보안·재빌드 분석, 승인 후 단계별 업데이트·검증·STATE 기록 절차를 정의했다.
   - 플러그인 버전을 `3.2.0`으로 맞췄다. `quick_validate.py`, `manifest.json` JSON 검증, `git diff --check` 통과. 전체 CI는 운영 문서/워크플로 변경으로 대상 없음.
+
+- 프로젝트 지식 관리 체계를 추가했다. (2026-08-21)
+  - `docs/knowledge-management-guide.md`에 `00-inbox`부터 `99-archive`까지의 주제 분류, 날짜 기반 파일명, 메타데이터, 원문에서 정식 문서로 승격하는 흐름을 정의했다.
+  - `templates/knowledge-entry.md`, `whitepaper-note.md`, `development-plan.md`, `decision-record.md`를 추가해 다른 프로젝트에서도 동일한 방식으로 정보를 정리할 수 있게 했다.
+  - 연결 프로젝트는 로컬 `docs/`를 구성하고, 공통 가이드는 `rules/docs/knowledge-management-guide.md`를 통해 참조한다.
+  - 후속 정합성 보강: 신규 파일을 plugin manifest에 등록하고 버전을 `3.4.0`으로 올렸으며, `knowledge` intake와 브라우저 폼, 지식 영역 디렉터리, 색인 생성 경로를 연결했다. `decision` 기본 상태는 `draft`로 조정했다.
 
 - `docs/` 화면 7종에 공통 상단 이동 바를 넣어 가이드 브라우저를 허브로 오갈 수 있게 했다. (2026-08-21)
   - 배경: 프리뷰·문서 화면이 서로 링크되어 있지 않아 화면마다 주소를 직접 입력해야 했다.

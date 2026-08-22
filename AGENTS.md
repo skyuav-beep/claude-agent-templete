@@ -48,7 +48,8 @@
 5. 역할별 세부 규칙은 `agents/` 아래 문서로 분리한다.
 6. 작업 요청 형식은 `templates/` 아래 문서로 분리한다.
 7. 현재 상태와 다음 작업은 `STATE.md`에 기록한다.
-8. 규칙이 실제 작업 방식과 어긋나면 루트 문서 또는 하위 문서 업데이트를 제안한다.
+8. 사용자 입력·개념·백서·요구사항·설계·개발계획은 `docs/knowledge-management-guide.md`의 분류와 명명 규칙으로 보관한다.
+9. 규칙이 실제 작업 방식과 어긋나면 루트 문서 또는 하위 문서 업데이트를 제안한다.
 
 ## Project Context & Operations
 
@@ -188,6 +189,11 @@
 - **[QA/워크플로우 설문](./templates/qa-intake.md)** - 에이전트 테스트 강제 유무, Git 커밋 컨벤션, CI/CD 연동 정책을 수집할 때.
 - **[프로젝트 가이드 정본](./docs/project-guide.md)** - 현재 프로젝트의 목표, 기술·업무·검증 기준을 확인할 때.
 - **[프로젝트 가이드 템플릿](./docs/project-guide-template.md)** - intake 답변을 프로젝트 가이드 구조로 옮길 때.
+- **[프로젝트 지식 관리 가이드](./docs/knowledge-management-guide.md)** - 사용자 입력부터 개념·백서·요구사항·설계·개발계획까지의 분류, 시간순 명명, 문서 생명주기를 확인할 때.
+- **[지식 입력 템플릿](./templates/knowledge-entry.md)** - 분류 전 원문과 사용자 정보를 `docs/00-inbox/`에 기록할 때.
+- **[개념·백서 템플릿](./templates/whitepaper-note.md)** - 개념과 백서 정보를 근거 중심으로 정리할 때.
+- **[개발계획 템플릿](./templates/development-plan.md)** - 근거 문서, 마일스톤, 완료 조건, 검증 계획을 정리할 때.
+- **[의사결정 기록 템플릿](./templates/decision-record.md)** - 중요한 기술·제품·운영 결정을 ADR 형태로 남길 때.
 - **[다국어 가이드](./docs/i18n-guidelines.md)** - i18n 구조, key 규칙, formatting, fallback 기준을 정리할 때.
 - **[비즈니스 로직 플레이북](./docs/business-logic-playbook.md)** - 요구사항, 시나리오, 구현, 검증, 빌드, Git 작업 기준을 확인할 때.
 - **[금액·수량 처리 기준](./docs/money-quantity-guidelines.md)** - 금액/수량의 계산·확정·표시·저장 계층 규칙, 잔차 배분, 통화 최소 단위, 실수 타입 금지 기준을 확인할 때.
@@ -205,7 +211,7 @@
 - **[개발 전략 가이드](./docs/development-strategy.md)** - UI Mock First와 Logic/DB First 중 개발 진행 방식을 선택할 때.
 - **[개발 프로세스 시각화](./docs/development-process.html)** - 브라우저에서 시각 가이드, 단계별 체크리스트, STATE 미니 대시보드 확인 시.
 - **[개발 전략 매뉴얼](./docs/development-strategy.html)** - 브라우저에서 UI-first 기본 경로와 DB/로직 우선 예외 경로를 비교할 때.
-- **[Intake 폼 UI](./docs/intake.html)** - 브라우저에서 Startup QnA 위저드 또는 요청 템플릿(feature/bugfix/refactor/review/business-logic) 입력 후 Markdown으로 내보낼 때.
+- **[Intake 폼 UI](./docs/intake.html)** - 브라우저에서 Startup QnA 위저드 또는 요청 템플릿(feature/bugfix/refactor/review/business-logic/knowledge) 입력 후 Markdown으로 내보낼 때.
 - **[Skills Layer](./.claude/skills/)** - 자연어 트리거 기반 자동 활성화 SKILL.md 11종. `start`, `dev-start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`, `stack-upgrade`. 우선순위와 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
 - **[Slash Commands](./.claude/commands/)** - skills와 동일 이름의 명시적 slash command 11종. `/start`, `/dev-start`, `/intake`, `/request`, `/feature`, `/bugfix`, `/refactor`, `/review`, `/business-logic`, `/design`, `/stack-upgrade`. 사용자가 직접 호출할 때만 동작.
 - **[Hooks Layer](./.claude/hooks/)** - 파괴적 명령 차단, 비밀 파일 쓰기 차단, STATE.md 갱신 리마인더, 3단계 승인 전 파일 수정 확인, 세션 파일 겹침 조정. 설정은 `.claude/settings.local.json`.

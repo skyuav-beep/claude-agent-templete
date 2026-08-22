@@ -149,7 +149,7 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 
 - 프로젝트 시작: `start` (startup-checklist QnA)
 - 개발 세션 부트스트랩: `dev-start` (PC 켜고 개발 재개 — 상태 브리핑 + dev 컨테이너 기동 + hot reload/UI·로직 점검)
-- 개별 토픽 수집: `intake` (12종 intake 라우터)
+- 개별 토픽 수집: `intake` (13종 intake 라우터)
 - 작업 요청 라우터: `request` (유형 자동 판별, 키워드가 모호할 때만 활성화)
 - 개별 요청: `feature`, `bugfix`, `refactor`, `review`, `business-logic`
 - 기술 스택 업그레이드: `stack-upgrade` (라이브러리·런타임·Docker·개발 인프라 버전 점검 및 안전한 업데이트)
