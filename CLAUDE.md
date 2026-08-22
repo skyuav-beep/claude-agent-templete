@@ -118,12 +118,12 @@
 - `templates/` — 작업 요청 5종 + intake 양식 14종 (`data-table-density.md` 포함)
 - `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타: `docs/design-guidelines.md`, admin FE: `docs/admin-fe-design-guide.md`, UI 결정 기록: `docs/ui-decisions.md`, 로컬/CI 실행 경계+Docker 재빌드: `docs/local-dev-ci-guide.md`, 금액·수량 처리: `docs/money-quantity-guidelines.md`, 작업 알림: `docs/notification-guide.md`)
 - `.claude/CLAUDE.md` — Claude 실행 게이트. 루트 `CLAUDE.md`와 함께 자동 로드되어 읽기 순서, 6단계 승인 절차, 시작·종료 게이트를 주입한다 (`.codex/README.md` 대응)
-- `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 10종)
-- `.claude/commands/` — L2 보조 (명시적 slash command 10종, skills와 병존)
+- `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 11종)
+- `.claude/commands/` — L2 보조 (명시적 slash command 11종, skills와 병존)
 - `.claude/hooks/` — L3 Guardrails (가드레일 5종 + 작업 알림 3종, opt-in 1종 포함). 상태줄은 `.claude/statusline-notify.sh`
 - `.claude/agents/` — L4 서브에이전트 정의 6종, frontmatter로 자동 등록 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - `.claude/plugins/` — L5 배포 도구 (manifest, install)
-- `.codex/` — Codex runtime adapter (workflow 10종, checks 2종, subagent prompt guide 6종, notify 어댑터 1종). Claude 자동화와 분리된 보완 레이어
+- `.codex/` — Codex runtime adapter (workflow 11종, checks 2종, subagent prompt guide 6종, notify 어댑터 1종). Claude 자동화와 분리된 보완 레이어
 - `scripts/` — 저장소 유지보수 스크립트 (문서 인덱스 생성, 로컬 문서 서버, HTML 구문 검사, 화면 이동 바 생성). Node 내장 모듈만 사용하며 설치 배포 대상이 아니다. 문서 UI는 `node scripts/serve-docs.mjs`로 열고, 브라우저에서 문서를 고치려면 `--edit`을 붙인다 (기존 `.md` 수정만, 커밋은 별도). `docs/` 화면 7종 상단의 공통 이동 바는 `node scripts/build-nav.mjs`가 마커 구간을 생성하므로 각 HTML의 `agent-nav` 구간은 직접 고치지 않는다 (`--check`로 최신 여부만 검사)
 
 ## Design System
@@ -152,6 +152,7 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 - 개별 토픽 수집: `intake` (12종 intake 라우터)
 - 작업 요청 라우터: `request` (유형 자동 판별, 키워드가 모호할 때만 활성화)
 - 개별 요청: `feature`, `bugfix`, `refactor`, `review`, `business-logic`
+- 기술 스택 업그레이드: `stack-upgrade` (라이브러리·런타임·Docker·개발 인프라 버전 점검 및 안전한 업데이트)
 
 ### 우선순위 규칙
 
@@ -159,6 +160,7 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 - 유형이 모호하거나 복합적일 때만 `request` skill이 활성화된다.
 - 동일 입력에서 두 skill이 동시에 매칭되면 더 구체적인 개별 skill을 선택한다.
 - `dev-start`(개발 시작/이어서 개발/세션 시작/환경 셋팅해/다음 작업은)는 **환경 부팅·상태 재개** 맥락에만 활성화한다. "개발 시작"이 무엇을 만들지(기능/버그/로직)를 설명하는 맥락이면 `feature`/`bugfix`/`business-logic`을 우선한다.
+- `stack-upgrade`는 라이브러리·패키지·런타임·Docker 이미지·base image·개발 인프라의 버전 점검/업데이트 맥락에 활성화한다. 단순 개발환경 기동은 `dev-start`, 기능 구현은 `feature`를 우선한다.
 
 ### Skill 연계 흐름
 
@@ -167,7 +169,7 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 
 ### 명시적 호출 (slash command)
 
-`.claude/commands/`에 동일 이름의 slash command가 병존한다. 사용자가 `/start`, `/feature` 등을 직접 입력해 명시적으로 호출할 수 있다.
+`.claude/commands/`에 동일 이름의 slash command가 병존한다. 사용자가 `/start`, `/feature`, `/stack-upgrade` 등을 직접 입력해 명시적으로 호출할 수 있다.
 - skills: 자연어 키워드로 자동 활성화 (description 트리거 기반)
 - commands: 사용자가 직접 슬래시 입력으로 호출
 

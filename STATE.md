@@ -23,6 +23,12 @@
 
 ## 최근 완료 작업
 
+- `stack-upgrade` 기술 스택 업그레이드 스킬을 Claude/Codex 양쪽에 추가했다. (2026-08-22)
+  - 자연어 트리거: 라이브러리·의존성·패키지·런타임·Docker/base image·개발 인프라 버전 점검 및 업데이트, `stack upgrade`, `stack-upgrade`.
+  - `.claude/skills/stack-upgrade`, `.claude/commands/stack-upgrade`, `.codex/workflows/stack-upgrade`를 추가하고 manifest와 런타임 라우팅 문서를 갱신했다.
+  - 승인 전 읽기 전용 조사, 후보 버전·breaking change·보안·재빌드 분석, 승인 후 단계별 업데이트·검증·STATE 기록 절차를 정의했다.
+  - 플러그인 버전을 `3.2.0`으로 맞췄다. `quick_validate.py`, `manifest.json` JSON 검증, `git diff --check` 통과. 전체 CI는 운영 문서/워크플로 변경으로 대상 없음.
+
 - `docs/` 화면 7종에 공통 상단 이동 바를 넣어 가이드 브라우저를 허브로 오갈 수 있게 했다. (2026-08-21)
   - 배경: 프리뷰·문서 화면이 서로 링크되어 있지 않아 화면마다 주소를 직접 입력해야 했다.
   - `scripts/build-nav.mjs`를 추가했다. 화면 목록·바 마크업·스타일을 이 스크립트가 소유하고, 각 HTML의 `agent-nav` 마커 구간만 생성한다. `--check`는 파일을 쓰지 않고 최신 여부만 검사한다.

@@ -22,6 +22,7 @@
 | 프로젝트 기준 | `AGENTS.md` 라우팅을 통해 로컬 가이드 선행 로드 | `AGENTS.md` 필수 로딩 + `.codex/README.md` | `docs/project-guide.md`, 하위 `AGENTS.md`, 관련 프로젝트 로컬 문서 |
 | 새 프로젝트 QnA | `.claude/skills/start/SKILL.md` 자동 활성화 | `.codex/workflows/start.md` 절차 실행 | `templates/startup-checklist.md` |
 | 개발 세션 부트스트랩 | `.claude/skills/dev-start/SKILL.md` 자동 활성화 | `.codex/workflows/dev-start.md` 절차 실행 | `docs/local-dev-ci-guide.md §2.0` |
+| 기술 스택 업그레이드 | `.claude/skills/stack-upgrade/SKILL.md` 자동 활성화 + `/stack-upgrade` | `.codex/workflows/stack-upgrade.md` 절차 실행 | `docs/approval-workflow.md`, `docs/local-dev-ci-guide.md` |
 | 토픽 intake | `.claude/skills/intake/SKILL.md` | `.codex/workflows/intake.md` | `templates/*-intake.md` |
 | 모호한 작업 요청 라우팅 | `.claude/skills/request/SKILL.md` 자동 분류 | `.codex/workflows/request.md` 절차 실행 | `agents/main-agent.md`, `templates/*-request.md` |
 | 작업 요청 구조화 | `.claude/skills/{feature,bugfix,refactor,review,business-logic}` | `.codex/workflows/{feature,bugfix,refactor,review,business-logic}` | `templates/*-request.md` |
