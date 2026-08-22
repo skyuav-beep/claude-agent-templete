@@ -1,6 +1,6 @@
 {
   "name": "claude-agent-template",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
   "compatibility": {
     "claude_code": "full automation via .claude layers",
@@ -101,6 +101,10 @@
         {
           "path": ".claude/skills/design/SKILL.md",
           "description": "Design system enforcement — auto-loads DESIGN.md on UI keywords"
+        },
+        {
+          "path": ".claude/skills/stack-upgrade/SKILL.md",
+          "description": "Stack version audit and safe dependency/infrastructure upgrades"
         }
       ]
     },
@@ -146,6 +150,10 @@
         {
           "path": ".claude/commands/design.md",
           "description": "/design [component] — explicit invocation"
+        },
+        {
+          "path": ".claude/commands/stack-upgrade.md",
+          "description": "/stack-upgrade [target] — explicit invocation"
         }
       ]
     },
@@ -322,6 +330,10 @@
       {
         "path": ".codex/workflows/design.md",
         "description": "Codex design workflow"
+      },
+      {
+        "path": ".codex/workflows/stack-upgrade.md",
+        "description": "Codex stack version audit and upgrade workflow"
       },
       {
         "path": ".codex/agents/explorer.md",

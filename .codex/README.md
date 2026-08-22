@@ -23,6 +23,7 @@
 
 - 새 프로젝트 시작: `workflows/start.md`
 - 개발 세션 재개(PC 켜고 시작): `workflows/dev-start.md`
+- 기술 스택 업그레이드: `workflows/stack-upgrade.md`
 - 토픽별 intake: `workflows/intake.md`
 - 모호한 작업 요청 분류: `workflows/request.md`
 - 기능 개발: `workflows/feature.md`
