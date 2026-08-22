@@ -63,10 +63,11 @@ related: []
 ---
 ```
 
-- `id`: 문서 간 연결에 사용할 불변 식별자
+- `id`: 문서 간 연결에 사용할 불변 식별자. `<접두사>-YYYYMMDD-NNN` 형식이며 접두사는 유형을 따른다.
+  `DOC`(inbox 원문), `CON`(concept), `WP`(whitepaper), `PRD`(product), `DSN`(design), `DEV`(development), `OPS`(operations), `DEC`(decision), `RPT`(report)
 - `type`: `concept`, `whitepaper`, `product`, `design`, `development`, `operations`, `decision`, `report`
 - `status`: `inbox`, `draft`, `review`, `approved`, `superseded`, `archived`
-- `source`: `user-input`, `meeting`, `research`, `implementation`, `decision` 중 하나 또는 설명
+- `source`: `user-input`, `meeting`, `research`, `planning`, `implementation`, `decision` 중 하나 또는 설명
 - `related`: 관련 문서 ID 또는 상대 경로 목록
 
 ## 입력에서 정식 문서로 승격하는 흐름

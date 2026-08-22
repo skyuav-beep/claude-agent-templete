@@ -5,26 +5,76 @@
 set -u
 
 command -v jq >/dev/null 2>&1 || exit 0
-command -v flock >/dev/null 2>&1 || exit 0
 
-payload=$(cat 2>/dev/null || true)
+mode="${1:-hook}"
+
+# CLI 모드에서 stdin을 읽으면 터미널 실행이 EOF를 기다리며 멈춘다.
+# hook 모드이면서 stdin이 파이프로 연결됐을 때만 payload를 읽는다.
+payload=""
+if [ "$mode" = "hook" ] && [ ! -t 0 ]; then
+  payload=$(cat 2>/dev/null || true)
+fi
+
+# GNU sha256sum과 macOS shasum을 모두 지원한다. 둘 다 없으면 경로를 파일명 안전
+# 문자열로 환원해 레지스트리가 조용히 비활성화되지 않게 한다.
+hash_hex() {
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum | cut -d' ' -f1
+  elif command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 | cut -d' ' -f1
+  else
+    tr -c '[:alnum:]' '-' | cut -c1-64
+  fi
+}
+
 root=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 common=$(git rev-parse --git-common-dir 2>/dev/null || printf '%s/.git' "$root")
 common=$(cd "$root" && realpath "$common" 2>/dev/null || printf '%s' "$common")
-repo_key=$(printf '%s' "$common" | sha256sum | cut -d' ' -f1)
+repo_key=$(printf '%s' "$common" | hash_hex)
 state_base="${SESSION_COORD_STATE_DIR:-${XDG_RUNTIME_DIR:-$HOME/.cache}/claude-agent-sessions}"
 state_dir="$state_base/$repo_key"
 mkdir -p "$state_dir" 2>/dev/null || exit 0
-exec 9>"$state_dir/.lock" 2>/dev/null || exit 0
-flock 9
+
+# flock이 없는 환경(기본 macOS 등)에서는 락 없이 진행한다. 같은 사용자 계정의
+# 짧은 갱신이라 경합 확률은 낮고, 조용히 종료하는 것보다 조정이 동작하는 편이 낫다.
+if command -v flock >/dev/null 2>&1; then
+  if exec 9>"$state_dir/.lock" 2>/dev/null; then
+    flock 9
+  fi
+fi
 
 json_get() { printf '%s' "$payload" | jq -r "$1 // empty" 2>/dev/null; }
+
 sid="${SESSION_COORD_SESSION_ID:-$(json_get '.session_id')}"
-[ -n "$sid" ] || sid="pid-$PPID"
-sid_file=$(printf '%s' "$sid" | sha256sum | cut -d' ' -f1)
+if [ -z "$sid" ]; then
+  # POSIX 세션 ID는 같은 터미널·같은 셸 세션에서 호출 간 불변이라
+  # register/claim/release가 하나의 레코드를 공유한다. PPID는 명령마다
+  # 새 셸을 띄우는 실행기에서 갈라지므로 최후 수단으로만 쓴다.
+  posix_sid=$(ps -o sid= -p $$ 2>/dev/null | tr -d ' ')
+  case "$posix_sid" in
+    ''|*[!0-9]*) sid="pid-$PPID" ;;
+    *) sid="sess-$posix_sid" ;;
+  esac
+fi
+sid_file=$(printf '%s' "$sid" | hash_hex)
 record="$state_dir/$sid_file.json"
 
-canon() { realpath -m "$1" 2>/dev/null || printf '%s/%s' "$root" "$1"; }
+# 세션이 비정상 종료되면 SessionEnd가 실행되지 않아 레코드가 남는다. PID 검증은
+# owner PID를 아는 경우에만 가능하므로 TTL이 실질적인 정리 기준이다.
+ttl="${SESSION_COORD_TTL_SECONDS:-28800}"
+case "$ttl" in
+  ''|*[!0-9]*) ttl=28800 ;;
+esac
+
+canon() {
+  local p="$1"
+  case "$p" in
+    /*) ;;
+    *) p="$PWD/$p" ;;
+  esac
+  realpath -m "$p" 2>/dev/null || realpath "$p" 2>/dev/null || printf '%s' "$p"
+}
+
 now=$(date +%s)
 branch=$(git -C "$root" branch --show-current 2>/dev/null || true)
 worktree=$(pwd -P)
@@ -42,7 +92,7 @@ cleanup_stale() {
     case "$started" in
       ''|*[!0-9]*) started=0 ;;
     esac
-    [ "$started" -gt 0 ] && [ $((now - started)) -gt 86400 ] && { rm -f "$f" 2>/dev/null; continue; }
+    [ "$started" -gt 0 ] && [ $((now - started)) -gt "$ttl" ] && { rm -f "$f" 2>/dev/null; continue; }
     pid=$(jq -r '.pid // empty' "$f" 2>/dev/null)
     comm=$(jq -r '.pid_comm // empty' "$f" 2>/dev/null)
     [ -n "$pid" ] && [ -n "$comm" ] || continue
@@ -92,10 +142,28 @@ status() {
   done
 }
 
+# TTL과 PID 검증으로 정리되지 않는 유령 점유를 수동으로 지운다.
+# 인자 없이 쓰면 stale 정리만 하고, 세션 ID를 주면 그 레코드를 삭제한다.
+prune() {
+  local target="${1:-}" f found removed=0 left
+  cleanup_stale
+  if [ -n "$target" ]; then
+    for f in "$state_dir"/*.json; do
+      [ -f "$f" ] || continue
+      found=$(jq -r '.session_id // empty' "$f" 2>/dev/null)
+      if [ "$found" = "$target" ]; then
+        rm -f "$f" 2>/dev/null && removed=$((removed + 1))
+      fi
+    done
+  fi
+  left=$(ls "$state_dir"/*.json 2>/dev/null | wc -l | tr -d ' ')
+  printf 'prune: %s개 삭제, %s개 남음\n' "$removed" "$left"
+}
+
 resource() {
   local safe_root key safe_sid port_offset
   safe_root=$(basename "$root" | tr -c '[:alnum:]' '-' | sed 's/-*$//')
-  key=$(printf '%s' "$sid" | sha256sum | cut -c1-8)
+  key=$(printf '%s' "$sid" | hash_hex | cut -c1-8)
   safe_sid=$(printf '%s' "$sid" | tr -c '[:alnum:]' '-' | sed 's/-*$//' | cut -c1-24)
   port_offset=$((16#${key:0:4} % 1000))
   printf 'export SESSION_COORD_SESSION_ID=%q\n' "$sid"
@@ -106,11 +174,12 @@ resource() {
 }
 
 cleanup_stale
-case "${1:-hook}" in
+case "$mode" in
   register) register ;;
   release) release ;;
   claim) [ -n "${2:-}" ] && claim "$2" ;;
   status) status ;;
+  prune) prune "${2:-}" ;;
   resource) resource ;;
   hook)
     event=$(json_get '.hook_event_name')

@@ -24,6 +24,16 @@
 
 ## 최근 완료 작업
 
+- 세션 충돌 조정 훅의 감사 지적 사항을 수정했다. (2026-08-22)
+  - CLI 모드에서도 stdin을 끝까지 읽어 터미널 실행이 멈추던 문제를 고쳤다. `hook` 모드이고 stdin이 파이프일 때만 payload를 읽는다.
+  - 세션 식별자를 POSIX 세션 ID 기반으로 바꿔 `register`/`claim`/`release`가 한 레코드를 공유하게 했다. 명령마다 새 셸을 쓰는 실행기를 위해 `eval "$(... resource)"`로 `SESSION_COORD_SESSION_ID`를 고정하는 경로를 가이드와 Codex workflow의 첫 단계로 올렸다.
+  - stale 등록 보존 시간을 24시간에서 8시간으로 낮추고 `SESSION_COORD_TTL_SECONDS`와 `prune` 커맨드를 추가했다.
+  - `sha256sum`/`shasum` 래퍼, `realpath` 폴백, `flock` 부재 시 잠금 없이 진행을 넣어 macOS에서 조용히 무력화되던 경로를 없앴다.
+  - `docs/session-coordination-guide.md`와 지식 영역 디렉터리 10종을 plugin manifest에 등록해 설치 대상에 포함시켰다. 플러그인 버전은 `3.4.1`.
+  - `CLAUDE.md` Repo Map의 `templates`·`docs` 항목, 지식 문서 명명 예외, `docs/plugin-guide.md`의 intake 카운트를 실제와 맞췄다. 지식 관리 가이드에 `id` 접두사 체계와 `source: planning`을 보강했다.
+  - `.claude/settings.local.json`은 사용자 전역 gitignore 대상이라 커밋되지 않는다. 이 저장소 로컬 설정에는 훅 3개(PreToolUse/SessionStart/SessionEnd)를 직접 등록했고, 다른 환경은 `settings.template.json`을 참고해 각자 등록해야 한다. 이 사실을 `CLAUDE.md` Hooks Layer에 명시했다.
+  - 검증: 훅 9종 `bash -n`, hook 모드 SessionStart 등록·PreToolUse 충돌 감지·SessionEnd 해제 후 재점유, CLI 터미널 실행 hang 해소, TTL 만료·`prune` 동작, manifest 142개 경로 존재와 중복 없음, `build-nav --check`, `check-html.mjs`, `git diff --check` 통과.
+
 - Claude/Codex 세션 충돌 조정 MVP를 추가했다. (2026-08-22)
   - `.claude/hooks/session-coordination.sh`가 사용자 런타임 디렉터리에 세션·worktree·점유 파일을 등록하고, 같은 파일을 점유한 다른 세션의 수정 전에 확인을 요청한다.
   - Claude `SessionStart`/`SessionEnd` 및 `Edit|Write` hook, Codex `session-coordination` workflow를 연결했다.
@@ -34,7 +44,7 @@
   - 자연어 트리거: 라이브러리·의존성·패키지·런타임·Docker/base image·개발 인프라 버전 점검 및 업데이트, `stack upgrade`, `stack-upgrade`.
   - `.claude/skills/stack-upgrade`, `.claude/commands/stack-upgrade`, `.codex/workflows/stack-upgrade`를 추가하고 manifest와 런타임 라우팅 문서를 갱신했다.
   - 승인 전 읽기 전용 조사, 후보 버전·breaking change·보안·재빌드 분석, 승인 후 단계별 업데이트·검증·STATE 기록 절차를 정의했다.
-  - 플러그인 버전을 `3.2.0`으로 맞췄다. `quick_validate.py`, `manifest.json` JSON 검증, `git diff --check` 통과. 전체 CI는 운영 문서/워크플로 변경으로 대상 없음.
+  - 플러그인 버전을 `3.2.0`으로 올렸다(이후 지식 관리 통합에서 `3.4.0`). `manifest.json` JSON 파싱과 `git diff --check` 통과. 전체 CI는 운영 문서/워크플로 변경으로 대상 없음.
 
 - 프로젝트 지식 관리 체계를 추가했다. (2026-08-21)
   - `docs/knowledge-management-guide.md`에 `00-inbox`부터 `99-archive`까지의 주제 분류, 날짜 기반 파일명, 메타데이터, 원문에서 정식 문서로 승격하는 흐름을 정의했다.
