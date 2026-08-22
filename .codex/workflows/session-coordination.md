@@ -5,9 +5,14 @@ Claude/Codex 세션이 같은 저장소에서 겹치는 작업을 피하도록 �
 ## 작업 시작
 
 ```bash
+eval "$(bash .claude/hooks/session-coordination.sh resource)"
 bash .claude/hooks/session-coordination.sh register
 bash .claude/hooks/session-coordination.sh status
 ```
+
+첫 줄의 `eval`은 `SESSION_COORD_SESSION_ID`를 현재 셸에 고정한다. 명령마다 새 셸을 띄우는
+실행기에서는 이 값이 없으면 `register`, `claim`, `release`가 서로 다른 세션으로 갈라지므로
+반드시 먼저 실행한다.
 
 기존 active 세션이 같은 기능이나 파일을 다루면 작업을 겹치지 않게 조정한다. 다른 파일을 다루는 독립 작업은 승인 후 전용 worktree에서 진행한다.
 

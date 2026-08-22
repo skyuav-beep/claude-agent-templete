@@ -22,6 +22,9 @@ Claude와 Codex가 같은 저장소에서 동시에 작업할 때 세션 상태�
 ## Codex 사용
 
 ```bash
+# 세션 식별자를 현재 셸에 고정한다. 반드시 먼저 실행한다.
+eval "$(bash .claude/hooks/session-coordination.sh resource)"
+
 bash .claude/hooks/session-coordination.sh register
 bash .claude/hooks/session-coordination.sh status
 bash .claude/hooks/session-coordination.sh claim src/example.ts
@@ -30,6 +33,17 @@ bash .claude/hooks/session-coordination.sh release
 ```
 
 Codex workflow는 작업 시작 시 `register`와 `status`, 파일을 수정하기 직전에 `claim`을 수행하고, 세션 종료 시 `release`한다. 같은 파일 충돌이 나오면 기존 세션을 기다리거나 사용자의 확인을 받은 뒤에 진행한다.
+
+`SESSION_COORD_SESSION_ID`가 없으면 helper는 셸의 POSIX 세션 ID로 대체한다. 같은 터미널에서 이어서 실행하면 값이 유지되지만, 명령마다 새 세션을 만드는 실행기에서는 갈라질 수 있으므로 위의 `eval`로 고정하는 경로를 기본으로 삼는다.
+
+## 등록 정리
+
+```bash
+bash .claude/hooks/session-coordination.sh prune              # 만료·종료된 등록 정리
+bash .claude/hooks/session-coordination.sh prune <session-id> # 특정 세션 등록 삭제
+```
+
+세션이 비정상 종료되면 `release`가 실행되지 않아 등록이 남는다. 기본 보존 시간은 8시간이며 `SESSION_COORD_TTL_SECONDS`로 조정한다. `status`에 남아 있는 유령 세션은 `prune`에 세션 ID를 넘겨 지운다.
 
 ## 개발 리소스 격리
 
@@ -50,3 +64,5 @@ helper가 제공하는 값은 `COMPOSE_PROJECT_NAME`, `SESSION_COORD_DOCKER_NETW
 - Bash 명령이 내부적으로 수정하는 파일은 파일 hook만으로 완전히 알 수 없다.
 - Docker/DB/port/volume 격리는 helper 값을 프로젝트별 Compose·환경 설정에 연결해야 하며 자동 적용되지 않는다.
 - 레지스트리는 같은 사용자 계정과 PC 범위의 조정 장치이며 원격 팀 잠금이 아니다.
+- 세션이 비정상 종료되면 TTL(기본 8시간)이 지나기 전까지 등록이 남는다. 즉시 지우려면 `prune`을 사용한다.
+- `jq`가 없으면 조정이 동작하지 않는다. `flock`이 없는 환경에서는 잠금 없이 진행하므로 동시 갱신이 겹칠 수 있다.

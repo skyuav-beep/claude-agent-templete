@@ -66,7 +66,7 @@ install.sh는 `manifest.json`에 등록된 파일을 대상 프로젝트에 복�
 - L4 Subagents: `.claude/agents/` (6개 정의 파일 — explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer. frontmatter로 자동 등록)
 - Design library: `designs/` (6개 시안 + alias contract + template) + `.claude/plugins/select-design.sh`
 - Codex Layer: `.codex/` (workflow 12종 + checks 2종 + subagent prompt guide 6종)
-- Supporting: `agents/` (4개 역할 지침), `templates/` (요청 5종 + intake 13종 + 지식 관리 4종 + startup checklist + data-table density), `docs/` (가이드/플레이북/HTML UI/런타임 매트릭스 + 지식 관리 가이드)
+- Supporting: `agents/` (4개 역할 지침), `templates/` (요청 5종 + intake 12종 + 지식 관리 4종 + startup checklist + data-table density), `docs/` (가이드/플레이북/HTML UI/런타임 매트릭스 + 지식 관리·세션 조정 가이드 + `docs/00-inbox/`~`docs/99-archive/` 지식 영역)
 
 L2의 skills와 commands는 병존한다. skills는 자연어 키워드 매칭으로 자동 활성화되고, commands는 사용자가 슬래시 입력으로 명시 호출한다.
 Codex는 `.codex/README.md`와 `.codex/workflows/*.md`를 통해 같은 운영 절차를 명시적으로 수행한다. 모호한 요청은 `.codex/workflows/request.md`가 Claude `request` skill과 같은 라우팅 역할을 맡는다.

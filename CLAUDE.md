@@ -91,6 +91,7 @@
 
 <!-- CUSTOMIZE: 프로젝트 코딩 컨벤션에 맞게 수정 -->
 - 파일명: kebab-case (예: `feature-request.md`, `block-destructive.sh`)
+- 예외: `docs/00-inbox/` ~ `docs/99-archive/`의 지식 문서는 `YYYY-MM-DD__문서유형__짧은-kebab-case-제목.md`를 쓴다 (`docs/knowledge-management-guide.md`)
 - 디렉터리명: kebab-case 단수형 (예: `agents/`, `templates/`, `docs/`)
 - Markdown 제목: `##` 레벨부터 시작, `#`은 파일 제목에만 사용
 - 커맨드명: kebab-case (예: `/business-logic`, `/feature`)
@@ -115,8 +116,9 @@
 - `DESIGN.md` — 디자인 시스템 카탈로그(active). UI/스타일 작업의 1차 소스 (토큰, 컴포넌트, Do/Don't, 다크 alias). `designs/`에서 선택된 시안의 활성 사본
 - `designs/` — 디자인 시안 라이브러리. 시안 선택은 `bash .claude/plugins/select-design.sh <slug>`
 - `agents/` — 역할별 에이전트 행동 규칙 (main, executor, researcher, reviewer)
-- `templates/` — 작업 요청 5종 + intake 양식 14종 (`data-table-density.md` 포함)
-- `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타: `docs/design-guidelines.md`, admin FE: `docs/admin-fe-design-guide.md`, UI 결정 기록: `docs/ui-decisions.md`, 로컬/CI 실행 경계+Docker 재빌드: `docs/local-dev-ci-guide.md`, 금액·수량 처리: `docs/money-quantity-guidelines.md`, 작업 알림: `docs/notification-guide.md`)
+- `templates/` — 작업 요청 5종 + intake 양식 12종 + 지식 관리 4종(`knowledge-entry`, `whitepaper-note`, `development-plan`, `decision-record`) + `startup-checklist.md` + `data-table-density.md`
+- `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타: `docs/design-guidelines.md`, admin FE: `docs/admin-fe-design-guide.md`, UI 결정 기록: `docs/ui-decisions.md`, 로컬/CI 실행 경계+Docker 재빌드: `docs/local-dev-ci-guide.md`, 금액·수량 처리: `docs/money-quantity-guidelines.md`, 작업 알림: `docs/notification-guide.md`, 지식 관리: `docs/knowledge-management-guide.md`, 세션 충돌 조정: `docs/session-coordination-guide.md`)
+- `docs/00-inbox/` ~ `docs/99-archive/` — 지식 관리 영역. 사용자 입력·개념·백서·요구사항·설계·개발계획·결정 기록을 주제별로 보관한다. 분류·명명·생명주기는 `docs/knowledge-management-guide.md`
 - `.claude/CLAUDE.md` — Claude 실행 게이트. 루트 `CLAUDE.md`와 함께 자동 로드되어 읽기 순서, 6단계 승인 절차, 시작·종료 게이트를 주입한다 (`.codex/README.md` 대응)
 - `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 11종)
 - `.claude/commands/` — L2 보조 (명시적 slash command 11종, skills와 병존)
@@ -178,7 +180,7 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 ## Hooks Layer (가드레일)
 
 `.claude/hooks/`에 정의된 셸 스크립트가 도구 실행 전에 자동으로 동작한다.
-설정은 `.claude/settings.local.json`의 `hooks` 섹션에 등록되어 있다.
+설정은 `.claude/settings.local.json`의 `hooks` 섹션에 등록한다. 이 파일은 로컬 전용이라 저장소에 커밋되지 않으므로, 훅을 추가할 때는 `.claude/settings.template.json`에 정본을 두고 각 환경에서 로컬 설정에 옮겨 등록한다.
 
 - `block-destructive.sh` — `rm -rf`, `git reset --hard`, `git push --force`, `git clean -f` 등 파괴적 명령 차단
 - `block-secret-files.sh` — `.env`, `*.pem`, `*.key`, `credentials.json` 등 비밀 파일 쓰기 차단

@@ -1,6 +1,6 @@
 {
   "name": "claude-agent-template",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
   "compatibility": {
     "claude_code": "full automation via .claude layers",
@@ -431,7 +431,18 @@
       "docs/user-fe-mobile-preview.html",
       "docs/ui-decisions.md",
       "docs/plugin-guide.md",
-      "docs/knowledge-management-guide.md"
+      "docs/knowledge-management-guide.md",
+      "docs/session-coordination-guide.md",
+      "docs/00-inbox/.gitkeep",
+      "docs/01-concept/.gitkeep",
+      "docs/02-whitepaper/.gitkeep",
+      "docs/03-product/.gitkeep",
+      "docs/04-design/.gitkeep",
+      "docs/05-development/.gitkeep",
+      "docs/06-operations/.gitkeep",
+      "docs/07-decisions/.gitkeep",
+      "docs/90-reports/.gitkeep",
+      "docs/99-archive/.gitkeep"
     ]
   }
 }
