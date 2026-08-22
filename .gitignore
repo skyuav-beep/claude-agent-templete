@@ -19,3 +19,7 @@ Thumbs.db
 
 # install.py 실행 부산물
 __pycache__/
+
+# 3단계 승인 마커. phase-approval.sh가 세션마다 만들고 작업이 끝나면 지우는
+# 세션 로컬 산출물이라 추적하지 않는다.
+.claude/.approval/
