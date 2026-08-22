@@ -354,7 +354,7 @@ user FE도 product 카피 톤은 활성 시안의 `policy.copy_tone`을 따른�
 
 ## 디자인 런타임 연계
 
-user FE 작업 키워드(피드, 카드, 상세, 모바일, 폼, bottom-sheet, app-bar, bottom-nav)는 Claude에서는 `.claude/skills/design/SKILL.md`를 자동 활성화하고, Codex에서는 `.codex/workflows/design.md`를 명시 적용해 `DESIGN.md`를 강제 로드한다. 본 가이드는 그 연장선으로 호출된다. 새로운 user FE 컴포넌트가 필요하면 `docs/design-guidelines.md ## 새 컴포넌트 추가 절차`를 따른다.
+user FE 작업 키워드(피드, 카드, 상세, 모바일, 폼, bottom-sheet, app-bar, bottom-nav)는 Claude에서는 `.claude/skills/design/SKILL.md`를 자동 활성화하고, Codex에서는 `.agents/skills/design/SKILL.md`를 자동 선택해 `DESIGN.md`를 강제 로드한다. 상세 호환 절차는 `.codex/workflows/design.md`를 따른다. 본 가이드는 그 연장선으로 호출된다. 새로운 user FE 컴포넌트가 필요하면 `docs/design-guidelines.md ## 새 컴포넌트 추가 절차`를 따른다.
 
 ## 모바일 전용판과의 차이
 

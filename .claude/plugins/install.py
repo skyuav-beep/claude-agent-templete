@@ -28,6 +28,7 @@ LINK_TARGETS = (
     ".claude/hooks",
     ".claude/plugins",
     ".claude/statusline-notify.sh",
+    ".agents/skills",
     ".codex",
 )
 

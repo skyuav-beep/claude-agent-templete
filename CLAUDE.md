@@ -125,6 +125,7 @@
 - `.claude/hooks/` — L3 Guardrails (가드레일 7종 + 작업 알림 3종, opt-in 1종 포함). 상태줄은 `.claude/statusline-notify.sh`
 - `.claude/agents/` — L4 서브에이전트 정의 6종, frontmatter로 자동 등록 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - `.claude/plugins/` — L5 배포 도구 (manifest, install)
+- `.agents/skills/` — Codex native skills 13종. 자연어 요청에 따라 작업 유형별 Skill을 자동 선택한다.
 - `.codex/` — Codex runtime adapter (workflow 13종, checks 2종, subagent prompt guide 6종, notify 어댑터 1종). Claude 자동화와 분리된 보완 레이어
 - `scripts/` — 저장소 유지보수 스크립트 (문서 인덱스 생성, 로컬 문서 서버, HTML 구문 검사, 화면 이동 바 생성). Node 내장 모듈만 사용하며 설치 배포 대상이 아니다. 문서 UI는 `node scripts/serve-docs.mjs`로 열고, 브라우저에서 문서를 고치려면 `--edit`을 붙인다 (기존 `.md` 수정만, 커밋은 별도). `docs/` 화면 7종 상단의 공통 이동 바는 `node scripts/build-nav.mjs`가 마커 구간을 생성하므로 각 HTML의 `agent-nav` 구간은 직접 고치지 않는다 (`--check`로 최신 여부만 검사)
 

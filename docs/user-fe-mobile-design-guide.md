@@ -249,7 +249,7 @@
 
 ## 디자인 런타임 연계
 
-모바일 전용 키워드(앱, 모바일, 네이티브, swipe, bottom-sheet, pull-to-refresh, sticky CTA)는 Claude에서는 `.claude/skills/design/SKILL.md`를 자동 활성화하고, Codex에서는 `.codex/workflows/design.md`를 명시 적용해 `DESIGN.md`를 강제 로드한다. 본 가이드는 그 연장선으로 호출된다.
+모바일 전용 키워드(앱, 모바일, 네이티브, swipe, bottom-sheet, pull-to-refresh, sticky CTA)는 Claude에서는 `.claude/skills/design/SKILL.md`를 자동 활성화하고, Codex에서는 `.agents/skills/design/SKILL.md`를 자동 선택해 `DESIGN.md`를 강제 로드한다. 상세 호환 절차는 `.codex/workflows/design.md`를 따른다. 본 가이드는 그 연장선으로 호출된다.
 
 ## 운영 메모
 
