@@ -203,7 +203,7 @@ admin 표면도 product 카피 톤은 활성 시안의 `policy.copy_tone`을 따
 
 ## 디자인 런타임 연계
 
-admin FE 작업 키워드(테이블, 사이드바, 로그인, 카드, 폼, 토스트)는 Claude에서는 `.claude/skills/design/SKILL.md`를 자동 활성화하고, Codex에서는 `.codex/workflows/design.md`를 명시 적용해 `DESIGN.md`를 강제 로드한다. 본 가이드는 그 연장선으로 호출된다. 새로운 admin 컴포넌트가 필요하면 `docs/design-guidelines.md ## 새 컴포넌트 추가 절차`를 따른다.
+admin FE 작업 키워드(테이블, 사이드바, 로그인, 카드, 폼, 토스트)는 Claude에서는 `.claude/skills/design/SKILL.md`를 자동 활성화하고, Codex에서는 `.agents/skills/design/SKILL.md`를 자동 선택해 `DESIGN.md`를 강제 로드한다. 상세 호환 절차는 `.codex/workflows/design.md`를 따른다. 본 가이드는 그 연장선으로 호출된다. 새로운 admin 컴포넌트가 필요하면 `docs/design-guidelines.md ## 새 컴포넌트 추가 절차`를 따른다.
 
 ## 시안별 화면 조립 차이
 

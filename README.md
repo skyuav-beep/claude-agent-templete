@@ -8,7 +8,8 @@
 - `STATE.md`: 현재 상태와 다음 작업 인계를 위한 기록 파일
 - `agents/`: 역할별 세부 지침
 - `.claude/`: Claude Code 자동화 레이어(skills, commands, hooks, subagents, plugin installer)
-- `.codex/`: Codex 실행 절차 레이어(workflows, checks, subagent prompt guides)
+- `.agents/skills/`: Codex 네이티브 Skill 레이어(자연어 자동 선택)
+- `.codex/`: Codex 운영 호환 레이어(workflows, checks, subagent prompt guides)
 - `templates/`: 기능 개발, 버그 수정, 리뷰 요청 템플릿
 - `docs/`: intake 답변을 바탕으로 작성할 프로젝트 가이드 템플릿
 - `templates/i18n-intake.md`, `docs/i18n-guidelines.md`: 다국어 프로젝트용 초기 설문과 기준 문서
@@ -39,7 +40,7 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 ## 지원 런타임
 
 - Claude Code: `.claude/*` 자동화 레이어로 skills, commands, hooks, subagents를 사용한다.
-- Codex: `AGENTS.md`와 `.codex/*` workflow/check 문서로 같은 운영 절차를 재현한다.
+- Codex: `AGENTS.md`와 `.agents/skills/*`를 기본 진입점으로 사용하고 `.codex/*`에서 승인·검증·호환 절차를 따른다.
 - 공통 정본: `AGENTS.md`, `STATE.md`, `docs/project-guide.md`, 프로젝트 로컬 `templates/`, `docs/`, `DESIGN.md`.
 - 런타임별 대응 관계는 `docs/agent-runtime-matrix.md`, Codex 실행 기준은 `docs/codex-guide.md`, Claude 실행 기준은 `docs/claude-guide.md`를 따른다.
 
@@ -47,7 +48,7 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 
 1. 이 저장소를 새 프로젝트의 시작점으로 복제하거나, 대상 상태에 맞는 설치 모드로 연결한다.
 2. Claude Code에서 자연어로 "새 프로젝트 시작하자"고 말하면 `start` skill이 자동 활성화되어 초기 설정 QnA를 진행한다.
-3. Codex에서는 `.codex/README.md`를 진입점으로 삼고, 작업 전 safety checklist와 작업 유형에 맞는 `.codex/workflows/*.md`를 따라 같은 템플릿을 읽는다.
+3. Codex에서는 `.codex/README.md`와 `.agents/skills/*/SKILL.md`를 진입점으로 삼고, 작업 전 safety checklist와 필요 시 `.codex/workflows/*.md`를 따른다.
 4. 특정 영역(예: UI, API)을 더 깊이 수집하려면 자연어로 토픽을 언급하면 `intake` skill이 활성화된다. 또는 `/intake tech` 같은 슬래시 커맨드로 명시 호출 가능.
 5. 작업 요청 시 "기능 추가", "버그 수정" 같은 키워드를 쓰면 해당 개별 skill이 자동 활성화된다. 또는 `/feature`, `/bugfix` 등 슬래시 커맨드로 명시 호출 가능.
 6. 유형이 모호하면 `request` skill이 자동으로 분류한다. 또는 `/request`로 명시 호출.
@@ -88,7 +89,7 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 
 ## Codex Workflows
 
-`.codex/workflows/`는 Claude skills를 Codex 실행 절차로 옮긴 레이어다.
+`.agents/skills/`는 Codex가 자연어 요청에 따라 선택하는 네이티브 Skill 레이어다. `.codex/workflows/`는 상세 절차와 명시적 호환 실행 레이어로 유지한다.
 
 - `start` / `dev-start` / `intake` — 초기 QnA, 개발 세션 재개, 토픽별 정보 수집
 - `request` — 모호하거나 복합적인 작업 요청을 개별 workflow로 분류

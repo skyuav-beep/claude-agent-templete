@@ -127,6 +127,6 @@
 
 ## 런타임 연계 흐름
 
-디자인 키워드가 사용자 메시지에 등장하면 Claude에서는 `.claude/skills/design/SKILL.md`가 자동 활성화되어 `DESIGN.md`를 강제 로드한다. Codex에서는 `.codex/workflows/design.md`를 명시적으로 적용한다. `feature`/`refactor`/`bugfix` 진행 중 UI 영향이 발견되면 같은 디자인 절차를 추가 적용해 일관성 항목을 보강한다.
+디자인 키워드가 사용자 메시지에 등장하면 Claude에서는 `.claude/skills/design/SKILL.md`가 자동 활성화되고, Codex에서는 `.agents/skills/design/SKILL.md`가 자동 선택되어 `DESIGN.md`를 강제 로드한다. 상세 호환 절차는 `.codex/workflows/design.md`를 따른다. `feature`/`refactor`/`bugfix` 진행 중 UI 영향이 발견되면 같은 디자인 절차를 추가 적용해 일관성 항목을 보강한다.
 
-상세 흐름은 `CLAUDE.md ## Design System`, `.claude/skills/design/SKILL.md`, `.codex/workflows/design.md`를 참조한다.
+상세 흐름은 `CLAUDE.md ## Design System`, `.claude/skills/design/SKILL.md`, `.agents/skills/design/SKILL.md`, `.codex/workflows/design.md`를 참조한다.

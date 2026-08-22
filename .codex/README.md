@@ -1,6 +1,6 @@
 # Codex Runtime Guide
 
-이 디렉터리는 Codex가 Claude Code 전용 자동화 없이 같은 운영 절차를 수행하도록 돕는 런타임 어댑터다.
+이 디렉터리는 Codex가 Claude Code 전용 자동화 없이 같은 운영 절차를 수행하도록 돕는 런타임 어댑터다. 작업별 자동 선택은 저장소 루트 `.agents/skills/`의 네이티브 Skill이 담당하고, 이 디렉터리는 승인·검증·호환 workflow를 담당한다.
 
 ## 경로 해석
 
@@ -15,7 +15,7 @@
 3. `STATE.md`
 4. `docs/project-guide.md`가 있으면 해당 문서와 현재 작업 영역의 하위 `AGENTS.md`
 5. `.codex/checks/safety-checklist.md`
-6. `.codex/workflows/<작업유형>.md`
+6. `.agents/skills/<작업유형>/SKILL.md` 또는 명시적 절차가 필요하면 `.codex/workflows/<작업유형>.md`
 7. workflow가 가리키는 프로젝트 로컬 정본 또는 위 경로 규칙에 따른 `rules/` 공통본
 8. `.codex/checks/finish-checklist.md`
 
@@ -76,7 +76,9 @@ Codex는 Claude Code의 `PreToolUse` 훅을 자동 실행하지 않는다. 따�
 
 ## 동등성 기준
 
-- `.codex/workflows/*`는 `.claude/skills/*`와 `.claude/commands/*`가 수행하는 절차를 Codex에서 명시적으로 재현한다.
+- `.agents/skills/*`는 Codex가 자연어 요청에서 선택하는 네이티브 작업 진입점이다.
+- `.codex/workflows/*`는 네이티브 Skill이 참조하는 상세 절차와 명시적 실행 호환 문서다.
+- `.codex/checks/*`와 `scripts/check-codex-skills.mjs`는 Skill을 넘어 결정론적으로 검증할 수 있는 항목을 담당한다.
 - `.codex/agents/*`는 `.claude/agents/*`의 역할과 같은 책임을 수행하되, Codex 도구·승인·샌드박스 모델에 맞춰 실행한다.
 - 모든 workflow와 agent guide는 `AGENTS.md ## 프로젝트 로컬 가이드 우선`을 선행 기준으로 적용한다.
 - 상세 정책은 중복 정의하지 않고 `AGENTS.md`, `agents/*.md`, `templates/*.md`, `docs/*.md`, `DESIGN.md`를 공통 정본으로 사용한다.

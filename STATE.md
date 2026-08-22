@@ -5,7 +5,7 @@
 - 이 저장소는 여러 개발 프로젝트에 재사용하는 `개발용 에이전트 운영 템플릿`이다.
 - 공통 운영 규칙과 라우팅은 `AGENTS.md`, 에이전트 헌법과 응답 정책은 `CLAUDE.md`가 정본이다.
 - 역할별 지침은 `agents/`, 요청·intake 양식은 `templates/`, 프로젝트·검증 가이드는 `docs/`에 둔다.
-- Claude Code 자동화는 `.claude/`, Codex 실행 어댑터는 `.codex/`에 둔다.
+- Claude Code 자동화는 `.claude/`, Codex 네이티브 Skill은 `.agents/skills/`, Codex 승인·검증 어댑터는 `.codex/`에 둔다.
 - 프로젝트 가이드는 템플릿 배포 원본에서 초기 scaffold를 유지하고 소비 프로젝트가 intake 결과로 교체한다.
 - 본 템플릿을 소비하는 런타임 앱은 sibling 저장소 `../riderapp-runtime/`이다.
 - 작업 알림은 Claude Code 사용자 전역 설정과 Codex `notify`에 등록되어 두 런타임 모두 동작 중이다. 구성·조정·되돌리기는 `docs/notification-guide.md`.
@@ -28,6 +28,13 @@
 - 과거 완료 기록과 상세 검증 근거는 아카이브에서 확인하고, 루트 문서는 현재 인계에 필요한 정보만 유지한다.
 
 ## 최근 완료 작업
+
+- Codex 네이티브 Skill·하네스 계층을 추가했다. (2026-08-22)
+  - `.agents/skills/`에 `start`, `dev-start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`, `stack-upgrade`, `session-coordination`, `git-cleanup` 13종의 `SKILL.md`를 추가했다. Codex가 자연어 요청에 따라 Skill을 자동 선택하고, `.codex/workflows/`는 상세·호환 절차로 유지한다.
+  - `.claude/*` 실행 파일은 변경하지 않았다. 공통 `AGENTS.md`·runtime matrix·plugin 문서와 설치 manifest만 Codex 네이티브 레이어를 반영하도록 갱신했다.
+  - `.claude/plugins/install.py`의 `--link` 대상과 manifest에 `.agents/skills/`를 등록하고 플러그인 버전을 `3.6.0`으로 올렸다.
+  - `scripts/check-codex-skills.mjs`가 Skill frontmatter, 이름 중복, manifest 경로를 검사한다.
+  - 검증: Skill 검사, manifest 82개 경로, JSON, HTML, nav, docs index, 설치 `--new --dry-run`, `git diff --check` 통과. 전체 CI는 문서·Codex 운영 레이어 변경이라 이번 범위에서 제외했다.
 
 - 배포 차단 가드레일과 `git-cleanup` 스킬을 추가했다. (2026-08-22)
   - 배포·릴리스는 문서 규칙에만 있고 실제 차단 장치가 없었다. `.claude/hooks/block-deploy.sh`가 `gh workflow run`, `gh release`, `vercel`/`fly`/`netlify deploy`, `kubectl apply`, `helm upgrade`, `terraform apply`, `docker push`, 패키지 publish, `prisma migrate deploy`, `staging`/`production` 환경 지정 명령을 차단한다. `git push`, `gh pr merge`, `docker compose up`, `prisma migrate dev` 같은 로컬 작업은 그대로 통과한다.

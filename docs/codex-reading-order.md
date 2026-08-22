@@ -37,11 +37,12 @@ Codex는 보통 다음 순서로 저장소 문서를 읽는다.
 4. `docs/project-guide.md`가 있으면 해당 문서
 5. 현재 작업 영역의 하위 `AGENTS.md`와 관련 프로젝트 로컬 문서
 6. `.codex/README.md`
-7. 작업 종류에 맞는 `.codex/workflows/*.md`
-8. `README.md`
-9. 작업 종류에 맞는 `agents/*.md`
-10. 요청 유형에 맞는 `templates/*.md`
-11. 마지막으로 실제 코드와 폴더 구조
+7. 작업 종류에 맞는 `.agents/skills/<작업유형>/SKILL.md`
+8. 필요 시 `.codex/workflows/*.md`
+9. `README.md`
+10. 작업 종류에 맞는 `agents/*.md`
+11. 요청 유형에 맞는 `templates/*.md`
+12. 마지막으로 실제 코드와 폴더 구조
 
 ## 4. 작업 유형별 우선 참조 파일
 
@@ -53,17 +54,18 @@ Codex는 보통 다음 순서로 저장소 문서를 읽는다.
 4. `docs/project-guide.md`가 있으면 해당 문서와 관련 로컬 문서
 5. `.codex/README.md`
 6. `.codex/checks/safety-checklist.md`
-7. 요청 유형이 모호하면 `.codex/workflows/request.md`
+7. `.agents/skills/request/SKILL.md` 또는 명시적 절차가 필요하면 `.codex/workflows/request.md`
 8. `README.md`
 
 ### 개발 세션 재개
 
 1. `AGENTS.md`
 2. `STATE.md`
-3. `.codex/workflows/dev-start.md`
-4. `docs/local-dev-ci-guide.md §2.0`
-5. 프로젝트별 `AGENTS.md ### Operational Commands`
-6. `docker compose` 설정 또는 실행 스크립트
+3. `.agents/skills/dev-start/SKILL.md`
+4. `.codex/workflows/dev-start.md`
+5. `docs/local-dev-ci-guide.md §2.0`
+6. 프로젝트별 `AGENTS.md ### Operational Commands`
+7. `docker compose` 설정 또는 실행 스크립트
 
 ### 기능 구현
 
@@ -176,7 +178,7 @@ Codex는 보통 다음 순서로 저장소 문서를 읽는다.
 - 루트 `AGENTS.md`는 공통 규칙과 라우팅만 유지한다.
 - Codex는 `AGENTS.md`의 필수 로딩 지시에 따라 `CLAUDE.md` 중 공통 커뮤니케이션·답변 포맷 섹션을 읽는다. Claude 전용 자동화 섹션을 Codex 기능으로 간주하지 않는다.
 - 모든 작업 유형은 `AGENTS.md ## 프로젝트 로컬 가이드 우선`을 공통 선행 조건으로 적용하므로 개별 workflow에 같은 우선순위를 반복하지 않는다.
-- `.codex/`는 Codex 전용 실행 절차이며 Claude Code의 `.claude/` 자동화와 경쟁하지 않는다.
+- `.agents/skills/`는 Codex 네이티브 자동 선택 레이어이고 `.codex/`는 승인·검증·호환 레이어다. Claude Code의 `.claude/` 자동화와 경쟁하지 않는다.
 - 세부 구현 규칙은 `agents/`와 `docs/`로 위임한다.
 - intake 문서는 정보 수집용이고, 실제 개발 기준은 `docs/` 아래 guide 문서다.
 - 사용자의 최신 요청은 항상 중요하지만, 상위 규칙과 충돌하면 상위 규칙을 우선한다.

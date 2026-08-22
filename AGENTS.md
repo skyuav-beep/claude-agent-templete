@@ -205,7 +205,7 @@
 - **[Codex 읽기 순서](./docs/codex-reading-order.md)** - Codex가 어떤 순서로 문맥을 읽는지 참고할 때.
 - **[에이전트 런타임 매트릭스](./docs/agent-runtime-matrix.md)** - Claude Code와 Codex의 기능 대응 관계, 공통 정본, 런타임별 어댑터 경계를 확인할 때.
 - **[Claude 실행 가이드](./docs/claude-guide.md)** - Claude Code의 `.claude/*` 자동화 레이어 사용 기준을 확인할 때.
-- **[Codex 실행 가이드](./docs/codex-guide.md)** - Codex에서 `.codex/*` workflow/check로 동일 운영 절차를 수행할 때.
+- **[Codex 실행 가이드](./docs/codex-guide.md)** - Codex에서 `.agents/skills/*`와 `.codex/*` workflow/check로 동일 운영 절차를 수행할 때.
 - **[서브에이전트 가이드](./docs/subagent-guide.md)** - 역할 분리나 협업 흐름 예시를 확인할 때.
 - **[개발 프로세스 문서](./docs/development-process.md)** - 문서형 개발 프로세스 초안을 확인할 때.
 - **[개발 전략 가이드](./docs/development-strategy.md)** - UI Mock First와 Logic/DB First 중 개발 진행 방식을 선택할 때.
@@ -217,6 +217,7 @@
 - **[Hooks Layer](./.claude/hooks/)** - 파괴적 명령 차단, 배포·릴리스 명령 차단, 비밀 파일 쓰기 차단, STATE.md 갱신 리마인더, 3단계 승인 전 파일 수정 확인, 세션 파일 겹침 조정. 설정은 `.claude/settings.local.json`.
 - **[서브에이전트 정의](./.claude/agents/)** - frontmatter로 자동 등록되는 역할별 서브에이전트 6종 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer). Agent 도구의 `subagent_type`에 이름을 지정해 호출한다. 디스패치 기준은 `docs/subagent-guide.md`.
 - **[Plugins Layer](./.claude/plugins/)** - manifest.json, VERSION, install.sh. 다른 프로젝트에 설치 시 `docs/plugin-guide.md` 참조.
+- **[Codex Native Skills](./.agents/skills/)** - Codex가 자연어 요청에 따라 자동 선택하는 네이티브 Skill 13종.
 - **[Codex Layer](./.codex/)** - Codex용 workflow 13종(`start`, `dev-start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`, `stack-upgrade`, `session-coordination`, `git-cleanup`), safety/finish checklist, subagent prompt guide. Claude 전용 자동화와 분리된 보완 레이어.
 - **[미완료 Git 작업 정리](./.claude/skills/git-cleanup/SKILL.md)** - 커밋·push·PR·머지·브랜치·worktree 중 덜 끝난 것을 점검하고 마무리할 때. 배포·릴리스는 실행하지 않고 사용자에게 인계한다.
 - **[세션 충돌 조정](./docs/session-coordination-guide.md)** - Claude/Codex 세션 등록, 파일 점유 확인, 겹침 시 대기·사용자 확인 기준.

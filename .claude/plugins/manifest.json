@@ -1,10 +1,10 @@
 {
   "name": "claude-agent-template",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
   "compatibility": {
     "claude_code": "full automation via .claude layers",
-    "codex": "equivalent workflow via AGENTS.md and .codex documents"
+    "codex": "native skills via .agents/skills with .codex compatibility workflows"
   },
   "install_policy": {
     "merge_block": [
@@ -24,6 +24,7 @@
       ".claude/commands/",
       ".claude/hooks/",
       ".claude/agents/",
+      ".agents/skills/",
       ".codex/",
       "designs/"
     ],
@@ -358,6 +359,58 @@
       {
         "path": ".codex/workflows/git-cleanup.md",
         "description": "Codex unfinished git work cleanup workflow"
+      },
+      {
+        "path": ".agents/skills/start/SKILL.md",
+        "description": "Native Codex skill for starting a project"
+      },
+      {
+        "path": ".agents/skills/dev-start/SKILL.md",
+        "description": "Native Codex skill for resuming development"
+      },
+      {
+        "path": ".agents/skills/intake/SKILL.md",
+        "description": "Native Codex skill for topic intake"
+      },
+      {
+        "path": ".agents/skills/request/SKILL.md",
+        "description": "Native Codex skill for routing ambiguous requests"
+      },
+      {
+        "path": ".agents/skills/feature/SKILL.md",
+        "description": "Native Codex skill for feature work"
+      },
+      {
+        "path": ".agents/skills/bugfix/SKILL.md",
+        "description": "Native Codex skill for bug fixes"
+      },
+      {
+        "path": ".agents/skills/refactor/SKILL.md",
+        "description": "Native Codex skill for refactoring"
+      },
+      {
+        "path": ".agents/skills/review/SKILL.md",
+        "description": "Native Codex skill for code review"
+      },
+      {
+        "path": ".agents/skills/business-logic/SKILL.md",
+        "description": "Native Codex skill for business logic changes"
+      },
+      {
+        "path": ".agents/skills/design/SKILL.md",
+        "description": "Native Codex skill for UI and design system work"
+      },
+      {
+        "path": ".agents/skills/stack-upgrade/SKILL.md",
+        "description": "Native Codex skill for stack upgrades"
+      },
+      {
+        "path": ".agents/skills/session-coordination/SKILL.md",
+        "description": "Native Codex skill for coordinating sessions"
+      },
+      {
+        "path": ".agents/skills/git-cleanup/SKILL.md",
+        "description": "Native Codex skill for unfinished Git cleanup"
       },
       {
         "path": ".codex/agents/explorer.md",

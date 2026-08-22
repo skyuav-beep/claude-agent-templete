@@ -38,7 +38,7 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --link --dry-run "$TARGET_ROOT"
 bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --link "$TARGET_ROOT"
 ```
 
-- 연결 대상: `rules`, `.claude/CLAUDE.md`, `.claude/{skills,commands,agents,hooks,plugins}`, `.claude/statusline-notify.sh`, `.codex`
+- 연결 대상: `rules`, `.claude/CLAUDE.md`, `.claude/{skills,commands,agents,hooks,plugins}`, `.claude/statusline-notify.sh`, `.agents/skills`, `.codex`
 - `.claude/settings.json`, `.claude/settings.local.json`, `.claude/.active-design`처럼 프로젝트가 소유하는 파일은 건드리지 않는다.
 - 기존 실체 파일·디렉터리가 있으면 `.agent-template-backup-<타임스탬프>/`로 옮긴 뒤 연결한다. 백업에 프로젝트 고유 설정이 들어 있을 수 있으므로 확인 후 삭제한다.
 - 같은 명령을 다시 실행해도 이미 올바른 링크는 `keep`으로 건너뛴다.
@@ -65,11 +65,11 @@ install.sh는 `manifest.json`에 등록된 파일을 대상 프로젝트에 복�
 - L3 Hooks: `.claude/hooks/` (승인·파괴 명령·배포 명령·비밀 파일·STATE·세션 충돌 가드레일과 알림 훅) + `settings.template.json` -> 설치 대상의 `settings.local.json`
 - L4 Subagents: `.claude/agents/` (6개 정의 파일 — explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer. frontmatter로 자동 등록)
 - Design library: `designs/` (6개 시안 + alias contract + template) + `.claude/plugins/select-design.sh`
-- Codex Layer: `.codex/` (workflow 13종 + checks 2종 + subagent prompt guide 6종)
+- Codex Layer: `.agents/skills/` (네이티브 Skill 13종) + `.codex/` (workflow 13종, checks 2종, subagent prompt guide 6종)
 - Supporting: `agents/` (4개 역할 지침), `templates/` (요청 5종 + intake 12종 + 지식 관리 4종 + startup checklist + data-table density), `docs/` (가이드/플레이북/HTML UI/런타임 매트릭스 + 지식 관리·세션 조정 가이드 + `docs/00-inbox/`~`docs/99-archive/` 지식 영역)
 
 L2의 skills와 commands는 병존한다. skills는 자연어 키워드 매칭으로 자동 활성화되고, commands는 사용자가 슬래시 입력으로 명시 호출한다.
-Codex는 `.codex/README.md`와 `.codex/workflows/*.md`를 통해 같은 운영 절차를 명시적으로 수행한다. 모호한 요청은 `.codex/workflows/request.md`가 Claude `request` skill과 같은 라우팅 역할을 맡는다.
+Codex는 `.agents/skills/*/SKILL.md`를 자연어 요청에 따라 선택하고, `.codex/workflows/*.md`를 상세·호환 절차로 사용한다. 모호한 요청은 `request` Skill이 Claude `request` skill과 같은 라우팅 역할을 맡는다.
 
 완료된 설치는 `.claude/.plugin-version`에 버전을 기록한다. `.claude/.template-install-state.json`에는 파일별 정책, 템플릿 해시, 설치 해시, 충돌 상태를 기록한다. 일부 충돌이 남으면 상태는 `partial`이며 완료 버전을 올리지 않는다.
 
