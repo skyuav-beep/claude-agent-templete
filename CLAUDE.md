@@ -21,7 +21,7 @@
 - 사용자 요청 없이 파괴적 명령을 실행하지 않는다.
 - 작업은 `docs/approval-workflow.md`의 6단계 승인 절차를 따른다. 3단계에서 승인된 정확한 범위 안에서만 branch/worktree 생성, commit, push, ready PR, merge, 원격 base 검증과 cleanup을 수행한다.
 - 전체 로컬 CI는 작업별로 실행하지 않고 배치 대기열에 기록한다. 6단계에서는 빠른 범위 검증만 하되 인증·권한·결제·정산·migration 관련 필수 검증은 생략하지 않는다.
-- 보호 규칙 우회, 강제 push, 배포·릴리스, `staging`·`production` migration은 승인 범위에 포함하지 않으며 실행하지 않는다.
+- 보호 규칙 우회, 강제 push, 배포·릴리스, `staging`·`production` migration은 승인 범위에 포함하지 않으며 실행하지 않는다. GitHub Actions 실행과 배포는 항상 사용자가 수동으로 한다. 에이전트는 필요한 명령을 알려 주는 데서 멈추고, `block-deploy.sh`가 이를 실제로 차단한다.
 - 확인하지 않은 외부 의존성, 비밀값, API 키를 임의로 추가하지 않는다.
 - 관련 없는 파일 수정이나 목적과 무관한 구조 확장을 하지 않는다.
 - 확인되지 않은 사항을 사실처럼 단정하지 않는다.
@@ -120,12 +120,12 @@
 - `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타: `docs/design-guidelines.md`, admin FE: `docs/admin-fe-design-guide.md`, UI 결정 기록: `docs/ui-decisions.md`, 로컬/CI 실행 경계+Docker 재빌드: `docs/local-dev-ci-guide.md`, 금액·수량 처리: `docs/money-quantity-guidelines.md`, 작업 알림: `docs/notification-guide.md`, 지식 관리: `docs/knowledge-management-guide.md`, 세션 충돌 조정: `docs/session-coordination-guide.md`)
 - `docs/00-inbox/` ~ `docs/99-archive/` — 지식 관리 영역. 사용자 입력·개념·백서·요구사항·설계·개발계획·결정 기록을 주제별로 보관한다. 분류·명명·생명주기는 `docs/knowledge-management-guide.md`
 - `.claude/CLAUDE.md` — Claude 실행 게이트. 루트 `CLAUDE.md`와 함께 자동 로드되어 읽기 순서, 6단계 승인 절차, 시작·종료 게이트를 주입한다 (`.codex/README.md` 대응)
-- `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 11종)
-- `.claude/commands/` — L2 보조 (명시적 slash command 11종, skills와 병존)
-- `.claude/hooks/` — L3 Guardrails (가드레일 6종 + 작업 알림 3종, opt-in 1종 포함). 상태줄은 `.claude/statusline-notify.sh`
+- `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 12종)
+- `.claude/commands/` — L2 보조 (명시적 slash command 12종, skills와 병존)
+- `.claude/hooks/` — L3 Guardrails (가드레일 7종 + 작업 알림 3종, opt-in 1종 포함). 상태줄은 `.claude/statusline-notify.sh`
 - `.claude/agents/` — L4 서브에이전트 정의 6종, frontmatter로 자동 등록 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - `.claude/plugins/` — L5 배포 도구 (manifest, install)
-- `.codex/` — Codex runtime adapter (workflow 12종, checks 2종, subagent prompt guide 6종, notify 어댑터 1종). Claude 자동화와 분리된 보완 레이어
+- `.codex/` — Codex runtime adapter (workflow 13종, checks 2종, subagent prompt guide 6종, notify 어댑터 1종). Claude 자동화와 분리된 보완 레이어
 - `scripts/` — 저장소 유지보수 스크립트 (문서 인덱스 생성, 로컬 문서 서버, HTML 구문 검사, 화면 이동 바 생성). Node 내장 모듈만 사용하며 설치 배포 대상이 아니다. 문서 UI는 `node scripts/serve-docs.mjs`로 열고, 브라우저에서 문서를 고치려면 `--edit`을 붙인다 (기존 `.md` 수정만, 커밋은 별도). `docs/` 화면 7종 상단의 공통 이동 바는 `node scripts/build-nav.mjs`가 마커 구간을 생성하므로 각 HTML의 `agent-nav` 구간은 직접 고치지 않는다 (`--check`로 최신 여부만 검사)
 
 ## Design System
@@ -155,6 +155,7 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 - 작업 요청 라우터: `request` (유형 자동 판별, 키워드가 모호할 때만 활성화)
 - 개별 요청: `feature`, `bugfix`, `refactor`, `review`, `business-logic`
 - 기술 스택 업그레이드: `stack-upgrade` (라이브러리·런타임·Docker·개발 인프라 버전 점검 및 안전한 업데이트)
+- 미완료 Git 작업 정리: `git-cleanup` (커밋·push·PR·머지·브랜치·worktree 중 덜 끝난 것을 점검하고 마무리)
 
 ### 우선순위 규칙
 
@@ -163,6 +164,7 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 - 동일 입력에서 두 skill이 동시에 매칭되면 더 구체적인 개별 skill을 선택한다.
 - `dev-start`(개발 시작/이어서 개발/세션 시작/환경 셋팅해/다음 작업은)는 **환경 부팅·상태 재개** 맥락에만 활성화한다. "개발 시작"이 무엇을 만들지(기능/버그/로직)를 설명하는 맥락이면 `feature`/`bugfix`/`business-logic`을 우선한다.
 - `stack-upgrade`는 라이브러리·패키지·런타임·Docker 이미지·base image·개발 인프라의 버전 점검/업데이트 맥락에 활성화한다. 단순 개발환경 기동은 `dev-start`, 기능 구현은 `feature`를 우선한다.
+- `git-cleanup`(깃 정리/커밋 정리/PR 정리/브랜치 정리/마무리)은 **이미 한 작업의 Git 상태를 마무리**하는 맥락에만 활성화한다. 코드 정리·구조 개선은 `refactor`, 개발 재개는 `dev-start`를 우선한다.
 
 ### Skill 연계 흐름
 
@@ -171,7 +173,7 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 
 ### 명시적 호출 (slash command)
 
-`.claude/commands/`에 동일 이름의 slash command가 병존한다. 사용자가 `/start`, `/feature`, `/stack-upgrade` 등을 직접 입력해 명시적으로 호출할 수 있다.
+`.claude/commands/`에 동일 이름의 slash command가 병존한다. 사용자가 `/start`, `/feature`, `/stack-upgrade`, `/git-cleanup` 등을 직접 입력해 명시적으로 호출할 수 있다.
 - skills: 자연어 키워드로 자동 활성화 (description 트리거 기반)
 - commands: 사용자가 직접 슬래시 입력으로 호출
 
@@ -183,6 +185,7 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 설정은 `.claude/settings.local.json`의 `hooks` 섹션에 등록한다. 이 파일은 로컬 전용이라 저장소에 커밋되지 않으므로, 훅을 추가할 때는 `.claude/settings.template.json`에 정본을 두고 각 환경에서 로컬 설정에 옮겨 등록한다.
 
 - `block-destructive.sh` — `rm -rf`, `git reset --hard`, `git push --force`, `git clean -f` 등 파괴적 명령 차단
+- `block-deploy.sh` — 배포·릴리스 계열 명령 차단 (`gh workflow run`, `gh release`, `vercel/fly/netlify deploy`, `kubectl apply`, `helm upgrade`, `terraform apply`, `docker push`, `npm publish`, `prisma migrate deploy`, `staging`/`production` 환경 지정 등). 배포는 항상 사용자 수동이다
 - `block-secret-files.sh` — `.env`, `*.pem`, `*.key`, `credentials.json` 등 비밀 파일 쓰기 차단
 - `state-reminder.sh` — `git commit` 시 STATE.md 미갱신 경고 (차단하지 않음)
 - `session-coordination.sh` — 세션을 등록하고 같은 파일을 점유한 다른 세션의 수정 전에 확인 요청
