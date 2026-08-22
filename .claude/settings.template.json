@@ -42,6 +42,30 @@
           {
             "type": "command",
             "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -x \"$root/.claude/hooks/phase-approval.sh\" ] || exit 0; bash \"$root/.claude/hooks/phase-approval.sh\"'"
+          },
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -x \"$root/.claude/hooks/session-coordination.sh\" ] || exit 0; bash \"$root/.claude/hooks/session-coordination.sh\"'"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -x \"$root/.claude/hooks/session-coordination.sh\" ] || exit 0; bash \"$root/.claude/hooks/session-coordination.sh\"'"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -x \"$root/.claude/hooks/session-coordination.sh\" ] || exit 0; bash \"$root/.claude/hooks/session-coordination.sh\"'"
           }
         ]
       }

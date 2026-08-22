@@ -120,10 +120,10 @@
 - `.claude/CLAUDE.md` — Claude 실행 게이트. 루트 `CLAUDE.md`와 함께 자동 로드되어 읽기 순서, 6단계 승인 절차, 시작·종료 게이트를 주입한다 (`.codex/README.md` 대응)
 - `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 11종)
 - `.claude/commands/` — L2 보조 (명시적 slash command 11종, skills와 병존)
-- `.claude/hooks/` — L3 Guardrails (가드레일 5종 + 작업 알림 3종, opt-in 1종 포함). 상태줄은 `.claude/statusline-notify.sh`
+- `.claude/hooks/` — L3 Guardrails (가드레일 6종 + 작업 알림 3종, opt-in 1종 포함). 상태줄은 `.claude/statusline-notify.sh`
 - `.claude/agents/` — L4 서브에이전트 정의 6종, frontmatter로 자동 등록 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - `.claude/plugins/` — L5 배포 도구 (manifest, install)
-- `.codex/` — Codex runtime adapter (workflow 11종, checks 2종, subagent prompt guide 6종, notify 어댑터 1종). Claude 자동화와 분리된 보완 레이어
+- `.codex/` — Codex runtime adapter (workflow 12종, checks 2종, subagent prompt guide 6종, notify 어댑터 1종). Claude 자동화와 분리된 보완 레이어
 - `scripts/` — 저장소 유지보수 스크립트 (문서 인덱스 생성, 로컬 문서 서버, HTML 구문 검사, 화면 이동 바 생성). Node 내장 모듈만 사용하며 설치 배포 대상이 아니다. 문서 UI는 `node scripts/serve-docs.mjs`로 열고, 브라우저에서 문서를 고치려면 `--edit`을 붙인다 (기존 `.md` 수정만, 커밋은 별도). `docs/` 화면 7종 상단의 공통 이동 바는 `node scripts/build-nav.mjs`가 마커 구간을 생성하므로 각 HTML의 `agent-nav` 구간은 직접 고치지 않는다 (`--check`로 최신 여부만 검사)
 
 ## Design System
@@ -183,6 +183,7 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 - `block-destructive.sh` — `rm -rf`, `git reset --hard`, `git push --force`, `git clean -f` 등 파괴적 명령 차단
 - `block-secret-files.sh` — `.env`, `*.pem`, `*.key`, `credentials.json` 등 비밀 파일 쓰기 차단
 - `state-reminder.sh` — `git commit` 시 STATE.md 미갱신 경고 (차단하지 않음)
+- `session-coordination.sh` — 세션을 등록하고 같은 파일을 점유한 다른 세션의 수정 전에 확인 요청
 - `warn-design-tokens.sh` — opt-in: hex 색/비-4의 배수 px 사용 경고 (기본 미등록, 활성화 방법은 `docs/design-guidelines.md` 참조)
 - `phase-approval.sh` — 3단계 승인 마커가 없는 Edit/Write와 메인 트리 직접 수정에 사용자 확인 요청 (`docs/approval-workflow.md` 참조)
 

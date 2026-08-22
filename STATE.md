@@ -23,6 +23,12 @@
 
 ## 최근 완료 작업
 
+- Claude/Codex 세션 충돌 조정 MVP를 추가했다. (2026-08-22)
+  - `.claude/hooks/session-coordination.sh`가 사용자 런타임 디렉터리에 세션·worktree·점유 파일을 등록하고, 같은 파일을 점유한 다른 세션의 수정 전에 확인을 요청한다.
+  - Claude `SessionStart`/`SessionEnd` 및 `Edit|Write` hook, Codex `session-coordination` workflow를 연결했다.
+  - `docs/session-coordination-guide.md`에 worktree 격리와 Docker/DB/port/volume 격리의 경계를 기록하고, 세션별 Compose project/network/DB 이름과 port offset을 계산하는 helper를 추가했다. 프로젝트 Compose 연결은 자동 적용하지 않는다.
+  - 검증: `bash -n`, settings/manifest JSON, 두 세션의 동일 파일 claim 충돌·release 후 재claim 동작 확인. Docker/DB 리소스 자동 격리는 후속 작업이다.
+
 - `stack-upgrade` 기술 스택 업그레이드 스킬을 Claude/Codex 양쪽에 추가했다. (2026-08-22)
   - 자연어 트리거: 라이브러리·의존성·패키지·런타임·Docker/base image·개발 인프라 버전 점검 및 업데이트, `stack upgrade`, `stack-upgrade`.
   - `.claude/skills/stack-upgrade`, `.claude/commands/stack-upgrade`, `.codex/workflows/stack-upgrade`를 추가하고 manifest와 런타임 라우팅 문서를 갱신했다.

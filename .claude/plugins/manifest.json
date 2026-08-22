@@ -1,6 +1,6 @@
 {
   "name": "claude-agent-template",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
   "compatibility": {
     "claude_code": "full automation via .claude layers",
@@ -177,6 +177,10 @@
           "description": "Block Claude edits before Step 3 approval and from main worktree"
         },
         {
+          "path": ".claude/hooks/session-coordination.sh",
+          "description": "Register sessions and ask before overlapping file edits"
+        },
+        {
           "path": ".claude/hooks/warn-design-tokens.sh",
           "description": "Opt-in: warn on hex/non-4px usage in CSS/JSX (not registered by default)"
         },
@@ -334,6 +338,10 @@
       {
         "path": ".codex/workflows/stack-upgrade.md",
         "description": "Codex stack version audit and upgrade workflow"
+      },
+      {
+        "path": ".codex/workflows/session-coordination.md",
+        "description": "Codex session overlap coordination workflow"
       },
       {
         "path": ".codex/agents/explorer.md",
