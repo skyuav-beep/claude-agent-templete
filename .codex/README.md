@@ -24,7 +24,7 @@
 - 새 프로젝트 시작: `workflows/start.md`
 - 개발 세션 재개(PC 켜고 시작): `workflows/dev-start.md`
 - 기술 스택 업그레이드: `workflows/stack-upgrade.md`
-- 세션 충돌 조정: `workflows/session-coordination.md`
+- 세션 충돌 조정: `workflows/session-coordination.md` (Claude는 `.claude/skills/session-coordination/`)
 - 미완료 Git 작업 정리: `workflows/git-cleanup.md`
 - 토픽별 intake: `workflows/intake.md`
 - 모호한 작업 요청 분류: `workflows/request.md`
@@ -52,6 +52,7 @@ Codex는 Claude Code의 `PreToolUse` 훅을 자동 실행하지 않는다. 따�
 2. 1단계와 2단계에서는 읽기 전용 명령만 실행한다.
 3. 3단계에서는 승인 범위와 Git 수명주기를 제시하고 멈춘다.
 4. 승인 후에만 worktree·파일 수정·설치·검증·Git 쓰기를 수행한다.
+   쓰기 전에는 `.codex/checks/safety-checklist.md ## 실행 전 공용 판정기`로 파괴·배포·비밀 파일 여부를 판정한다.
 5. 구현이 끝나면 5단계 사후 감사 결과를 별도 응답으로 남긴다.
 6. 6단계 승인 범위가 있을 때만 commit·push·PR·merge·cleanup을 수행한다.
 
@@ -63,6 +64,11 @@ Codex는 Claude Code의 `PreToolUse` 훅을 자동 실행하지 않는다. 따�
 다음 단계: <사용자 승인 대기 또는 다음 단계>
 쓰기 가능 여부: <읽기 전용 또는 승인 범위>
 ```
+
+훅이 자동 실행되지 않는 대신, 가드레일 3종(`block-destructive.sh`, `block-deploy.sh`,
+`block-secret-files.sh`)을 실행 전 판정 전용으로 호출한다. 종료 코드 `0`이면 진행하고 `2`면
+실행하지 않는다. 판정 기준을 문서에 옮겨 적지 않고 Claude와 같은 스크립트를 그대로 쓰는 이유는
+두 런타임의 차단 기준이 갈라지지 않게 하기 위해서다. 호출 형식은 안전 체크리스트에 있다.
 
 이 계약은 Codex 호스트의 도구 권한을 대체하지 않는다. 호스트 수준의 PreToolUse/승인 API가 제공되면 이 계약의 단계 상태와 연결해야 하며, 제공되지 않는 동안에는 체크리스트·diff·최종 감사로 위반을 탐지한다.
 

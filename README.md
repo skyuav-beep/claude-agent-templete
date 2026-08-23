@@ -75,6 +75,7 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 - `design` — UI/스타일/토큰 작업 시 `DESIGN.md` 강제 참조
 - `stack-upgrade` — 라이브러리·런타임·Docker·개발 인프라 버전 점검과 안전한 업데이트
 - `git-cleanup` — 커밋·push·PR·머지·브랜치·worktree 중 덜 끝난 작업 점검과 마무리
+- `session-coordination` — 여러 창이 같은 파일·worktree·Docker 자원을 동시에 쓸 때 점유 조정
 
 각 skill은 `templates/`의 원본을 읽어서 대화형으로 진행하며, 사용자 메시지의 설명을 미리 파싱해 가능한 항목을 채운다.
 우선순위 규칙과 skill 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
@@ -83,7 +84,7 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 
 `.claude/commands/`에 동일 이름의 slash command가 병존한다. 사용자가 직접 입력해 호출할 수 있다.
 
-- `/start`, `/dev-start`, `/intake [토픽]`, `/request [설명]`, `/feature [설명]`, `/bugfix [설명]`, `/refactor [설명]`, `/review [대상]`, `/business-logic [설명]`, `/design [컴포넌트]`, `/stack-upgrade [대상]`, `/git-cleanup [브랜치|PR]`
+- `/start`, `/dev-start`, `/intake [토픽]`, `/request [설명]`, `/feature [설명]`, `/bugfix [설명]`, `/refactor [설명]`, `/review [대상]`, `/business-logic [설명]`, `/design [컴포넌트]`, `/stack-upgrade [대상]`, `/git-cleanup [브랜치|PR]`, `/session-coordination [status|claim|release]`
 
 `[설명]` 인수를 주면 가능한 항목을 미리 채운다. skills와 동일 templates를 참조한다.
 
