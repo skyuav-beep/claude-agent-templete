@@ -60,8 +60,8 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --adopt "$TARGET_ROOT"
 install.sh는 `manifest.json`에 등록된 파일을 대상 프로젝트에 복사한다.
 
 - L1 Memory: `CLAUDE.md`, `AGENTS.md`, `STATE.md`, `DESIGN.md`
-- L2 Skills: `.claude/skills/` (12개 `SKILL.md` — 자연어 키워드로 자동 활성화)
-- L2 Commands: `.claude/commands/` (12개 slash command — 사용자가 직접 호출)
+- L2 Skills: `.claude/skills/` (13개 `SKILL.md` — 자연어 키워드로 자동 활성화)
+- L2 Commands: `.claude/commands/` (13개 slash command — 사용자가 직접 호출)
 - L3 Hooks: `.claude/hooks/` (승인·파괴 명령·배포 명령·비밀 파일·STATE·세션 충돌 가드레일과 알림 훅) + `settings.template.json` -> 설치 대상의 `settings.local.json`
 - L4 Subagents: `.claude/agents/` (6개 정의 파일 — explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer. frontmatter로 자동 등록)
 - Design library: `designs/` (6개 시안 + alias contract + template) + `.claude/plugins/select-design.sh`

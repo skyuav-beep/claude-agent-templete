@@ -1,6 +1,6 @@
 {
   "name": "claude-agent-template",
-  "version": "3.6.0",
+  "version": "3.7.0",
   "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
   "compatibility": {
     "claude_code": "full automation via .claude layers",
@@ -110,6 +110,10 @@
         {
           "path": ".claude/skills/git-cleanup/SKILL.md",
           "description": "Audit and finish unfinished commit/push/PR/merge/branch work"
+        },
+        {
+          "path": ".claude/skills/session-coordination/SKILL.md",
+          "description": "세션 충돌 조정 — 파일 점유·Docker 자원 격리"
         }
       ]
     },
@@ -163,6 +167,10 @@
         {
           "path": ".claude/commands/git-cleanup.md",
           "description": "/git-cleanup [branch|PR] — explicit invocation"
+        },
+        {
+          "path": ".claude/commands/session-coordination.md",
+          "description": "/session-coordination [status|claim|release] — explicit invocation"
         }
       ]
     },
