@@ -14,6 +14,7 @@
 - 배포·릴리스와 `staging`/`production` migration은 `block-deploy.sh`가 실제로 차단한다. 에이전트는 명령을 알려 주는 데서 멈추고 실행은 항상 사용자가 한다.
 - 여러 세션이 같은 저장소를 쓸 때의 파일 점유 조정은 `docs/session-coordination-guide.md`를 따른다. 세션 식별자는 `eval "$(bash .claude/hooks/session-coordination.sh resource)"`로 고정하는 경로가 기본이다.
 - 커밋·push·PR·머지·브랜치 정리가 덜 끝난 작업은 `git-cleanup` 스킬(`/git-cleanup`)로 한 번에 점검한다.
+- Claude와 Codex 양쪽에 작업 유형·가드레일이 같이 있는지는 `node scripts/check-runtime-parity.mjs`가 검사한다. 한쪽에만 스킬을 추가하면 실패한다.
 
 **세션 종료 (2026-08-22, 마지막)** — 저장소 파일은 이 기록 외에 변경하지 않았다. Claude Code 프로젝트 메모리(`~/.claude/projects/-home-skyua-projects-claude-agent-template/memory/`)를 9건에서 4건으로 정리했다. 낡음의 원인은 진행 상태 스냅샷을 메모리에 복사해 둔 것이어서, goldlink·vwallet 상세와 비활성 앱의 승인 정책을 지우고 저장소 구조·연결 프로젝트·런타임 앱 3건을 실측 기반 1건으로 합쳤다. 남긴 4건은 구조·연결 방식·작업 지침처럼 잘 변하지 않는 사실이다. 통합본에 "개별 프로젝트의 진행 상태는 그 프로젝트의 `STATE.md`와 그 프로젝트 메모리가 정본이며 여기에 복사하지 않는다"는 기준을 함께 넣었다. 실측으로 정정한 값 4건: 연결 프로젝트 11 → 17개, `.claude/` 배선 5 → 7종, riderwebapp은 상대경로가 아니라 symlink 참조, riderapp-runtime은 git 저장소가 아님. 삭제 전 백업은 이 세션 스크래치패드에만 있어 세션이 끝나면 사라진다. 미커밋 변경·열린 PR·미완료 worktree는 없고 재개 지점은 `## 다음 작업` 1순위 그대로다.
 
@@ -30,6 +31,16 @@
 - 과거 완료 기록과 상세 검증 근거는 아카이브에서 확인하고, 루트 문서는 현재 인계에 필요한 정보만 유지한다.
 
 ## 최근 완료 작업
+
+- Claude와 Codex의 런타임 parity 갭 7건을 해소했다. (2026-08-23)
+  - 배포 차단이 Claude 훅에만 있어 Codex에서는 클라우드 배포·컨테이너 push·패키지 publish·인프라 apply가 무방비였다. `.codex/checks/safety-checklist.md`에 차단 범위를 카테고리로 명시하고, 가드레일 3종(`block-destructive.sh`, `block-deploy.sh`, `block-secret-files.sh`)을 실행 전 판정 전용으로 호출하는 절차를 넣었다. 훅 수정은 필요 없었다 — 세 스크립트 모두 `{"command":"..."}` 입력으로 차단 rc=2 / 통과 rc=0을 정확히 반환하는 것을 실측 확인했다. 알림 어댑터가 `notify-pending.sh`를 공유하는 방식과 같은 구조다.
+  - 작업 유형 선택 우선순위가 `CLAUDE.md`의 Skills 절에 있어 Codex가 구조상 읽을 수 없었다(Codex 읽기 순서는 `CLAUDE.md`의 커뮤니케이션·답변 포맷 두 절만 포함). `AGENTS.md ## 작업 유형 선택 규칙`으로 승격하고 원위치는 포인터로 축약했다.
+  - `scripts/check-runtime-parity.mjs`를 신설했다. 스킬 양방향 대조, skill↔command 1:1, workflow 참조 실재, 서브에이전트 대조, 매트릭스 행 존재, 훅↔Codex 체크리스트 대응, manifest 등록, 공통 정본 절 존재까지 8항목을 검사한다. 음성 테스트로 스킬 누락·command 누락·훅 미대응·manifest 누락을 실제로 검출함을 확인했다.
+  - 세션 충돌 조정이 Codex에만 있어 Claude에 스킬·slash command를 추가했다. 충돌은 두 런타임이 동시에 도는 상황이 전제라 Claude 쪽 결손이 더 치명적이었다. 스킬·command·Codex 스킬이 각 13종으로 정렬됐다.
+  - 런타임 매트릭스의 작업 유형 7행에 Codex native skill 진입점을 반영하고, 가드레일 3종·승인 게이트·작업 유형 선택 5행을 신설했다. 2026-08-22 native skill 도입 이후 부분 갱신에 그쳐 있던 상태를 맞췄다.
+  - Codex 스킬 13종이 모두 14행 stub이던 문제를 대화형 수집이 중요한 5종(`start`, `intake`, `request`, `feature`, `bugfix`)만 37~42행으로 보강했다. 나머지 8종은 절차 위임으로 충분해 제외했다.
+  - 플러그인 버전 `3.7.0`. manifest 등록 경로는 객체 형식 93건과 문자열 목록 84건을 합쳐 고유 172건이며 전부 실재한다(그중 10건은 디렉터리). 이전 세션들이 "84개"로 기록한 값은 문자열 목록만 센 것이라 객체 형식 93건이 빠져 있었다. 누락은 그때도 지금도 0건이다.
+  - 검증: parity 검사(신규, 음성 테스트 4종 포함), Codex skill 검사, manifest 172경로 실재, nav `--check`, HTML 구문, 마크다운 링크 109건(깨짐 0), 가드레일 판정 회귀 6건. 전체 로컬 CI는 문서·운영 레이어 변경이라 배치 대기열로 넘겼다.
 
 - Codex 네이티브 Skill·하네스 계층을 추가했다. (2026-08-22)
   - `.agents/skills/`에 `start`, `dev-start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`, `stack-upgrade`, `session-coordination`, `git-cleanup` 13종의 `SKILL.md`를 추가했다. Codex가 자연어 요청에 따라 Skill을 자동 선택하고, `.codex/workflows/`는 상세·호환 절차로 유지한다.
