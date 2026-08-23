@@ -23,3 +23,7 @@ __pycache__/
 # 3단계 승인 마커. phase-approval.sh가 세션마다 만들고 작업이 끝나면 지우는
 # 세션 로컬 산출물이라 추적하지 않는다.
 .claude/.approval/
+
+# 4단계 전용 worktree. 승인 절차가 세션마다 만들고 6단계에서 정리하는
+# 작업 로컬 산출물이라 추적하지 않는다.
+.claude/worktrees/
