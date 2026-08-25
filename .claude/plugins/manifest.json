@@ -1,6 +1,6 @@
 {
   "name": "claude-agent-template",
-  "version": "3.7.0",
+  "version": "3.8.0",
   "description": "5-layer agent operations template: Memory, Skills, Hooks, Subagents, Plugins",
   "compatibility": {
     "claude_code": "full automation via .claude layers",
@@ -112,6 +112,10 @@
           "description": "Audit and finish unfinished commit/push/PR/merge/branch work"
         },
         {
+          "path": ".claude/skills/session-end/SKILL.md",
+          "description": "Session wrap-up — record history/next steps in STATE.md and clear all pending Git work"
+        },
+        {
           "path": ".claude/skills/session-coordination/SKILL.md",
           "description": "세션 충돌 조정 — 파일 점유·Docker 자원 격리"
         }
@@ -167,6 +171,10 @@
         {
           "path": ".claude/commands/git-cleanup.md",
           "description": "/git-cleanup [branch|PR] — explicit invocation"
+        },
+        {
+          "path": ".claude/commands/session-end.md",
+          "description": "/session-end [state|git] — explicit invocation"
         },
         {
           "path": ".claude/commands/session-coordination.md",
@@ -369,6 +377,10 @@
         "description": "Codex unfinished git work cleanup workflow"
       },
       {
+        "path": ".codex/workflows/session-end.md",
+        "description": "Codex session wrap-up workflow"
+      },
+      {
         "path": ".agents/skills/start/SKILL.md",
         "description": "Native Codex skill for starting a project"
       },
@@ -419,6 +431,10 @@
       {
         "path": ".agents/skills/git-cleanup/SKILL.md",
         "description": "Native Codex skill for unfinished Git cleanup"
+      },
+      {
+        "path": ".agents/skills/session-end/SKILL.md",
+        "description": "Native Codex skill for session wrap-up"
       },
       {
         "path": ".codex/agents/explorer.md",

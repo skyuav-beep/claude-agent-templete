@@ -24,6 +24,7 @@
 | 개발 세션 부트스트랩 | `.claude/skills/dev-start/SKILL.md` 자동 활성화 | `.agents/skills/dev-start/SKILL.md` 자동 선택 -> `.codex/workflows/dev-start.md` | `docs/local-dev-ci-guide.md §2.0` |
 | 기술 스택 업그레이드 | `.claude/skills/stack-upgrade/SKILL.md` 자동 활성화 + `/stack-upgrade` | `.agents/skills/stack-upgrade/SKILL.md` 자동 선택 -> `.codex/workflows/stack-upgrade.md` | `docs/approval-workflow.md`, `docs/local-dev-ci-guide.md` |
 | 미완료 Git 작업 정리 | `.claude/skills/git-cleanup/SKILL.md` 자동 활성화 + `/git-cleanup` | `.agents/skills/git-cleanup/SKILL.md` 자동 선택 -> `.codex/workflows/git-cleanup.md` | `docs/approval-workflow.md`, `docs/finish-checklist.md` |
+| 세션 종료와 인계 정리 | `.claude/skills/session-end/SKILL.md` 자동 활성화 + `/session-end` | `.agents/skills/session-end/SKILL.md` 자동 선택 -> `.codex/workflows/session-end.md` | `docs/finish-checklist.md`, `docs/approval-workflow.md` |
 | 세션 충돌 조정 | `.claude/skills/session-coordination/SKILL.md` + `session-coordination.sh` 파일 점유 hook | `.agents/skills/session-coordination/SKILL.md` 자동 선택 -> `.codex/workflows/session-coordination.md` (동일 스크립트 호출) | `docs/session-coordination-guide.md` |
 | 토픽 intake | `.claude/skills/intake/SKILL.md` | `.agents/skills/intake/SKILL.md` 자동 선택 -> `.codex/workflows/intake.md` | `templates/*-intake.md` |
 | 모호한 작업 요청 라우팅 | `.claude/skills/request/SKILL.md` 자동 분류 | `.agents/skills/request/SKILL.md` 자동 선택 -> `.codex/workflows/request.md` | `agents/main-agent.md`, `templates/*-request.md` |

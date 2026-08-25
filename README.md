@@ -75,6 +75,7 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 - `design` — UI/스타일/토큰 작업 시 `DESIGN.md` 강제 참조
 - `stack-upgrade` — 라이브러리·런타임·Docker·개발 인프라 버전 점검과 안전한 업데이트
 - `git-cleanup` — 커밋·push·PR·머지·브랜치·worktree 중 덜 끝난 작업 점검과 마무리
+- `session-end` — 세션 이력·다음 재개 지점 `STATE.md` 기록과 Git 잔여물 없는 마감
 - `session-coordination` — 여러 창이 같은 파일·worktree·Docker 자원을 동시에 쓸 때 점유 조정
 
 각 skill은 `templates/`의 원본을 읽어서 대화형으로 진행하며, 사용자 메시지의 설명을 미리 파싱해 가능한 항목을 채운다.
@@ -84,7 +85,7 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 
 `.claude/commands/`에 동일 이름의 slash command가 병존한다. 사용자가 직접 입력해 호출할 수 있다.
 
-- `/start`, `/dev-start`, `/intake [토픽]`, `/request [설명]`, `/feature [설명]`, `/bugfix [설명]`, `/refactor [설명]`, `/review [대상]`, `/business-logic [설명]`, `/design [컴포넌트]`, `/stack-upgrade [대상]`, `/git-cleanup [브랜치|PR]`, `/session-coordination [status|claim|release]`
+- `/start`, `/dev-start`, `/intake [토픽]`, `/request [설명]`, `/feature [설명]`, `/bugfix [설명]`, `/refactor [설명]`, `/review [대상]`, `/business-logic [설명]`, `/design [컴포넌트]`, `/stack-upgrade [대상]`, `/git-cleanup [브랜치|PR]`, `/session-end [state|git]`, `/session-coordination [status|claim|release]`
 
 `[설명]` 인수를 주면 가능한 항목을 미리 채운다. skills와 동일 templates를 참조한다.
 
@@ -96,7 +97,7 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 - `request` — 모호하거나 복합적인 작업 요청을 개별 workflow로 분류
 - `feature` / `bugfix` / `refactor` / `review` / `business-logic` — 작업 요청 처리
 - `design` — UI/디자인 작업 시 `DESIGN.md`와 디자인 가이드 강제 참조
-- `stack-upgrade` / `session-coordination` / `git-cleanup` — 버전 업그레이드, 세션 겹침 조정, 미완료 Git 작업 정리
+- `stack-upgrade` / `session-coordination` / `git-cleanup` / `session-end` — 버전 업그레이드, 세션 겹침 조정, 미완료 Git 작업 정리, 세션 종료 마감
 
 Codex에서는 자동 hook이 없으므로 `.codex/checks/safety-checklist.md`와 `.codex/checks/finish-checklist.md`를 작업 전후 체크리스트로 사용한다. `.codex/agents/*`는 `.claude/agents/*`와 같은 책임을 Codex 도구·승인 모델에 맞춰 수행하는 prompt guide다.
 

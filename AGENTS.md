@@ -86,6 +86,7 @@ Claude Code는 `.claude/skills/`, Codex는 `.agents/skills/`가 이 기준을 �
 - `dev-start`(개발 시작/이어서 개발/세션 시작/환경 셋팅해/다음 작업은)는 환경 부팅·상태 재개 맥락에만 선택한다. "개발 시작"이 무엇을 만들지(기능/버그/로직)를 설명하는 맥락이면 `feature`/`bugfix`/`business-logic`을 우선한다.
 - `stack-upgrade`는 라이브러리·패키지·런타임·Docker 이미지·base image·개발 인프라의 버전 점검/업데이트 맥락에 선택한다. 단순 개발환경 기동은 `dev-start`, 기능 구현은 `feature`를 우선한다.
 - `git-cleanup`(깃 정리/커밋 정리/PR 정리/브랜치 정리/마무리)은 이미 한 작업의 Git 상태를 마무리하는 맥락에만 선택한다. 코드 정리·구조 개선은 `refactor`, 개발 재개는 `dev-start`를 우선한다.
+- `session-end`(세션종료해줘/세션 종료/세션 끝/오늘 작업 끝/작업 종료/세션 마감/정리하고 종료/인계 정리)는 세션을 닫으며 이력 기록과 Git 정리를 함께 하는 맥락에 선택한다. Git 상태만 정리하면 `git-cleanup`, 세션을 여는 맥락이면 `dev-start`를 우선한다.
 - `session-coordination`은 여러 세션이 같은 저장소 파일, worktree, Compose·DB 자원을 동시에 쓸 때 선택한다.
 
 ## 빠른 읽기 순서
@@ -230,8 +231,8 @@ Claude Code는 `.claude/skills/`, Codex는 `.agents/skills/`가 이 기준을 �
 - **[Hooks Layer](./.claude/hooks/)** - 파괴적 명령 차단, 배포·릴리스 명령 차단, 비밀 파일 쓰기 차단, STATE.md 갱신 리마인더, 3단계 승인 전 파일 수정 확인, 세션 파일 겹침 조정. 설정은 `.claude/settings.local.json`.
 - **[서브에이전트 정의](./.claude/agents/)** - frontmatter로 자동 등록되는 역할별 서브에이전트 6종 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer). Agent 도구의 `subagent_type`에 이름을 지정해 호출한다. 디스패치 기준은 `docs/subagent-guide.md`.
 - **[Plugins Layer](./.claude/plugins/)** - manifest.json, VERSION, install.sh. 다른 프로젝트에 설치 시 `docs/plugin-guide.md` 참조.
-- **[Codex Native Skills](./.agents/skills/)** - Codex가 자연어 요청에 따라 자동 선택하는 네이티브 Skill 13종.
-- **[Codex Layer](./.codex/)** - Codex용 workflow 13종(`start`, `dev-start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`, `stack-upgrade`, `session-coordination`, `git-cleanup`), safety/finish checklist, subagent prompt guide. Claude 전용 자동화와 분리된 보완 레이어.
+- **[Codex Native Skills](./.agents/skills/)** - Codex가 자연어 요청에 따라 자동 선택하는 네이티브 Skill 14종.
+- **[Codex Layer](./.codex/)** - Codex용 workflow 14종(`start`, `dev-start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`, `stack-upgrade`, `session-coordination`, `git-cleanup`, `session-end`), safety/finish checklist, subagent prompt guide. Claude 전용 자동화와 분리된 보완 레이어.
 - **[미완료 Git 작업 정리](./.claude/skills/git-cleanup/SKILL.md)** - 커밋·push·PR·머지·브랜치·worktree 중 덜 끝난 것을 점검하고 마무리할 때. 배포·릴리스는 실행하지 않고 사용자에게 인계한다.
 - **[세션 충돌 조정](./docs/session-coordination-guide.md)** - Claude/Codex 세션 등록, 파일 점유 확인, 겹침 시 대기·사용자 확인 기준.
 - **[Plugin 가이드](./docs/plugin-guide.md)** - 설치, 업데이트, 커스텀, 버전 관리 방법.
