@@ -26,6 +26,7 @@
 - 기술 스택 업그레이드: `workflows/stack-upgrade.md`
 - 세션 충돌 조정: `workflows/session-coordination.md` (Claude는 `.claude/skills/session-coordination/`)
 - 미완료 Git 작업 정리: `workflows/git-cleanup.md`
+- 세션 종료와 인계 정리: `workflows/session-end.md`
 - 토픽별 intake: `workflows/intake.md`
 - 모호한 작업 요청 분류: `workflows/request.md`
 - 기능 개발: `workflows/feature.md`

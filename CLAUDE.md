@@ -120,13 +120,13 @@
 - `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타: `docs/design-guidelines.md`, admin FE: `docs/admin-fe-design-guide.md`, UI 결정 기록: `docs/ui-decisions.md`, 로컬/CI 실행 경계+Docker 재빌드: `docs/local-dev-ci-guide.md`, 금액·수량 처리: `docs/money-quantity-guidelines.md`, 작업 알림: `docs/notification-guide.md`, 지식 관리: `docs/knowledge-management-guide.md`, 세션 충돌 조정: `docs/session-coordination-guide.md`)
 - `docs/00-inbox/` ~ `docs/99-archive/` — 지식 관리 영역. 사용자 입력·개념·백서·요구사항·설계·개발계획·결정 기록을 주제별로 보관한다. 분류·명명·생명주기는 `docs/knowledge-management-guide.md`
 - `.claude/CLAUDE.md` — Claude 실행 게이트. 루트 `CLAUDE.md`와 함께 자동 로드되어 읽기 순서, 6단계 승인 절차, 시작·종료 게이트를 주입한다 (`.codex/README.md` 대응)
-- `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 13종)
-- `.claude/commands/` — L2 보조 (명시적 slash command 13종, skills와 병존)
+- `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 14종)
+- `.claude/commands/` — L2 보조 (명시적 slash command 14종, skills와 병존)
 - `.claude/hooks/` — L3 Guardrails (가드레일 7종 + 작업 알림 3종, opt-in 1종 포함). 상태줄은 `.claude/statusline-notify.sh`
 - `.claude/agents/` — L4 서브에이전트 정의 6종, frontmatter로 자동 등록 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - `.claude/plugins/` — L5 배포 도구 (manifest, install)
-- `.agents/skills/` — Codex native skills 13종. 자연어 요청에 따라 작업 유형별 Skill을 자동 선택한다.
-- `.codex/` — Codex runtime adapter (workflow 13종, checks 2종, subagent prompt guide 6종, notify 어댑터 1종). Claude 자동화와 분리된 보완 레이어
+- `.agents/skills/` — Codex native skills 14종. 자연어 요청에 따라 작업 유형별 Skill을 자동 선택한다.
+- `.codex/` — Codex runtime adapter (workflow 14종, checks 2종, subagent prompt guide 6종, notify 어댑터 1종). Claude 자동화와 분리된 보완 레이어
 - `scripts/` — 저장소 유지보수 스크립트 (문서 인덱스 생성, 로컬 문서 서버, HTML 구문 검사, 화면 이동 바 생성, 런타임 parity 검사). Node 내장 모듈만 사용하며 설치 배포 대상이 아니다. 문서 UI는 `node scripts/serve-docs.mjs`로 열고, 브라우저에서 문서를 고치려면 `--edit`을 붙인다 (기존 `.md` 수정만, 커밋은 별도). `docs/` 화면 7종 상단의 공통 이동 바는 `node scripts/build-nav.mjs`가 마커 구간을 생성하므로 각 HTML의 `agent-nav` 구간은 직접 고치지 않는다 (`--check`로 최신 여부만 검사). Claude와 Codex 양쪽에 작업 유형·가드레일이 같이 있는지는 `node scripts/check-runtime-parity.mjs`가 검사한다
 
 ## Design System
@@ -157,6 +157,7 @@ UI/스타일 산출물은 항상 `DESIGN.md`를 1차 소스로 사용한다. 운
 - 개별 요청: `feature`, `bugfix`, `refactor`, `review`, `business-logic`
 - 기술 스택 업그레이드: `stack-upgrade` (라이브러리·런타임·Docker·개발 인프라 버전 점검 및 안전한 업데이트)
 - 미완료 Git 작업 정리: `git-cleanup` (커밋·push·PR·머지·브랜치·worktree 중 덜 끝난 것을 점검하고 마무리)
+- 세션 종료와 인계: `session-end` (이번 세션 이력과 다음 재개 지점을 `STATE.md`에 기록하고 Git 잔여물 없이 마감)
 - 세션 충돌 조정: `session-coordination` (여러 창이 같은 파일·worktree·Docker 자원을 동시에 쓸 때 점유 조정)
 
 ### 우선순위 규칙
