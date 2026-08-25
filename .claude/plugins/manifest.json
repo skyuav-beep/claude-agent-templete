@@ -434,7 +434,7 @@
       },
       {
         "path": ".agents/skills/session-end/SKILL.md",
-        "description": "Native Codex skill for session wrap-up"
+        "description": "Native Codex skill for session wrap-up; state records STATE only, git performs Git cleanup only"
       },
       {
         "path": ".codex/agents/explorer.md",

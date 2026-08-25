@@ -1,5 +1,5 @@
 ---
-description: "사용자가 세션을 끝낼 때 활성화. 이번 세션 작업 이력과 다음 재개 지점을 STATE.md에 기록하고, 미커밋·미push·열린 PR·잔여 브랜치·worktree를 남기지 않고 정리한다 (세션종료해줘, 세션 종료, 세션 끝, 오늘 작업 끝, 작업 종료, 세션 마감, 정리하고 종료, 인계 정리, session end, end session, wrap up)"
+description: "사용자가 세션을 끝낼 때 활성화. 이번 세션 작업 이력과 다음 재개 지점을 STATE.md에 기록하고, 미커밋·미push·열린 PR·잔여 브랜치·worktree를 남기지 않고 정리한다 (세션종료해줘, 세션 종료, 세션 끝, 오늘 작업 끝, 작업 종료, 세션 마감, 정리하고 종료, 인계 정리, session end, end session, wrap up). state는 STATE 기록만, git은 Git 정리만 수행하며 Git만 정리할 때는 git-cleanup을 우선한다."
 ---
 
 # 세션 종료와 인계 정리
