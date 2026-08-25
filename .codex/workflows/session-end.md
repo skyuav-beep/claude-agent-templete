@@ -6,6 +6,13 @@
 
 ## 절차
 
+## 입력 모드
+
+- 인수가 없거나 사용자가 단순히 세션 종료·마감을 요청하면 아래 전체 절차를 수행한다.
+- `state`를 명시하면 작업 이력 수집과 다음 재개 지점 도출 후, STATE 기록 계획을 제시하고 승인받아 `STATE.md` 기록까지만 수행한다. Git 정리와 원격 작업은 하지 않는다.
+- `git`을 명시하면 `.codex/workflows/git-cleanup.md`의 Git 점검·정리 절차를 수행한다. 세션 이력 기록은 수행하지 않는다.
+- Codex에는 Claude slash command의 argument-hint가 없으므로, 자연어로 `session-end state` 또는 `session-end git`처럼 모드를 표현해도 같은 규칙을 적용한다.
+
 1. 작업 이력 수집(읽기 전용) — 아래를 확인하고 이 단계에서는 아무것도 바꾸지 않는다.
    - `git status --short --branch`, `git diff`, `git diff --staged`
    - `STATE.md` 마지막 기록 이후 쌓인 커밋
@@ -19,7 +26,7 @@
    - 머지가 끝났는데 남은 로컬·원격 브랜치와 worktree
    - 승인 마커 등 세션 로컬 산출물
 4. 요약과 정리 계획 제시 — 이번 세션에 무엇을 했는지 사용자 언어로 먼저 보여 준다. 파일 목록 나열로 대신하지 않는다. 그다음 항목별 처리 방안을 제안하고, 판단이 갈리는 것은 선택지를 준다.
-5. 승인 후 마감 — `docs/approval-workflow.md` 3단계 승인 후 6단계 순서대로 수행한다. 빠른 검증 → `STATE.md` 기록 → commit → push → ready PR → 게이트 확인 → merge → 원격 base SHA 검증 → 브랜치·worktree 정리.
+5. 승인 후 마감 — `docs/approval-workflow.md` 3단계 승인 후 선택한 모드의 범위만 수행한다. 전체 모드는 빠른 검증 → `STATE.md` 기록 → commit → push → ready PR → 게이트 확인 → merge → 원격 base SHA 검증 → 브랜치·worktree 정리 순서다. `state` 모드는 STATE 기록까지, `git` 모드는 Git cleanup workflow의 승인 범위까지다.
 
 ## STATE.md 기록 형식
 

@@ -35,6 +35,12 @@
 
 ## 최근 완료 작업
 
+- `session-end`의 Codex 입력 모드와 자동 선택 경계를 보완했다. (2026-08-25)
+  - Codex native skill과 Claude skill description에 세션 종료·마감·인계 정리 트리거와 `git-cleanup` 우선 경계를 명시했다.
+  - Codex workflow에 `state`(STATE 기록만)·`git`(Git 정리만) 모드를 추가하고, slash command가 없는 Codex에서도 자연어 인수로 같은 모드를 선택하도록 했다.
+  - manifest의 Codex skill 설명을 모드 의미와 정렬했다.
+  - 검증: runtime parity, Codex skill, manifest JSON·경로, 설치 dry-run, shell/Node 구문, `git diff --check` 통과.
+
 - 세션 종료 마감 스킬 `session-end`를 추가했다. (2026-08-25, PR #47)
   - 종료 절차는 `docs/finish-checklist.md`와 `git-cleanup`에 흩어져 있었지만 "세션종료해줘"라는 발화에 걸리는 트리거가 어느 스킬에도 없어 매번 에이전트 판단에 의존했다. 트리거 키워드를 가진 스킬로 만들어 같은 절차가 항상 실행되게 했다.
   - 흐름은 작업 이력 수집(읽기 전용) -> 완료/진행 중/보류 분류와 재개 지점 도출 -> Git 전수 점검 -> 요약과 정리 계획 제시 -> 승인 후 마감 5단계다. Git 점검 항목은 `git-cleanup`을 재사용하고 중복 정의하지 않는다.
