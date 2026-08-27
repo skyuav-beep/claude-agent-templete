@@ -40,3 +40,14 @@ docker compose -p "$COMPOSE_PROJECT_NAME" up -d
 ```
 
 프로젝트 Compose 파일이 해당 변수들을 사용하도록 구성되어 있는지 먼저 확인한다.
+
+## 브랜치·worktree 를 지우는 명령
+
+다른 세션이 등록돼 있으면 아래 형태는 실행 전 확인을 요청한다. 한쪽이 만든 브랜치를 다른 창이 지우면 커밋을 되짚을 단서가 reflog 밖에 남지 않는다.
+
+- 브랜치 삭제 `git branch -D|--delete`
+- 원격 ref 삭제 `git push origin --delete <ref>`, `git push origin :refs/heads/<ref>`, `git update-ref -d`
+- worktree 제거 `git worktree remove|prune`
+- 이력 덮어쓰기 `git push --force|--force-with-lease|--mirror`
+
+`git push origin main`, `git branch <new>`, `git worktree add` 는 통과한다. 등록된 다른 세션이 없으면 아무것도 막지 않는다. 확인 요청을 받으면 **그 브랜치가 본인 것인지 먼저 확인**하고, 남의 것이면 지우지 말고 사용자에게 알린다.
