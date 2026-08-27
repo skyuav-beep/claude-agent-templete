@@ -59,6 +59,8 @@ bash "$TEMPLATE_ROOT/.claude/plugins/install.sh" --update "$TARGET_ROOT"
 11. 작업이 끝날 때마다 `STATE.md`를 업데이트한다.
 12. 프로젝트에 들어오는 정보는 `docs/00-inbox/`에 기록한 뒤 지식 관리 가이드에 따라 주제별 문서로 승격한다.
 
+단계형 작업에서 메시지 전체를 `>` 하나로 보내면 직전 응답의 `다음 단계 진행해`와 동일하게 동작한다. 위험 작업의 별도 승인까지 대신하지는 않는다.
+
 ## Skills Layer (자동 활성화)
 
 `.claude/skills/<name>/SKILL.md`에 정의된 skill은 description의 트리거 키워드로 사용자 발화에서 자동 활성화된다.
