@@ -37,6 +37,10 @@
 
 ## 최근 완료 작업
 
+- `>` 단독 입력을 다음 단계 진행 단축 입력으로 정의했다. (2026-08-27)
+  - 공통 승인 workflow와 Claude/Codex 실행 문서에 적용 범위와 위험 작업 예외를 기록했다.
+  - 키보드 이벤트를 가로채는 기능이 아니라, 사용자에게 전달된 `>` 메시지를 단계 진행 신호로 해석하는 문서 규칙이다.
+
 - 플러그인 설치 manifest의 문서 누락을 보완하고 재발 방지 검사를 추가했다. (2026-08-27)
   - `docs/guide-browser.html`과 `docs/notification-guide.md`를 `manifest.json`의 Supporting docs에 등록해 소비 프로젝트 설치 결과에도 포함되도록 했다.
   - `scripts/check-runtime-parity.mjs`에 필수 설치 문서 manifest 등록 검사를 추가했다.
