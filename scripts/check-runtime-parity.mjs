@@ -114,6 +114,24 @@ if (fs.existsSync(manifestPath)) {
     }
   };
   walk(manifest);
+  for (const paths of Object.values(manifest.supporting ?? {})) {
+    if (Array.isArray(paths)) {
+      for (const rel of paths) {
+        if (typeof rel === "string") registered.add(rel);
+      }
+    }
+  }
+  // 설치 후에도 운영 가이드와 문서 브라우저가 남아 있어야 한다.
+  // supporting.docs에서 빠지면 원본 저장소에서는 보이지만 소비 프로젝트에는 배포되지 않는다.
+  const requiredInstallPaths = [
+    "docs/guide-browser.html",
+    "docs/notification-guide.md",
+  ];
+  for (const rel of requiredInstallPaths) {
+    if (!registered.has(rel)) {
+      errors.push(`필수 설치 파일 manifest 누락: ${rel} — 소비 프로젝트에 배포되지 않습니다.`);
+    }
+  }
   for (const name of [...claudeSkills].sort()) {
     const rel = `.claude/skills/${name}/SKILL.md`;
     if (!registered.has(rel)) errors.push(`manifest 누락: ${rel} — 설치 시 배포되지 않습니다.`);

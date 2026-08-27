@@ -37,6 +37,11 @@
 
 ## 최근 완료 작업
 
+- 플러그인 설치 manifest의 문서 누락을 보완하고 재발 방지 검사를 추가했다. (2026-08-27)
+  - `docs/guide-browser.html`과 `docs/notification-guide.md`를 `manifest.json`의 Supporting docs에 등록해 소비 프로젝트 설치 결과에도 포함되도록 했다.
+  - `scripts/check-runtime-parity.mjs`에 필수 설치 문서 manifest 등록 검사를 추가했다.
+  - 검증: 설치 `--new --dry-run`(작업 169·충돌 0), Codex Skill, HTML, navigation, `git diff --check` 통과. 전체 CI는 문서·검사 스크립트 변경 범위라 이번 작업에서 실행하지 않았다.
+
 - PR 머지가 매번 권한 분류기에 막히던 원인을 규명했다. (2026-08-25)
   - 사용자 전역 허용 목록에는 `Bash(gh pr merge:*)`가 이미 있었다. 그런데도 막힌 이유는 `auto` 모드에서 **분류기 판정이 일반 허용 목록보다 우선**하기 때문이다. `autoMode`에는 `soft_deny` 2건과 `environment`만 있고 `allow` 배열이 아예 없어, `"$defaults"`로 상속된 내장 규칙이 PR 머지를 "되돌리기 어려운 작업"으로 판정했다.
   - 해소하려면 `~/.claude/settings.json`의 `autoMode.allow`에 `["$defaults", "Bash(gh pr merge:*)"]`를 넣고 재시작한다. `"$defaults"`를 빼면 내장 허용 규칙이 전부 사라지므로 함께 넣는다. 일반 허용 목록에 다시 등록하는 것은 효과가 없다.

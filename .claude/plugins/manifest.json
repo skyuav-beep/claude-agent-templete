@@ -497,6 +497,7 @@
     "docs": [
       "docs/project-guide-template.md",
       "docs/project-guide.md",
+      "docs/guide-browser.html",
       "docs/approval-workflow.md",
       "docs/finish-checklist.md",
       "docs/business-logic-playbook.md",
@@ -524,6 +525,7 @@
       "docs/user-fe-mobile-preview.html",
       "docs/ui-decisions.md",
       "docs/plugin-guide.md",
+      "docs/notification-guide.md",
       "docs/knowledge-management-guide.md",
       "docs/session-coordination-guide.md",
       "docs/00-inbox/.gitkeep",
