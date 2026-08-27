@@ -101,8 +101,28 @@ cleanup_stale() {
   done
 }
 
+# 등록에 pid 가 없으면 cleanup_stale 이 생존 검사를 못 해 TTL(기본 8시간) 까지
+# 유령 등록이 남는다. 환경변수가 없을 때 부모를 거슬러 올라가 실행기 프로세스를
+# 찾아 둔다. 못 찾으면 종전대로 비워 두고, 그 경우 TTL 로만 정리된다.
+detect_owner_pid() {
+  local p="$PPID" depth=0 comm parent
+  while [ "$depth" -lt 12 ]; do
+    case "$p" in ''|0|1|*[!0-9]*) return ;; esac
+    comm=$(ps -p "$p" -o comm= 2>/dev/null | tr -d ' ')
+    case "$comm" in
+      claude|claude-code|codex|cursor) printf '%s' "$p"; return ;;
+    esac
+    parent=$(ps -p "$p" -o ppid= 2>/dev/null | tr -d ' ')
+    [ "$parent" = "$p" ] && return
+    p="$parent"
+    depth=$((depth + 1))
+  done
+}
+
 register() {
   local owner_pid="${SESSION_COORD_OWNER_PID:-}"
+  case "$owner_pid" in ''|*[!0-9]*) owner_pid="" ;; esac
+  [ -n "$owner_pid" ] || owner_pid=$(detect_owner_pid)
   case "$owner_pid" in ''|*[!0-9]*) owner_pid="" ;; esac
   write_record "$(jq -n \
     --arg sid "$sid" --arg repo "$root" --arg common "$common" \
@@ -132,6 +152,37 @@ claim() {
   [ -f "$record" ] || register
   local tmp="$record.tmp.$$"
   jq --arg path "$path" '.paths = ((.paths // []) + [$path] | unique)' "$record" > "$tmp" 2>/dev/null && mv -f "$tmp" "$record" 2>/dev/null
+}
+
+# 다른 세션이 같은 저장소에 등록돼 있을 때만, 남의 브랜치·worktree·원격 ref 를
+# 없앨 수 있는 git 명령을 확인 대상으로 돌린다. 한쪽이 만든 브랜치를 다른 창이
+# 정리해 버리면 커밋을 되짚을 단서가 reflog 밖에 남지 않는다.
+# 혼자 쓰는 저장소에서는 아무것도 하지 않는다.
+guard_git() {
+  local cmd="$1" f others=0 label=""
+  local risky=0
+  case "$cmd" in *git*) ;; *) return ;; esac
+  case "$cmd" in
+    *"branch -D"*|*"branch -d"*|*"branch --delete"*|\
+    *"worktree remove"*|*"worktree prune"*|\
+    *"push --force"*|*"push -f"*|*"push --mirror"*|*"force-with-lease"*|\
+    *" :refs/"*|*"update-ref -d"*) risky=1 ;;
+  esac
+  # `git push origin --delete <ref>` 처럼 remote 이름이 사이에 끼는 형태는 위의
+  # 연속 패턴으로 잡히지 않는다. push 와 삭제 플래그의 공존으로 따로 본다.
+  case "$cmd" in
+    *push*) case "$cmd" in *--delete*|*" -d "*) risky=1 ;; esac ;;
+  esac
+  [ "$risky" -eq 1 ] || return
+  for f in "$state_dir"/*.json; do
+    [ -f "$f" ] || continue
+    [ "$f" = "$record" ] && continue
+    others=$((others + 1))
+    label=$(jq -r '(.session_id // "unknown") + " / " + (.branch // "?") + " @ " + (.worktree // "?")' "$f" 2>/dev/null)
+  done
+  [ "$others" -gt 0 ] || return
+  jq -n --arg n "$others" --arg label "$label" \
+    '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"ask",permissionDecisionReason:("이 저장소에 다른 세션 " + $n + "개가 등록돼 있습니다(예: " + $label + "). 브랜치·worktree·원격 ref 를 지우는 명령은 그쪽 작업을 되돌릴 수 없게 만들 수 있습니다. 해당 브랜치가 본인 것인지 확인한 뒤 진행하세요.")}}'
 }
 
 status() {
@@ -188,7 +239,12 @@ case "$mode" in
       SessionEnd) release ;;
       PreToolUse)
         file_path=$(json_get '.tool_input.file_path')
-        [ -n "$file_path" ] && claim "$file_path"
+        if [ -n "$file_path" ]; then
+          claim "$file_path"
+        else
+          command_text=$(json_get '.tool_input.command')
+          [ -n "$command_text" ] && guard_git "$command_text"
+        fi
         ;;
     esac
     ;;
