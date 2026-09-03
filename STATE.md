@@ -41,14 +41,14 @@
 
 ## 최근 완료 작업
 
-- Windows에서 무력화되던 가드레일 훅 6종을 복구했다. (2026-09-03, PR 대기)
+- Windows에서 무력화되던 가드레일 훅 6종을 복구했다. (2026-09-03, PR #53 `f3b8eb1`)
   - 대상: `block-deploy`, `block-destructive`, `block-secret-files`, `phase-approval`, `state-reminder`, `warn-design-tokens`.
   - `python3 /dev/fd/3 3<<'PY'` -> Python 본문을 `mktemp` 임시 파일로 넘기고 `trap`으로 정리한다. stdin은 payload 전용으로 남는다.
   - 셸 래퍼만 바뀌었다(42+/9-). Python 본문은 바이트 단위로 동일해 POSIX 동작에 차이가 없다.
   - 검증(Windows): `bash -n` 훅 10종, 차단 기대 8건 전부 rc=2·통과 기대 6건 전부 rc=0, 5회 호출 임시파일 누수 0, `check-runtime-parity.mjs` 통과, 타깃에서 symlink 경유 end-to-end 확인.
   - 검증(WSL2 Ubuntu, Python 3.12.3): LF로 정규화해 정상 WSL 클론을 재현한 뒤 차단 기대 5건 전부 rc=2·통과 기대 3건 전부 rc=0, 10회 호출 임시파일 누수 0. POSIX 동작 동일이 추론이 아니라 실측으로 확인됐다.
   - `rm -rf ./build` 차단은 `block-destructive.sh:96`의 의도된 동작이다(위치 제약을 두면 `find -exec rm -rf`를 놓쳐 일부러 뺐다고 주석에 명시). 회귀가 아니다.
-  - 브랜치 `fix/windows-hook-python-delivery` `af05b6b` push 완료. PR은 사용자가 브라우저로 생성한다(`gh` 미인증).
+  - PR #53으로 머지됐다(`f3b8eb1`, squash). 작업 브랜치 `fix/windows-hook-python-delivery`는 삭제됐다. `gh`가 미인증 상태라 PR 생성은 사용자가 브라우저로 했다.
 
 - `sos_sccl` 릴리스 후보(`20260830_Coding_Agent_v1_Git_Release_Candidate`)에 템플릿을 연결했다. (2026-09-03)
   - `--adopt` 작업 169건·보호 1건(`STATE.md`)·충돌 0, 이어서 `--link`로 실행 레이어 9종과 `rules` 연결. 플러그인 `3.8.0`.
@@ -174,7 +174,7 @@
 ## 전체 CI 배치 대기열
 
 - **2026-09-03 WSL2 Ubuntu에서 전체 로컬 CI를 돌려 20/20 통과했다. 누적 대기열은 비었다.**
-  - 실행 환경: WSL 네이티브 FS에 클론(LF 체크아웃), `main`에 `fix/windows-hook-python-delivery`와 `docs/2026-09-03-windows-portability`를 병합한 통합 커밋 기준. node v22.22.0 / Python 3.12.3 / git 2.43.0.
+  - 실행 환경: WSL 네이티브 FS에 클론(LF 체크아웃), 당시 `main`에 `fix/windows-hook-python-delivery`(현 #53)와 `docs/2026-09-03-windows-portability`를 병합한 통합 커밋 기준. node v22.22.0 / Python 3.12.3 / git 2.43.0.
   - 검사 항목: Node 스크립트 5종, 훅 `bash -n` 11종(Codex `notify-codex.sh` 포함), manifest JSON·경로 169건(중복 0·누락 0), 설치 dry-run 2종(`--new`·`--adopt` 모두 충돌 0), 마크다운 상대 링크 108건(깨짐 0), 가드레일 판정 24건(불일치 0).
   - 이번에 해소한 누적분: #39·#40·#41·#45·#47·#48·#49와 #52, 그리고 위 두 브랜치. 2026-08-23 이후 미실행 상태였다.
   - `build-docs-index.mjs --check`는 검증이 아니라 빌드 단계다. 산출물 `docs/docs-index.json`이 `.gitignore:10`에 등록돼 커밋되지 않으므로 fresh clone에서는 어느 브랜치든 항상 실패한다. 생성기를 한 번 돌린 뒤 검사해야 한다. 다음 CI에서 게이트로 오해하지 않도록 남긴다.
