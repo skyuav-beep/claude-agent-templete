@@ -6,7 +6,12 @@
 # block-destructive.sh와 같은 방식으로 실행 문맥을 정제한 뒤 판정한다.
 # 로컬 개발 명령(docker compose up, prisma migrate dev 등)은 차단하지 않는다.
 
-VERDICT=$(python3 /dev/fd/3 3<<'PY' 2>/dev/null
+# Python 본문은 임시 파일로 넘긴다. Windows(MSYS)에서 /dev/fd/3은 네이티브
+# Python이 열 수 없는 경로로 번역되어 판정이 조용히 통과된다.
+# payload는 계속 stdin 전용으로 남으므로 MAX_ARG_STRLEN 제약을 받지 않는다.
+PYSRC=$(mktemp) || exit 0
+trap 'rm -f "$PYSRC"' EXIT
+cat >"$PYSRC" <<'PY'
 import json, os, re, sys
 
 SHELL_EVAL = re.compile(
@@ -105,7 +110,7 @@ for pattern, label in RULES:
         print(label)
         break
 PY
-)
+VERDICT=$(python3 "$PYSRC" 2>/dev/null)
 
 [ -z "$VERDICT" ] && exit 0
 
