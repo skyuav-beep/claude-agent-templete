@@ -7,7 +7,7 @@
 - 역할별 지침은 `agents/`, 요청·intake 양식은 `templates/`, 프로젝트·검증 가이드는 `docs/`에 둔다.
 - Claude Code 자동화는 `.claude/`, Codex 네이티브 Skill은 `.agents/skills/`, Codex 승인·검증 어댑터는 `.codex/`에 둔다.
 - 프로젝트 가이드는 템플릿 배포 원본에서 초기 scaffold를 유지하고 소비 프로젝트가 intake 결과로 교체한다.
-- 이 템플릿을 `rules/` symlink로 참조하는 연결 프로젝트는 2026-08-22 실측 기준 17개다(GoldFX, aica2, aiospace, ccaa, goldlink, icnft, icwp2p, makeupshop, mlm_v1.0, riderapp-runtime, riderwebapp, signal2, skim, sos_sccl, tokendtu, trippass, vwallet. 작업용 worktree 2개는 별도). 전원 `.claude/` 하위 7종 symlink 배선이 끝나 있어 템플릿 개정이 즉시 반영된다. 이 17개는 POSIX 환경 실측치이며, 2026-09-03 Windows PC(`C: Projects`) 실측에서는 연결 프로젝트가 `sos_sccl` 릴리스 후보 1곳뿐이다. 템플릿이 Windows에서 처음 쓰인 것이 이날이며 그전까지 Windows 결함이 드러나지 않은 이유다. 초기 런타임 앱이던 sibling `../riderapp-runtime/`은 현재 git 저장소가 아니고 활동이 없어 참조 구현으로 삼지 않는다.
+- 이 템플릿을 `rules/` symlink로 참조하는 연결 프로젝트는 2026-08-22 실측 기준 17개다(GoldFX, aica2, aiospace, ccaa, goldlink, icnft, icwp2p, makeupshop, mlm_v1.0, riderapp-runtime, riderwebapp, signal2, skim, sos_sccl, tokendtu, trippass, vwallet. 작업용 worktree 2개는 별도). 전원 `.claude/` 하위 7종 symlink 배선이 끝나 있어 템플릿 개정이 즉시 반영된다. 이 17개는 POSIX 환경 실측치다. 주 개발 환경은 WSL이며 템플릿은 거기서 정상 동작한다. 2026-09-03 네이티브 Windows PC(`C: Projects`) 실측에서는 연결 프로젝트가 `sos_sccl` 릴리스 후보 1곳뿐이고, 템플릿이 네이티브 Windows에서 쓰인 것이 이날이 처음이라 그전까지 Windows 전용 결함이 드러나지 않았다. 초기 런타임 앱이던 sibling `../riderapp-runtime/`은 현재 git 저장소가 아니고 활동이 없어 참조 구현으로 삼지 않는다.
 - 작업 알림은 Claude Code 사용자 전역 설정과 Codex `notify`에 등록되어 두 런타임 모두 동작 중이다. 구성·조정·되돌리기는 `docs/notification-guide.md`.
 - Claude와 Codex는 각각 `.claude/CLAUDE.md`와 `.codex/README.md`를 실행 게이트로 삼아 같은 6단계 절차를 적용한다. 연결 프로젝트는 이 파일들을 공통본 symlink로 참조하므로 템플릿 개정이 즉시 반영된다.
 - 프로젝트에 들어오는 개념·백서·요구사항·설계·개발계획을 시간순과 주제별로 보관하는 공통 지식 관리 체계를 `docs/knowledge-management-guide.md`와 `templates/` 양식으로 정의했다.
@@ -18,7 +18,7 @@
 - Claude와 Codex 양쪽에 작업 유형·가드레일이 같이 있는지는 `node scripts/check-runtime-parity.mjs`가 검사한다. 한쪽에만 스킬을 추가하면 실패한다.
 
 
-**세션 기록 (2026-09-03, Windows 첫 사용에서 드러난 이식성 결함 3건)** — `sos_sccl` 릴리스 후보에 템플릿을 처음 적용하다 Windows에서만 나타나는 결함 3건을 찾았다. 가장 위험했던 것은 **가드레일 훅 6종이 조용히 무력화**돼 있던 점이다. `python3 /dev/fd/3 3<<'PY'`로 Python 본문을 넘기는데 MSYS가 `/dev/fd/3`을 네이티브 Python이 열 수 없는 경로로 번역하고, `2>/dev/null`이 에러를 삼켜 판정이 비면 `exit 0`으로 통과한다. 실측에서 `vercel deploy --prod`·`terraform apply`·`gh release create`·`rm -rf /`가 전부 rc=0으로 통과했다. Python 본문을 임시 파일로 넘기고 stdin은 payload 전용으로 남겨 고쳤다 — `block-secret-files.sh`가 fd 3을 쓴 이유가 Write의 `tool_input`이 `MAX_ARG_STRLEN`(128KB)을 넘기기 때문이라, 환경변수나 argv로 넘기는 방식은 그 제약을 되살린다(300KB payload로 확인). 판정 로직은 한 줄도 바꾸지 않아 POSIX 동작에 차이가 없다. 둘째는 `install.py --link`가 만든 symlink가 Windows에서 전부 깨져 있던 것이다. `relative_link()`가 구분자를 `/`로 하드코딩하는데 Windows reparse point는 역슬래시만 해석한다. `rules` 하나만 살아 있던 건 그것만 `os.path.relpath()`를 쓰기 때문이고, Git Bash가 reparse point를 자체 해석해 `ls`/`cat`은 멀쩡해 보이는 것이 함정이다. 타깃 링크는 복구했으나 **`install.py` 자체는 아직 고치지 않았다**. 셋째는 `check-codex-skills.mjs`가 `core.autocrlf=true` 클론에서 rc=1로 실패하는 것이다(frontmatter 첫 줄이 CRLF라 13행의 LF 기대 검사가 Skill 14종을 전부 누락으로 판정한다). 미해결이며 `## 다음 작업` 2순위에 있다.
+**세션 기록 (2026-09-03, Windows 첫 사용에서 드러난 이식성 결함 3건)** — `sos_sccl` 릴리스 후보에 템플릿을 처음 적용하다 Windows에서만 나타나는 결함 3건을 찾았다. 가장 위험했던 것은 **가드레일 훅 6종이 조용히 무력화**돼 있던 점이다. `python3 /dev/fd/3 3<<'PY'`로 Python 본문을 넘기는데 MSYS가 `/dev/fd/3`을 네이티브 Python이 열 수 없는 경로로 번역하고, `2>/dev/null`이 에러를 삼켜 판정이 비면 `exit 0`으로 통과한다. 실측에서 `vercel deploy --prod`·`terraform apply`·`gh release create`·`rm -rf /`가 전부 rc=0으로 통과했다. Python 본문을 임시 파일로 넘기고 stdin은 payload 전용으로 남겨 고쳤다 — `block-secret-files.sh`가 fd 3을 쓴 이유가 Write의 `tool_input`이 `MAX_ARG_STRLEN`(128KB)을 넘기기 때문이라, 환경변수나 argv로 넘기는 방식은 그 제약을 되살린다(300KB payload로 확인). 판정 로직은 한 줄도 바꾸지 않아 POSIX 동작에 차이가 없다. 둘째는 `install.py --link`가 만든 symlink가 Windows에서 전부 깨져 있던 것이다. `relative_link()`가 구분자를 `/`로 하드코딩하는데 Windows reparse point는 역슬래시만 해석한다. `rules` 하나만 살아 있던 건 그것만 `os.path.relpath()`를 쓰기 때문이고, Git Bash가 reparse point를 자체 해석해 `ls`/`cat`은 멀쩡해 보이는 것이 함정이다. 타깃 링크는 복구했으나 **`install.py` 자체는 아직 고치지 않았다**. 셋째는 `check-codex-skills.mjs`가 `core.autocrlf=true` 클론에서 rc=1로 실패하는 것이다(frontmatter 첫 줄이 CRLF라 13행의 LF 기대 검사가 Skill 14종을 전부 누락으로 판정한다). **세 결함 모두 네이티브 Windows 전용이고 WSL은 해당하지 않는다** — 성립 조건이 각각 MSYS의 경로 번역, NTFS reparse point, `autocrlf=true` 체크아웃이라 WSL에서는 어느 것도 성립하지 않는다. 이를 WSL2 Ubuntu에서 실측으로 확인했고, 수정한 훅이 Linux에서 동일하게 동작하는 것과 역슬래시 symlink가 WSL DrvFs에서 정상 해석되는 것도 같이 확인했다. 그래서 남은 2건(`install.py`, `check-codex-skills.mjs`)은 2순위가 아니라 `## 다음 작업` 4순위에 둔다. 네이티브 Windows를 쓸 계획이 생기면 그때 올린다.
 
 **세션 기록 (2026-08-27, 세션 조정 사각지대 두 곳)** — 연결 프로젝트(`sos`)에서 두 창이 같은 저장소를 쓰다 세 번 부딪힌 뒤, 기존 조정 장치가 닿지 않던 두 곳을 메웠다. **hook 이 `Edit|Write` 에만 걸려 있어 git 명령은 통과**했다 — 한쪽이 만든 브랜치를 다른 창이 `git push origin --delete` 로 지워도 아무 확인이 없었고, 커밋을 되짚을 단서는 reflog 뿐이었다. 이제 다른 세션이 등록돼 있을 때에 한해 브랜치·원격 ref·worktree 삭제와 force push 를 확인 대상으로 돌린다(11종 포착, 정상 명령 9종 무개입 확인). 또 하나는 **등록의 `pid` 가 비어 생존 검사가 불가능**했던 것이다. `SESSION_COORD_OWNER_PID` 가 없으면 부모를 거슬러 실행기 프로세스를 찾아 기록하므로, 창이 사라진 등록은 TTL 8시간을 기다리지 않고 정리된다. `.claude/settings.template.json` 의 `Bash` matcher 연결은 **이미 설치된 프로젝트에 자동 전파되지 않는다** — 각 프로젝트의 `settings.json` 은 복사본이라 직접 추가해야 한다. hook 스크립트 자체는 symlink 라 즉시 반영된다.
 **세션 종료 (2026-08-25, 마지막)** — 세션 마감 스킬 `session-end`를 만들어 배포하고(PR #47 `6eae247`), 이어서 PR 머지가 매번 막히던 원인을 규명했다. 스킬은 종료 절차 자체가 아니라 **트리거의 부재**를 고친 것이다 — 절차는 `docs/finish-checklist.md`와 `git-cleanup`에 이미 있었지만 "세션종료해줘"에 걸리는 키워드가 어느 스킬에도 없어 실행 여부가 매번 에이전트 판단에 달려 있었다. 머지 차단은 설정 오류가 아니라 계층 문제였다. 사용자 전역 허용 목록에 `Bash(gh pr merge:*)`가 이미 등록돼 있는데도 막혔는데, `auto` 모드에서는 분류기 판정이 허용 목록보다 우선하고 `autoMode.allow` 배열이 비어 있어 기본 soft_deny 규칙(되돌리기 어려운 작업)이 그대로 적용됐다. 저장소 문서는 6단계에서 머지를 승인 범위에 넣었으므로 문서와 런타임이 어긋난 상태였다. 미커밋 변경·미push 커밋·열린 PR·잔여 브랜치·worktree는 없다. 재개 지점은 `## 다음 작업` 1순위이며, 사용자 직접 실행이 필요한 분류기 설정과 승인 대기 중인 가이드 반영안이 2순위에 있다.
@@ -45,7 +45,8 @@
   - 대상: `block-deploy`, `block-destructive`, `block-secret-files`, `phase-approval`, `state-reminder`, `warn-design-tokens`.
   - `python3 /dev/fd/3 3<<'PY'` -> Python 본문을 `mktemp` 임시 파일로 넘기고 `trap`으로 정리한다. stdin은 payload 전용으로 남는다.
   - 셸 래퍼만 바뀌었다(42+/9-). Python 본문은 바이트 단위로 동일해 POSIX 동작에 차이가 없다.
-  - 검증: `bash -n` 훅 10종, 차단 기대 8건 전부 rc=2·통과 기대 6건 전부 rc=0, 5회 호출 임시파일 누수 0, `check-runtime-parity.mjs` 통과, 타깃에서 symlink 경유 end-to-end 확인.
+  - 검증(Windows): `bash -n` 훅 10종, 차단 기대 8건 전부 rc=2·통과 기대 6건 전부 rc=0, 5회 호출 임시파일 누수 0, `check-runtime-parity.mjs` 통과, 타깃에서 symlink 경유 end-to-end 확인.
+  - 검증(WSL2 Ubuntu, Python 3.12.3): LF로 정규화해 정상 WSL 클론을 재현한 뒤 차단 기대 5건 전부 rc=2·통과 기대 3건 전부 rc=0, 10회 호출 임시파일 누수 0. POSIX 동작 동일이 추론이 아니라 실측으로 확인됐다.
   - `rm -rf ./build` 차단은 `block-destructive.sh:96`의 의도된 동작이다(위치 제약을 두면 `find -exec rm -rf`를 놓쳐 일부러 뺐다고 주석에 명시). 회귀가 아니다.
   - 브랜치 `fix/windows-hook-python-delivery` `af05b6b` push 완료. PR은 사용자가 브라우저로 생성한다(`gh` 미인증).
 
@@ -173,7 +174,7 @@
 ## 전체 CI 배치 대기열
 
 - 현재 필수 대기 항목은 없다.
-- 기존 7건(#39·#40·#41·#45·#47·#48·#49)에 #52와 브랜치 `fix/windows-hook-python-delivery`가 더해졌다. `git log origin/main` 실측으로 확인한 머지 PR은 #39·#40·#41·#42·#44·#45·#46·#47·#49·#52이며, PR 번호가 붙지 않은 커밋(`7ccb64d`, `121476a`, `4531bb3`)도 있다. 모두 문서와 훅·검사 스크립트 범위이며 bash 구문, 훅 동작 프로브(세션 조정 6종·배포 차단 25종·가드레일 판정 8종), parity 검사, manifest 경로·중복, 설치 dry-run, 링크·HTML 검사로 각각 검증했다. 누적 기준(3~5건)을 크게 넘겼고 2026-08-23 이후 한 번도 돌리지 않았다. 다음 세션 초반에 전체 로컬 CI를 한 번 돌린다. Windows에서는 `check-codex-skills.mjs`가 CRLF 때문에 실패하므로 그 결함을 먼저 처리하거나 실패를 예상하고 읽는다.
+- 기존 7건(#39·#40·#41·#45·#47·#48·#49)에 #52와 브랜치 `fix/windows-hook-python-delivery`가 더해졌다. `git log origin/main` 실측으로 확인한 머지 PR은 #39·#40·#41·#42·#44·#45·#46·#47·#49·#52이며, PR 번호가 붙지 않은 커밋(`7ccb64d`, `121476a`, `4531bb3`)도 있다. 모두 문서와 훅·검사 스크립트 범위이며 bash 구문, 훅 동작 프로브(세션 조정 6종·배포 차단 25종·가드레일 판정 8종), parity 검사, manifest 경로·중복, 설치 dry-run, 링크·HTML 검사로 각각 검증했다. 누적 기준(3~5건)을 크게 넘겼고 2026-08-23 이후 한 번도 돌리지 않았다. 다음 세션 초반에 전체 로컬 CI를 한 번 돌린다. WSL에서 돌리면 그대로 읽으면 된다. 네이티브 Windows에서 돌릴 때만 `check-codex-skills.mjs`가 CRLF 때문에 실패하므로 그 실패를 예상하고 읽는다(`## 다음 작업` 4순위).
 - 전체 로컬 CI는 3~5개 작업 누적, 하루 종료, 릴리스 전 또는 사용자 명시 요청 시 별도 6단계 작업으로 실행한다.
 
 ## 다음 작업
@@ -187,10 +188,8 @@
 - 중점: 활성 시안 `worknest`의 light/dark 대비, 카드 헤어라인 보더와 그림자 정책(hover lift·overlay 한정), gradient 전면 금지 준수, 사이드바·active 채움 전용 토큰 렌더링.
 - 의도와 다른 부분이 나오면 관련 카탈로그와 `DESIGN.md`, `STATE.md`를 같은 작업에서 갱신한다.
 
-### 2순위 — 사용자 판단이 필요한 8건
+### 2순위 — 사용자 판단이 필요한 6건
 
-- `install.py --link`의 Windows symlink 결함 (2026-09-03). `relative_link()`가 `"../" * n + "rules/" + rel`로 구분자를 `/`에 고정해 Windows에서 링크가 전부 깨진다. `os.path.join(*([".."] * rel.count("/")), "rules", *rel.split("/"))`로 바꾸고 `symlink_to(..., target_is_directory=...)`를 함께 넘긴다. POSIX에서는 결과 문자열이 지금과 같아 동작이 바뀌지 않는다. 타깃(`sos_sccl`)은 이미 손으로 복구했으므로 이 수정은 다음 설치부터 적용된다. 훅 PR과 성격이 같아 묶어도 되고 별도로 올려도 된다.
-- `check-codex-skills.mjs`의 CRLF 결함 (2026-09-03). `core.autocrlf=true`로 클론하면 frontmatter 첫 줄이 CRLF로 끝나는데, 13행의 `startsWith` 검사가 LF만 기대해 Skill 14종 전부 frontmatter 누락으로 판정하고 rc=1로 실패한다. 파서에서 CR를 허용하는 방법과 `.gitattributes`로 마크다운 줄바꿈을 정규화하는 방법이 있다. 후자는 저장소 전체 체크아웃에 영향을 주므로 판단이 필요하다. `check-runtime-parity.mjs`는 영향받지 않는다.
 - 머지 권한 열기 (2026-08-25 인계, 사용자 직접 실행). `~/.claude/settings.json`의 `autoMode`에 `"allow": ["$defaults", "Bash(gh pr merge:*)"]`를 추가하고 Claude Code를 재시작한다. 일반 허용 목록(`permissions.allow`)에는 이미 있으나 분류기 판정이 우선해 효과가 없다. `"$defaults"`를 빼면 내장 허용 규칙이 전부 사라진다. 에이전트는 이 편집도 편집용 스크립트 작성도 분류기에 막히므로 사용자가 직접 해야 한다. 되돌리려면 편집 전 백업(`~/.claude/settings.json.bak-<날짜>`)을 덮어쓴다. 적용 전까지는 6단계 마감이 머지에서 멈추고 `!gh pr merge <num> --squash --delete-branch`로 인계된다.
 - 머지 가이드 반영안 (2026-08-25, 승인 대기). `docs/local-dev-ci-guide.md §6.3`에 "실행 환경이 막으면" 항목을 추가하고, `session-end` 스킬 2종(Claude·Codex)에 마감이 머지에서 멈출 수 있음을 명시한다. 문구 초안은 이번 세션 대화에 있고 승인만 하면 바로 구현 가능하다. `riderwebapp`에만 있던 항목을 공통 정본으로 올리는 작업이다.
 - 권한 모드 적용 (2026-08-04 인계). 파일 수정 확인을 없애려면 사용자 전역 설정(`~/.claude/settings.json`)에서 권한 모드를 `acceptEdits`로 바꾸고 허용 목록에 `Write`를 추가한다. 에이전트는 이 편집을 실행할 수 없어 사용자가 직접 해야 하며 적용 후 재시작이 필요하다. 되돌리려면 `~/.claude/settings.json.bak-20260804`를 덮어쓴다. 분류기를 유지한 채 특정 작업만 여는 `autoMode.allow` 방식도 대안이며, 이 경우 저장소 설정이 아니라 전역 설정에 넣어야 적용된다. 2026-08-14 세션에서는 훅 스크립트 수정, 여러 저장소 설정을 한 번에 바꾸는 스크립트, PR 머지 세 건이 분류기에 막혀 사용자 확인을 거쳤다.
@@ -207,6 +206,11 @@
 - 연결 프로젝트에 템플릿을 새로 설치할 때 알림 스크립트 4종이 `managed_prefixes` 규칙대로 전달되는지 첫 설치에서 확인한다.
 
 ### 4순위 — 선택 개선
+
+Windows 이식성 2건은 여기 있다. 주 개발 환경이 WSL이고 2026-09-03 실측에서 WSL은 두 결함 모두에 해당하지 않는 것이 확인됐다. 네이티브 Windows에서 템플릿을 쓸 계획이 생기면 그때 올린다.
+
+- `install.py --link`의 symlink 구분자 (Windows 전용). `relative_link()`가 `"../" * n + "rules/" + rel`로 구분자를 `/`에 고정한다. Linux에서 만든 symlink는 지금도 정상이고, 네이티브 Windows에서만 reparse point가 해석하지 못해 깨진다. 고치려면 `os.path.join(*([".."] * rel.count("/")), "rules", *rel.split("/"))`로 바꾸고 `symlink_to(..., target_is_directory=...)`를 함께 넘긴다. 역슬래시 형태는 WSL에서도 정상 해석되는 것을 실측했으므로(WSL DrvFs가 구분자를 정규화한다) 양쪽 모두 안전한 유일한 형태다. `sos_sccl` 타깃은 이미 손으로 복구했다.
+- `check-codex-skills.mjs`의 CRLF 처리 (Windows 전용). `core.autocrlf=true`로 클론하면 frontmatter 첫 줄이 CRLF로 끝나는데 13행의 `startsWith` 검사가 LF만 기대해 Skill 14종을 전부 누락으로 판정하고 rc=1로 실패한다. WSL 클론은 LF라 영향이 없다. 파서에서 CR를 허용하는 방법과 `.gitattributes`로 정규화하는 방법이 있고, 후자는 저장소 전체 체크아웃에 영향을 준다.
 
 - 문서 편집에 새 문서 생성·삭제를 열지 여부. 열려면 경로·명명 규칙 검증을 함께 설계한다.
 - `docs/template-usage.md` 또는 예시 프로젝트 문서 추가.
