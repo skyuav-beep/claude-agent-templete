@@ -4,7 +4,12 @@
 # Claude Code 전용 게이트다. Codex는 저장소 훅을 자동 실행하지 않으므로
 # .codex/workflows와 체크리스트의 단계 계약을 별도로 적용한다.
 
-python3 /dev/fd/3 3<<'PY'
+# Python 본문은 임시 파일로 넘긴다. Windows(MSYS)에서 /dev/fd/3은 네이티브
+# Python이 열 수 없는 경로로 번역되어 판정이 조용히 통과된다.
+# payload는 계속 stdin 전용으로 남으므로 MAX_ARG_STRLEN 제약을 받지 않는다.
+PYSRC=$(mktemp) || exit 0
+trap 'rm -f "$PYSRC"' EXIT
+cat >"$PYSRC" <<'PY'
 import json
 import os
 import subprocess
@@ -76,3 +81,4 @@ print(json.dumps({
     }
 }, ensure_ascii=False))
 PY
+python3 "$PYSRC"

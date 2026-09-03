@@ -12,7 +12,12 @@
 # tool_input에는 파일 본문 전체가 실려 수백 KB가 되므로, 파이썬 스크립트는
 # fd 3으로 주고 stdin은 payload 전용으로 남긴다.
 
-COMMAND=$(python3 /dev/fd/3 3<<'PY' 2>/dev/null
+# Python 본문은 임시 파일로 넘긴다. Windows(MSYS)에서 /dev/fd/3은 네이티브
+# Python이 열 수 없는 경로로 번역되어 판정이 조용히 통과된다.
+# payload는 계속 stdin 전용으로 남으므로 MAX_ARG_STRLEN 제약을 받지 않는다.
+PYSRC=$(mktemp) || exit 0
+trap 'rm -f "$PYSRC"' EXIT
+cat >"$PYSRC" <<'PY'
 import json, os, re, sys
 
 # 아래 패턴 검사는 명령 문자열 전체를 훑는다. 그대로 두면 "실행되지 않는 텍스트"
@@ -83,7 +88,7 @@ ti = d.get("tool_input")
 ti = ti if isinstance(ti, dict) else {}
 print(strip_quoted(strip_comments(strip_heredocs(ti.get("command") or d.get("command") or ""))))
 PY
-)
+COMMAND=$(python3 "$PYSRC" 2>/dev/null)
 [ -z "$COMMAND" ] && exit 0
 
 BLOCKED=""
