@@ -41,6 +41,12 @@
 
 ## 최근 완료 작업
 
+- 아바타 gradient를 시안 policy에 맞게 스코프 지정했다. (2026-09-03, 브랜치 `fix/avatar-gradient-design-scope` `203b3dc`)
+  - 프리뷰 3화면의 `.avatar`가 `[data-design]` 스코프 없는 규칙 하나뿐이라 시안 6종 전부 `wanted`의 gradient를 렌더링했다. 활성 시안 `worknest`는 "gradient 전면 금지 — 아바타·심볼·배너 모두 단색"(`designs/worknest.md:374`)이라 명시적 위반이었다.
+  - `policy.gradient_locations` 기준으로 avatar gradient를 허용하는 시안은 `wanted` 하나뿐이다. 기본 규칙을 토큰 단색(`--bg-brand`/`--fg-on-brand`)으로 바꾸고 gradient를 `[data-design="wanted"]`로 한정했다. `minimal-mono`는 `bg-inverse`/`fg-on-brand`, `toss-like`·`material-3`은 `bg-brand-subtle`/`fg-brand`로 각 문서의 fallback을 반영했다.
+  - 검증: 6시안 × light/dark 12조합 computed style 실측(`wanted`만 gradient, 나머지 10조합 0건), `check-html`·`check-runtime-parity`·`build-nav --check` 통과(WSL 기준).
+  - `build-nav --check`는 네이티브 Windows에서 7화면 전부 stale로 오판한다. 손대지 않은 `guide-browser.html`·`intake.html`까지 포함되고 WSL에서는 전부 통과하므로 CRLF 아티팩트다(4순위 CRLF 항목과 같은 계열).
+
 - Windows에서 무력화되던 가드레일 훅 6종을 복구했다. (2026-09-03, PR #53 `f3b8eb1`)
   - 대상: `block-deploy`, `block-destructive`, `block-secret-files`, `phase-approval`, `state-reminder`, `warn-design-tokens`.
   - `python3 /dev/fd/3 3<<'PY'` -> Python 본문을 `mktemp` 임시 파일로 넘기고 `trap`으로 정리한다. stdin은 payload 전용으로 남는다.
@@ -216,6 +222,8 @@ Windows 이식성 2건은 여기 있다. 주 개발 환경이 WSL이고 2026-09-
 
 - `install.py --link`의 symlink 구분자 (Windows 전용). `relative_link()`가 `"../" * n + "rules/" + rel`로 구분자를 `/`에 고정한다. Linux에서 만든 symlink는 지금도 정상이고, 네이티브 Windows에서만 reparse point가 해석하지 못해 깨진다. 고치려면 `os.path.join(*([".."] * rel.count("/")), "rules", *rel.split("/"))`로 바꾸고 `symlink_to(..., target_is_directory=...)`를 함께 넘긴다. 역슬래시 형태는 WSL에서도 정상 해석되는 것을 실측했으므로(WSL DrvFs가 구분자를 정규화한다) 양쪽 모두 안전한 유일한 형태다. `sos_sccl` 타깃은 이미 손으로 복구했다.
 - `check-codex-skills.mjs`의 CRLF 처리 (Windows 전용). `core.autocrlf=true`로 클론하면 frontmatter 첫 줄이 CRLF로 끝나는데 13행의 `startsWith` 검사가 LF만 기대해 Skill 14종을 전부 누락으로 판정하고 rc=1로 실패한다. WSL 클론은 LF라 영향이 없다. 파서에서 CR를 허용하는 방법과 `.gitattributes`로 정규화하는 방법이 있고, 후자는 저장소 전체 체크아웃에 영향을 준다.
+
+- `linear-like` 시안의 light 테마가 렌더링되지 않는다 (2026-09-03 발견, 기록만). 프리뷰 3화면 공통으로 `linear-like`+light 조합에서 `--bg-canvas`·`--bg-surface`·`--bg-brand`·`--fg-default`·`--border-subtle`이 0/5로 비어 body와 카드 배경까지 투명하다. dark는 5/5 정상이고 다른 시안의 light도 정상이다. `docs/admin-fe-preview.html:111`의 `:root[data-design="linear-like"][data-theme="light"]` 블록 안에 dark 블록이 중첩돼 있고 닫는 중괄호가 어긋난 것으로 보인다. 아바타 수정(`fix/avatar-gradient-design-scope`)에서 이 조합의 아바타가 비어 보이는데, 토큰 fallback으로 가리지 않고 원인을 남겼다. 활성 시안이 아니라 급하지 않다.
 
 - 문서 편집에 새 문서 생성·삭제를 열지 여부. 열려면 경로·명명 규칙 검증을 함께 설계한다.
 - `docs/template-usage.md` 또는 예시 프로젝트 문서 추가.
