@@ -184,7 +184,7 @@ Claude와 Codex가 같은 발화에서 같은 유형을 고르도록 공통 문�
 `.claude/hooks/`에 정의된 셸 스크립트가 도구 실행 전에 자동으로 동작한다.
 설정은 `.claude/settings.local.json`의 `hooks` 섹션에 등록한다. 이 파일은 로컬 전용이라 저장소에 커밋되지 않으므로, 훅을 추가할 때는 `.claude/settings.template.json`에 정본을 두고 각 환경에서 로컬 설정에 옮겨 등록한다.
 
-- `block-destructive.sh` — `rm -rf`, `git reset --hard`, `git push --force`, `git clean -f` 등 파괴적 명령 차단
+- `block-destructive.sh` — 재귀 삭제(`rm -r`/`-rf`/`-R`/`--recursive`), `git reset --hard`, `git push --force`, `git clean -f` 등 파괴적 명령 차단. `scripts/check-destructive-guard.mjs`가 판정을 고정한다
 - `block-deploy.sh` — 배포·릴리스 계열 명령 차단 (`gh workflow run`, `gh release`, `vercel/fly/netlify deploy`, `kubectl apply`, `helm upgrade`, `terraform apply`, `docker push`, `npm publish`, `prisma migrate deploy`, `staging`/`production` 환경 지정 등). 배포는 항상 사용자 수동이다
 - `block-secret-files.sh` — `.env`, `*.pem`, `*.key`, `credentials.json` 등 비밀 파일 쓰기 차단
 - `state-reminder.sh` — `git commit` 시 STATE.md 미갱신 경고 (차단하지 않음)

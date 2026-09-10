@@ -5,7 +5,7 @@ Codex는 Claude Code hooks를 자동 실행하지 않으므로 작업 전에 아
 ## 사용자 확인 필요
 
 - 파일 삭제, 대규모 이동, 구조 재편
-- `rm -rf`, `git reset --hard`, `git clean -f`, 강제 push
+- 재귀 삭제(`rm -r`/`-rf`/`-R`/`--recursive`), `git reset --hard`, `git clean -f`, 강제 push
 - `docker compose down -v`처럼 로컬 데이터를 삭제하는 명령
 - 배포·릴리스 계열 전반. 아래 `## 실행 전 공용 판정기`로 먼저 판정한다.
   - CI/릴리스 트리거: `gh workflow run`, `gh run rerun`, `gh release`, 릴리스 태그 push
