@@ -93,13 +93,24 @@ COMMAND=$(python3 "$PYSRC" 2>/dev/null)
 
 BLOCKED=""
 
-# rm: -r과 -f가 같은 그룹이든 분리되어 있든 모두 차단.
+# rm: 재귀 삭제는 강제 플래그 유무와 무관하게 차단한다. -r·-R·--recursive를 모두 본다.
+# -f를 함께 요구하면 `rm -Rf`(대문자)와 `rm --recursive --force`(장문)가 빠져나가고,
+# 강제 없는 `rm -r`도 그대로 통과한다. 셋 다 되돌릴 수 없는 재귀 삭제다.
 # 위치 제약(줄 시작/체인 뒤)을 두면 `find ... -exec rm -rf {}`나 `sh -c "rm -rf /"`를
 # 놓친다. 데이터 문맥은 앞 단계에서 제거되므로 위치 제약 없이 검사하되, `docker run --rm`
 # 처럼 '-'가 앞에 붙은 플래그는 제외한다.
-if echo "$COMMAND" | grep -qE "(^|[[:space:];&|(\"'])rm[[:space:]]"; then
-  if echo "$COMMAND" | grep -qE '\s-[a-zA-Z]*r' && echo "$COMMAND" | grep -qE '\s-[a-zA-Z]*f'; then
-    BLOCKED="rm -rf"
+# 플래그는 rm 호출 구간(다음 ; && || | 전까지)에서만 찾는다. 명령줄 전체를 훑으면
+# `grep -rn ... && docker compose -f x.yaml rm --force svc`처럼 서로 다른 명령의
+# 플래그를 rm의 것으로 오판해 무해한 명령을 막는다.
+# `git rm --cached`는 색인에서만 빼고 작업 트리 파일은 남긴다. 재귀여도 삭제가 아니므로
+# 제외한다. 다만 `git` 접두어까지 함께 확인한다. 그러지 않으면 `rm -rf dir --cached`처럼
+# 무의미한 인자를 붙이는 것만으로 차단을 지나갈 수 있다.
+RM_ARGS=$(echo "$COMMAND" \
+  | grep -oE "(^|[[:space:];&|(\"'])(git[[:space:]]+)?rm[[:space:]][^;&|]*" \
+  | grep -vE 'git[[:space:]]+rm[[:space:]].*\s--cached\b')
+if [ -n "$RM_ARGS" ]; then
+  if echo "$RM_ARGS" | grep -qE '\s-[a-zA-Z]*[rR]|\s--recursive\b'; then
+    BLOCKED="rm -r"
   fi
 fi
 
