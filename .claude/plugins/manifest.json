@@ -187,7 +187,7 @@
       "files": [
         {
           "path": ".claude/hooks/block-destructive.sh",
-          "description": "Block rm -rf, git reset --hard, etc."
+          "description": "Block recursive rm (-r/-R/--recursive), git reset --hard, etc."
         },
         {
           "path": ".claude/hooks/block-deploy.sh",
