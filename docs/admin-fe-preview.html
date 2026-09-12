@@ -1060,10 +1060,19 @@
     }
     .avatar {
       width: 32px; height: 32px; border-radius: 50%;
-      background: linear-gradient(135deg, oklch(0.563 0.232 257), oklch(0.668 0.260 354), oklch(0.736 0.183 53));
-      color: white; font-size: 13px; font-weight: 600;
+      background: var(--bg-brand);
+      color: var(--fg-on-brand); font-size: 13px; font-weight: 600;
       display: inline-flex; align-items: center; justify-content: center;
     }
+
+    /* 아바타 채움은 각 시안의 policy.gradient_locations 를 따른다.
+       gradient는 "avatar"를 명시한 wanted 전용이고, 나머지 시안은 문서에 적힌 단색 fallback을 쓴다.
+       worknest·material-3·minimal-mono는 gradient_locations: [] (전면 금지),
+       toss-like는 ["hero","table-fade-edge"], linear-like는 ["accent","hero","table-fade-edge"]로 avatar 미포함. */
+    [data-design="wanted"] .avatar { background: linear-gradient(135deg, oklch(0.563 0.232 257), oklch(0.668 0.260 354), oklch(0.736 0.183 53)); color: oklch(1 0 0); }
+    [data-design="minimal-mono"] .avatar { background: var(--bg-inverse); color: var(--fg-on-brand); }
+    [data-design="toss-like"] .avatar,
+    [data-design="material-3"] .avatar { background: var(--bg-brand-subtle); color: var(--fg-brand); }
 
     /* ============================================================
        4) stat-card (KPI)

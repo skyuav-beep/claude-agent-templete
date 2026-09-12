@@ -15,7 +15,12 @@
 # exit 2의 stderr만 모델에게 전달한다. 즉 경고가 아무에게도 도달하지 않았다.
 # 차단하지 않으면서 모델에게 전달하는 방법은 stdout JSON뿐이다.
 
-python3 /dev/fd/3 3<<'PY'
+# Python 본문은 임시 파일로 넘긴다. Windows(MSYS)에서 /dev/fd/3은 네이티브
+# Python이 열 수 없는 경로로 번역되어 판정이 조용히 통과된다.
+# payload는 계속 stdin 전용으로 남으므로 MAX_ARG_STRLEN 제약을 받지 않는다.
+PYSRC=$(mktemp) || exit 0
+trap 'rm -f "$PYSRC"' EXIT
+cat >"$PYSRC" <<'PY'
 import json
 import os
 import re
@@ -106,3 +111,4 @@ print(json.dumps({
     }
 }, ensure_ascii=False))
 PY
+python3 "$PYSRC"

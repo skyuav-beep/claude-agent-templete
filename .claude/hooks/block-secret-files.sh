@@ -9,7 +9,12 @@
 # 본문 전체가 실려 MAX_ARG_STRLEN(128KB)을 넘기므로, 스크립트를 fd 3으로 주고
 # stdin을 payload 전용으로 남긴다.
 
-python3 /dev/fd/3 3<<'PY'
+# Python 본문은 임시 파일로 넘긴다. Windows(MSYS)에서 /dev/fd/3은 네이티브
+# Python이 열 수 없는 경로로 번역되어 판정이 조용히 통과된다.
+# payload는 계속 stdin 전용으로 남으므로 MAX_ARG_STRLEN 제약을 받지 않는다.
+PYSRC=$(mktemp) || exit 0
+trap 'rm -f "$PYSRC"' EXIT
+cat >"$PYSRC" <<'PY'
 import json
 import os
 import re
@@ -135,3 +140,4 @@ for token in tokens:
 
 sys.exit(0)
 PY
+python3 "$PYSRC"

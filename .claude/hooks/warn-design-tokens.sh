@@ -20,7 +20,12 @@
 # 끼워 넣으면 파일 본문이 코드로 해석될 수 있으므로, 스크립트는 fd 3으로 주고
 # payload는 stdin으로만 전달한다.
 
-PARSED=$(python3 /dev/fd/3 3<<'PY' 2>/dev/null
+# Python 본문은 임시 파일로 넘긴다. Windows(MSYS)에서 /dev/fd/3은 네이티브
+# Python이 열 수 없는 경로로 번역되어 판정이 조용히 통과된다.
+# payload는 계속 stdin 전용으로 남으므로 MAX_ARG_STRLEN 제약을 받지 않는다.
+PYSRC=$(mktemp) || exit 0
+trap 'rm -f "$PYSRC"' EXIT
+cat >"$PYSRC" <<'PY'
 import json, os, sys
 
 raw = sys.stdin.read()
@@ -56,7 +61,7 @@ if isinstance(edits, list):
 # 첫 줄은 파일 경로, 나머지는 검사 대상 본문.
 sys.stdout.write(file_path + "\n" + "\n".join(chunks))
 PY
-)
+PARSED=$(python3 "$PYSRC" 2>/dev/null)
 
 [ -z "$PARSED" ] && exit 0
 FILE_PATH=$(printf '%s\n' "$PARSED" | head -n 1)

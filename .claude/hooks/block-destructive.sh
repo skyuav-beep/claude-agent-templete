@@ -12,7 +12,12 @@
 # tool_input에는 파일 본문 전체가 실려 수백 KB가 되므로, 파이썬 스크립트는
 # fd 3으로 주고 stdin은 payload 전용으로 남긴다.
 
-COMMAND=$(python3 /dev/fd/3 3<<'PY' 2>/dev/null
+# Python 본문은 임시 파일로 넘긴다. Windows(MSYS)에서 /dev/fd/3은 네이티브
+# Python이 열 수 없는 경로로 번역되어 판정이 조용히 통과된다.
+# payload는 계속 stdin 전용으로 남으므로 MAX_ARG_STRLEN 제약을 받지 않는다.
+PYSRC=$(mktemp) || exit 0
+trap 'rm -f "$PYSRC"' EXIT
+cat >"$PYSRC" <<'PY'
 import json, os, re, sys
 
 # 아래 패턴 검사는 명령 문자열 전체를 훑는다. 그대로 두면 "실행되지 않는 텍스트"
@@ -83,18 +88,29 @@ ti = d.get("tool_input")
 ti = ti if isinstance(ti, dict) else {}
 print(strip_quoted(strip_comments(strip_heredocs(ti.get("command") or d.get("command") or ""))))
 PY
-)
+COMMAND=$(python3 "$PYSRC" 2>/dev/null)
 [ -z "$COMMAND" ] && exit 0
 
 BLOCKED=""
 
-# rm: -r과 -f가 같은 그룹이든 분리되어 있든 모두 차단.
+# rm: 재귀 삭제는 강제 플래그 유무와 무관하게 차단한다. -r·-R·--recursive를 모두 본다.
+# -f를 함께 요구하면 `rm -Rf`(대문자)와 `rm --recursive --force`(장문)가 빠져나가고,
+# 강제 없는 `rm -r`도 그대로 통과한다. 셋 다 되돌릴 수 없는 재귀 삭제다.
 # 위치 제약(줄 시작/체인 뒤)을 두면 `find ... -exec rm -rf {}`나 `sh -c "rm -rf /"`를
 # 놓친다. 데이터 문맥은 앞 단계에서 제거되므로 위치 제약 없이 검사하되, `docker run --rm`
 # 처럼 '-'가 앞에 붙은 플래그는 제외한다.
-if echo "$COMMAND" | grep -qE "(^|[[:space:];&|(\"'])rm[[:space:]]"; then
-  if echo "$COMMAND" | grep -qE '\s-[a-zA-Z]*r' && echo "$COMMAND" | grep -qE '\s-[a-zA-Z]*f'; then
-    BLOCKED="rm -rf"
+# 플래그는 rm 호출 구간(다음 ; && || | 전까지)에서만 찾는다. 명령줄 전체를 훑으면
+# `grep -rn ... && docker compose -f x.yaml rm --force svc`처럼 서로 다른 명령의
+# 플래그를 rm의 것으로 오판해 무해한 명령을 막는다.
+# `git rm --cached`는 색인에서만 빼고 작업 트리 파일은 남긴다. 재귀여도 삭제가 아니므로
+# 제외한다. 다만 `git` 접두어까지 함께 확인한다. 그러지 않으면 `rm -rf dir --cached`처럼
+# 무의미한 인자를 붙이는 것만으로 차단을 지나갈 수 있다.
+RM_ARGS=$(echo "$COMMAND" \
+  | grep -oE "(^|[[:space:];&|(\"'])(git[[:space:]]+)?rm[[:space:]][^;&|]*" \
+  | grep -vE 'git[[:space:]]+rm[[:space:]].*\s--cached\b')
+if [ -n "$RM_ARGS" ]; then
+  if echo "$RM_ARGS" | grep -qE '\s-[a-zA-Z]*[rR]|\s--recursive\b'; then
+    BLOCKED="rm -r"
   fi
 fi
 

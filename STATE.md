@@ -18,10 +18,11 @@
 - Claude와 Codex 양쪽에 작업 유형·가드레일이 같이 있는지는 `node scripts/check-runtime-parity.mjs`가 검사한다. 한쪽에만 스킬을 추가하면 실패한다.
 
 
+**세션 종료 (2026-09-12, 마지막)** — 가이드 제약도를 진단하고 완화안 2건을 적용했다. 에이전트 가이드가 과한지 물어 측정했다. 항상 로드되는 규칙은 542행이고 의무형 문장 170 대 재량형 24, 훅 10종 중 실제 차단은 3종뿐이었다. 결론은 **위험 통제는 느슨하고 절차·형식이 빡빡하다**였다 — 되돌릴 수 없는 작업만 막고 나머지는 확인에 그치는데, 쓰기가 없는 질의까지 6단계에 묶여 답 하나에 3턴이 들었다. 완화안 4건 중 사용자가 2건을 택했다. `AGENTS.md ## 작업 유형 선택 규칙`의 기능별 세부 구분 5개를 `### 유형이 갈릴 때만 적용하는 구분 기준`으로 내려 상위 규칙으로 유형이 정해지면 읽지 않도록 했다(문장 삭제 0, parity 유지). 읽기 전용 질의의 1·2단계 통합은 **사용자가 거부**해 절차는 그대로다. 범위 밖 변경 1건: 사용자 전역 `~/.claude/CLAUDE.md`의 미러 2절(36행)을 정본 참조로 축약했고(21행), 사후 감사에서 안전 3조항(범위 밖 변경·결과 변동·데이터 소실 보고)이 함께 사라지는 것을 잡아 그 항목만 복원했다. 이 파일은 git 관리 밖이라 커밋에 없다. 마감 시점에 미커밋 변경·미push 커밋·열린 PR·worktree는 없다. 다만 이번 세션과 무관하게 **원격 브랜치 3개가 남아 있었다** — `fix/session-coordination-git-guard`는 PR #52로 머지돼 삭제했고, `docs/2026-09-03-windows-portability`(상태 기록 5커밋)와 `fix/avatar-gradient-design-scope`(프리뷰 3화면 수정)는 **PR 없이 미머지 상태**라 손대지 않고 `## 다음 작업` 2순위에 올렸다. 9월 3일 작업이 main에 반영되지 않은 상태다. 재개 지점은 `## 다음 작업` 1순위이고, 이번 세션의 미결(라우팅 표 줄이기)은 2순위에 있다. 세션 마감 뒤 사용자 요청으로 `fix/avatar-gradient-design-scope`를 확인해 PR #57(`9f2ac1d`)로 머지하고 로컬·원격 브랜치를 정리했다 — 프리뷰 3화면의 아바타가 시안과 무관하게 gradient로 칠해져 활성 시안 `worknest`의 gradient 전면 금지를 위반하던 것을 단색 토큰 기본값 + `[data-design="wanted"]` 한정으로 고친 유효한 수정이었다. 확인 중 `docs/user-fe-preview.html` 1행의 오타 문자열을 발견했으나 별건이라 함께 고치지 않고 `## 다음 작업` 2순위에 남겼다. 최종 마감 시점에 미커밋·미push·열린 PR·worktree·승인 마커는 없고, 원격 `docs/2026-09-03-windows-portability`만 미머지로 남아 있다.
 **세션 기록 (2026-09-03, Windows 첫 사용에서 드러난 이식성 결함 3건)** — `sos_sccl` 릴리스 후보에 템플릿을 처음 적용하다 Windows에서만 나타나는 결함 3건을 찾았다. 가장 위험했던 것은 **가드레일 훅 6종이 조용히 무력화**돼 있던 점이다. `python3 /dev/fd/3 3<<'PY'`로 Python 본문을 넘기는데 MSYS가 `/dev/fd/3`을 네이티브 Python이 열 수 없는 경로로 번역하고, `2>/dev/null`이 에러를 삼켜 판정이 비면 `exit 0`으로 통과한다. 실측에서 `vercel deploy --prod`·`terraform apply`·`gh release create`·`rm -rf /`가 전부 rc=0으로 통과했다. Python 본문을 임시 파일로 넘기고 stdin은 payload 전용으로 남겨 고쳤다 — `block-secret-files.sh`가 fd 3을 쓴 이유가 Write의 `tool_input`이 `MAX_ARG_STRLEN`(128KB)을 넘기기 때문이라, 환경변수나 argv로 넘기는 방식은 그 제약을 되살린다(300KB payload로 확인). 판정 로직은 한 줄도 바꾸지 않아 POSIX 동작에 차이가 없다. 둘째는 `install.py --link`가 만든 symlink가 Windows에서 전부 깨져 있던 것이다. `relative_link()`가 구분자를 `/`로 하드코딩하는데 Windows reparse point는 역슬래시만 해석한다. `rules` 하나만 살아 있던 건 그것만 `os.path.relpath()`를 쓰기 때문이고, Git Bash가 reparse point를 자체 해석해 `ls`/`cat`은 멀쩡해 보이는 것이 함정이다. 타깃 링크는 복구했으나 **`install.py` 자체는 아직 고치지 않았다**. 셋째는 `check-codex-skills.mjs`가 `core.autocrlf=true` 클론에서 rc=1로 실패하는 것이다(frontmatter 첫 줄이 CRLF라 13행의 LF 기대 검사가 Skill 14종을 전부 누락으로 판정한다). **세 결함 모두 네이티브 Windows 전용이고 WSL은 해당하지 않는다** — 성립 조건이 각각 MSYS의 경로 번역, NTFS reparse point, `autocrlf=true` 체크아웃이라 WSL에서는 어느 것도 성립하지 않는다. 이를 WSL2 Ubuntu에서 실측으로 확인했고, 수정한 훅이 Linux에서 동일하게 동작하는 것과 역슬래시 symlink가 WSL DrvFs에서 정상 해석되는 것도 같이 확인했다. 그래서 남은 2건(`install.py`, `check-codex-skills.mjs`)은 2순위가 아니라 `## 다음 작업` 4순위에 둔다. 네이티브 Windows를 쓸 계획이 생기면 그때 올린다.
 
 **세션 기록 (2026-08-27, 세션 조정 사각지대 두 곳)** — 연결 프로젝트(`sos`)에서 두 창이 같은 저장소를 쓰다 세 번 부딪힌 뒤, 기존 조정 장치가 닿지 않던 두 곳을 메웠다. **hook 이 `Edit|Write` 에만 걸려 있어 git 명령은 통과**했다 — 한쪽이 만든 브랜치를 다른 창이 `git push origin --delete` 로 지워도 아무 확인이 없었고, 커밋을 되짚을 단서는 reflog 뿐이었다. 이제 다른 세션이 등록돼 있을 때에 한해 브랜치·원격 ref·worktree 삭제와 force push 를 확인 대상으로 돌린다(11종 포착, 정상 명령 9종 무개입 확인). 또 하나는 **등록의 `pid` 가 비어 생존 검사가 불가능**했던 것이다. `SESSION_COORD_OWNER_PID` 가 없으면 부모를 거슬러 실행기 프로세스를 찾아 기록하므로, 창이 사라진 등록은 TTL 8시간을 기다리지 않고 정리된다. `.claude/settings.template.json` 의 `Bash` matcher 연결은 **이미 설치된 프로젝트에 자동 전파되지 않는다** — 각 프로젝트의 `settings.json` 은 복사본이라 직접 추가해야 한다. hook 스크립트 자체는 symlink 라 즉시 반영된다.
-**세션 종료 (2026-08-25, 마지막)** — 세션 마감 스킬 `session-end`를 만들어 배포하고(PR #47 `6eae247`), 이어서 PR 머지가 매번 막히던 원인을 규명했다. 스킬은 종료 절차 자체가 아니라 **트리거의 부재**를 고친 것이다 — 절차는 `docs/finish-checklist.md`와 `git-cleanup`에 이미 있었지만 "세션종료해줘"에 걸리는 키워드가 어느 스킬에도 없어 실행 여부가 매번 에이전트 판단에 달려 있었다. 머지 차단은 설정 오류가 아니라 계층 문제였다. 사용자 전역 허용 목록에 `Bash(gh pr merge:*)`가 이미 등록돼 있는데도 막혔는데, `auto` 모드에서는 분류기 판정이 허용 목록보다 우선하고 `autoMode.allow` 배열이 비어 있어 기본 soft_deny 규칙(되돌리기 어려운 작업)이 그대로 적용됐다. 저장소 문서는 6단계에서 머지를 승인 범위에 넣었으므로 문서와 런타임이 어긋난 상태였다. 미커밋 변경·미push 커밋·열린 PR·잔여 브랜치·worktree는 없다. 재개 지점은 `## 다음 작업` 1순위이며, 사용자 직접 실행이 필요한 분류기 설정과 승인 대기 중인 가이드 반영안이 2순위에 있다.
+**세션 종료 (2026-08-25)** — 세션 마감 스킬 `session-end`를 만들어 배포하고(PR #47 `6eae247`), 이어서 PR 머지가 매번 막히던 원인을 규명했다. 스킬은 종료 절차 자체가 아니라 **트리거의 부재**를 고친 것이다 — 절차는 `docs/finish-checklist.md`와 `git-cleanup`에 이미 있었지만 "세션종료해줘"에 걸리는 키워드가 어느 스킬에도 없어 실행 여부가 매번 에이전트 판단에 달려 있었다. 머지 차단은 설정 오류가 아니라 계층 문제였다. 사용자 전역 허용 목록에 `Bash(gh pr merge:*)`가 이미 등록돼 있는데도 막혔는데, `auto` 모드에서는 분류기 판정이 허용 목록보다 우선하고 `autoMode.allow` 배열이 비어 있어 기본 soft_deny 규칙(되돌리기 어려운 작업)이 그대로 적용됐다. 저장소 문서는 6단계에서 머지를 승인 범위에 넣었으므로 문서와 런타임이 어긋난 상태였다. 미커밋 변경·미push 커밋·열린 PR·잔여 브랜치·worktree는 없다. 재개 지점은 `## 다음 작업` 1순위이며, 사용자 직접 실행이 필요한 분류기 설정과 승인 대기 중인 가이드 반영안이 2순위에 있다.
 
 이전 세션(2026-08-23): Claude와 Codex의 런타임 parity 갭 7건을 해소했다(PR #45 `83d8860`). 두 레이어를 1:1 대조해 자동 검사가 잡지 못하던 구조적 갭을 찾았고, 가장 위험했던 것은 배포 차단이 Claude 훅에만 있어 Codex에서는 클라우드 배포·컨테이너 push·패키지 publish·인프라 apply가 무방비였던 점이다. 훅 수정 없이 해결했다 — 가드레일 3종이 이미 단순 JSON 입력으로 정확히 판정하므로 Codex가 같은 스크립트를 판정 전용으로 호출한다. 차단 기준이 한 곳에만 남아 두 런타임이 갈라질 여지가 없다. 재발 방지로 `scripts/check-runtime-parity.mjs`를 넣어 한쪽에만 스킬을 추가하면 검사가 실패한다. 미커밋 변경·열린 PR·미완료 worktree는 없고 재개 지점은 `## 다음 작업` 1순위 그대로다.
 
@@ -41,7 +42,16 @@
 
 ## 최근 완료 작업
 
-- 아바타 gradient를 시안 policy에 맞게 스코프 지정했다. (2026-09-03, 브랜치 `fix/avatar-gradient-design-scope` `203b3dc`)
+- 파괴적 명령 차단 훅의 오탐을 없애고 재귀 삭제 차단 범위를 넓혔다. (2026-09-10)
+  - 플래그를 명령줄 전체가 아니라 `rm` 호출 구간에서만 찾는다. 종전에는 `grep -rn ... && docker compose -f x.yaml rm --force svc`처럼 서로 다른 명령의 `-r`과 `-f`를 `rm`의 것으로 오판해 무해한 명령을 막았다. 소비 프로젝트에서 실제로 두 번 막혔다.
+  - 판정 기준을 "재귀 삭제인가" 하나로 바꾸고 `-r`·`-R`·`--recursive`를 모두 인식한다. 종전 규칙은 소문자 `r`과 `-f`를 함께 요구해 **`rm -Rf`와 `rm --recursive --force`가 그대로 통과했다.** 강제 없는 `rm -r`도 막지 못했다. 셋 다 되돌릴 수 없는 재귀 삭제다.
+  - 범위를 넓히면서 `git rm -r`이 새로 걸린다. 작업 트리 파일을 실제로 지우므로 차단이 맞다. 다만 `git rm -r --cached`는 색인에서만 빼므로 예외로 통과시킨다. 예외는 `git` 접두어까지 확인한다. 그러지 않으면 `rm -rf dir --cached`처럼 무의미한 인자를 붙이는 것만으로 차단을 지나갈 수 있다.
+  - 나머지 차단 규칙 4종과 따옴표·주석·heredoc 전처리는 바꾸지 않았다.
+  - `scripts/check-destructive-guard.mjs`를 추가했다. 훅을 실제로 실행해 종료 코드로 판정하며, 차단 16건과 통과 11건을 고정한다.
+  - 훅 설명이 적힌 세 곳(`CLAUDE.md`, Codex safety checklist, 플러그인 manifest)을 실제 판정에 맞춰 정정했다. manifest는 소비 프로젝트에 함께 배포된다.
+  - 검증: 회귀 검사 27/27 통과, `check-runtime-parity.mjs` 회귀 없음, 소비 프로젝트에서 오탐 명령 실측 통과.
+
+- 아바타 gradient를 시안 policy에 맞게 스코프 지정했다. (2026-09-03 작업, PR #57 `9f2ac1d`로 머지)
   - 프리뷰 3화면의 `.avatar`가 `[data-design]` 스코프 없는 규칙 하나뿐이라 시안 6종 전부 `wanted`의 gradient를 렌더링했다. 활성 시안 `worknest`는 "gradient 전면 금지 — 아바타·심볼·배너 모두 단색"(`designs/worknest.md:374`)이라 명시적 위반이었다.
   - `policy.gradient_locations` 기준으로 avatar gradient를 허용하는 시안은 `wanted` 하나뿐이다. 기본 규칙을 토큰 단색(`--bg-brand`/`--fg-on-brand`)으로 바꾸고 gradient를 `[data-design="wanted"]`로 한정했다. `minimal-mono`는 `bg-inverse`/`fg-on-brand`, `toss-like`·`material-3`은 `bg-brand-subtle`/`fg-brand`로 각 문서의 fallback을 반영했다.
   - 검증: 6시안 × light/dark 12조합 computed style 실측(`wanted`만 gradient, 나머지 10조합 0건), `check-html`·`check-runtime-parity`·`build-nav --check` 통과(WSL 기준).
@@ -185,6 +195,7 @@
   - 이번에 해소한 누적분: #39·#40·#41·#45·#47·#48·#49와 #52, 그리고 위 두 브랜치. 2026-08-23 이후 미실행 상태였다.
   - `build-docs-index.mjs --check`는 검증이 아니라 빌드 단계다. 산출물 `docs/docs-index.json`이 `.gitignore:10`에 등록돼 커밋되지 않으므로 fresh clone에서는 어느 브랜치든 항상 실패한다. 생성기를 한 번 돌린 뒤 검사해야 한다. 다음 CI에서 게이트로 오해하지 않도록 남긴다.
   - manifest 경로 검사는 `install.py`의 `manifest_files()`를 그대로 써야 한다. JSON을 직접 훑으면 경로가 아닌 문자열(command 설명 등)까지 주워 누락 오탐이 난다.
+- **2026-09-03 이후 누적분이 다시 쌓였다: #54·#55·#56·#57·#58·#59.** 모두 문서와 훅 범위이며 각 PR 에서 개별 검증했다(#54 는 회귀 검사 27/27 포함). 누적 기준(3~5건)을 넘겼으므로 다음 세션 초반에 전체 로컬 CI 를 한 번 돌린다.
 - 전체 로컬 CI는 3~5개 작업 누적, 하루 종료, 릴리스 전 또는 사용자 명시 요청 시 별도 6단계 작업으로 실행한다.
 - 네이티브 Windows에서 돌릴 때만 `check-codex-skills.mjs`가 CRLF 때문에 실패한다(4순위 참조). WSL에서는 그대로 읽으면 된다.
 
@@ -199,7 +210,10 @@
 - 중점: 활성 시안 `worknest`의 light/dark 대비, 카드 헤어라인 보더와 그림자 정책(hover lift·overlay 한정), gradient 전면 금지 준수, 사이드바·active 채움 전용 토큰 렌더링.
 - 의도와 다른 부분이 나오면 관련 카탈로그와 `DESIGN.md`, `STATE.md`를 같은 작업에서 갱신한다.
 
-### 2순위 — 사용자 판단이 필요한 6건
+### 2순위 — 사용자 판단이 필요한 8건
+
+
+- 라우팅 표 줄이기 (2026-09-12 제안, 답변 대기). `AGENTS.md ## Context Map`은 45항목 74행이고 항상 로드된다. 별도 문서로 분리하는 안은 보류했다 — 색인을 읽어야 한다는 사실부터 알아야 해서 왕복만 늘고, 절감은 14%에 그치며, 연결 프로젝트 17곳에 파급된다. 대신 intake 설문 12종 묶음을 한 줄로 접고 항목별 설명을 다듬는 축약안을 제안했다. 승인하면 바로 구현 가능하다.
 
 - 머지 권한 열기 (2026-08-25 인계, 사용자 직접 실행). `~/.claude/settings.json`의 `autoMode`에 `"allow": ["$defaults", "Bash(gh pr merge:*)"]`를 추가하고 Claude Code를 재시작한다. 일반 허용 목록(`permissions.allow`)에는 이미 있으나 분류기 판정이 우선해 효과가 없다. `"$defaults"`를 빼면 내장 허용 규칙이 전부 사라진다. 에이전트는 이 편집도 편집용 스크립트 작성도 분류기에 막히므로 사용자가 직접 해야 한다. 되돌리려면 편집 전 백업(`~/.claude/settings.json.bak-<날짜>`)을 덮어쓴다. 적용 전까지는 6단계 마감이 머지에서 멈추고 `!gh pr merge <num> --squash --delete-branch`로 인계된다.
 - 머지 가이드 반영안 (2026-08-25, 승인 대기). `docs/local-dev-ci-guide.md §6.3`에 "실행 환경이 막으면" 항목을 추가하고, `session-end` 스킬 2종(Claude·Codex)에 마감이 머지에서 멈출 수 있음을 명시한다. 문구 초안은 이번 세션 대화에 있고 승인만 하면 바로 구현 가능하다. `riderwebapp`에만 있던 항목을 공통 정본으로 올리는 작업이다.
