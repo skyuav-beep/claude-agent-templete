@@ -7,7 +7,7 @@
 - 역할별 지침은 `agents/`, 요청·intake 양식은 `templates/`, 프로젝트·검증 가이드는 `docs/`에 둔다.
 - Claude Code 자동화는 `.claude/`, Codex 네이티브 Skill은 `.agents/skills/`, Codex 승인·검증 어댑터는 `.codex/`에 둔다.
 - 프로젝트 가이드는 템플릿 배포 원본에서 초기 scaffold를 유지하고 소비 프로젝트가 intake 결과로 교체한다.
-- 이 템플릿을 `rules/` symlink로 참조하는 연결 프로젝트는 2026-08-22 실측 기준 17개다(GoldFX, aica2, aiospace, ccaa, goldlink, icnft, icwp2p, makeupshop, mlm_v1.0, riderapp-runtime, riderwebapp, signal2, skim, sos_sccl, tokendtu, trippass, vwallet. 작업용 worktree 2개는 별도). 전원 `.claude/` 하위 7종 symlink 배선이 끝나 있어 템플릿 개정이 즉시 반영된다. 초기 런타임 앱이던 sibling `../riderapp-runtime/`은 현재 git 저장소가 아니고 활동이 없어 참조 구현으로 삼지 않는다.
+- 이 템플릿을 `rules/` symlink로 참조하는 연결 프로젝트는 2026-08-22 실측 기준 17개다(GoldFX, aica2, aiospace, ccaa, goldlink, icnft, icwp2p, makeupshop, mlm_v1.0, riderapp-runtime, riderwebapp, signal2, skim, sos_sccl, tokendtu, trippass, vwallet. 작업용 worktree 2개는 별도). 전원 `.claude/` 하위 7종 symlink 배선이 끝나 있어 템플릿 개정이 즉시 반영된다. 이 17개는 POSIX 환경 실측치다. 주 개발 환경은 WSL이며 템플릿은 거기서 정상 동작한다. 2026-09-03 네이티브 Windows PC(`C: Projects`) 실측에서는 연결 프로젝트가 `sos_sccl` 릴리스 후보 1곳뿐이고, 템플릿이 네이티브 Windows에서 쓰인 것이 이날이 처음이라 그전까지 Windows 전용 결함이 드러나지 않았다. 초기 런타임 앱이던 sibling `../riderapp-runtime/`은 현재 git 저장소가 아니고 활동이 없어 참조 구현으로 삼지 않는다.
 - 작업 알림은 Claude Code 사용자 전역 설정과 Codex `notify`에 등록되어 두 런타임 모두 동작 중이다. 구성·조정·되돌리기는 `docs/notification-guide.md`.
 - Claude와 Codex는 각각 `.claude/CLAUDE.md`와 `.codex/README.md`를 실행 게이트로 삼아 같은 6단계 절차를 적용한다. 연결 프로젝트는 이 파일들을 공통본 symlink로 참조하므로 템플릿 개정이 즉시 반영된다.
 - 프로젝트에 들어오는 개념·백서·요구사항·설계·개발계획을 시간순과 주제별로 보관하는 공통 지식 관리 체계를 `docs/knowledge-management-guide.md`와 `templates/` 양식으로 정의했다.
@@ -19,6 +19,8 @@
 
 
 **세션 종료 (2026-09-12, 마지막)** — 가이드 제약도를 진단하고 완화안 2건을 적용했다. 에이전트 가이드가 과한지 물어 측정했다. 항상 로드되는 규칙은 542행이고 의무형 문장 170 대 재량형 24, 훅 10종 중 실제 차단은 3종뿐이었다. 결론은 **위험 통제는 느슨하고 절차·형식이 빡빡하다**였다 — 되돌릴 수 없는 작업만 막고 나머지는 확인에 그치는데, 쓰기가 없는 질의까지 6단계에 묶여 답 하나에 3턴이 들었다. 완화안 4건 중 사용자가 2건을 택했다. `AGENTS.md ## 작업 유형 선택 규칙`의 기능별 세부 구분 5개를 `### 유형이 갈릴 때만 적용하는 구분 기준`으로 내려 상위 규칙으로 유형이 정해지면 읽지 않도록 했다(문장 삭제 0, parity 유지). 읽기 전용 질의의 1·2단계 통합은 **사용자가 거부**해 절차는 그대로다. 범위 밖 변경 1건: 사용자 전역 `~/.claude/CLAUDE.md`의 미러 2절(36행)을 정본 참조로 축약했고(21행), 사후 감사에서 안전 3조항(범위 밖 변경·결과 변동·데이터 소실 보고)이 함께 사라지는 것을 잡아 그 항목만 복원했다. 이 파일은 git 관리 밖이라 커밋에 없다. 마감 시점에 미커밋 변경·미push 커밋·열린 PR·worktree는 없다. 다만 이번 세션과 무관하게 **원격 브랜치 3개가 남아 있었다** — `fix/session-coordination-git-guard`는 PR #52로 머지돼 삭제했고, `docs/2026-09-03-windows-portability`(상태 기록 5커밋)와 `fix/avatar-gradient-design-scope`(프리뷰 3화면 수정)는 **PR 없이 미머지 상태**라 손대지 않고 `## 다음 작업` 2순위에 올렸다. 9월 3일 작업이 main에 반영되지 않은 상태다. 재개 지점은 `## 다음 작업` 1순위이고, 이번 세션의 미결(라우팅 표 줄이기)은 2순위에 있다. 세션 마감 뒤 사용자 요청으로 `fix/avatar-gradient-design-scope`를 확인해 PR #57(`9f2ac1d`)로 머지하고 로컬·원격 브랜치를 정리했다 — 프리뷰 3화면의 아바타가 시안과 무관하게 gradient로 칠해져 활성 시안 `worknest`의 gradient 전면 금지를 위반하던 것을 단색 토큰 기본값 + `[data-design="wanted"]` 한정으로 고친 유효한 수정이었다. 확인 중 `docs/user-fe-preview.html` 1행의 오타 문자열을 발견했으나 별건이라 함께 고치지 않고 `## 다음 작업` 2순위에 남겼다. 최종 마감 시점에 미커밋·미push·열린 PR·worktree·승인 마커는 없고, 원격 `docs/2026-09-03-windows-portability`만 미머지로 남아 있다.
+**세션 기록 (2026-09-03, Windows 첫 사용에서 드러난 이식성 결함 3건)** — `sos_sccl` 릴리스 후보에 템플릿을 처음 적용하다 Windows에서만 나타나는 결함 3건을 찾았다. 가장 위험했던 것은 **가드레일 훅 6종이 조용히 무력화**돼 있던 점이다. `python3 /dev/fd/3 3<<'PY'`로 Python 본문을 넘기는데 MSYS가 `/dev/fd/3`을 네이티브 Python이 열 수 없는 경로로 번역하고, `2>/dev/null`이 에러를 삼켜 판정이 비면 `exit 0`으로 통과한다. 실측에서 `vercel deploy --prod`·`terraform apply`·`gh release create`·`rm -rf /`가 전부 rc=0으로 통과했다. Python 본문을 임시 파일로 넘기고 stdin은 payload 전용으로 남겨 고쳤다 — `block-secret-files.sh`가 fd 3을 쓴 이유가 Write의 `tool_input`이 `MAX_ARG_STRLEN`(128KB)을 넘기기 때문이라, 환경변수나 argv로 넘기는 방식은 그 제약을 되살린다(300KB payload로 확인). 판정 로직은 한 줄도 바꾸지 않아 POSIX 동작에 차이가 없다. 둘째는 `install.py --link`가 만든 symlink가 Windows에서 전부 깨져 있던 것이다. `relative_link()`가 구분자를 `/`로 하드코딩하는데 Windows reparse point는 역슬래시만 해석한다. `rules` 하나만 살아 있던 건 그것만 `os.path.relpath()`를 쓰기 때문이고, Git Bash가 reparse point를 자체 해석해 `ls`/`cat`은 멀쩡해 보이는 것이 함정이다. 타깃 링크는 복구했으나 **`install.py` 자체는 아직 고치지 않았다**. 셋째는 `check-codex-skills.mjs`가 `core.autocrlf=true` 클론에서 rc=1로 실패하는 것이다(frontmatter 첫 줄이 CRLF라 13행의 LF 기대 검사가 Skill 14종을 전부 누락으로 판정한다). **세 결함 모두 네이티브 Windows 전용이고 WSL은 해당하지 않는다** — 성립 조건이 각각 MSYS의 경로 번역, NTFS reparse point, `autocrlf=true` 체크아웃이라 WSL에서는 어느 것도 성립하지 않는다. 이를 WSL2 Ubuntu에서 실측으로 확인했고, 수정한 훅이 Linux에서 동일하게 동작하는 것과 역슬래시 symlink가 WSL DrvFs에서 정상 해석되는 것도 같이 확인했다. 그래서 남은 2건(`install.py`, `check-codex-skills.mjs`)은 2순위가 아니라 `## 다음 작업` 4순위에 둔다. 네이티브 Windows를 쓸 계획이 생기면 그때 올린다.
+
 **세션 기록 (2026-08-27, 세션 조정 사각지대 두 곳)** — 연결 프로젝트(`sos`)에서 두 창이 같은 저장소를 쓰다 세 번 부딪힌 뒤, 기존 조정 장치가 닿지 않던 두 곳을 메웠다. **hook 이 `Edit|Write` 에만 걸려 있어 git 명령은 통과**했다 — 한쪽이 만든 브랜치를 다른 창이 `git push origin --delete` 로 지워도 아무 확인이 없었고, 커밋을 되짚을 단서는 reflog 뿐이었다. 이제 다른 세션이 등록돼 있을 때에 한해 브랜치·원격 ref·worktree 삭제와 force push 를 확인 대상으로 돌린다(11종 포착, 정상 명령 9종 무개입 확인). 또 하나는 **등록의 `pid` 가 비어 생존 검사가 불가능**했던 것이다. `SESSION_COORD_OWNER_PID` 가 없으면 부모를 거슬러 실행기 프로세스를 찾아 기록하므로, 창이 사라진 등록은 TTL 8시간을 기다리지 않고 정리된다. `.claude/settings.template.json` 의 `Bash` matcher 연결은 **이미 설치된 프로젝트에 자동 전파되지 않는다** — 각 프로젝트의 `settings.json` 은 복사본이라 직접 추가해야 한다. hook 스크립트 자체는 symlink 라 즉시 반영된다.
 **세션 종료 (2026-08-25)** — 세션 마감 스킬 `session-end`를 만들어 배포하고(PR #47 `6eae247`), 이어서 PR 머지가 매번 막히던 원인을 규명했다. 스킬은 종료 절차 자체가 아니라 **트리거의 부재**를 고친 것이다 — 절차는 `docs/finish-checklist.md`와 `git-cleanup`에 이미 있었지만 "세션종료해줘"에 걸리는 키워드가 어느 스킬에도 없어 실행 여부가 매번 에이전트 판단에 달려 있었다. 머지 차단은 설정 오류가 아니라 계층 문제였다. 사용자 전역 허용 목록에 `Bash(gh pr merge:*)`가 이미 등록돼 있는데도 막혔는데, `auto` 모드에서는 분류기 판정이 허용 목록보다 우선하고 `autoMode.allow` 배열이 비어 있어 기본 soft_deny 규칙(되돌리기 어려운 작업)이 그대로 적용됐다. 저장소 문서는 6단계에서 머지를 승인 범위에 넣었으므로 문서와 런타임이 어긋난 상태였다. 미커밋 변경·미push 커밋·열린 PR·잔여 브랜치·worktree는 없다. 재개 지점은 `## 다음 작업` 1순위이며, 사용자 직접 실행이 필요한 분류기 설정과 승인 대기 중인 가이드 반영안이 2순위에 있다.
 
@@ -48,6 +50,28 @@
   - `scripts/check-destructive-guard.mjs`를 추가했다. 훅을 실제로 실행해 종료 코드로 판정하며, 차단 16건과 통과 11건을 고정한다.
   - 훅 설명이 적힌 세 곳(`CLAUDE.md`, Codex safety checklist, 플러그인 manifest)을 실제 판정에 맞춰 정정했다. manifest는 소비 프로젝트에 함께 배포된다.
   - 검증: 회귀 검사 27/27 통과, `check-runtime-parity.mjs` 회귀 없음, 소비 프로젝트에서 오탐 명령 실측 통과.
+
+- 아바타 gradient를 시안 policy에 맞게 스코프 지정했다. (2026-09-03 작업, PR #57 `9f2ac1d`로 머지)
+  - 프리뷰 3화면의 `.avatar`가 `[data-design]` 스코프 없는 규칙 하나뿐이라 시안 6종 전부 `wanted`의 gradient를 렌더링했다. 활성 시안 `worknest`는 "gradient 전면 금지 — 아바타·심볼·배너 모두 단색"(`designs/worknest.md:374`)이라 명시적 위반이었다.
+  - `policy.gradient_locations` 기준으로 avatar gradient를 허용하는 시안은 `wanted` 하나뿐이다. 기본 규칙을 토큰 단색(`--bg-brand`/`--fg-on-brand`)으로 바꾸고 gradient를 `[data-design="wanted"]`로 한정했다. `minimal-mono`는 `bg-inverse`/`fg-on-brand`, `toss-like`·`material-3`은 `bg-brand-subtle`/`fg-brand`로 각 문서의 fallback을 반영했다.
+  - 검증: 6시안 × light/dark 12조합 computed style 실측(`wanted`만 gradient, 나머지 10조합 0건), `check-html`·`check-runtime-parity`·`build-nav --check` 통과(WSL 기준).
+  - `build-nav --check`는 네이티브 Windows에서 7화면 전부 stale로 오판한다. 손대지 않은 `guide-browser.html`·`intake.html`까지 포함되고 WSL에서는 전부 통과하므로 CRLF 아티팩트다(4순위 CRLF 항목과 같은 계열).
+
+- Windows에서 무력화되던 가드레일 훅 6종을 복구했다. (2026-09-03, PR #53 `f3b8eb1`)
+  - 대상: `block-deploy`, `block-destructive`, `block-secret-files`, `phase-approval`, `state-reminder`, `warn-design-tokens`.
+  - `python3 /dev/fd/3 3<<'PY'` -> Python 본문을 `mktemp` 임시 파일로 넘기고 `trap`으로 정리한다. stdin은 payload 전용으로 남는다.
+  - 셸 래퍼만 바뀌었다(42+/9-). Python 본문은 바이트 단위로 동일해 POSIX 동작에 차이가 없다.
+  - 검증(Windows): `bash -n` 훅 10종, 차단 기대 8건 전부 rc=2·통과 기대 6건 전부 rc=0, 5회 호출 임시파일 누수 0, `check-runtime-parity.mjs` 통과, 타깃에서 symlink 경유 end-to-end 확인.
+  - 검증(WSL2 Ubuntu, Python 3.12.3): LF로 정규화해 정상 WSL 클론을 재현한 뒤 차단 기대 5건 전부 rc=2·통과 기대 3건 전부 rc=0, 10회 호출 임시파일 누수 0. POSIX 동작 동일이 추론이 아니라 실측으로 확인됐다.
+  - `rm -rf ./build` 차단은 `block-destructive.sh:96`의 의도된 동작이다(위치 제약을 두면 `find -exec rm -rf`를 놓쳐 일부러 뺐다고 주석에 명시). 회귀가 아니다.
+  - PR #53으로 머지됐다(`f3b8eb1`, squash). 작업 브랜치 `fix/windows-hook-python-delivery`는 삭제됐다. `gh`가 미인증 상태라 PR 생성은 사용자가 브라우저로 했다.
+
+- `sos_sccl` 릴리스 후보(`20260830_Coding_Agent_v1_Git_Release_Candidate`)에 템플릿을 연결했다. (2026-09-03)
+  - `--adopt` 작업 169건·보호 1건(`STATE.md`)·충돌 0, 이어서 `--link`로 실행 레이어 9종과 `rules` 연결. 플러그인 `3.8.0`.
+  - `--link`가 만든 symlink 9종이 Windows에서 전부 깨져 `os.path.join` 기반으로 다시 걸었다. skills 14·commands 14·hooks 10 전부 네이티브 해석 확인.
+  - `.gitignore`에 실행 레이어 5종(`/.claude/`, `/.agents/`, `/.codex`, `/rules`, `/.agent-template-backup-*/`)을 추가했다. 저장소 밖 상대경로 symlink라 커밋하면 다른 환경에서 깨진다.
+  - 공유 문서(`AGENTS.md`, `DESIGN.md`, `agents/`, `designs/`, `docs/`, `templates/`)는 ignore하지 않고 untracked로 남겼다. 커밋 여부는 그 저장소에서 판단한다.
+  - 설치 중 다른 세션이 같은 저장소에서 `Dockerfile.runtime`·`tools/run_ci_quality_gates.py`를 수정하고 `tests/test_runtime_git_line_endings_contract.py`를 추가했다. 건드리지 않았다.
 
 - `>` 단독 입력을 다음 단계 진행 단축 입력으로 정의했다. (2026-08-27)
   - 공통 승인 workflow와 Claude/Codex 실행 문서에 적용 범위와 위험 작업 예외를 기록했다.
@@ -165,9 +189,15 @@
 
 ## 전체 CI 배치 대기열
 
-- 현재 필수 대기 항목은 없다.
-- PR 7건이 누적됐다(#39·#40·#41·#45·#47·#48·#49). 모두 문서와 훅·검사 스크립트 범위이며 bash 구문, 훅 동작 프로브(세션 조정 6종·배포 차단 25종·가드레일 판정 8종), parity 검사, manifest 경로·중복, 설치 dry-run, 링크·HTML 검사로 각각 검증했다. 누적 기준(3~5건)을 넘겼으므로 다음 세션 초반에 전체 로컬 CI를 한 번 돌린다.
+- **2026-09-03 WSL2 Ubuntu에서 전체 로컬 CI를 돌려 20/20 통과했다. 누적 대기열은 비었다.**
+  - 실행 환경: WSL 네이티브 FS에 클론(LF 체크아웃), 당시 `main`에 `fix/windows-hook-python-delivery`(현 #53)와 `docs/2026-09-03-windows-portability`를 병합한 통합 커밋 기준. node v22.22.0 / Python 3.12.3 / git 2.43.0.
+  - 검사 항목: Node 스크립트 5종, 훅 `bash -n` 11종(Codex `notify-codex.sh` 포함), manifest JSON·경로 169건(중복 0·누락 0), 설치 dry-run 2종(`--new`·`--adopt` 모두 충돌 0), 마크다운 상대 링크 108건(깨짐 0), 가드레일 판정 24건(불일치 0).
+  - 이번에 해소한 누적분: #39·#40·#41·#45·#47·#48·#49와 #52, 그리고 위 두 브랜치. 2026-08-23 이후 미실행 상태였다.
+  - `build-docs-index.mjs --check`는 검증이 아니라 빌드 단계다. 산출물 `docs/docs-index.json`이 `.gitignore:10`에 등록돼 커밋되지 않으므로 fresh clone에서는 어느 브랜치든 항상 실패한다. 생성기를 한 번 돌린 뒤 검사해야 한다. 다음 CI에서 게이트로 오해하지 않도록 남긴다.
+  - manifest 경로 검사는 `install.py`의 `manifest_files()`를 그대로 써야 한다. JSON을 직접 훑으면 경로가 아닌 문자열(command 설명 등)까지 주워 누락 오탐이 난다.
+- **2026-09-03 이후 누적분이 다시 쌓였다: #54·#55·#56·#57·#58·#59.** 모두 문서와 훅 범위이며 각 PR 에서 개별 검증했다(#54 는 회귀 검사 27/27 포함). 누적 기준(3~5건)을 넘겼으므로 다음 세션 초반에 전체 로컬 CI 를 한 번 돌린다.
 - 전체 로컬 CI는 3~5개 작업 누적, 하루 종료, 릴리스 전 또는 사용자 명시 요청 시 별도 6단계 작업으로 실행한다.
+- 네이티브 Windows에서 돌릴 때만 `check-codex-skills.mjs`가 CRLF 때문에 실패한다(4순위 참조). WSL에서는 그대로 읽으면 된다.
 
 ## 다음 작업
 
@@ -180,11 +210,10 @@
 - 중점: 활성 시안 `worknest`의 light/dark 대비, 카드 헤어라인 보더와 그림자 정책(hover lift·overlay 한정), gradient 전면 금지 준수, 사이드바·active 채움 전용 토큰 렌더링.
 - 의도와 다른 부분이 나오면 관련 카탈로그와 `DESIGN.md`, `STATE.md`를 같은 작업에서 갱신한다.
 
-### 2순위 — 사용자 판단이 필요한 9건
+### 2순위 — 사용자 판단이 필요한 8건
 
 
 - 라우팅 표 줄이기 (2026-09-12 제안, 답변 대기). `AGENTS.md ## Context Map`은 45항목 74행이고 항상 로드된다. 별도 문서로 분리하는 안은 보류했다 — 색인을 읽어야 한다는 사실부터 알아야 해서 왕복만 늘고, 절감은 14%에 그치며, 연결 프로젝트 17곳에 파급된다. 대신 intake 설문 12종 묶음을 한 줄로 접고 항목별 설명을 다듬는 축약안을 제안했다. 승인하면 바로 구현 가능하다.
-- `docs/2026-09-03-windows-portability` 브랜치 처리. main에 없는 커밋 5개이나 실제 diff는 `STATE.md` 1개다. 9월 3일 전체 CI 통과 기록과 아바타 gradient 결함 기록이 담겨 있고 PR이 없다. 내용을 확인해 PR로 올릴지 버릴지 정한다.
 
 - 머지 권한 열기 (2026-08-25 인계, 사용자 직접 실행). `~/.claude/settings.json`의 `autoMode`에 `"allow": ["$defaults", "Bash(gh pr merge:*)"]`를 추가하고 Claude Code를 재시작한다. 일반 허용 목록(`permissions.allow`)에는 이미 있으나 분류기 판정이 우선해 효과가 없다. `"$defaults"`를 빼면 내장 허용 규칙이 전부 사라진다. 에이전트는 이 편집도 편집용 스크립트 작성도 분류기에 막히므로 사용자가 직접 해야 한다. 되돌리려면 편집 전 백업(`~/.claude/settings.json.bak-<날짜>`)을 덮어쓴다. 적용 전까지는 6단계 마감이 머지에서 멈추고 `!gh pr merge <num> --squash --delete-branch`로 인계된다.
 - 머지 가이드 반영안 (2026-08-25, 승인 대기). `docs/local-dev-ci-guide.md §6.3`에 "실행 환경이 막으면" 항목을 추가하고, `session-end` 스킬 2종(Claude·Codex)에 마감이 머지에서 멈출 수 있음을 명시한다. 문구 초안은 이번 세션 대화에 있고 승인만 하면 바로 구현 가능하다. `riderwebapp`에만 있던 항목을 공통 정본으로 올리는 작업이다.
@@ -202,6 +231,13 @@
 - 연결 프로젝트에 템플릿을 새로 설치할 때 알림 스크립트 4종이 `managed_prefixes` 규칙대로 전달되는지 첫 설치에서 확인한다.
 
 ### 4순위 — 선택 개선
+
+Windows 이식성 2건은 여기 있다. 주 개발 환경이 WSL이고 2026-09-03 실측에서 WSL은 두 결함 모두에 해당하지 않는 것이 확인됐다. 네이티브 Windows에서 템플릿을 쓸 계획이 생기면 그때 올린다.
+
+- `install.py --link`의 symlink 구분자 (Windows 전용). `relative_link()`가 `"../" * n + "rules/" + rel`로 구분자를 `/`에 고정한다. Linux에서 만든 symlink는 지금도 정상이고, 네이티브 Windows에서만 reparse point가 해석하지 못해 깨진다. 고치려면 `os.path.join(*([".."] * rel.count("/")), "rules", *rel.split("/"))`로 바꾸고 `symlink_to(..., target_is_directory=...)`를 함께 넘긴다. 역슬래시 형태는 WSL에서도 정상 해석되는 것을 실측했으므로(WSL DrvFs가 구분자를 정규화한다) 양쪽 모두 안전한 유일한 형태다. `sos_sccl` 타깃은 이미 손으로 복구했다.
+- `check-codex-skills.mjs`의 CRLF 처리 (Windows 전용). `core.autocrlf=true`로 클론하면 frontmatter 첫 줄이 CRLF로 끝나는데 13행의 `startsWith` 검사가 LF만 기대해 Skill 14종을 전부 누락으로 판정하고 rc=1로 실패한다. WSL 클론은 LF라 영향이 없다. 파서에서 CR를 허용하는 방법과 `.gitattributes`로 정규화하는 방법이 있고, 후자는 저장소 전체 체크아웃에 영향을 준다.
+
+- `linear-like` 시안의 light 테마가 렌더링되지 않는다 (2026-09-03 발견, 기록만). 프리뷰 3화면 공통으로 `linear-like`+light 조합에서 `--bg-canvas`·`--bg-surface`·`--bg-brand`·`--fg-default`·`--border-subtle`이 0/5로 비어 body와 카드 배경까지 투명하다. dark는 5/5 정상이고 다른 시안의 light도 정상이다. `docs/admin-fe-preview.html:111`의 `:root[data-design="linear-like"][data-theme="light"]` 블록 안에 dark 블록이 중첩돼 있고 닫는 중괄호가 어긋난 것으로 보인다. 아바타 수정(`fix/avatar-gradient-design-scope`)에서 이 조합의 아바타가 비어 보이는데, 토큰 fallback으로 가리지 않고 원인을 남겼다. 활성 시안이 아니라 급하지 않다.
 
 - 문서 편집에 새 문서 생성·삭제를 열지 여부. 열려면 경로·명명 규칙 검증을 함께 설계한다.
 - `docs/template-usage.md` 또는 예시 프로젝트 문서 추가.
