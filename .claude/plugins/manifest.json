@@ -203,7 +203,7 @@
         },
         {
           "path": ".claude/hooks/phase-approval.sh",
-          "description": "Block Claude edits before Step 3 approval and from main worktree"
+          "description": "Ask before Claude edits without Step 3 approval or in the main worktree; STATE.md and docs/archive/ records are exempt"
         },
         {
           "path": ".claude/hooks/session-coordination.sh",
