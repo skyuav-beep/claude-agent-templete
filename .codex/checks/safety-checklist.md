@@ -33,9 +33,11 @@ Codex는 Claude Code hooks를 자동 실행하지 않는다. 대신 같은 스�
 Bash 명령 실행 전:
 
 ```bash
-echo '{"command":"<실행할 명령>"}' | bash .claude/hooks/block-destructive.sh
+echo '{"command":"<실행할 명령>","cwd":"<명령을 실행할 위치>"}' | bash .claude/hooks/block-destructive.sh
 echo '{"command":"<실행할 명령>"}' | bash .claude/hooks/block-deploy.sh
 ```
+
+`cwd`는 `git reset --hard`처럼 대상 저장소의 상태로 판정하는 명령에 쓰인다. 생략하면 판정기를 호출한 위치를 쓴다.
 
 파일 쓰기 전:
 
@@ -43,8 +45,10 @@ echo '{"command":"<실행할 명령>"}' | bash .claude/hooks/block-deploy.sh
 echo '{"tool_name":"Write","tool_input":{"file_path":"<경로>"}}' | bash .claude/hooks/block-secret-files.sh
 ```
 
-- 종료 코드 `0`이면 그대로 진행한다.
+- 종료 코드 `0`이고 출력이 없으면 그대로 진행한다.
+- 종료 코드 `0`이지만 출력에 `"permissionDecision": "ask"`가 있으면 출력된 사유를 사용자에게 보여 주고 Codex 승인 요청으로 확인받은 뒤 실행한다.
 - 종료 코드 `2`면 실행하지 않는다. 출력된 사유와 필요한 명령을 사용자에게 전달하고 사용자가 직접 실행하도록 둔다.
+- `git reset --hard`가 보존할 작업 때문에 보류되면 사유에 적힌 대로 `.codex/workflows/git-cleanup.md ## reset 전 보존 정리`를 먼저 진행한다.
 - 스크립트를 찾을 수 없으면 위 `## 사용자 확인 필요` 목록으로 직접 판단한다.
 - 차단 패턴의 정본은 스크립트다. 이 문서에 패턴 목록을 복제하지 않는다.
 

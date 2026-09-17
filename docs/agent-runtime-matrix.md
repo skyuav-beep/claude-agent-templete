@@ -31,7 +31,7 @@
 | 작업 요청 구조화 | `.claude/skills/{feature,bugfix,refactor,review,business-logic}` | `.agents/skills/{feature,bugfix,refactor,review,business-logic}` 자동 선택 -> 동명 `.codex/workflows/*` | `templates/*-request.md` |
 | 디자인 규칙 | `.claude/skills/design/SKILL.md` 자동 로드 | `.agents/skills/design/SKILL.md` 자동 선택 → `.codex/workflows/design.md` | `DESIGN.md`, `docs/design-guidelines.md` |
 | 작업 유형 선택 | `.claude/skills/*` description 트리거 | `.agents/skills/*` description 자동 선택 | `AGENTS.md ## 작업 유형 선택 규칙` |
-| 파괴적 명령 차단 | `.claude/hooks/block-destructive.sh` PreToolUse 자동 차단 | 같은 스크립트를 실행 전 판정 전용으로 호출 (`.codex/checks/safety-checklist.md ## 실행 전 공용 판정기`) | `AGENTS.md` 사용자 확인 규칙 |
+| 파괴적 명령 차단 | `.claude/hooks/block-destructive.sh` PreToolUse 자동 차단 (`git reset --hard`는 보존 확인 후 확인 요청) | 같은 스크립트를 실행 전 판정 전용으로 호출, 확인 요청 출력은 Codex 승인으로 연결 (`.codex/checks/safety-checklist.md ## 실행 전 공용 판정기`) | `AGENTS.md` 사용자 확인 규칙 |
 | 배포·릴리스 차단 | `.claude/hooks/block-deploy.sh` PreToolUse 자동 차단 | 같은 스크립트를 실행 전 판정 전용으로 호출 | `CLAUDE.md ## Golden Rules` |
 | 비밀 파일 차단 | `.claude/hooks/block-secret-files.sh` PreToolUse 자동 차단 | 같은 스크립트를 쓰기 전 판정 전용으로 호출 | `.codex/checks/safety-checklist.md` |
 | 3단계 승인 게이트 | `.claude/hooks/phase-approval.sh` 확인 요청 | `.codex/README.md ## 단계 실행 계약`의 단계 선언 봉투 | `docs/approval-workflow.md` |

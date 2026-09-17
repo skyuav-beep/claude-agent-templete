@@ -10,5 +10,6 @@ description: 미커밋 변경, 미push 커밋, 열린 PR, 남은 브랜치·work
 3. 정리 계획과 Git 수명주기를 제시하고 승인받는다.
 4. 승인 후 빠른 검증, STATE, commit, push, PR, merge, base SHA 확인, cleanup 순으로 진행한다.
 5. 배포·release·원격 migration·강제 push는 실행하지 않는다.
+6. `git reset --hard`가 남은 작업 때문에 보류되면 정리와 머지를 먼저 끝내고, reset을 실행한 뒤 브랜치·worktree를 삭제한다.
 
 상세 절차는 `.codex/workflows/git-cleanup.md`를 따른다.

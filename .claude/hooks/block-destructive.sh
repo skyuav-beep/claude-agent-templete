@@ -15,8 +15,13 @@
 # Python 본문은 임시 파일로 넘긴다. Windows(MSYS)에서 /dev/fd/3은 네이티브
 # Python이 열 수 없는 경로로 번역되어 판정이 조용히 통과된다.
 # payload는 계속 stdin 전용으로 남으므로 MAX_ARG_STRLEN 제약을 받지 않는다.
+# `git reset --hard` 판정은 payload를 한 번 더 읽어야 하므로 stdin을 임시 파일에
+# 받아 두고 두 스크립트에 각각 리다이렉트로 넘긴다.
 PYSRC=$(mktemp) || exit 0
-trap 'rm -f "$PYSRC"' EXIT
+trap 'rm -f "$PYSRC" "$RESETSRC" "$PAYLOAD"' EXIT
+RESETSRC=$(mktemp) || exit 0
+PAYLOAD=$(mktemp) || exit 0
+cat >"$PAYLOAD"
 cat >"$PYSRC" <<'PY'
 import json, os, re, sys
 
@@ -88,8 +93,187 @@ ti = d.get("tool_input")
 ti = ti if isinstance(ti, dict) else {}
 print(strip_quoted(strip_comments(strip_heredocs(ti.get("command") or d.get("command") or ""))))
 PY
-COMMAND=$(python3 "$PYSRC" 2>/dev/null)
+COMMAND=$(python3 "$PYSRC" <"$PAYLOAD" 2>/dev/null)
 [ -z "$COMMAND" ] && exit 0
+
+# `git reset --hard`는 막지 않고 실행 직전에 확인받는다. 다만 커밋하지 않은 변경이나
+# 원격 어디에도 없는 커밋이 있으면 reset이 그것을 되돌릴 수 없게 지우므로, 먼저
+# Git 정리(커밋 -> push -> PR -> 머지)로 보존하도록 보류한다.
+# 추적하지 않는 파일은 보통 남지만, 대상 커밋에 같은 경로가 있으면 경고 없이 덮어써지므로
+# 그 경우만 보존 대상에 넣는다.
+# 사용자가 버려도 된다고 분명히 말하면 에이전트가 일회용 폐기 확인 파일을 만들고,
+# 이 판정은 그 파일을 읽는 즉시 지운 뒤 사라질 작업을 경고하며 확인을 요청한다.
+cat >"$RESETSRC" <<'PY'
+import json, os, re, shlex, subprocess, sys
+
+
+def git(cwd, *args):
+    result = subprocess.run(["git", "-C", cwd, *args], capture_output=True, text=True, timeout=15)
+    return result.stdout.strip() if result.returncode == 0 else None
+
+
+def split_args(text):
+    try:
+        return shlex.split(text)
+    except ValueError:
+        return text.split()
+
+
+def hold(reason):
+    print(f"[Hooks L3] 보류: {reason}", file=sys.stderr)
+    sys.exit(2)
+
+
+def ask(reason):
+    print(json.dumps({
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "ask",
+            "permissionDecisionReason": f"[Hooks L3] {reason}",
+        }
+    }, ensure_ascii=False))
+    sys.exit(0)
+
+
+raw = sys.stdin.read()
+if not raw.strip():
+    raw = os.environ.get("CLAUDE_TOOL_INPUT", "")
+try:
+    payload = json.loads(raw)
+except Exception:
+    payload = {}
+payload = payload if isinstance(payload, dict) else {}
+ti = payload.get("tool_input")
+ti = ti if isinstance(ti, dict) else {}
+command = ti.get("command") or payload.get("command") or ""
+
+# reset 호출을 찾는다. git 전역 옵션(-C, -c)이나 reset 옵션(-q)이 사이에 끼거나
+# --hard가 대상 커밋 뒤에 와도 같은 호출로 본다.
+call = None
+for found in re.finditer(r"\bgit\s+(?:([^;&|\n]*?)\s+)?reset\s+([^;&|)\n]*)", command):
+    reset_args = split_args(found.group(2))
+    if "--hard" in reset_args:
+        call = found
+        break
+if not call:
+    hold("'git reset --hard' 위치를 명령에서 찾지 못해 보존 여부를 확인할 수 없습니다.")
+
+
+def move(base, dest):
+    if dest == "-" or "$" in dest or "`" in dest:
+        hold(f"reset 대상 경로 '{dest}'를 해석할 수 없어 대상 저장소를 확인하지 못했습니다. 저장소 안에서 직접 실행하세요.")
+    return os.path.normpath(os.path.join(base, os.path.expanduser(dest)))
+
+
+# 대상 저장소: 작업 위치에서 reset 앞의 cd/pushd를 순서대로 따라간 뒤 git -C를 적용한다.
+workdir = payload.get("cwd") or os.getcwd()
+for cd in re.finditer(r"(?:^|[;&|(\n])\s*(?:cd|pushd)(?=[\s;&|)]|$)([^;&|)\n]*)", command[:call.start()]):
+    dests = [p for p in split_args(cd.group(1)) if p == "-" or not p.startswith("-")]
+    workdir = move(workdir, dests[0] if dests else "~")
+global_args = split_args(call.group(1) or "")
+index = 0
+while index < len(global_args):
+    arg = global_args[index]
+    if arg.startswith("--git-dir") or arg.startswith("--work-tree"):
+        hold("--git-dir나 --work-tree로 지정한 저장소는 보존 여부를 확인하지 못합니다. 저장소 안에서 직접 실행하세요.")
+    if arg in ("-C", "-c") and index + 1 < len(global_args):
+        if arg == "-C":
+            workdir = move(workdir, global_args[index + 1])
+        index += 2
+        continue
+    index += 1
+
+top = git(workdir, "rev-parse", "--show-toplevel") if os.path.isdir(workdir) else None
+if not top:
+    hold(f"reset 대상 저장소를 확인하지 못했습니다(위치: {workdir}). 보존할 작업이 있는지 알 수 없어 실행하지 않습니다.")
+
+# 대상 커밋: reset 인자 중 첫 비옵션 인자. 없으면 HEAD다.
+reset_args = split_args(call.group(2))
+if "--" in reset_args:
+    reset_args = reset_args[:reset_args.index("--")]
+target = next((t for t in reset_args if not t.startswith("-")), "HEAD")
+
+status = git(top, "status", "--porcelain", "--untracked-files=no")
+if status is None:
+    hold(f"저장소 상태를 읽지 못했습니다({top}).")
+dirty = len([line for line in status.splitlines() if line.strip()])
+
+head_exists = git(top, "rev-parse", "--verify", "--quiet", "HEAD") is not None
+target_sha = git(top, "rev-parse", "--verify", "--quiet", f"{target}^{{commit}}")
+
+# reset 뒤 원격 어디에도 남지 않는 커밋. 대상을 해석하지 못하면 대상 없이 보수적으로 센다.
+lost = 0
+if head_exists:
+    args = ["rev-list", "--count", "HEAD", "--not", "--remotes"]
+    if target_sha:
+        args.append(target_sha)
+    counted = git(top, *args)
+    if counted is None or not counted.isdigit():
+        hold(f"원격에 없는 커밋을 세지 못했습니다({top}).")
+    lost = int(counted)
+
+# 대상 커밋에서 새로 생기는 경로에 추적하지 않는 파일이 있으면 reset이 덮어쓴다.
+# 상위 경로 자리에 파일이 있어 디렉터리로 바뀌는 경우도 같다. 색인에 있는 파일은
+# 이미 커밋하지 않은 변경으로 셌으므로 뺀다.
+clobbered = []
+if head_exists and target_sha:
+    added = git(top, "diff", "--name-only", "--no-renames", "--diff-filter=A", "-z", "HEAD", target_sha)
+    if added is None:
+        hold(f"대상 커밋과 겹치는 파일을 확인하지 못했습니다({top}).")
+    at_risk = set()
+    for rel in filter(None, added.split("\0")):
+        parts = rel.split("/")
+        for depth in range(1, len(parts) + 1):
+            full = os.path.join(top, *parts[:depth])
+            if depth == len(parts):
+                if os.path.lexists(full):
+                    at_risk.add(rel)
+            elif os.path.lexists(full) and not os.path.isdir(full):
+                at_risk.add("/".join(parts[:depth]))
+                break
+            elif not os.path.isdir(full):
+                break
+    if at_risk:
+        indexed = git(top, "ls-files", "-z")
+        if indexed is None:
+            hold(f"추적 중인 파일 목록을 읽지 못했습니다({top}).")
+        clobbered = sorted(at_risk - set(indexed.split("\0")))
+
+work = f"커밋하지 않은 변경 {dirty}개, 원격에 없는 커밋 {lost}개, 덮어써질 추적 안 되는 파일 {len(clobbered)}개"
+if clobbered:
+    work += "(" + ", ".join(clobbered[:5]) + (" 등" if len(clobbered) > 5 else "") + ")"
+
+common = git(top, "rev-parse", "--path-format=absolute", "--git-common-dir")
+main_repo = os.path.dirname(os.path.realpath(common)) if common else top
+session_id = re.sub(r"[^A-Za-z0-9_.-]", "_", str(payload.get("session_id") or ""))
+marker_name = f"{session_id}.reset-discard" if session_id else "reset-discard"
+marker = os.path.join(main_repo, ".claude", ".approval", marker_name)
+discard = os.path.exists(marker)
+if discard:
+    try:
+        os.remove(marker)
+    except OSError:
+        pass
+
+if dirty or lost or clobbered:
+    if not discard:
+        hold(
+            f"'git reset --hard'가 지울 작업이 남아 있습니다(저장소 {top}: {work}). "
+            "먼저 Git 정리 절차(git-cleanup)로 커밋 -> push -> PR -> 머지를 마치고, fetch로 원격 기준을 갱신한 뒤 다시 실행하세요. "
+            + ("덮어써질 추적 안 되는 파일은 커밋하거나 다른 위치로 옮기세요. " if clobbered else "")
+            + "작업 브랜치 삭제는 reset 뒤에 합니다. 먼저 지우면 이미 머지된 커밋도 원격에 없는 것으로 판정됩니다. "
+            f"사용자가 이 작업을 버려도 된다고 분명히 말한 경우에만 폐기 확인 파일 {marker}을 만든 뒤 다시 실행하세요. "
+            "파일은 한 번 쓰면 지워지고, 실행 직전 확인을 한 번 더 받습니다."
+        )
+    ask(
+        f"경고: 사용자의 폐기 확인에 따라 정리 없이 'git reset --hard'를 실행합니다. "
+        f"저장소 {top}의 작업이 사라집니다({work}). 버려도 되면 허용하세요."
+    )
+ask(
+    f"확인: 'git reset --hard'를 실행합니다. 저장소 {top}에 보존할 작업"
+    "(커밋하지 않은 변경, 원격에 없는 커밋, 덮어써질 추적 안 되는 파일)은 없습니다. 진행하려면 허용하세요."
+)
+PY
 
 BLOCKED=""
 
@@ -114,7 +298,10 @@ if [ -n "$RM_ARGS" ]; then
   fi
 fi
 
-echo "$COMMAND" | grep -qE 'git\s+reset\s+--hard' && BLOCKED="git reset --hard"
+# reset: `git -C dir reset --hard`, `git reset -q --hard`, `git reset <커밋> --hard`처럼
+# git 전역 옵션이나 reset 옵션이 끼어도, --hard가 뒤에 와도 같은 명령이다.
+RESET_HARD=""
+echo "$COMMAND" | grep -qE 'git\s+([^;&|]*\s)?reset\s+([^;&|]*\s)?--hard\b' && RESET_HARD="git reset --hard"
 echo "$COMMAND" | grep -qE 'git\s+push\s+.*(-f|--force)\b' && BLOCKED="git push --force"
 echo "$COMMAND" | grep -qE 'git\s+clean\s+.*-[a-zA-Z]*f' && BLOCKED="git clean -f"
 echo "$COMMAND" | grep -qE 'git\s+checkout\s+\.\s*$' && BLOCKED="git checkout ."
@@ -122,6 +309,18 @@ echo "$COMMAND" | grep -qE 'git\s+checkout\s+\.\s*$' && BLOCKED="git checkout ."
 if [ -n "$BLOCKED" ]; then
   echo "[Hooks L3] 차단: '$BLOCKED' 패턴이 감지되었습니다. 파괴적 명령은 사용자 확인 후 실행하세요." >&2
   exit 2
+fi
+
+# 판정이 확인 요청(0)이나 보류(2) 외의 코드로 끝나면 보존 여부를 모르는 것이므로
+# 종전처럼 막는다.
+if [ -n "$RESET_HARD" ]; then
+  python3 "$RESETSRC" <"$PAYLOAD"
+  rc=$?
+  if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then
+    echo "[Hooks L3] 차단: '$RESET_HARD'의 보존 여부 판정에 실패했습니다. 사용자 확인 후 실행하세요." >&2
+    exit 2
+  fi
+  exit "$rc"
 fi
 
 exit 0
