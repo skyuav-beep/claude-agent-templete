@@ -23,6 +23,7 @@
 ## 기록
 
 - 문서나 운영 규칙 변경이면 `STATE.md`를 갱신했다. 갱신 여부는 다시 묻지 않는다.
+- 응답에 "`STATE.md`에 기록할까요?" 같은 기록 여부 질문을 남기지 않았다. 기록한 사실만 한 줄로 알렸다(`docs/approval-workflow.md ## 재확인하지 않는 작업`).
 - `DESIGN.md`를 바꿨다면 관련 design catalog와 `STATE.md` 변경 이력을 확인했다.
 
 ## 응답 형식
