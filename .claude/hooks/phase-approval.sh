@@ -50,7 +50,18 @@ target_git = git(target_dir, "rev-parse", "--path-format=absolute", "--git-commo
 if os.path.realpath(target_git) != project_git:
     sys.exit(0)
 
-# The Step 3 marker is checked first: once the session is approved the user
+# Fact records are covered by every Step 3 approval (docs/approval-workflow.md
+# "## 재확인하지 않는 작업"), so asking again only interrupts the finish step,
+# typically after the marker has already been removed. This applies in the main
+# checkout and in worktrees alike. docs/99-archive/ is not a record: moving a
+# document there is a structure change and still needs approval.
+target_top = git(target_dir, "rev-parse", "--show-toplevel")
+if target_top:
+    relative = os.path.relpath(target, os.path.realpath(target_top)).replace(os.sep, "/")
+    if relative == "STATE.md" or relative.startswith("docs/archive/"):
+        sys.exit(0)
+
+# The Step 3 marker is checked next: once the session is approved the user
 # should not be asked again, whichever tree the change lands in.
 session_id = payload.get("session_id") or "<session_id>"
 marker = os.path.join(os.path.dirname(project_git), ".claude", ".approval", session_id)
