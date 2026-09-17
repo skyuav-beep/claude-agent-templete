@@ -15,6 +15,7 @@ argument-hint: "[브랜치명 | PR번호 | 비워두면 전체]"
 2. **개발 내용 먼저 요약** — 파일 목록만 나열하지 말고 변경 내용을 읽어 어떤 작업이 어디까지 진행됐는지 설명한다. 커밋 가능한 완결 변경과 미완성 변경을 구분한다.
 3. **정리 계획 제시** — 항목별 처리 방안과 판단이 갈리는 선택지를 함께 제시한다.
 4. **승인 후 실행** — `docs/approval-workflow.md` 3단계 승인 후 6단계 순서대로: 빠른 검증 → `STATE.md` 기록 → commit → push → ready PR → 게이트 확인 → merge → 원격 base SHA 검증 → 브랜치·worktree 정리.
+5. **reset 전 보존 정리** — `git reset --hard`가 남은 작업 때문에 보류됐으면 위 순서로 머지와 원격 base SHA 검증까지 마친 뒤 `git fetch` → reset 재실행 → 브랜치·worktree 정리 순으로 진행한다. 상세는 `git-cleanup` 스킬의 `## reset 전 보존 정리`를 따른다.
 
 ## 인수 처리
 
