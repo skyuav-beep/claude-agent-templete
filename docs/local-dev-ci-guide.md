@@ -257,7 +257,7 @@ git 작업(브랜치 생성 → 빠른 검증 → push → 머지 → 정리)의
 - 절차:
   ```bash
   # PR 기반: GitHub UI 또는
-  gh pr merge <num> --squash --delete-branch
+  gh pr merge <num> --squash        # --delete-branch 금지 — 정리는 §6.5 순서로
   # 로컬 직접 머지(프로젝트 정책이 허용할 때):
   git checkout main && git pull --rebase origin main
   git merge --squash feat/orders-cancel-window && git commit
@@ -273,19 +273,26 @@ git 작업(브랜치 생성 → 빠른 검증 → push → 머지 → 정리)의
   - **제거**: 워크플로 파일을 삭제한다.
 - 배포/릴리스 워크플로는 agent가 trigger/dispatch하지 않는다(§5, 사용자 수동).
 
-### 6.5. 브랜치 정리 (cleanup)
+### 6.5. 브랜치·worktree 정리 (cleanup)
 
-머지가 끝나면 작업 브랜치를 정리한다.
+머지가 끝나면 브랜치를 정리한다. 전용 worktree를 썼다면 **worktree를 먼저 제거해 브랜치 점유를 푼 뒤** 삭제한다 — 순서를 바꾸면 git이 삭제를 거부한다.
 
 ```bash
-# 로컬 머지 브랜치 삭제 — unmerged면 git이 거부(안전)
+# 1) 전용 worktree 제거 — worktree를 쓴 경우에만. 브랜치 점유 해제 (등록만 남은 고아 대비 prune)
+git worktree remove ../<repo>-wt-<주제> && git worktree prune
+# 2) 로컬 머지 브랜치 삭제 — unmerged면 git이 거부(안전)
 git branch -d feat/orders-cancel-window
-# 원격 브랜치 삭제 — 3단계에서 승인된 수명주기 범위
+# 3) 원격 브랜치 삭제 — 3단계에서 승인된 수명주기 범위
 git push origin --delete feat/orders-cancel-window
-# 삭제된 원격 추적 ref 정리
+# 4) 삭제된 원격 추적 ref 정리
 git fetch --prune
 ```
 
+- **`gh pr merge --delete-branch`는 worktree와 함께 쓰지 않는다.** 브랜치가 worktree에 체크아웃돼 있으면 git이 삭제·체크아웃을 막아 로컬 정리 단계에서 죽는다 — 메인 저장소에서 실행하면 `cannot delete branch '<br>' used by worktree at ...`, worktree 안에서 실행하면 `fatal: '<base>' is already used by worktree at ...`로 끝난다. 원인은 같고 문구만 다르다.
+- ⚠️ 이 오류가 나도 **원격 머지는 이미 끝나 있다.** 머지를 재시도하거나 "머지 실패"로 보고하지 않는다. 확인은 `gh pr view <num> --json state,mergeCommit`.
+- ⚠️ 같은 실패에서 `--delete-branch`의 **원격 삭제 단계까지 건너뛴다.** 잔존 여부는 추적 ref(`git branch -r`)가 아니라 `git ls-remote --heads origin <br>`으로 확인한다.
+- squash 머지에서는 `git merge-base --is-ancestor`가 항상 실패한다(원본 commit이 조상이 아님). 삭제 전 안전 확인은 `gh pr view <num> --json mergeCommit`의 머지 commit이 base에 들어갔는지로 한다.
+- `git worktree remove`는 추적 파일 수정·추적되지 않은 파일이 있으면 거부한다(`.gitignore` 대상인 빌드 산출물·`node_modules`는 차단 사유가 아니다). 거부되면 `--force`로 밀지 말고 남은 작업부터 확인한다.
 - 로컬 `git branch -d`는 머지 안 된 브랜치를 거부하므로 안전하다.
 - `git branch -D`(강제 삭제)는 미머지 작업을 잃으므로 사용자 확인 없이는 쓰지 않는다(`block-destructive.sh` 점검 대상).
 - 원격 삭제·`--prune`는 3단계에서 승인되고 원격 base의 머지 반영을 검증한 뒤 수행한다.
