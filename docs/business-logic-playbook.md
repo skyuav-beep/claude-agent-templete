@@ -212,7 +212,8 @@ git push -u origin feat/orders-cancel-window
 # gh pr create --title ... --body ... (또는 웹 UI)
 
 # 6) 빠른 검증 후 머지·브랜치/worktree 정리 (§6.3 / §6.5)
-# gh pr merge <num> --squash --delete-branch
+# gh pr merge <num> --squash                          # --delete-branch 금지 (§6.5)
+# git worktree remove ../<repo>-wt-<주제>              # worktree를 썼다면 이것부터 — 브랜치 점유 해제
 git branch -d feat/orders-cancel-window               # 로컬 (unmerged면 거부 — 안전)
 git push origin --delete feat/orders-cancel-window    # 원격 (사용자 요청 시)
 git fetch --prune
