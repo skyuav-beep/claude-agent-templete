@@ -302,7 +302,12 @@ fi
 # git 전역 옵션이나 reset 옵션이 끼어도, --hard가 뒤에 와도 같은 명령이다.
 RESET_HARD=""
 echo "$COMMAND" | grep -qE 'git\s+([^;&|]*\s)?reset\s+([^;&|]*\s)?--hard\b' && RESET_HARD="git reset --hard"
-echo "$COMMAND" | grep -qE 'git\s+push\s+.*(-f|--force)\b' && BLOCKED="git push --force"
+# push: 강제 옵션은 push 호출 구간(다음 ; && || | 전까지)에서, 공백 뒤 옵션 토큰으로만 찾는다.
+# 구간을 넘기면 `git push origin --delete x; rm -f y`의 `rm -f`를 push 강제로 오판하고,
+# 토큰 경계를 보지 않으면 `topic-f` 같은 브랜치 이름까지 막는다. 옵션 뒤 경계는 공백만이 아니라
+# 이름에 쓰이지 않는 모든 문자로 본다. `git push -f;ls`, `(git push -f)`, `bash -c "git push -f"`처럼
+# 기호가 바로 붙어도 강제 push다.
+echo "$COMMAND" | grep -qE 'git\s+push\s+([^;&|]*\s)?(-[a-zA-Z]*f[a-zA-Z]*|--force(-with-lease|-if-includes)?)(=[^[:space:]]*)?([^[:alnum:]_-]|$)' && BLOCKED="git push --force"
 echo "$COMMAND" | grep -qE 'git\s+clean\s+.*-[a-zA-Z]*f' && BLOCKED="git clean -f"
 echo "$COMMAND" | grep -qE 'git\s+checkout\s+\.\s*$' && BLOCKED="git checkout ."
 
