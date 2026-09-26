@@ -46,6 +46,13 @@
 
 ## 최근 완료 작업
 
+- admin 화면 가이드를 여백 최소·밀도 우선 구성으로 바꿨다. (2026-09-26, PR #71)
+  - 출발점은 admin 페이지가 여백이 과하고, 열을 많이 나눠 넓은 화면에서 오른쪽이 비는 문제였다. 원인은 콘텐츠 최대 너비 1280 권장, 상세 화면 좌 720 / 우 320 고정, 대시보드 열 수 고정이었다.
+  - `docs/admin-fe-design-guide.md`에 `## 밀도 우선 레이아웃 원칙`을 신설했다: 위치별 여백 기본·상한·Mobile 표(콘텐츠 `space-16`, 카드 안쪽 `space-16` 상한 `space-20`, 카드 사이 `space-12`), `auto-fit` 최소 폭 기반 열 분할(`auto-fill` 금지), 내용 적은 카드 합치기(KPI `stat-card`는 예외), 페이지 분할 2열 상한, content max-width 제거.
+  - 화면 골격·로그인·대시보드·리스트 빈 상태·상세·폼 패턴 수치를 새 상한에 맞췄고, 시안별 비교표 수치는 유지하되 상한이 우선한다고 명시했다.
+  - 범위 밖으로 남긴 것: `docs/user-fe-design-guide.md`의 "admin은 1280" 문장, `docs/admin-fe-preview.html`의 max-width 1280 표시, 활성 시안 `DESIGN.md`(admin 표면 미정의).
+  - 검증: `check-runtime-parity` 통과, `build-nav --check` 7화면 최신, 비-4의 배수 간격 0건.
+
 - 파괴적 명령 차단 훅이 refspec 강제(`git push origin +main`)와 git 전역 옵션 뒤 강제 push(`git -C <dir> push -f`)도 막게 했다. (2026-09-26, PR #69)
   - #68 감사에서 범위 밖으로 남긴 구멍 2종이다. 기존 판정은 옵션(`-f`, `--force`)만 보고 `git` 바로 뒤에 `push`가 와야만 검사했다.
   - 변경: 강제 옵션 판정의 앞부분을 `reset --hard` 판정과 같은 `git\s+([^;&|]*\s)?push`로 바꾸고, push 구간에서 공백 뒤 토큰이 `+`로 시작하면 차단하는 줄을 추가했다. `feature+x`, `v1.0+build`, `main:+x`처럼 토큰 중간의 `+`와 `git fetch +main:main`은 통과한다.
@@ -257,6 +264,7 @@
   - 실행하지 않은 것: 세션 조정 훅과 STATE 리마인더 훅의 실제 판정, 참조형 마크다운 링크(9/17과 같음, 이번 누적분과 무관).
   - `build-docs-index.mjs --check`는 검증이 아니라 빌드 단계다. 산출물 `docs/docs-index.json`이 `.gitignore:10`에 등록돼 커밋되지 않으므로 fresh clone에서는 어느 브랜치든 항상 실패한다. 생성기를 한 번 돌린 뒤 검사해야 한다.
   - manifest 경로 검사는 `install.py`의 `manifest_files()`를 그대로 써야 한다. JSON을 직접 훑으면 경로가 아닌 문자열(command 설명 등)까지 주워 누락 오탐이 난다.
+- 누적 대기: PR #71(admin 가이드 문서 변경).
 - 직전 실행: 2026-09-17 16/16(차단 판정 44, 승인 게이트 12, 보완 3건 포함).
 - 전체 로컬 CI는 3~5개 작업 누적, 하루 종료, 릴리스 전 또는 사용자 명시 요청 시 별도 6단계 작업으로 실행한다.
 - 네이티브 Windows에서 돌릴 때만 `check-codex-skills.mjs`가 CRLF 때문에 실패한다(4순위 참조). WSL에서는 그대로 읽으면 된다.

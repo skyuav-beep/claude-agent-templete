@@ -19,6 +19,45 @@ admin/dashboard 표면을 만들 때 `DESIGN.md`의 토큰·컴포넌트를 어�
 - 카피 톤: `policy.copy_tone` (ko-friendly: `-요`/`-어요`/`-아요` + 동사형 / ko-formal: `-습니다` / en-sentence: sentence case)
 - 단일 강조색: `{colors.bg-brand}` 1개만 primary CTA에 (시안의 brand 정의 따름 — solid hue 또는 gradient pair)
 
+## 밀도 우선 레이아웃 원칙
+
+admin 화면은 여백보다 정보량을 우선한다. 여백으로 영역을 나누지 않고 1px 헤어라인(`{colors.border-subtle}`)과 섹션 제목으로 나눈다. 모든 admin 페이지(대시보드·리스트·상세·폼·설정·로그인)에 적용한다.
+
+### 여백 상한
+
+| 위치 | 기본 | 상한 | Mobile(<768) |
+|---|---|---|---|
+| content 영역 padding | `{spacing.space-16}` | `{spacing.space-24}` | `{spacing.space-12}` |
+| 카드·섹션 안쪽 padding | `{spacing.space-16}` | `{spacing.space-20}` | `{spacing.space-12}` |
+| 카드 사이 gap(가로·세로 동일) | `{spacing.space-12}` | `{spacing.space-16}` | `{spacing.space-8}` |
+| 섹션 사이 세로 간격 | `{spacing.space-16}` | `{spacing.space-24}` | `{spacing.space-12}` |
+| 카드 내부 항목 간격 | `{spacing.space-8}` | `{spacing.space-12}` | `{spacing.space-8}` |
+| 폼 필드 세로 간격 | `{spacing.space-12}` | `{spacing.space-16}` | `{spacing.space-12}` |
+| 빈 상태 세로 padding | `{spacing.space-48}` | `{spacing.space-64}` | `{spacing.space-32}` |
+
+- 기본값으로 시작하고, 상한은 넘지 않는다. 상한을 넘는 여백이 필요해 보이면 여백 대신 구분선·섹션 제목으로 해결한다.
+- 표 셀 padding은 이 표가 아니라 `DESIGN.md ### data-table`과 `templates/data-table-density.md`의 케이스를 따른다.
+
+### 열 분할 기준
+
+- 열 수를 고정하지 않는다. 칸당 최소 폭을 정하고 `grid-template-columns: repeat(auto-fit, minmax(<최소 폭>, 1fr))`로 폭에 맞춰 열 수가 정해지게 한다. 최소 폭 기준: `stat-card` 200, 위젯·차트 카드 360, 폼 필드 280.
+- `auto-fill`은 쓰지 않는다. 빈 트랙이 남아 오른쪽 공백이 생긴다. `auto-fit`은 남은 폭을 기존 칸이 흡수한다.
+- 값 하나·두 줄 이하처럼 내용이 적은 카드를 여러 열로 나누지 않는다. 한 카드 안의 key-value 그리드나 stat strip으로 합친다. 예외는 대시보드 KPI `stat-card`로, 같은 종류의 지표를 나란히 비교하는 목적이라 열 나열을 허용한다.
+- 페이지 분할은 주 콘텐츠 1열 + 보조 패널 1열까지만 허용한다. 3열 이상 페이지 분할은 금지한다(카드 그리드는 예외).
+- 폭 1024 미만에서는 보조 패널을 주 콘텐츠 아래로 내린다.
+
+### 가용 폭 채우기
+
+- content 영역에 max-width를 두지 않는다. 대시보드·리스트·상세는 사이드바를 뺀 가용 폭 전체를 쓴다. 초광폭 화면에서는 카드 그리드의 칸 수와 표 칼럼 폭이 늘어난다.
+- 고정 폭 카드를 왼쪽 정렬로 나열하지 않는다. 남는 폭은 유동 칸(`1fr`, `flex: 1`)이 흡수한다.
+- 2열 구성은 주 콘텐츠 유동 + 보조 패널 고정 폭(280~320) 조합이다. 주 콘텐츠에 max-width를 두지 않는다.
+- 읽기 폭 제한이 필요하면 컨테이너가 아니라 긴 설명 텍스트 블록이나 개별 입력 필드에만 건다. 폼 섹션 카드 자체는 가용 폭을 채운다.
+
+### 적용 우선순위
+
+- 이 절의 수치는 아래 화면 패턴과 `## 시안별 화면 조립 차이`의 여백 수치보다 우선한다. 시안별 표는 그림자·라운드 같은 시각 차이 참고용이다.
+- 활성 시안이 admin 레이아웃 수치를 따로 정의하지 않았으면 이 절을 그대로 적용한다. 시안이 정의했다면 이 절의 상한을 넘지 않는 범위에서 시안 값을 쓴다.
+
 ## 화면 골격
 
 admin의 표준 골격은 3개 영역으로 구성된다.
@@ -37,7 +76,7 @@ admin의 표준 골격은 3개 영역으로 구성된다.
 
 - 좌측 `sidebar-nav` 240(expand) / 64(collapse). bg `{colors.bg-surface}`, 우측 1px `{colors.border-subtle}`.
 - 상단 `top-bar (admin)` 56 height. 좌측 페이지 제목 + breadcrumb, 우측 search/env/notification/avatar.
-- content 영역 padding `{spacing.space-24}` ~ `{spacing.space-32}` (페이지 밀도에 따라). max-content-width 1280 권장.
+- content 영역 padding `{spacing.space-16}`(상한 `{spacing.space-24}`, Mobile `{spacing.space-12}`). max-width 없이 가용 폭 전체를 쓴다(`## 밀도 우선 레이아웃 원칙`).
 - 사이드바 + top-bar 경계는 1px 단일 라인만 사용. cross-shadow 금지.
 
 ## 로그인 화면 패턴
@@ -60,7 +99,7 @@ admin의 표준 골격은 3개 영역으로 구성된다.
 +----------------------------------+
 ```
 
-- 카드 너비 400(min), padding `{spacing.space-32}`, radius `{rounded.radius-12}`.
+- 카드 너비 400(min), padding `{spacing.space-20}`, radius `{rounded.radius-12}`. 입력 사이 간격 `{spacing.space-12}`.
 - 에러 inline: 입력 하단에 `{component.alert}` inline. 카피 예 (ko-friendly): `이메일 또는 비밀번호가 일치하지 않아요`. (en-sentence: `Email or password is incorrect`)
 - 다중 환경(운영/스테이징/로컬) 운영 시 우측 상단에 `{component.chip}` 변형으로 환경 표시.
 - 다크 모드 대응: 카드 `{colors.bg-surface}` alias가 light/dark 자동 분기.
@@ -72,22 +111,22 @@ admin의 표준 골격은 3개 영역으로 구성된다.
 ```
 top-bar
 +--------+--------+--------+--------+
-| stat 1 | stat 2 | stat 3 | stat 4 |  ← stat-card × 4, grid gap {spacing.space-16}
+| stat 1 | stat 2 | stat 3 | stat 4 |  ← stat-card auto-fit(min 200), grid gap {spacing.space-12}
 +--------+--------+--------+--------+
-+----------------------+ +----------+
-| 시계열 차트 카드        | | 요약 카드 |
-| 1px border-subtle    | | 동일 사양 |
-| padding space-24     | |          |
-+----------------------+ +----------+
++----------------------------+ +----------+
+| 시계열 차트 카드 (유동 폭)     | | 요약 카드 |
+| 1px border-subtle          | | 고정 320 |
+| padding space-16           | |          |
++----------------------------+ +----------+
 +---------------------------------+
 |  최근 활동 data-table             |
 |  comfortable density            |
 +---------------------------------+
 ```
 
-- `stat-card` 4개 1행은 desktop 기본. mobile에서 1열 stack + padding 1단계 축소.
+- `stat-card`는 `auto-fit` 최소 폭 200으로 배치해 넓은 화면에서는 한 행에 더 많이, 좁은 화면에서는 줄바꿈한다. Mobile은 1열 stack + padding `{spacing.space-12}`.
 - 차트 카드 내부 차트는 단색 stroke + fill 없음. 색은 brand alias 또는 semantic signal 한 가지.
-- 카드 사이 grid gap은 `{spacing.space-16}` 또는 `{spacing.space-24}`. row gap도 동일 ladder.
+- 카드 사이 grid gap은 `{spacing.space-12}`(상한 `{spacing.space-16}`). row gap도 동일 값.
 
 ## 리스트 페이지 패턴
 
@@ -112,7 +151,7 @@ top-bar (page-title: "주문 목록")
 - table은 `### data-table` 명세 그대로. status 셀은 `{component.badge}` 시맨틱 색.
 - **컬럼이 많을 때**(9개 이상) 또는 사용자가 "여백 과다"를 호소할 때는 padding을 임의로 줄이지 않는다. `DESIGN.md ### data-table > #### Wide Table Cases`의 4-케이스(A 표준 / B 컴팩트 / C 와이드+sticky / D 초과밀도)에서 한 가지를 선택하고, 요구사항은 `templates/data-table-density.md` 양식으로 합의한다.
 - 행 클릭으로 상세 진입 시 cursor:pointer + hover bg `{colors.bg-subtle}`. 액션 셀 `{component.button-tertiary}` sm은 `event.stopPropagation()` 분리.
-- 빈 상태: `{component.empty-state}`를 테이블 container 내부에 padding 80 0으로 둠. 카피 예 (ko-friendly): `조회된 주문이 없어요. 필터를 조정해 보세요` / (en-sentence): `No orders found. Try adjusting filters.`
+- 빈 상태: `{component.empty-state}`를 테이블 container 내부에 세로 padding `{spacing.space-48}`로 둠. 카피 예 (ko-friendly): `조회된 주문이 없어요. 필터를 조정해 보세요` / (en-sentence): `No orders found. Try adjusting filters.`
 - 페이지네이션 컨트롤은 우측 정렬, ghost/tertiary 버튼 sm.
 
 ## 상세 페이지 패턴
@@ -121,19 +160,20 @@ top-bar (page-title: "주문 목록")
 
 ```
 top-bar (page-title: "주문 #1023", breadcrumb: 주문 / #1023)
-+----------------------+-------------------+
-| 좌: 상세 정보 카드      | 우: 사이드 패널     |
-| 1px hairline border  | 1px hairline      |
-| padding space-24     | padding space-24  |
-|                      |                   |
-| 섹션 라벨 caption1     | 액션 묶음            |
-| 값 body1/title3      | button-primary md  |
-+----------------------+-------------------+
-| 활동 로그 list (timeline 패턴 — line 1px) |
-+------------------------------------------+
++----------------------------+-------------------+
+| 좌: 상세 정보 카드 (유동 폭)   | 우: 사이드 패널     |
+| 1px hairline border        | 1px hairline      |
+| padding space-16           | padding space-16  |
+|                            |                   |
+| 섹션 라벨 caption1           | 액션 묶음            |
+| 값 body1/title3            | button-primary md  |
++----------------------------+-------------------+
+| 활동 로그 list (timeline 패턴 — line 1px)       |
++------------------------------------------------+
 ```
 
-- 좌측 카드는 max-width ~720, 우측 사이드 패널은 ~320. 둘 사이 gap `{spacing.space-24}`.
+- 좌측 카드는 유동 폭으로 남은 폭을 채우고(max-width 없음), 우측 사이드 패널은 고정 320. 둘 사이 gap `{spacing.space-16}`. 폭 1024 미만에서는 사이드 패널을 좌측 카드 아래로 내린다.
+- 좌측 카드의 필드는 라벨-값 한 쌍을 한 칸으로 보고 `auto-fit` 최소 폭 280 그리드로 배치해 넓은 화면에서 오른쪽이 비지 않게 한다.
 - 액션 묶음에서 단일 강조 액션 1개만 primary. 나머지는 secondary/tertiary/ghost.
 - 위험 액션(주문 취소/회원 정지)은 `{component.button-danger}` 별도 행에 분리. 클릭 시 `{component.modal}` 확인 단계 필요.
 
@@ -141,8 +181,9 @@ top-bar (page-title: "주문 #1023", breadcrumb: 주문 / #1023)
 
 `{component.input}` + `{component.checkbox}` + `{component.toggle}`를 수직 stack. 섹션 단위로 카드 분리.
 
-- 섹션 카드 padding `{spacing.space-24}`. 섹션 제목 `{typography.title3}` + sub `{typography.body2} {colors.fg-secondary}`.
-- 폼 필드 간 vertical gap `{spacing.space-16}`. 라벨은 필드 위 `{typography.label2}`.
+- 섹션 카드 padding `{spacing.space-16}`, 섹션 카드 사이 `{spacing.space-16}`. 섹션 제목 `{typography.title3}` + sub `{typography.body2} {colors.fg-secondary}`.
+- 섹션 카드는 가용 폭을 채우고, 필드는 `auto-fit` 최소 폭 280 그리드로 배치한다. 긴 텍스트 입력(설명·메모)만 한 행 전체를 쓴다.
+- 폼 필드 간 vertical gap `{spacing.space-12}`. 라벨은 필드 위 `{typography.label2}`.
 - 도움말 문구는 필드 아래 `{typography.caption1} {colors.fg-secondary}`. 에러는 같은 위치를 `{colors.fg-danger}`로 교체.
 - 하단 액션 바: sticky bottom 카드 또는 카드 내부 우측 정렬. 단일 primary `저장하기` + ghost `취소`.
 
@@ -207,7 +248,7 @@ admin FE 작업 키워드(테이블, 사이드바, 로그인, 카드, 폼, 토�
 
 ## 시안별 화면 조립 차이
 
-본 가이드의 화면 패턴(login/dashboard/list/상세/폼)은 alias 호출을 사용하므로 라이브러리 5개 시안 모두 자동 호환된다. 다만 각 시안의 정책 차이로 시각 결과는 달라진다. 아래는 동일 화면 패턴이 시안별로 어떻게 다르게 보이는지를 정리한 비교 매트릭스다.
+본 가이드의 화면 패턴(login/dashboard/list/상세/폼)은 alias 호출을 사용하므로 라이브러리 5개 시안 모두 자동 호환된다. 다만 각 시안의 정책 차이로 시각 결과는 달라진다. 아래는 동일 화면 패턴이 시안별로 어떻게 다르게 보이는지를 정리한 비교 매트릭스다. 표의 padding·gap 수치가 `## 밀도 우선 레이아웃 원칙`의 상한을 넘으면 상한을 따른다.
 
 ### 1. login 화면
 
