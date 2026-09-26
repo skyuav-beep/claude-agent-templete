@@ -74,7 +74,7 @@ bottom-nav는 사라지고 좌측 collapsed sidebar 또는 top-tab으로 전환.
 
 ### Desktop (≥ 1024) — admin 골격 재사용
 
-`docs/admin-fe-design-guide.md ## 화면 골격`의 3영역 구조와 동일하지만 max-content-width를 마케팅 1080 또는 user-facing 1200으로 운영한다. admin은 최대 너비 없이 가용 폭 전체를 쓴다(`docs/admin-fe-design-guide.md ## 밀도 우선 레이아웃 원칙`).
+`docs/admin-fe-design-guide.md ## 화면 골격`의 3영역 구조와 동일하지만 max-content-width를 마케팅 1080 또는 user-facing 1200으로 운영한다. admin은 화면 1920을 상한으로 가용 폭 전체를 쓴다(콘텐츠 최대 1648, `docs/admin-fe-design-guide.md ## 밀도 우선 레이아웃 원칙`).
 
 ## 1. Splash / Onboarding
 
