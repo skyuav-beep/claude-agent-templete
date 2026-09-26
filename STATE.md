@@ -46,6 +46,14 @@
 
 ## 최근 완료 작업
 
+- Codex `dev-start`도 Claude처럼 상태 브리핑·로컬 기동·hot reload 점검을 6단계 없이 한 턴에 진행하게 했다. (2026-09-26, PR #67)
+  - 원인: Claude `dev-start` skill에는 "기록·코드 변경부터 6단계 적용" 조항이 있지만 Codex skill·workflow에는 없었다. Codex는 `.codex/README.md`의 "단순 조회가 아닌 모든 작업은 6단계, 1·2단계는 읽기 전용" 계약을 그대로 따라 컨테이너 기동을 3단계 승인 뒤로 미뤘다. Claude는 승인 게이트 훅이 Edit/Write만 보므로 기동 명령이 막히지 않았다.
+  - 변경: `.agents/skills/dev-start/SKILL.md`에 `## 승인 절차 연결`, `.codex/workflows/dev-start.md ## 정책`에 같은 예외, `.codex/README.md`의 `## 종료 규칙`과 `## 단계 실행 계약`에 `dev-start` 예외를 넣었다. 가드레일 판정은 예외 없이 유지한다.
+  - 5단계 감사에서 예외 문구가 "증분 재빌드부터 6단계"라고 적어 같은 파일의 첫 부팅 증분 재빌드 허용과 Claude 기준에 어긋나는 것을 잡아 "재빌드"를 뺐다.
+  - 공통 `docs/approval-workflow.md`에는 예외를 넣지 않았다. Claude도 skill에만 두는 구조와 같다.
+  - 4단계 첫 편집 시도는 Claude Code auto mode 분류기가 `[Self-Modification]`으로 거부했고, 사용자가 권한 모드를 바꾼 뒤 재시도해 적용했다.
+  - 검증: `check-codex-skills`, `check-runtime-parity` 통과. parity 검사는 승인 조항 문구는 비교하지 않는다.
+
 - 응답에서 `STATE.md` 기록 여부를 묻지 않도록 금지 문구 예시를 규칙에 넣었다. (2026-09-17, PR #63)
   - 배경: 과거 대화에서 에이전트가 글로 "`STATE.md`에 반영할까요?"처럼 기록 여부만 물은 사례를 다시 분류했다. 21건 중 규칙 위반은 6건이고, 그중 이 템플릿의 연결 프로젝트에서 나온 것은 3건(goldlink, GoldFX, sccl)이다. 나머지는 Git 승인 질문 7건, 허용된 `다음 작업`·TODO 확인 2건, 질문이 아닌 문장 6건이었다. #62 보고에서 "약 20건"이라 한 것은 이 분류 전 수치라 과대였다.
   - `docs/approval-workflow.md ## 재확인하지 않는 작업`에 "묻지 않는다"의 뜻(기록 먼저, 보고에 한 줄)과 금지 예시 2종(기록 자체를 선택지로 두는 문장, Git 승인에 기록을 끼워 넣는 문장), 허용 2종(3단계 범위에 기록 단계를 적는 것, `다음 작업` 한 줄 확인)을 적었다.
@@ -233,6 +241,7 @@
   - 실행하지 않은 것: 세션 조정 훅과 STATE 리마인더 훅의 실제 판정(둘 다 9/3 이후 변경 없음, 문법·Python 구문 검사는 통과), 참조형 마크다운 링크. 보완 검사 3건은 임시 스크립트로 돌렸고 저장소 상시 검사로 넣지는 않았다.
   - `build-docs-index.mjs --check`는 검증이 아니라 빌드 단계다. 산출물 `docs/docs-index.json`이 `.gitignore:10`에 등록돼 커밋되지 않으므로 fresh clone에서는 어느 브랜치든 항상 실패한다. 생성기를 한 번 돌린 뒤 검사해야 한다.
   - manifest 경로 검사는 `install.py`의 `manifest_files()`를 그대로 써야 한다. JSON을 직접 훑으면 경로가 아닌 문자열(command 설명 등)까지 주워 누락 오탐이 난다.
+- 누적 대기: #65·#66(세션 기록·Git 가이드, #64는 CI 기록 자체), #67(Codex `dev-start` 예외). 모두 문서 변경이다.
 - 직전 실행: 2026-09-03 20/20(Node 스크립트 5종, `bash -n` 11종, manifest 169, dry-run 2종, 링크 108, 가드레일 24).
 - 전체 로컬 CI는 3~5개 작업 누적, 하루 종료, 릴리스 전 또는 사용자 명시 요청 시 별도 6단계 작업으로 실행한다.
 - 네이티브 Windows에서 돌릴 때만 `check-codex-skills.mjs`가 CRLF 때문에 실패한다(4순위 참조). WSL에서는 그대로 읽으면 된다.

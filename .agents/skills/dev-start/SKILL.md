@@ -12,3 +12,8 @@ description: 개발 세션을 재개하거나 PC를 켜고 프로젝트 작업�
 5. `STATE.md`의 다음 작업부터 이어간다.
 
 상세 호환 절차는 `.codex/workflows/dev-start.md`를 따른다.
+
+## 승인 절차 연결
+
+- 상태 브리핑, 로컬 dev 기동(`up -d`), hot reload·UI/로직 점검은 6단계 승인 절차의 예외로 한 턴에 진행한다. 실행 전 가드레일 판정은 그대로 적용한다.
+- 점검 결과를 문서로 남기거나 코드를 바꾸는 단계, 로컬 CI·push부터 `docs/approval-workflow.md`의 6단계 승인 절차를 적용한다.
