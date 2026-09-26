@@ -307,7 +307,11 @@ echo "$COMMAND" | grep -qE 'git\s+([^;&|]*\s)?reset\s+([^;&|]*\s)?--hard\b' && R
 # 토큰 경계를 보지 않으면 `topic-f` 같은 브랜치 이름까지 막는다. 옵션 뒤 경계는 공백만이 아니라
 # 이름에 쓰이지 않는 모든 문자로 본다. `git push -f;ls`, `(git push -f)`, `bash -c "git push -f"`처럼
 # 기호가 바로 붙어도 강제 push다.
-echo "$COMMAND" | grep -qE 'git\s+push\s+([^;&|]*\s)?(-[a-zA-Z]*f[a-zA-Z]*|--force(-with-lease|-if-includes)?)(=[^[:space:]]*)?([^[:alnum:]_-]|$)' && BLOCKED="git push --force"
+# reset과 같이 `git -C dir push -f`, `git -c k=v push --force`처럼 git 전역 옵션이 끼어도 같은 명령이다.
+# refspec 앞의 `+`(`git push origin +main`)도 옵션 없이 원격 이력을 덮어쓴다. 공백 뒤 토큰의
+# 첫 글자일 때만 보므로 `feature+x`처럼 이름 중간의 `+`는 걸리지 않는다.
+echo "$COMMAND" | grep -qE 'git\s+([^;&|]*\s)?push\s+([^;&|]*\s)?(-[a-zA-Z]*f[a-zA-Z]*|--force(-with-lease|-if-includes)?)(=[^[:space:]]*)?([^[:alnum:]_-]|$)' && BLOCKED="git push --force"
+echo "$COMMAND" | grep -qE 'git\s+([^;&|]*\s)?push\s+([^;&|]*\s)?\+[^[:space:];&|]' && BLOCKED="git push --force"
 echo "$COMMAND" | grep -qE 'git\s+clean\s+.*-[a-zA-Z]*f' && BLOCKED="git clean -f"
 echo "$COMMAND" | grep -qE 'git\s+checkout\s+\.\s*$' && BLOCKED="git checkout ."
 

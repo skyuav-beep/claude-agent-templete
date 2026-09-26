@@ -46,6 +46,13 @@
 
 ## 최근 완료 작업
 
+- 파괴적 명령 차단 훅이 refspec 강제(`git push origin +main`)와 git 전역 옵션 뒤 강제 push(`git -C <dir> push -f`)도 막게 했다. (2026-09-26, PR #69)
+  - #68 감사에서 범위 밖으로 남긴 구멍 2종이다. 기존 판정은 옵션(`-f`, `--force`)만 보고 `git` 바로 뒤에 `push`가 와야만 검사했다.
+  - 변경: 강제 옵션 판정의 앞부분을 `reset --hard` 판정과 같은 `git\s+([^;&|]*\s)?push`로 바꾸고, push 구간에서 공백 뒤 토큰이 `+`로 시작하면 차단하는 줄을 추가했다. `feature+x`, `v1.0+build`, `main:+x`처럼 토큰 중간의 `+`와 `git fetch +main:main`은 통과한다.
+  - `scripts/check-destructive-guard.mjs`에 사례 10건(차단 6, 통과 4)을 추가해 66/66이다. 기존·새 훅 16종 비교에서 회귀 0건이고, 와일드카드 refspec 강제(`+refs/heads/*:refs/heads/*`)도 새로 막힌다.
+  - 남은 낮은 오탐(막는 쪽): `git push -o +ci`처럼 옵션 값이 `+`로 시작하는 경우, `git log --oneline push -f`처럼 push가 하위 명령이 아닌 인자로 오고 뒤에 `-f`가 붙는 경우.
+  - 검증: `check-destructive-guard` 66/66, `bash -n` 통과.
+
 - 파괴적 명령 차단 훅이 원격 브랜치 삭제 뒤의 `rm -f`를 강제 push로 오판하던 것을 고쳤다. (2026-09-26, PR #68)
   - 원인: `block-destructive.sh`의 push 판정이 `git\s+push\s+.*(-f|--force)\b`라 `.*`가 `;`·`&&`·`|`를 넘어 뒤 명령의 `-f`까지 읽었다. #67 마무리에서 `git push origin --delete <브랜치>; rm -f <승인 마커>`가 막혔다. `topic-f`처럼 `-f`로 끝나는 브랜치 이름도 같은 규칙에 걸렸다. `rm`·`reset --hard` 판정은 이미 `[^;&|]*`로 구간을 자르고 있었고 push만 빠져 있었다.
   - 변경: push 구간 안에서 공백 뒤 옵션 토큰(`-[a-zA-Z]*f[a-zA-Z]*`, `--force`, `--force-with-lease`, `--force-if-includes`, `=값`)만 보고, 옵션 뒤 경계는 이름에 쓰이지 않는 모든 문자로 본다.
@@ -249,7 +256,7 @@
   - 실행하지 않은 것: 세션 조정 훅과 STATE 리마인더 훅의 실제 판정(둘 다 9/3 이후 변경 없음, 문법·Python 구문 검사는 통과), 참조형 마크다운 링크. 보완 검사 3건은 임시 스크립트로 돌렸고 저장소 상시 검사로 넣지는 않았다.
   - `build-docs-index.mjs --check`는 검증이 아니라 빌드 단계다. 산출물 `docs/docs-index.json`이 `.gitignore:10`에 등록돼 커밋되지 않으므로 fresh clone에서는 어느 브랜치든 항상 실패한다. 생성기를 한 번 돌린 뒤 검사해야 한다.
   - manifest 경로 검사는 `install.py`의 `manifest_files()`를 그대로 써야 한다. JSON을 직접 훑으면 경로가 아닌 문자열(command 설명 등)까지 주워 누락 오탐이 난다.
-- 누적 대기: #65·#66(세션 기록·Git 가이드, #64는 CI 기록 자체), #67(Codex `dev-start` 예외), #68(강제 push 판정 오탐, 훅 변경).
+- 누적 대기: #65·#66(세션 기록·Git 가이드, #64는 CI 기록 자체), #67(Codex `dev-start` 예외), #68(강제 push 판정 오탐, 훅 변경), #69(refspec·전역 옵션 강제 push 차단, 훅 변경).
 - 직전 실행: 2026-09-03 20/20(Node 스크립트 5종, `bash -n` 11종, manifest 169, dry-run 2종, 링크 108, 가드레일 24).
 - 전체 로컬 CI는 3~5개 작업 누적, 하루 종료, 릴리스 전 또는 사용자 명시 요청 시 별도 6단계 작업으로 실행한다.
 - 네이티브 Windows에서 돌릴 때만 `check-codex-skills.mjs`가 CRLF 때문에 실패한다(4순위 참조). WSL에서는 그대로 읽으면 된다.
