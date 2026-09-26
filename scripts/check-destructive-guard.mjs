@@ -41,6 +41,19 @@ const CASES = [
 
   // 나머지 차단 규칙. 이 파일을 고칠 때 함께 깨지지 않도록 같이 고정한다.
   { command: "git push --force origin main", blocked: true, note: "원격 이력 덮어쓰기" },
+  { command: "git push -f origin main", blocked: true, note: "단문 강제 옵션" },
+  { command: "git push -uf origin main", blocked: true, note: "묶음 옵션 안의 f" },
+  { command: "git push origin --force-with-lease", blocked: true, note: "조건부여도 원격 이력을 덮어쓴다" },
+  {
+    command: "git push --force-with-lease=main origin",
+    blocked: true,
+    note: "값을 붙인 형태",
+  },
+  { command: "git push -f;echo ok", blocked: true, note: "옵션 뒤에 ; 가 바로 붙음" },
+  { command: "git push --force;ls", blocked: true, note: "장문 옵션 뒤에 ; 가 바로 붙음" },
+  { command: "git push -f|tee log", blocked: true, note: "옵션 뒤에 파이프가 바로 붙음" },
+  { command: "(git push -f)", blocked: true, note: "서브셸 괄호" },
+  { command: 'bash -c "git push -f"', blocked: true, note: "인용부호 안" },
   { command: "git clean -fd", blocked: true, note: "추적 밖 파일 삭제" },
   { command: "git checkout .", blocked: true, note: "로컬 수정 폐기" },
 
@@ -56,6 +69,17 @@ const CASES = [
     note: "재귀이나 색인에서만 뺀다. 작업 트리 파일은 남는다",
   },
   { command: "ls -la", blocked: false, note: "rm이 없다" },
+  {
+    command: "git push -q origin --delete x; rm -f a",
+    blocked: false,
+    note: "뒤 명령의 -f는 push 옵션이 아니다",
+  },
+  {
+    command: "git push origin main && rm -f tmp.txt",
+    blocked: false,
+    note: "체인 뒤 rm -f를 push 강제로 읽지 않는다",
+  },
+  { command: "git push origin topic-f", blocked: false, note: "-f로 끝나는 브랜치 이름" },
   { command: "git reset --soft HEAD~1", blocked: false, note: "--hard가 아니면 작업 트리를 건드리지 않는다" },
   {
     command: 'grep -rn "x" . && docker compose -f a.yaml rm --force svc',

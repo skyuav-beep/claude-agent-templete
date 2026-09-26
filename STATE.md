@@ -46,6 +46,14 @@
 
 ## 최근 완료 작업
 
+- 파괴적 명령 차단 훅이 원격 브랜치 삭제 뒤의 `rm -f`를 강제 push로 오판하던 것을 고쳤다. (2026-09-26, PR #68)
+  - 원인: `block-destructive.sh`의 push 판정이 `git\s+push\s+.*(-f|--force)\b`라 `.*`가 `;`·`&&`·`|`를 넘어 뒤 명령의 `-f`까지 읽었다. #67 마무리에서 `git push origin --delete <브랜치>; rm -f <승인 마커>`가 막혔다. `topic-f`처럼 `-f`로 끝나는 브랜치 이름도 같은 규칙에 걸렸다. `rm`·`reset --hard` 판정은 이미 `[^;&|]*`로 구간을 자르고 있었고 push만 빠져 있었다.
+  - 변경: push 구간 안에서 공백 뒤 옵션 토큰(`-[a-zA-Z]*f[a-zA-Z]*`, `--force`, `--force-with-lease`, `--force-if-includes`, `=값`)만 보고, 옵션 뒤 경계는 이름에 쓰이지 않는 모든 문자로 본다.
+  - 5단계 감사에서 첫 안(경계를 공백·줄 끝만 인정)이 `git push -f;ls`, `(git push -f)`, `bash -c "git push -f"` 등 5종을 새로 통과시키는 회귀를 기존·새 훅 비교로 잡아 경계를 넓혔다. 4단계 보고의 "기존 규칙도 `-fq`를 막았다"는 틀렸고, `-fq` 차단은 이번에 새로 생겼다.
+  - `scripts/check-destructive-guard.mjs`에 push 사례 12건(차단 9, 통과 3)을 추가해 56/56이다.
+  - 남은 범위 밖 구멍: refspec 강제(`git push origin +main`)와 `git -C <dir> push -f`는 기존·새 훅 모두 통과한다.
+  - 검증: `check-destructive-guard` 56/56, `bash -n` 통과.
+
 - Codex `dev-start`도 Claude처럼 상태 브리핑·로컬 기동·hot reload 점검을 6단계 없이 한 턴에 진행하게 했다. (2026-09-26, PR #67)
   - 원인: Claude `dev-start` skill에는 "기록·코드 변경부터 6단계 적용" 조항이 있지만 Codex skill·workflow에는 없었다. Codex는 `.codex/README.md`의 "단순 조회가 아닌 모든 작업은 6단계, 1·2단계는 읽기 전용" 계약을 그대로 따라 컨테이너 기동을 3단계 승인 뒤로 미뤘다. Claude는 승인 게이트 훅이 Edit/Write만 보므로 기동 명령이 막히지 않았다.
   - 변경: `.agents/skills/dev-start/SKILL.md`에 `## 승인 절차 연결`, `.codex/workflows/dev-start.md ## 정책`에 같은 예외, `.codex/README.md`의 `## 종료 규칙`과 `## 단계 실행 계약`에 `dev-start` 예외를 넣었다. 가드레일 판정은 예외 없이 유지한다.
@@ -241,7 +249,7 @@
   - 실행하지 않은 것: 세션 조정 훅과 STATE 리마인더 훅의 실제 판정(둘 다 9/3 이후 변경 없음, 문법·Python 구문 검사는 통과), 참조형 마크다운 링크. 보완 검사 3건은 임시 스크립트로 돌렸고 저장소 상시 검사로 넣지는 않았다.
   - `build-docs-index.mjs --check`는 검증이 아니라 빌드 단계다. 산출물 `docs/docs-index.json`이 `.gitignore:10`에 등록돼 커밋되지 않으므로 fresh clone에서는 어느 브랜치든 항상 실패한다. 생성기를 한 번 돌린 뒤 검사해야 한다.
   - manifest 경로 검사는 `install.py`의 `manifest_files()`를 그대로 써야 한다. JSON을 직접 훑으면 경로가 아닌 문자열(command 설명 등)까지 주워 누락 오탐이 난다.
-- 누적 대기: #65·#66(세션 기록·Git 가이드, #64는 CI 기록 자체), #67(Codex `dev-start` 예외). 모두 문서 변경이다.
+- 누적 대기: #65·#66(세션 기록·Git 가이드, #64는 CI 기록 자체), #67(Codex `dev-start` 예외), #68(강제 push 판정 오탐, 훅 변경).
 - 직전 실행: 2026-09-03 20/20(Node 스크립트 5종, `bash -n` 11종, manifest 169, dry-run 2종, 링크 108, 가드레일 24).
 - 전체 로컬 CI는 3~5개 작업 누적, 하루 종료, 릴리스 전 또는 사용자 명시 요청 시 별도 6단계 작업으로 실행한다.
 - 네이티브 Windows에서 돌릴 때만 `check-codex-skills.mjs`가 CRLF 때문에 실패한다(4순위 참조). WSL에서는 그대로 읽으면 된다.
