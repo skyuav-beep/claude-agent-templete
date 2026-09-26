@@ -54,6 +54,12 @@ const CASES = [
   { command: "git push -f|tee log", blocked: true, note: "옵션 뒤에 파이프가 바로 붙음" },
   { command: "(git push -f)", blocked: true, note: "서브셸 괄호" },
   { command: 'bash -c "git push -f"', blocked: true, note: "인용부호 안" },
+  { command: "git push origin +main", blocked: true, note: "refspec 앞 +는 옵션 없는 강제 push" },
+  { command: "git push origin +HEAD:main", blocked: true, note: "로컬:원격 형태의 + refspec" },
+  { command: "git -C d push -f", blocked: true, note: "git 전역 옵션 -C 뒤" },
+  { command: "git -c a=b push --force origin main", blocked: true, note: "git 전역 옵션 -c 뒤" },
+  { command: "git --git-dir=.git push -f", blocked: true, note: "git 전역 장문 옵션 뒤" },
+  { command: "git -C d push origin +main", blocked: true, note: "전역 옵션과 + refspec이 함께" },
   { command: "git clean -fd", blocked: true, note: "추적 밖 파일 삭제" },
   { command: "git checkout .", blocked: true, note: "로컬 수정 폐기" },
 
@@ -80,6 +86,14 @@ const CASES = [
     note: "체인 뒤 rm -f를 push 강제로 읽지 않는다",
   },
   { command: "git push origin topic-f", blocked: false, note: "-f로 끝나는 브랜치 이름" },
+  { command: "git push origin feature+x", blocked: false, note: "이름 중간의 +는 강제가 아니다" },
+  { command: "git push origin :old", blocked: false, note: "삭제 refspec은 강제 push가 아니다" },
+  { command: "git -C d stash push -m wip", blocked: false, note: "stash push는 원격 push가 아니다" },
+  {
+    command: "git -C d status && git push origin main",
+    blocked: false,
+    note: "전역 옵션 허용이 체인을 넘어 판정하지 않는다",
+  },
   { command: "git reset --soft HEAD~1", blocked: false, note: "--hard가 아니면 작업 트리를 건드리지 않는다" },
   {
     command: 'grep -rn "x" . && docker compose -f a.yaml rm --force svc',
