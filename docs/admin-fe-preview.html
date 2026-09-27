@@ -751,6 +751,8 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* 조립 예시 폭 계산용: cqw가 스크롤바를 뺀 실제 폭을 가리키게 한다 */
+    body { container-type: inline-size; }
 
     html, body {
       background: var(--bg-subtle);
@@ -1560,10 +1562,13 @@
       display: flex; flex-direction: column; gap: var(--space-16);
       overflow: auto;
     }
-    /* 화면 조립 예시는 admin 밀도 기준(화면 1920 상한)을 보이도록 1280 틀 밖으로 넓힌다. 폭 min(화면, 1920) - 32, 가운데 정렬 */
+    /* 화면 조립 예시는 admin 밀도 기준(화면 1920 상한)을 보이도록 1280 틀 밖으로 넓힌다. 폭 min(화면, 1920) - 32, 가운데 정렬.
+       100vw는 스크롤바를 포함해 여백이 줄어드므로 cqw(body 기준, 스크롤바 제외)로 덮어쓴다. cqw 미지원 브라우저는 100vw 식을 쓴다 */
     .section.assembly {
       margin-left: calc(50% - min(50vw, 960px) + var(--space-16));
       margin-right: calc(50% - min(50vw, 960px) + var(--space-16));
+      margin-left: calc(50% - min(50cqw, 960px) + var(--space-16));
+      margin-right: calc(50% - min(50cqw, 960px) + var(--space-16));
     }
     .section.assembly > .specimen { padding: var(--space-16); }
     .filter-row {
