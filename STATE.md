@@ -46,7 +46,7 @@
 
 ## 최근 완료 작업
 
-- `minimal-mono` 시안의 admin 최대 너비 문장을 PR #73의 1920 상한 기준에 맞췄다. (2026-09-27, PR #__PR__)
+- `minimal-mono` 시안의 admin 최대 너비 문장을 PR #73의 1920 상한 기준에 맞췄다. (2026-09-27, PR #74)
   - `designs/minimal-mono.md ## Responsive Behavior` 첫 문장의 "데스크톱 max-content-width 1280 권장"을 "화면 1920 상한, 콘텐츠 최대 1648(사이드바 접힘 1824), 1920 초과 시 가운데 정렬"로 바꾸고 `docs/admin-fe-design-guide.md ## 밀도 우선 레이아웃 원칙`으로 연결했다. 토큰·정책·알리아스 계약은 바꾸지 않았다.
   - 보고만 하고 남긴 것: `designs/wanted.md`의 대시보드 max-content-width 약 1280(3곳, 원티드 실제 시스템 출처 [src:1]). 원본 시스템과 달라지는 수정이라 별도 판단이 필요하다.
   - 활성 시안은 `worknest`라 루트 `DESIGN.md`에는 영향이 없다.
@@ -284,7 +284,7 @@
   - 실행하지 않은 것: 세션 조정 훅과 STATE 리마인더 훅의 실제 판정, 참조형 마크다운 링크(9/17과 같음, 이번 누적분과 무관).
   - `build-docs-index.mjs --check`는 검증이 아니라 빌드 단계다. 산출물 `docs/docs-index.json`이 `.gitignore:10`에 등록돼 커밋되지 않으므로 fresh clone에서는 어느 브랜치든 항상 실패한다. 생성기를 한 번 돌린 뒤 검사해야 한다.
   - manifest 경로 검사는 `install.py`의 `manifest_files()`를 그대로 써야 한다. JSON을 직접 훑으면 경로가 아닌 문자열(command 설명 등)까지 주워 누락 오탐이 난다.
-- 누적 대기: PR #71(admin 가이드 문서 변경), PR #72(admin 미리보기·사용자 화면 가이드), PR #73(admin 1920 상한), PR #__PR__(minimal-mono 너비 문장).
+- 누적 대기: PR #71(admin 가이드 문서 변경), PR #72(admin 미리보기·사용자 화면 가이드), PR #73(admin 1920 상한), PR #74(minimal-mono 너비 문장).
 - 직전 실행: 2026-09-17 16/16(차단 판정 44, 승인 게이트 12, 보완 3건 포함).
 - 전체 로컬 CI는 3~5개 작업 누적, 하루 종료, 릴리스 전 또는 사용자 명시 요청 시 별도 6단계 작업으로 실행한다.
 - 네이티브 Windows에서 돌릴 때만 `check-codex-skills.mjs`가 CRLF 때문에 실패한다(4순위 참조). WSL에서는 그대로 읽으면 된다.
