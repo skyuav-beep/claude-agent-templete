@@ -302,7 +302,7 @@ interactive: hover bg-subtle
 
 ## Responsive Behavior
 
-표준 mobile-first 패턴. 본 시안은 admin/도구 surface가 1차 대상이므로 데스크톱 max-content-width 1280를 권장한다.
+표준 mobile-first 패턴. 본 시안은 admin/도구 surface가 1차 대상이다. admin 표면의 데스크톱 콘텐츠 폭은 화면 1920을 상한으로 가용 폭 전체를 쓴다(콘텐츠 최대 1648, 사이드바 접힘 1824, 1920 초과 화면은 가운데 정렬). 세부 규칙은 `docs/admin-fe-design-guide.md ## 밀도 우선 레이아웃 원칙`을 따른다.
 
 ### Breakpoints
 
