@@ -6,7 +6,7 @@ Claude와 Codex가 같은 저장소에서 동시에 작업할 때 세션 상태�
 
 - Claude는 `SessionStart`에서 세션을 등록하고 `SessionEnd`에서 해제한다.
 - Claude가 파일을 수정하기 전에 공용 레지스트리에서 동일 파일을 점유한 다른 세션을 찾는다.
-- 다른 세션이 등록돼 있을 때에 한해, 브랜치·worktree·원격 ref 를 지우는 git 명령도 확인 대상으로 돌린다. 혼자 쓰는 저장소에서는 개입하지 않는다.
+- 다른 세션이 등록돼 있을 때에 한해, 이 세션이 만들지 않은 브랜치·worktree·원격 ref 를 지우는 git 명령도 확인 대상으로 돌린다. 이 세션이 만든 것만 정리하면 묻지 않고, 혼자 쓰는 저장소에서는 개입하지 않는다.
 - 겹침이 발견되면 자동 수정하지 않고 세션·worktree·파일을 사용자에게 보여 주며 확인을 요청한다.
 - Codex는 lifecycle hook이 저장소 설정에 자동 연결되지 않으므로 workflow 시작/종료 시 같은 스크립트를 호출한다.
 
@@ -39,7 +39,7 @@ Codex workflow는 작업 시작 시 `register`와 `status`, 파일을 수정하�
 
 ## 브랜치·worktree 를 지우는 명령
 
-한쪽 창이 만든 브랜치를 다른 창이 정리해 버리면 커밋을 되짚을 단서가 reflog 밖에 남지 않는다. 다른 세션이 등록돼 있을 때 아래 형태는 실행 전 확인을 요청한다.
+한쪽 창이 만든 브랜치를 다른 창이 정리해 버리면 커밋을 되짚을 단서가 reflog 밖에 남지 않는다. 다른 세션이 등록돼 있을 때 아래 형태는 지우는 대상이 이 세션 것이 아니면 실행 전 확인을 요청한다.
 
 | 대상 | 예 |
 |---|---|
@@ -49,6 +49,25 @@ Codex workflow는 작업 시작 시 `register`와 `status`, 파일을 수정하�
 | 이력 덮어쓰기 | `git push --force`, `--force-with-lease`, `--mirror` |
 
 `git push origin main`, `git branch <new>`, `git worktree add` 처럼 남의 작업을 지우지 않는 명령은 그대로 통과한다. 등록된 다른 세션이 없으면 위 명령도 막지 않는다.
+
+### 이 세션이 만든 것은 묻지 않는다
+
+훅은 이 세션이 실행한 아래 명령에서 만든 브랜치·worktree를 세션 레코드(`branches`, `worktrees`)에 적어 둔다. 브랜치 삭제·원격 ref 삭제·worktree 제거의 대상이 전부 여기에 있으면 다른 세션이 있어도 묻지 않는다. 그래서 6단계의 머지 후 정리가 중간에 멈추지 않는다.
+
+| 이 세션 것으로 적는 명령 | 적는 값 |
+|---|---|
+| `git worktree add -b <branch> <path>` | 브랜치와 worktree 경로 |
+| `git checkout -b`, `git switch -c`, `git branch <new>`(로컬에 없던 이름) | 브랜치 |
+| `git push <remote> <branch>`(원격 추적 ref가 아직 없던 브랜치) | 브랜치 |
+
+아래는 이 세션 것이어도 종전대로 확인한다.
+
+- 대상 중 하나라도 이 세션이 만들지 않았거나, 다른 세션의 레코드에 같은 브랜치·worktree가 있을 때
+- 대상이 실행 시점에 정해질 때(`$VAR`, 명령 치환, glob)
+- 이력 덮어쓰기(`--force` 계열, `+refspec`, `--mirror`), `git update-ref -d`, `git worktree prune`
+- 명령을 셸 문법으로 읽지 못하거나 `python3`가 없을 때(종전 규칙으로 판정)
+
+세션 레코드는 세션마다 따로 있으므로, 이전 세션에서 만든 브랜치를 새 세션에서 지우면 한 번 확인한다. 판정은 `node scripts/check-session-guard.mjs`가 고정한다.
 
 이 점검은 `Bash` 도구에 연결돼 있어야 동작한다. 이미 설치된 프로젝트는 `.claude/settings.json` 이 복사본이라 자동으로 갱신되지 않는다. `bash .claude/plugins/install.sh --link` 로 연결한 프로젝트라면 hook 스크립트는 즉시 반영되지만, `Bash` matcher 연결은 프로젝트의 `settings.json` 에 직접 추가하거나 `settings.template.json` 을 다시 복사해야 한다.
 

@@ -189,7 +189,7 @@ Claude와 Codex가 같은 발화에서 같은 유형을 고르도록 공통 문�
 - `block-deploy.sh` — 배포·릴리스 계열 명령 차단 (`gh workflow run`, `gh release`, `vercel/fly/netlify deploy`, `kubectl apply`, `helm upgrade`, `terraform apply`, `docker push`, `npm publish`, `prisma migrate deploy`, `staging`/`production` 환경 지정 등). 배포는 항상 사용자 수동이다
 - `block-secret-files.sh` — `.env`, `*.pem`, `*.key`, `credentials.json` 등 비밀 파일 쓰기 차단
 - `state-reminder.sh` — `git commit` 시 STATE.md 미갱신 경고 (차단하지 않음)
-- `session-coordination.sh` — 세션을 등록하고 같은 파일을 점유한 다른 세션의 수정 전에 확인 요청
+- `session-coordination.sh` — 세션을 등록하고 같은 파일을 점유한 다른 세션의 수정 전에 확인 요청. 다른 세션이 있을 때 브랜치·worktree 삭제는 이 세션이 만든 것이 아닐 때만 묻는다. `scripts/check-session-guard.mjs`가 판정을 고정한다
 - `warn-design-tokens.sh` — opt-in: hex 색/비-4의 배수 px 사용 경고 (기본 미등록, 활성화 방법은 `docs/design-guidelines.md` 참조)
 - `phase-approval.sh` — 3단계 승인 마커가 없는 Edit/Write와 메인 트리 직접 수정에 사용자 확인 요청. 사실 기록 파일(`STATE.md`, `docs/archive/`)은 묻지 않는다 (`docs/approval-workflow.md` 참조). `scripts/check-phase-approval.mjs`가 판정을 고정한다
 
