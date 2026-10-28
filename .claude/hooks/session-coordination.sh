@@ -158,10 +158,229 @@ claim() {
 # 없앨 수 있는 git 명령을 확인 대상으로 돌린다. 한쪽이 만든 브랜치를 다른 창이
 # 정리해 버리면 커밋을 되짚을 단서가 reflog 밖에 남지 않는다.
 # 혼자 쓰는 저장소에서는 아무것도 하지 않는다.
+#
+# 이 세션이 만든 브랜치·worktree(`git worktree add -b`, `checkout -b`, 새 원격
+# 브랜치 push)는 세션 레코드에 적어 두고, 지우는 대상이 전부 이 세션 것이면
+# 묻지 않는다. 대상을 읽을 수 없거나(`$VAR` 등) 하나라도 이 세션 것이 아니면
+# 종전대로 확인한다. 이력 덮어쓰기와 `worktree prune`은 대상과 무관하게 확인한다.
 guard_git() {
+  local cmd="$1" rc pysrc
+  case "$cmd" in *git*) ;; *) return ;; esac
+  command -v python3 >/dev/null 2>&1 || { guard_git_legacy "$cmd"; return; }
+  # Python 본문은 임시 파일로 넘긴다. Windows(MSYS)에서 /dev/fd 경로는 네이티브
+  # Python이 열 수 없다(phase-approval.sh와 같은 이유).
+  pysrc=$(mktemp) || { guard_git_legacy "$cmd"; return; }
+  cat >"$pysrc" <<'PY'
+import glob
+import json
+import os
+import re
+import shlex
+import subprocess
+import sys
+
+cmd = os.environ["SC_CMD"]
+cwd = os.environ.get("SC_CWD") or os.getcwd()
+record = os.environ["SC_RECORD"]
+state_dir = os.environ["SC_STATE_DIR"]
+SEP = {";", "&&", "||", "|", "&", "|&", ";;", "(", ")"}
+
+
+def load(path):
+    try:
+        with open(path, encoding="utf-8") as fh:
+            return json.load(fh)
+    except Exception:
+        return {}
+
+
+def canon(base, p):
+    return os.path.realpath(os.path.join(base, os.path.expanduser(p)))
+
+
+def opaque(token):
+    # 셸이 실행 시점에 바꾸는 값은 대상을 알 수 없다.
+    return any(c in token for c in "$`*?")
+
+
+def short(ref):
+    return ref[len("refs/heads/"):] if ref.startswith("refs/heads/") else ref
+
+
+def git_ok(base, *args):
+    try:
+        return subprocess.run(["git", "-C", base, *args], capture_output=True, timeout=5).returncode == 0
+    except Exception:
+        return False
+
+
+# 리다이렉션(2>&1, >/dev/null)은 인자가 아니므로 먼저 걷어 낸다.
+text = re.sub(r"\d*(?:<<-?|>>|<|>)&?\s*(?:'[^']*'|\"[^\"]*\"|[^\s;&|()'\"]+)?", " ", cmd.replace("\n", " ; "))
+try:
+    lex = shlex.shlex(text, posix=True, punctuation_chars=";&|()")
+    lex.whitespace_split = True
+    tokens = list(lex)
+except ValueError:
+    sys.exit(3)
+
+segments, cur = [], []
+for t in tokens:
+    if t in SEP:
+        segments.append(cur)
+        cur = []
+    else:
+        cur.append(t)
+segments.append(cur)
+
+vcwd = cwd
+made_b, made_w = set(), set()
+del_b, del_w, always = [], [], []
+for seg in segments:
+    while seg and re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", seg[0]):
+        seg = seg[1:]
+    if not seg:
+        continue
+    if seg[0] == "cd":
+        if len(seg) > 1 and not opaque(seg[1]):
+            vcwd = canon(vcwd, seg[1])
+        continue
+    if seg[0] != "git":
+        continue
+    base, j = vcwd, 1
+    while j < len(seg) and seg[j].startswith("-"):
+        if seg[j] == "-C" and j + 1 < len(seg):
+            base = canon(base, seg[j + 1])
+            j += 2
+        elif seg[j] in ("-c", "--git-dir", "--work-tree", "--namespace") and j + 1 < len(seg):
+            j += 2
+        else:
+            j += 1
+    if j >= len(seg):
+        continue
+    sub, args = seg[j], seg[j + 1:]
+    flags = [a for a in args if a.startswith("-")]
+    names = [a for a in args if not a.startswith("-")]
+
+    if sub == "branch":
+        if any(f in ("-d", "-D", "--delete") or re.match(r"^-[A-Za-z]*[dD][A-Za-z]*$", f) for f in flags):
+            remote = "-r" in flags or "--remotes" in flags
+            for n in names:
+                del_b.append(n.split("/", 1)[-1] if remote else n)
+        elif not flags and names and not opaque(names[0]) and not git_ok(base, "rev-parse", "--verify", "-q", "refs/heads/" + names[0]):
+            made_b.add(names[0])
+    elif sub in ("checkout", "switch"):
+        for k, a in enumerate(args):
+            if a in ("-b", "-B", "-c", "-C") and k + 1 < len(args) and not opaque(args[k + 1]):
+                made_b.add(args[k + 1])
+    elif sub == "worktree" and args:
+        act, rest = args[0], args[1:]
+        if act == "add":
+            pos, k = [], 0
+            while k < len(rest):
+                a = rest[k]
+                if a in ("-b", "-B") and k + 1 < len(rest):
+                    if not opaque(rest[k + 1]):
+                        made_b.add(rest[k + 1])
+                    k += 2
+                    continue
+                if a == "--reason":
+                    k += 2
+                    continue
+                if not a.startswith("-"):
+                    pos.append(a)
+                k += 1
+            if pos and not opaque(pos[0]):
+                made_w.add(canon(base, pos[0]))
+        elif act == "remove":
+            for p in (a for a in rest if not a.startswith("-")):
+                del_w.append(p if opaque(p) else canon(base, p))
+        elif act == "prune":
+            always.append("git worktree prune")
+    elif sub == "update-ref" and ("-d" in flags or "--delete" in flags):
+        always.append("git update-ref -d")
+    elif sub == "push":
+        delete, force, pos, k = False, False, [], 0
+        while k < len(args):
+            a = args[k]
+            if a in ("--delete", "-d"):
+                delete = True
+            elif a in ("-f", "--force", "--mirror") or a.startswith("--force-with-lease") or a.startswith("--force-if-includes"):
+                force = True
+            elif a in ("-o", "--push-option", "--repo", "--receive-pack", "--exec"):
+                k += 1
+            elif a.startswith("-") and not a.startswith("--"):
+                force = force or "f" in a[1:]
+                delete = delete or "d" in a[1:]
+            elif not a.startswith("-"):
+                pos.append(a)
+            k += 1
+        if force:
+            always.append("git push (이력 덮어쓰기)")
+        remote = pos[0] if pos else "origin"
+        for r in pos[1:]:
+            if delete or r.startswith(":"):
+                del_b.append(r if opaque(r) else short(r.lstrip(":")))
+            elif r.startswith("+"):
+                always.append(r)
+            elif not opaque(r):
+                dst = short(r.split(":", 1)[1] if ":" in r else r)
+                # 원격에 아직 없는 브랜치를 올리는 경우만 이 세션 것으로 본다.
+                if dst != "HEAD" and not git_ok(base, "rev-parse", "--verify", "-q", f"refs/remotes/{remote}/{dst}"):
+                    made_b.add(dst)
+
+mine = load(record)
+if made_b or made_w:
+    mine["branches"] = sorted(set(mine.get("branches") or []) | made_b)
+    mine["worktrees"] = sorted(set(mine.get("worktrees") or []) | made_w)
+    tmp = f"{record}.tmp.{os.getpid()}"
+    try:
+        with open(tmp, "w", encoding="utf-8") as fh:
+            json.dump(mine, fh, ensure_ascii=False)
+        os.replace(tmp, record)
+    except Exception:
+        pass
+
+if not (del_b or del_w or always):
+    sys.exit(0)
+others = [load(f) for f in glob.glob(os.path.join(state_dir, "*.json")) if f != record]
+if not others:
+    sys.exit(0)
+
+their_b, their_w = set(), set()
+for o in others:
+    their_b.update([o.get("branch") or ""] + list(o.get("branches") or []))
+    their_w.update([o.get("worktree") or ""] + list(o.get("worktrees") or []))
+my_b = set(mine.get("branches") or [])
+my_w = set(mine.get("worktrees") or [])
+problems = list(always)
+problems += [b for b in del_b if opaque(b) or b not in my_b or b in their_b]
+problems += [w for w in del_w if opaque(w) or w not in my_w or w in their_w]
+if not problems:
+    sys.exit(0)
+
+o = others[-1]
+label = f"{o.get('session_id') or 'unknown'} / {o.get('branch') or '?'} @ {o.get('worktree') or '?'}"
+reason = (
+    f"이 세션이 만들지 않았거나 대상을 알 수 없는 브랜치·worktree·원격 ref 를 지우거나 덮어쓰려 합니다: {', '.join(problems)}. "
+    f"이 저장소에 다른 세션 {len(others)}개가 등록돼 있습니다(예: {label}). "
+    "그쪽 작업이면 되돌릴 수 없게 됩니다. 해당 브랜치가 본인 것인지 확인한 뒤 진행하세요."
+)
+print(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "ask", "permissionDecisionReason": reason}}, ensure_ascii=False))
+PY
+  [ -f "$record" ] || register
+  SC_CMD="$cmd" SC_CWD="${hook_cwd:-$PWD}" SC_RECORD="$record" SC_STATE_DIR="$state_dir" python3 "$pysrc"
+  rc=$?
+  rm -f "$pysrc"
+  # 명령을 셸 문법으로 읽지 못하면 종전 규칙으로 판정한다.
+  [ "$rc" -eq 3 ] && guard_git_legacy "$cmd"
+  return 0
+}
+
+# Python이 없거나 명령을 해석하지 못할 때의 종전 판정. 지우는 대상과 무관하게,
+# 다른 세션이 있으면 확인한다.
+guard_git_legacy() {
   local cmd="$1" f others=0 label=""
   local risky=0
-  case "$cmd" in *git*) ;; *) return ;; esac
   case "$cmd" in
     *"branch -D"*|*"branch -d"*|*"branch --delete"*|\
     *"worktree remove"*|*"worktree prune"*|\
@@ -243,6 +462,7 @@ case "$mode" in
           claim "$file_path"
         else
           command_text=$(json_get '.tool_input.command')
+          hook_cwd=$(json_get '.cwd')
           [ -n "$command_text" ] && guard_git "$command_text"
         fi
         ;;
