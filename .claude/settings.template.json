@@ -78,5 +78,33 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git branch *)",
+      "Bash(git fetch *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git worktree list *)",
+      "Bash(git rev-parse *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh pr create *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(grep *)",
+      "Bash(jq *)",
+      "Bash(bash -n *)",
+      "Bash(node scripts/*)"
+    ]
   }
 }
