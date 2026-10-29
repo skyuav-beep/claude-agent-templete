@@ -75,6 +75,21 @@ Codex는 `.agents/skills/*/SKILL.md`를 자연어 요청에 따라 선택하고,
 
 `.claude/settings.template.json`은 최초 설치 시 `.claude/settings.local.json`으로 생성되며 이후 자동 덮어쓰지 않는다. hook 명령은 실행 시점의 git 루트를 기준으로 `.claude/hooks/*`를 찾으므로 템플릿 폴더명이나 설치 경로에 의존하지 않는다.
 
+### Bash 명령 자동 실행 (`permissions.allow`)
+
+템플릿은 Bash 명령을 확인 창 없이 바로 실행하도록 `permissions.allow`를 함께 배포한다. 파괴·배포·비밀 파일·세션 충돌 판정은 허용 규칙과 무관하게 `PreToolUse` 훅이 계속 차단하거나 확인을 요청한다.
+
+- `Bash` (전체 허용): `default`·`acceptEdits` 모드에서 모든 셸 명령을 바로 실행한다.
+- 좁은 규칙(`Bash(git status *)`, `Bash(gh pr view *)`, `Bash(node scripts/*)` 등): `auto` 모드용이다. `auto` 모드는 `Bash` 같은 전체 허용 규칙을 무시하고 분류기로 판정하지만, 좁은 규칙은 분류기보다 먼저 적용된다. 복합 명령(`a && b`)은 하위 명령마다 규칙이 맞아야 통과한다.
+- `auto` 모드에서 분류기가 막는 작업(force push, 리뷰 전 머지 등)은 템플릿으로 풀 수 없다. `autoMode` 키는 사용자 전역 `~/.claude/settings.json`에서만 읽히며, 사용자가 `/permissions`의 `Auto mode` 탭에서 직접 조정한다.
+- 이미 설치된 프로젝트의 `settings.local.json`은 자동 갱신되지 않는다. 템플릿의 `permissions` 블록을 직접 병합한다.
+
+```bash
+jq -s '.[0] * {permissions: {allow: ((.[0].permissions.allow // []) + .[1].permissions.allow | unique)}}' \
+  .claude/settings.local.json "$TEMPLATE_ROOT/.claude/settings.template.json" > /tmp/settings.merged.json \
+  && mv /tmp/settings.merged.json .claude/settings.local.json
+```
+
 ## 플래그
 
 - `--new`, `--adopt`, `--update`: 설치 모드
