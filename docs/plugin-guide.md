@@ -90,6 +90,23 @@ jq -s '.[0] * {permissions: {allow: ((.[0].permissions.allow // []) + .[1].permi
   && mv /tmp/settings.merged.json .claude/settings.local.json
 ```
 
+### worktree 폴더 쓰기 허용 (`additionalDirectories`)
+
+작업 worktree를 저장소 옆 형제 폴더(`<프로젝트>-worktrees/`)에 만들면, 세션을 연 저장소 폴더 밖이라 `auto` 모드에서도 새 파일 생성·수정마다 "Do you want to create ...?" 확인 창이 뜬다. 선택지에 "이 폴더 접근 항상 허용"이 보이면 이 경우다. 승인 게이트 훅의 확인(훅 사유가 함께 표시됨)과는 원인이 다르다.
+
+- 해결: 사용자 전역 `~/.claude/settings.json`의 `permissions.additionalDirectories`에 worktree 상위 폴더를 등록한다. 등록한 폴더에는 기존 `Edit` 허용 규칙이 그대로 적용된다.
+- 경로가 PC마다 다르므로 템플릿 `settings.template.json`에는 넣지 않는다. 설치한 PC마다 한 번 등록한다.
+- 권한을 넓히는 설정이라 에이전트가 대신 편집하지 못한다. 사용자가 직접 편집하고 새 세션부터 적용된다.
+
+```json
+"permissions": {
+  "additionalDirectories": ["/home/<user>/projects"]
+}
+```
+
+- 상위 폴더 하나를 등록하면 모든 `*-worktrees`가 함께 허용된다. 좁히려면 `"/home/<user>/projects/<프로젝트>-worktrees"`처럼 폴더별로 적는다.
+- 지금 세션에만 적용하려면 확인 창에서 "항상 허용"(`Shift+Tab`)을 고르거나 `/add-dir <worktree 상위 폴더>`를 입력한다.
+
 ## 플래그
 
 - `--new`, `--adopt`, `--update`: 설치 모드
