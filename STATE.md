@@ -71,6 +71,10 @@
 
 ## 최근 완료 작업
 
+- admin 콘텐츠 폭 규칙을 '1920 상한·가운데 정렬'에서 '폭 상한 없음(가용 폭 전체)'으로 바꿨다. (2026-10-31)
+  - 연결 프로젝트 makeupshop의 사용자 결정(넓은 화면 좌우 여백 제거, admin 전체, makeupshop #613·#614)을 공통 템플릿에도 반영.
+  - `docs/admin-fe-design-guide.md`(가용 폭 채우기·content padding·2열 구성), `docs/user-fe-design-guide.md`, `designs/minimal-mono.md`, `designs/wanted.md` 적용 메모 2곳, `docs/admin-fe-preview.html` 조립 예시.
+  - 검증: `check-html` 통과.
 - 세션 충돌 훅이 머지 후 정리 명령을 묻지 않게 했다. (2026-10-31)
   - 같은 명령에서 리터럴로 대입한 변수(`b=feat/x; ... $b`)를 값으로 풀어 판정한다. 종전에는 `$b`·`$w`를 대상 불명으로 보고 매번 확인을 띄웠다.
   - 같은 명령에 `gh pr merge`가 있으면 머지 후 정리로 보고, 다른 세션 레코드에 없는 대상은 이 세션이 만들지 않았어도 통과시킨다. 다른 세션 것·값 모르는 대상·이력 덮어쓰기는 계속 확인한다.
