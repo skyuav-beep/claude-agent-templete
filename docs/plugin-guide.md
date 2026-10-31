@@ -94,7 +94,8 @@ jq -s '.[0] * {permissions: {allow: ((.[0].permissions.allow // []) + .[1].permi
 
 작업 worktree를 저장소 옆 형제 폴더(`<프로젝트>-worktrees/`)에 만들면, 세션을 연 저장소 폴더 밖이라 `auto` 모드에서도 새 파일 생성·수정마다 "Do you want to create ...?" 확인 창이 뜬다. 선택지에 "이 폴더 접근 항상 허용"이 보이면 이 경우다. 승인 게이트 훅의 확인(훅 사유가 함께 표시됨)과는 원인이 다르다.
 
-- 해결: 사용자 전역 `~/.claude/settings.json`의 `permissions.additionalDirectories`에 worktree 상위 폴더를 등록한다. 등록한 폴더에는 기존 `Edit` 허용 규칙이 그대로 적용된다.
+- 기본 해결: 승인 게이트(`phase-approval.sh`)가 3단계 승인을 받은 세션의 같은 저장소 worktree 수정에 허용으로 답하므로, 게이트 훅을 등록한 프로젝트는 따로 설정하지 않아도 이 확인 창이 뜨지 않는다. 승인 전이거나 다른 저장소 파일이면 종전대로 확인한다.
+- 게이트 없이도 없애려면: 사용자 전역 `~/.claude/settings.json`의 `permissions.additionalDirectories`에 worktree 상위 폴더를 등록한다. 등록한 폴더에는 기존 `Edit` 허용 규칙이 그대로 적용된다.
 - 경로가 PC마다 다르므로 템플릿 `settings.template.json`에는 넣지 않는다. 설치한 PC마다 한 번 등록한다.
 - 권한을 넓히는 설정이라 에이전트가 대신 편집하지 못한다. 사용자가 직접 편집하고 새 세션부터 적용된다.
 
