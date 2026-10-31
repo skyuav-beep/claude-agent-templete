@@ -19,6 +19,8 @@
 - Claude와 Codex 양쪽에 작업 유형·가드레일이 같이 있는지는 `node scripts/check-runtime-parity.mjs`가 검사한다. 한쪽에만 스킬을 추가하면 실패한다.
 
 
+**세션 종료 (2026-10-31, 마지막 2)** — 출발점은 `makeupshop` worktree에 `.ts` 파일을 만들 때마다 뜨는 확인 창을 승인 없이 넘기고 싶다는 요청이었다. 원인은 승인 절차가 아니라 worktree가 세션 폴더 밖 형제 폴더라 뜨는 Claude Code 기본 확인이었다. 처음에는 사용자 전역 `additionalDirectories` 등록을 설치 안내에 넣었다(PR #92 `2b6a229`). 이어 Bash 확인 창 두 건(`git worktree prune`, 머지 확인을 거친 `for` 반복 정리)까지 자동 진행하라는 요청에 따라 훅 두 개를 고쳤다(PR #93 `038ab00`). 승인 게이트는 승인된 세션의 같은 저장소 worktree 수정에 `allow`로 답하고, 세션 충돌 훅은 prune을 묻지 않으며 다른 세션 것이 없는 반복 정리를 통과시킨다. 그 과정에서 셸 예약어 뒤 삭제 명령이 판정에서 빠지던 구멍도 막았다. 판단 근거로 남길 것: 권한 확대 설정(`additionalDirectories`)은 에이전트가 편집할 수 없어 안내만 했고, 경로가 PC마다 달라 템플릿 설정에는 넣지 않았다. 이번 훅 수정은 auto 모드에서 거부 없이 적용됐다. 남은 리스크: 훅 `allow`가 폴더 밖 확인 창을 실제로 건너뛰는지는 아직 보지 못했고, 반복 정리에서 실제 삭제가 머지 확인 조건 안에 있는지는 훅이 따지지 않는다. 미커밋·열린 PR·잔여 worktree·승인 마커 없음. 재개 지점은 `## 다음 작업` 1순위(시각 검수) 그대로이며, 실사용 확인을 3순위에 넣었다.
+
 **작업 기록 (2026-10-31, worktree 파일 생성·머지 후 정리 확인 창 제거)** — `makeupshop`에서 확인 창 세 가지가 자동 진행을 막았다. ① worktree에 새 `.ts` 파일을 만들 때 뜨는 Claude Code 기본 확인 창(세션 폴더 밖 형제 폴더라서). 승인 게이트가 3단계 승인을 받은 세션의 같은 저장소 worktree 수정에 `allow`로 답하게 해, 전역 설정 없이도 넘어가게 했다. 승인 전·메인 체크아웃·다른 저장소는 종전과 같다. ② `git worktree prune`. 디렉터리가 이미 사라진 worktree의 관리 정보만 지우므로 세션 충돌 훅이 더는 묻지 않는다. ③ `for w in ../makeupshop-worktrees/s2-*` 반복으로 머지된 PR의 브랜치를 지우는 정리. `gh pr list --state merged`·`gh pr view --json ...merged...`도 머지 후 정리로 보고, 반복 경로가 모두 확인되고 그 worktree·브랜치가 다른 세션 것이 아니면 반복 안의 `$b`·`$w` 대상을 통과시킨다. 같이 막은 구멍: `then git branch -D main`처럼 셸 예약어 뒤 명령은 판정에서 빠져 묻지 않고 통과됐다. 검증: `check-phase-approval` 14/14, `check-session-guard` 34/34(수정 전 훅으로는 새 케이스 3건 실패), `check-destructive-guard` 66/66, `check-runtime-parity` OK. 남은 위험: 반복 정리의 실제 삭제가 머지 확인 조건 안에 있는지는 훅이 확인하지 않는다. 훅 `allow`가 세션 폴더 밖 확인 창을 실제로 건너뛰는지는 다음 `makeupshop` 세션에서 확인한다.
 
 **작업 기록 (2026-10-31, worktree 폴더 쓰기 확인 창 안내)** — `makeupshop` 작업 중 worktree에 새 파일을 만들 때마다 "Do you want to create ...?" 확인 창이 떴다. 원인은 승인 게이트 훅이 아니라 worktree가 세션을 연 저장소 밖 형제 폴더(`makeupshop-worktrees/`)에 있어서 Claude Code의 작업 폴더 범위 확인에 걸린 것이다. 해결책인 사용자 전역 `permissions.additionalDirectories` 등록을 `docs/plugin-guide.md ### worktree 폴더 쓰기 허용`에 설치 안내로 넣었다. 경로가 PC마다 달라 `settings.template.json`에는 넣지 않았고, 권한 확대 편집이라 사용자가 직접 등록해야 한다.
@@ -377,6 +379,7 @@
 - 연결 프로젝트에 템플릿을 새로 설치할 때 알림 스크립트 4종이 `managed_prefixes` 규칙대로 전달되는지 첫 설치에서 확인한다.
 - 2026-09-17에 바꾼 확인창 두 개가 실사용에서 의도대로 동작하는지 첫 사용 때 확인한다. ① `git reset --hard`를 남은 작업 없이 실행하면 Claude Code 확인창이 뜨고, 남은 작업이 있으면 보류 사유가 나오는지 ② 승인 마커 없이 `STATE.md`를 기록할 때 확인창이 더는 뜨지 않는지. 둘 다 회귀 검사는 통과했지만 실제 확인창 표시는 보지 못했다.
 - Codex에서 `dev-start`가 상태 브리핑·로컬 기동·hot reload 점검까지 한 턴에 진행되는지 첫 사용 때 확인한다(2026-09-26 #67). 여전히 단계별로 끊기면 Codex가 `.codex/README.md`의 예외 줄을 읽는지부터 본다.
+- 2026-10-31 #93의 확인 창 제거가 실사용에서 통하는지 `makeupshop` 다음 세션에서 확인한다. ① 승인 후 worktree에 새 파일을 만들 때 "Do you want to create" 창이 뜨지 않는지(뜨면 전역 `additionalDirectories` 등록으로 대체) ② `git worktree prune`과 `gh pr list --state merged`를 쓰는 반복 정리가 묻지 않고 진행되는지.
 - 세션 충돌 훅의 소유 판정이 실사용에서 의도대로 동작하는지 본다(2026-10-28 #86, 2026-10-31 #90 머지 후 정리 예외 추가). 다른 세션이 열려 있는 저장소에서 이 세션이 만든 브랜치를 정리할 때 확인 창이 뜨지 않는지, 남의 브랜치를 지우려 할 때는 뜨는지 확인한다. 업데이트 전에 만든 브랜치와 이전 세션에서 만든 브랜치는 한 번 묻는 것이 정상이다.
 
 ### 4순위 — 선택 개선
