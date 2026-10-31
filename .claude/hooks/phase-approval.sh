@@ -50,6 +50,28 @@ target_git = git(target_dir, "rev-parse", "--path-format=absolute", "--git-commo
 if os.path.realpath(target_git) != project_git:
     sys.exit(0)
 
+# A worktree has its own git-dir. The main checkout points directly at the
+# common git directory.
+target_repo_git = git(target_dir, "rev-parse", "--path-format=absolute", "--git-dir")
+in_worktree = bool(target_repo_git) and os.path.realpath(target_repo_git) != project_git
+
+
+def passthrough(why):
+    # Worktrees usually live in a sibling folder outside the session's working
+    # directory, so Claude Code asks "Do you want to create ...?" even after the
+    # gate has nothing to ask. Answer allow for this repository's worktrees so an
+    # approved session runs without that prompt. Deny rules still apply.
+    if in_worktree:
+        print(json.dumps({
+            "hookSpecificOutput": {
+                "hookEventName": "PreToolUse",
+                "permissionDecision": "allow",
+                "permissionDecisionReason": why,
+            }
+        }, ensure_ascii=False))
+    sys.exit(0)
+
+
 # Fact records are covered by every Step 3 approval (docs/approval-workflow.md
 # "## 재확인하지 않는 작업"), so asking again only interrupts the finish step,
 # typically after the marker has already been removed. This applies in the main
@@ -59,19 +81,17 @@ target_top = git(target_dir, "rev-parse", "--show-toplevel")
 if target_top:
     relative = os.path.relpath(target, os.path.realpath(target_top)).replace(os.sep, "/")
     if relative == "STATE.md" or relative.startswith("docs/archive/"):
-        sys.exit(0)
+        passthrough("사실 기록 파일은 3단계 승인에 포함됩니다.")
 
 # The Step 3 marker is checked next: once the session is approved the user
 # should not be asked again, whichever tree the change lands in.
 session_id = payload.get("session_id") or "<session_id>"
 marker = os.path.join(os.path.dirname(project_git), ".claude", ".approval", session_id)
 if os.path.exists(marker):
-    sys.exit(0)
+    passthrough("3단계 승인을 받은 세션의 worktree 수정입니다.")
 
-# A worktree has its own git-dir. The main checkout points directly at the
-# common git directory, so flag it separately in the confirmation message.
-target_repo_git = git(target_dir, "rev-parse", "--path-format=absolute", "--git-dir")
-if os.path.realpath(target_repo_git) == project_git:
+# Flag the main checkout separately in the confirmation message.
+if not in_worktree:
     reason = (
         "Step 3 사용자 승인 마커가 없고, 메인 체크아웃을 직접 수정하려 합니다. "
         "절차상 구현은 세션 전용 worktree에서 진행합니다. 이미 승인한 작업이면 허용해 주세요. "

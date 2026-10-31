@@ -162,10 +162,14 @@ claim() {
 # 이 세션이 만든 브랜치·worktree(`git worktree add -b`, `checkout -b`, 새 원격
 # 브랜치 push)는 세션 레코드에 적어 두고, 지우는 대상이 전부 이 세션 것이면
 # 묻지 않는다. 같은 명령 안에서 리터럴로 대입한 변수(`b=feat/x; ... $b`)는
-# 값으로 풀어 판정한다. 같은 명령에 `gh pr merge`가 있으면 머지 후 정리로 보고,
-# 다른 세션 레코드에 없는 대상은 이 세션이 만들지 않았어도 묻지 않는다.
-# 대상을 읽을 수 없거나(명령 치환, 값을 모르는 `$VAR` 등) 다른 세션 것이면
-# 종전대로 확인한다. 이력 덮어쓰기와 `worktree prune`은 대상과 무관하게 확인한다.
+# 값으로 풀어 판정한다. 같은 명령에 `gh pr merge`나 머지 여부 확인
+# (`gh pr list --state merged`, `gh pr view --json ...merged...`)이 있으면 머지 후
+# 정리로 보고, 다른 세션 레코드에 없는 대상은 이 세션이 만들지 않았어도 묻지 않는다.
+# 머지 후 정리가 `for w in <경로 glob>` 반복으로 대상을 고르면, glob이 가리키는
+# worktree와 그 브랜치가 다른 세션 것이 아닐 때 반복 안의 `$VAR` 대상도 통과시킨다.
+# 그 밖에 대상을 읽을 수 없거나(명령 치환, 값을 모르는 `$VAR` 등) 다른 세션 것이면
+# 종전대로 확인한다. 이력 덮어쓰기는 대상과 무관하게 확인한다. `worktree prune`은
+# 디렉터리가 이미 사라진 worktree의 관리 정보만 지우므로 확인하지 않는다.
 guard_git() {
   local cmd="$1" rc pysrc
   case "$cmd" in *git*) ;; *) return ;; esac
@@ -247,10 +251,15 @@ segments.append(cur)
 vcwd = cwd
 env = {}
 merging = False
+loops = []  # for 반복이 도는 경로들. None이면 값을 모르는 반복이다.
+KEYWORDS = {"if", "then", "else", "elif", "fi", "while", "until", "do", "done", "!", "{", "}", "time"}
 made_b, made_w = set(), set()
 del_b, del_w, always = [], [], []
 ASSIGN = r"^[A-Za-z_][A-Za-z0-9_]*="
 for seg in segments:
+    # `then git branch -D x`처럼 셸 예약어 뒤에 오는 명령도 판정한다.
+    while seg and seg[0] in KEYWORDS:
+        seg = seg[1:]
     if seg and seg[0] == "export" and len(seg) > 1 and all(re.match(ASSIGN, a) for a in seg[1:]):
         seg = seg[1:]
     assigns = []
@@ -267,8 +276,25 @@ for seg in segments:
             else:
                 env[name] = val
         continue
+    if seg[0] == "for" and len(seg) > 2 and seg[2] == "in":
+        items, paths = seg[3:], []
+        for item in items:
+            item = expand(item)
+            if "$" in item or "`" in item:
+                paths = None
+                break
+            paths += [os.path.realpath(p) for p in glob.glob(os.path.join(vcwd, os.path.expanduser(item)))]
+        env.pop(seg[1], None)
+        loops.append(paths)
+        continue
     seg = [expand(t) for t in seg]
     if seg[0] == "gh" and seg[1:3] == ["pr", "merge"]:
+        merging = True
+        continue
+    if seg[0] == "gh" and seg[1:2] == ["pr"] and (
+        (seg[2:3] == ["list"] and any(a in ("--state=merged",) or (a in ("--state", "-s") and seg[k + 1:k + 2] == ["merged"]) for k, a in enumerate(seg)))
+        or (seg[2:3] == ["view"] and any("merged" in a.lower() for a in seg[3:]))
+    ):
         merging = True
         continue
     if seg[0] == "cd":
@@ -325,8 +351,6 @@ for seg in segments:
         elif act == "remove":
             for p in (a for a in rest if not a.startswith("-")):
                 del_w.append(p if opaque(p) else canon(base, p))
-        elif act == "prune":
-            always.append("git worktree prune")
     elif sub == "update-ref" and ("-d" in flags or "--delete" in flags):
         always.append("git update-ref -d")
     elif sub == "push":
@@ -386,8 +410,18 @@ my_w = set(mine.get("worktrees") or [])
 problems = list(always)
 if merging:
     # 머지 후 정리는 사용자가 승인한 머지의 후속이다. 다른 세션 것만 확인한다.
-    problems += [b for b in del_b if opaque(b) or b in their_b]
-    problems += [w for w in del_w if opaque(w) or w in their_w]
+    # 반복 대상 경로가 모두 확인되고 다른 세션 것이 없으면 반복 변수 대상도 통과시킨다.
+    loop_safe = bool(loops) and all(paths is not None for paths in loops)
+    for paths in loops if loop_safe else []:
+        for p in paths:
+            try:
+                cur = subprocess.run(["git", "-C", p, "branch", "--show-current"], capture_output=True, text=True, timeout=5).stdout.strip()
+            except Exception:
+                cur = None  # 브랜치를 모르면 반복 대상도 모르는 것으로 본다.
+            if p in their_w or cur is None or (cur and cur in their_b):
+                loop_safe = False
+    problems += [b for b in del_b if (opaque(b) and not loop_safe) or b in their_b]
+    problems += [w for w in del_w if (opaque(w) and not loop_safe) or w in their_w]
 else:
     problems += [b for b in del_b if opaque(b) or b not in my_b or b in their_b]
     problems += [w for w in del_w if opaque(w) or w not in my_w or w in their_w]
@@ -419,7 +453,7 @@ guard_git_legacy() {
   local risky=0
   case "$cmd" in
     *"branch -D"*|*"branch -d"*|*"branch --delete"*|\
-    *"worktree remove"*|*"worktree prune"*|\
+    *"worktree remove"*|\
     *"push --force"*|*"push -f"*|*"push --mirror"*|*"force-with-lease"*|\
     *" :refs/"*|*"update-ref -d"*) risky=1 ;;
   esac

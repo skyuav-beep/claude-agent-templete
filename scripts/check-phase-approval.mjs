@@ -2,7 +2,8 @@
 // phase-approval.sh 회귀 검사.
 //
 // 임시 저장소와 worktree를 만들고 훅을 실제로 실행해 출력으로 판정한다. 확인 요청
-// (permissionDecision: ask)이 출력되면 확인, 아무 출력 없이 끝나면 통과다.
+// (permissionDecision: ask)이 출력되면 확인, 허용(allow)이 출력되면 허용, 아무 출력
+// 없이 끝나면 통과다. 허용은 세션 작업 폴더 밖 worktree의 기본 확인 창까지 건너뛴다.
 // Node 내장 모듈만 쓰며 설치 배포 대상이 아니다.
 //
 //   node scripts/check-phase-approval.mjs
@@ -41,12 +42,12 @@ git(REPO, "worktree", "add", "-q", "-b", "work", WORKTREE);
 
 const marker = path.join(REPO, ".claude", ".approval", SESSION);
 
-/** cwd는 세션 작업 위치, file은 수정 대상이다. withMarker면 3단계 승인 표시를 둔다. */
+/** cwd는 세션 작업 위치, file은 수정 대상이다. withMarker면 3단계 승인 표시를 둔다. allow는 허용 출력 기대. */
 const CASES = [
   // 사실 기록은 3단계 승인에 포함되므로 표시 없이도 묻지 않는다.
   { cwd: REPO, file: "STATE.md", ask: false, note: "메인 체크아웃의 STATE.md" },
   { cwd: REPO, file: path.join(REPO, "STATE.md"), ask: false, note: "절대 경로로 넘겨도 같다" },
-  { cwd: WORKTREE, file: "STATE.md", ask: false, note: "worktree의 STATE.md" },
+  { cwd: WORKTREE, file: "STATE.md", ask: false, allow: true, note: "worktree의 STATE.md는 허용" },
   { cwd: REPO, file: "docs/archive/STATE-2026-09-17.md", ask: false, note: "아직 없는 폴더의 STATE 스냅샷" },
 
   // 기록이 아니거나 기록처럼 보이기만 하는 것은 그대로 확인한다.
@@ -59,6 +60,8 @@ const CASES = [
 
   // 기존 동작. 승인 표시가 있거나 다른 저장소 파일이면 묻지 않는다.
   { cwd: REPO, file: "README.md", ask: false, withMarker: true, note: "승인 표시가 있으면 통과" },
+  { cwd: REPO, file: path.join(WORKTREE, "src/new.ts"), ask: false, allow: true, withMarker: true, note: "승인 후 형제 worktree 새 파일은 허용" },
+  { cwd: REPO, file: path.join(WORKTREE, "src/new.ts"), ask: true, note: "승인 전 worktree 새 파일은 확인" },
   { cwd: REPO, file: path.join(TMP, "outside.md"), ask: false, note: "저장소 밖 파일" },
 ];
 
@@ -72,8 +75,11 @@ const run = ({ cwd, file }) => {
   };
   const result = spawnSync("bash", [HOOK], { input: JSON.stringify(input), encoding: "utf8" });
   if (result.error) throw result.error;
-  return /"permissionDecision":\s*"ask"/.test(result.stdout);
+  const m = /"permissionDecision":\s*"(ask|allow)"/.exec(result.stdout);
+  return m ? m[1] : "pass";
 };
+
+const NAMES = { ask: "확인", allow: "허용", pass: "통과" };
 
 let failed = 0;
 try {
@@ -82,12 +88,13 @@ try {
       fs.mkdirSync(path.dirname(marker), { recursive: true });
       fs.writeFileSync(marker, "");
     }
-    const asked = run(testCase);
+    const got = run(testCase);
     fs.rmSync(marker, { force: true });
-    const ok = asked === testCase.ask;
+    const want = testCase.ask ? "ask" : testCase.allow ? "allow" : "pass";
+    const ok = got === want;
     if (!ok) failed += 1;
-    const verdict = asked ? "확인" : "통과";
-    const expected = testCase.ask ? "확인" : "통과";
+    const verdict = NAMES[got];
+    const expected = NAMES[want];
     const where = testCase.cwd === WORKTREE ? "worktree" : "main";
     const label = `${where}: ${path.isAbsolute(testCase.file) ? testCase.file.replace(TMP, "<tmp>") : testCase.file}`;
     const detail = ok ? testCase.note : `${expected}이어야 하는데 ${verdict}`;
