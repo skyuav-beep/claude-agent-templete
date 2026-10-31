@@ -338,7 +338,7 @@ space-128: 128
 
 마케팅 표면은 보다 좁은 max-width(~1080)를 가지며, 대시보드는 ~1280으로 확장된다 [src:1]. `ui_kits/wanted-web/`는 1200을 잡고 desktop marketplace의 표준값으로 운영한다 [src:1].
 
-> 템플릿 적용 메모: 위 값은 원티드 원본 기준이다. 이 템플릿의 admin 표면은 화면 1920 상한을 따른다(콘텐츠 최대 1648, 사이드바 접힘 1824 — `docs/admin-fe-design-guide.md ## 밀도 우선 레이아웃 원칙`).
+> 템플릿 적용 메모: 위 값은 원티드 원본 기준이다. 이 템플릿의 admin 표면은 폭 상한 없이 가용 폭 전체를 쓴다(`docs/admin-fe-design-guide.md ## 밀도 우선 레이아웃 원칙`).
 
 ### Vertical rhythm
 
@@ -1018,7 +1018,7 @@ C/D 채택 시 시안별 스크롤 affordance 정책(`policy.gradient_locations`
 
 원티드 시스템은 mobile-first 표준 패턴을 유지한다 — 모바일·태블릿·데스크톱 표면을 같은 시스템 위에서 운영하지만, 마케팅 표면은 max-width ~1080px, 대시보드는 ~1280px로 운영한다 [src:1].
 
-> 템플릿 적용 메모: 이 절의 값은 원티드 원본 기준이다. 이 템플릿의 admin 표면은 화면 1920 상한을 따른다(콘텐츠 최대 1648, 사이드바 접힘 1824 — `docs/admin-fe-design-guide.md ## 밀도 우선 레이아웃 원칙`).
+> 템플릿 적용 메모: 이 절의 값은 원티드 원본 기준이다. 이 템플릿의 admin 표면은 폭 상한 없이 가용 폭 전체를 쓴다(`docs/admin-fe-design-guide.md ## 밀도 우선 레이아웃 원칙`).
 
 ### Breakpoints
 
