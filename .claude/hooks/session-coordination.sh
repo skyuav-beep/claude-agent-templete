@@ -161,7 +161,10 @@ claim() {
 #
 # 이 세션이 만든 브랜치·worktree(`git worktree add -b`, `checkout -b`, 새 원격
 # 브랜치 push)는 세션 레코드에 적어 두고, 지우는 대상이 전부 이 세션 것이면
-# 묻지 않는다. 대상을 읽을 수 없거나(`$VAR` 등) 하나라도 이 세션 것이 아니면
+# 묻지 않는다. 같은 명령 안에서 리터럴로 대입한 변수(`b=feat/x; ... $b`)는
+# 값으로 풀어 판정한다. 같은 명령에 `gh pr merge`가 있으면 머지 후 정리로 보고,
+# 다른 세션 레코드에 없는 대상은 이 세션이 만들지 않았어도 묻지 않는다.
+# 대상을 읽을 수 없거나(명령 치환, 값을 모르는 `$VAR` 등) 다른 세션 것이면
 # 종전대로 확인한다. 이력 덮어쓰기와 `worktree prune`은 대상과 무관하게 확인한다.
 guard_git() {
   local cmd="$1" rc pysrc
@@ -203,6 +206,15 @@ def opaque(token):
     return any(c in token for c in "$`*?")
 
 
+def expand(token):
+    # 같은 명령 앞쪽에서 리터럴로 대입한 변수만 값으로 바꾼다. 모르는 변수는 그대로 둬
+    # opaque()가 계속 확인 대상으로 판정한다.
+    def rep(m):
+        name = m.group(1) or m.group(2)
+        return env.get(name, m.group(0))
+    return re.sub(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}|\$([A-Za-z_][A-Za-z0-9_]*)", rep, token)
+
+
 def short(ref):
     return ref[len("refs/heads/"):] if ref.startswith("refs/heads/") else ref
 
@@ -233,12 +245,31 @@ for t in tokens:
 segments.append(cur)
 
 vcwd = cwd
+env = {}
+merging = False
 made_b, made_w = set(), set()
 del_b, del_w, always = [], [], []
+ASSIGN = r"^[A-Za-z_][A-Za-z0-9_]*="
 for seg in segments:
-    while seg and re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", seg[0]):
+    if seg and seg[0] == "export" and len(seg) > 1 and all(re.match(ASSIGN, a) for a in seg[1:]):
+        seg = seg[1:]
+    assigns = []
+    while seg and re.match(ASSIGN, seg[0]):
+        assigns.append(seg[0])
         seg = seg[1:]
     if not seg:
+        # 단독 대입(`b=feat/x;`)만 셸 변수가 된다. `b=x git ...` 접두 대입은 인자 확장에 쓰이지 않는다.
+        for a in assigns:
+            name, val = a.split("=", 1)
+            val = expand(val)
+            if opaque(val):
+                env.pop(name, None)
+            else:
+                env[name] = val
+        continue
+    seg = [expand(t) for t in seg]
+    if seg[0] == "gh" and seg[1:3] == ["pr", "merge"]:
+        merging = True
         continue
     if seg[0] == "cd":
         if len(seg) > 1 and not opaque(seg[1]):
@@ -353,8 +384,13 @@ for o in others:
 my_b = set(mine.get("branches") or [])
 my_w = set(mine.get("worktrees") or [])
 problems = list(always)
-problems += [b for b in del_b if opaque(b) or b not in my_b or b in their_b]
-problems += [w for w in del_w if opaque(w) or w not in my_w or w in their_w]
+if merging:
+    # 머지 후 정리는 사용자가 승인한 머지의 후속이다. 다른 세션 것만 확인한다.
+    problems += [b for b in del_b if opaque(b) or b in their_b]
+    problems += [w for w in del_w if opaque(w) or w in their_w]
+else:
+    problems += [b for b in del_b if opaque(b) or b not in my_b or b in their_b]
+    problems += [w for w in del_w if opaque(w) or w not in my_w or w in their_w]
 if not problems:
     sys.exit(0)
 
