@@ -60,14 +60,20 @@ Codex workflow는 작업 시작 시 `register`와 `status`, 파일을 수정하�
 | `git checkout -b`, `git switch -c`, `git branch <new>`(로컬에 없던 이름) | 브랜치 |
 | `git push <remote> <branch>`(원격 추적 ref가 아직 없던 브랜치) | 브랜치 |
 
+같은 명령 안에서 리터럴로 대입한 변수(`b=feat/x; w=../wt; git worktree remove $w && git branch -D $b`)는 값으로 풀어 판정한다. 명령 치환으로 대입한 값(`b=$(...)`)과 접두 대입(`b=x git branch -D $b`)은 풀지 않는다.
+
+### 머지 후 정리는 묻지 않는다
+
+같은 명령에 `gh pr merge`가 있으면 승인된 머지의 후속 정리로 본다. 이때는 지우는 대상이 이 세션이 만든 것이 아니어도(이전 세션에서 만든 브랜치 등) 다른 세션 레코드에 없으면 묻지 않는다. 다른 세션의 브랜치·worktree, 값을 모르는 대상, 이력 덮어쓰기는 머지 명령 안에서도 확인한다.
+
 아래는 이 세션 것이어도 종전대로 확인한다.
 
-- 대상 중 하나라도 이 세션이 만들지 않았거나, 다른 세션의 레코드에 같은 브랜치·worktree가 있을 때
-- 대상이 실행 시점에 정해질 때(`$VAR`, 명령 치환, glob)
+- 대상 중 하나라도 이 세션이 만들지 않았거나(머지 후 정리 제외), 다른 세션의 레코드에 같은 브랜치·worktree가 있을 때
+- 대상이 실행 시점에 정해질 때(값을 모르는 `$VAR`, 명령 치환, glob)
 - 이력 덮어쓰기(`--force` 계열, `+refspec`, `--mirror`), `git update-ref -d`, `git worktree prune`
 - 명령을 셸 문법으로 읽지 못하거나 `python3`가 없을 때(종전 규칙으로 판정)
 
-세션 레코드는 세션마다 따로 있으므로, 이전 세션에서 만든 브랜치를 새 세션에서 지우면 한 번 확인한다. 판정은 `node scripts/check-session-guard.mjs`가 고정한다.
+세션 레코드는 세션마다 따로 있으므로, 이전 세션에서 만든 브랜치를 새 세션에서 머지 없이 지우면 한 번 확인한다. 판정은 `node scripts/check-session-guard.mjs`가 고정한다.
 
 이 점검은 `Bash` 도구에 연결돼 있어야 동작한다. 이미 설치된 프로젝트는 `.claude/settings.json` 이 복사본이라 자동으로 갱신되지 않는다. `bash .claude/plugins/install.sh --link` 로 연결한 프로젝트라면 hook 스크립트는 즉시 반영되지만, `Bash` matcher 연결은 프로젝트의 `settings.json` 에 직접 추가하거나 `settings.template.json` 을 다시 복사해야 한다.
 
