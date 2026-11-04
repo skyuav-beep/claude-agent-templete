@@ -107,6 +107,7 @@ jq -s '.[0] * {permissions: {allow: ((.[0].permissions.allow // []) + .[1].permi
 
 - 상위 폴더 하나를 등록하면 모든 `*-worktrees`가 함께 허용된다. 좁히려면 `"/home/<user>/projects/<프로젝트>-worktrees"`처럼 폴더별로 적는다.
 - 지금 세션에만 적용하려면 확인 창에서 "항상 허용"(`Shift+Tab`)을 고르거나 `/add-dir <worktree 상위 폴더>`를 입력한다.
+- 선택지가 "this project's .claude folder"이면 원인이 다르다. 서브 에이전트가 `<저장소>/.claude/worktrees/` 아래 격리 worktree에서 작업한 경우이며, 위 설정으로는 없어지지 않는다. 서브 에이전트를 세션 worktree에서 작업시키는 것이 해결책이다(`docs/subagent-guide.md ### 작업 폴더`).
 
 ## 플래그
 
