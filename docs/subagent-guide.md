@@ -97,6 +97,12 @@ Claude Code는 `Agent` 도구를 통해 독립적인 서브 에이전트를 실�
 
 Claude에서는 `.claude/agents/`의 정의 파일이 frontmatter로 자동 등록되므로, Agent 도구의 `subagent_type`에 에이전트 이름을 지정해 호출한다. 정의 파일 본문을 프롬프트에 복사할 필요는 없다. Codex에서 subagent를 사용할 때는 같은 역할의 `.codex/agents/` 문서를 읽어 프롬프트 기준으로 삼는다.
 
+### 작업 폴더
+
+- 파일을 고치는 서브 에이전트는 본 에이전트가 만든 세션 worktree(`<프로젝트>-worktrees/<작업명>`)에서 작업하게 한다. 프롬프트에 그 절대 경로를 적고, 그 밖의 경로는 고치지 않도록 제약에 넣는다.
+- Agent 도구의 `isolation: "worktree"`는 쓰지 않는다. 이 옵션은 worktree를 `<저장소>/.claude/worktrees/agent-*`에 만드는데, Claude Code가 `.claude/` 폴더를 보호 경로로 다뤄 `auto` 모드에서도 파일을 만들거나 고칠 때마다 확인 창을 띄운다(선택지에 "this project's .claude folder"가 보이면 이 경우다).
+- 서로 다른 파일을 고치는 서브 에이전트 여러 개를 병렬로 돌려야 하면, 본 에이전트가 형제 폴더에 worktree를 하나씩 더 만들어 나눠 준다.
+
 ### 디스패치 기준
 
 - 조사/탐색 작업 -> Claude: `subagent_type: explorer` / Codex: `.codex/agents/explorer.md`

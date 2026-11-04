@@ -18,6 +18,8 @@
 - 세션을 닫을 때는 `session-end` 스킬(`/session-end`)로 이번 세션 이력과 다음 재개 지점을 `STATE.md`에 남기고 Git 잔여물 없이 마감한다. Git 상태만 정리하면 `git-cleanup`이다.
 - Claude와 Codex 양쪽에 작업 유형·가드레일이 같이 있는지는 `node scripts/check-runtime-parity.mjs`가 검사한다. 한쪽에만 스킬을 추가하면 실패한다.
 
+**작업 기록 (2026-11-04, 서브 에이전트 격리 worktree 확인 창)** — `makeupshop`에서 테스트 파일(`.ts`)을 만들 때마다 "this project's .claude folder" 선택지가 붙은 확인 창이 떴다. 원인은 서브 에이전트가 `isolation: "worktree"`로 실행돼 `<저장소>/.claude/worktrees/agent-*`에서 작업한 것이다. Claude Code가 `.claude/`를 보호 경로로 다뤄 `auto` 모드에서도 매번 묻는다. 10-31에 다룬 형제 폴더 확인 창(`additionalDirectories`)과는 원인이 달라 그 설정으로는 없어지지 않는다. `docs/subagent-guide.md ### 작업 폴더`에 서브 에이전트는 세션 worktree에서 작업시키고 격리 옵션은 쓰지 않는다는 규칙을 넣고, `docs/plugin-guide.md`에 두 확인 창의 구분을 한 줄 추가했다. 검증: `check-runtime-parity` OK, `build-nav --check` 최신. `docs-index.json`은 이번 변경 전부터 갱신 필요 상태였고 범위 밖이라 두었다. 남은 위험: 규칙 문서라 에이전트가 격리 옵션을 고르는 것을 기계적으로 막지는 않는다.
+
 
 **세션 종료 (2026-10-31, 마지막 2)** — 출발점은 `makeupshop` worktree에 `.ts` 파일을 만들 때마다 뜨는 확인 창을 승인 없이 넘기고 싶다는 요청이었다. 원인은 승인 절차가 아니라 worktree가 세션 폴더 밖 형제 폴더라 뜨는 Claude Code 기본 확인이었다. 처음에는 사용자 전역 `additionalDirectories` 등록을 설치 안내에 넣었다(PR #92 `2b6a229`). 이어 Bash 확인 창 두 건(`git worktree prune`, 머지 확인을 거친 `for` 반복 정리)까지 자동 진행하라는 요청에 따라 훅 두 개를 고쳤다(PR #93 `038ab00`). 승인 게이트는 승인된 세션의 같은 저장소 worktree 수정에 `allow`로 답하고, 세션 충돌 훅은 prune을 묻지 않으며 다른 세션 것이 없는 반복 정리를 통과시킨다. 그 과정에서 셸 예약어 뒤 삭제 명령이 판정에서 빠지던 구멍도 막았다. 판단 근거로 남길 것: 권한 확대 설정(`additionalDirectories`)은 에이전트가 편집할 수 없어 안내만 했고, 경로가 PC마다 달라 템플릿 설정에는 넣지 않았다. 이번 훅 수정은 auto 모드에서 거부 없이 적용됐다. 남은 리스크: 훅 `allow`가 폴더 밖 확인 창을 실제로 건너뛰는지는 아직 보지 못했고, 반복 정리에서 실제 삭제가 머지 확인 조건 안에 있는지는 훅이 따지지 않는다. 미커밋·열린 PR·잔여 worktree·승인 마커 없음. 재개 지점은 `## 다음 작업` 1순위(시각 검수) 그대로이며, 실사용 확인을 3순위에 넣었다.
 
