@@ -113,7 +113,23 @@
       "Bash(grep *)",
       "Bash(jq *)",
       "Bash(bash -n *)",
-      "Bash(node scripts/*)"
+      "Bash(node scripts/*)",
+      "Bash(git pull *)",
+      "Bash(git push *)",
+      "Bash(git worktree *)",
+      "Bash(git checkout *)",
+      "Bash(git switch *)",
+      "Bash(git merge --ff-only *)",
+      "Bash(gh pr *)",
+      "Bash(mkdir -p .claude/.approval*)",
+      "Bash(touch .claude/.approval/*)",
+      "Bash(rm -f .claude/.approval/*)"
+    ],
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push * --force*)",
+      "Bash(git push * -f*)"
     ]
   }
 }
