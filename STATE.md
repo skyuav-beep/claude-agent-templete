@@ -18,6 +18,8 @@
 - 세션을 닫을 때는 `session-end` 스킬(`/session-end`)로 이번 세션 이력과 다음 재개 지점을 `STATE.md`에 남기고 Git 잔여물 없이 마감한다. Git 상태만 정리하면 `git-cleanup`이다.
 - Claude와 Codex 양쪽에 작업 유형·가드레일이 같이 있는지는 `node scripts/check-runtime-parity.mjs`가 검사한다. 한쪽에만 스킬을 추가하면 실패한다.
 
+**작업 기록 (2026-11-05, 격리 worktree 차단 훅)** — 문서 규칙(#96)을 넣은 뒤에도 `makeupshop`의 다른 세션이 서브 에이전트를 `isolation: "worktree"`로 18번 띄웠고(서브에이전트 가이드는 필요할 때만 읽혀 적용되지 않음), `.claude/worktrees/agent-*`에서 파일마다 확인 창이 다시 떴다. 그래서 `agent-worktree-guard.sh`를 추가해 `Agent`·`Task`의 격리 옵션과 `EnterWorktree`를 거부하고, 거부 사유로 형제 폴더 worktree를 쓰라고 안내하게 했다. `settings.template.json` 등록, manifest·`CLAUDE.md` 훅 목록(가드레일 8종)·서브에이전트 가이드를 맞췄다. 이름을 `block-`으로 시작하지 않은 것은 Codex에는 같은 도구가 없어 parity 대응 대상이 아니기 때문이다. 검증: 훅 판정 6건(격리 Agent·Task·EnterWorktree 거부, 일반 Agent·Bash·깨진 입력 통과), `check-runtime-parity` OK, 기존 판정 검사 14/14·34/34·66/66, JSON 구문. 남은 위험: 각 프로젝트의 `settings.local.json`은 사본이라 템플릿 등록이 자동 반영되지 않는다. 이미 떠 있는 세션의 확인 창은 사용자가 처리해야 한다.
+
 **작업 기록 (2026-11-04, 서브 에이전트 격리 worktree 확인 창)** — `makeupshop`에서 테스트 파일(`.ts`)을 만들 때마다 "this project's .claude folder" 선택지가 붙은 확인 창이 떴다. 원인은 서브 에이전트가 `isolation: "worktree"`로 실행돼 `<저장소>/.claude/worktrees/agent-*`에서 작업한 것이다. Claude Code가 `.claude/`를 보호 경로로 다뤄 `auto` 모드에서도 매번 묻는다. 10-31에 다룬 형제 폴더 확인 창(`additionalDirectories`)과는 원인이 달라 그 설정으로는 없어지지 않는다. `docs/subagent-guide.md ### 작업 폴더`에 서브 에이전트는 세션 worktree에서 작업시키고 격리 옵션은 쓰지 않는다는 규칙을 넣고, `docs/plugin-guide.md`에 두 확인 창의 구분을 한 줄 추가했다. 검증: `check-runtime-parity` OK, `build-nav --check` 최신. `docs-index.json`은 이번 변경 전부터 갱신 필요 상태였고 범위 밖이라 두었다. 남은 위험: 규칙 문서라 에이전트가 격리 옵션을 고르는 것을 기계적으로 막지는 않는다.
 
 

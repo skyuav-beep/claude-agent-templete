@@ -124,7 +124,7 @@
 - `.claude/CLAUDE.md` — Claude 실행 게이트. 루트 `CLAUDE.md`와 함께 자동 로드되어 읽기 순서, 6단계 승인 절차, 시작·종료 게이트를 주입한다 (`.codex/README.md` 대응)
 - `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 14종)
 - `.claude/commands/` — L2 보조 (명시적 slash command 14종, skills와 병존)
-- `.claude/hooks/` — L3 Guardrails (가드레일 7종 + 작업 알림 3종, opt-in 1종 포함). 상태줄은 `.claude/statusline-notify.sh`
+- `.claude/hooks/` — L3 Guardrails (가드레일 8종 + 작업 알림 3종, opt-in 1종 포함). 상태줄은 `.claude/statusline-notify.sh`
 - `.claude/agents/` — L4 서브에이전트 정의 6종, frontmatter로 자동 등록 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - `.claude/plugins/` — L5 배포 도구 (manifest, install)
 - `.agents/skills/` — Codex native skills 14종. 자연어 요청에 따라 작업 유형별 Skill을 자동 선택한다.
@@ -193,6 +193,7 @@ Claude와 Codex가 같은 발화에서 같은 유형을 고르도록 공통 문�
 - `session-coordination.sh` — 세션을 등록하고 같은 파일을 점유한 다른 세션의 수정 전에 확인 요청. 다른 세션이 있을 때 브랜치·worktree 삭제는 이 세션이 만든 것이 아닐 때만 묻는다. 머지 후 정리(머지 확인을 거친 반복 정리 포함)는 다른 세션 것이 아니면 묻지 않고, `worktree prune`도 묻지 않는다. `scripts/check-session-guard.mjs`가 판정을 고정한다
 - `warn-design-tokens.sh` — opt-in: hex 색/비-4의 배수 px 사용 경고 (기본 미등록, 활성화 방법은 `docs/design-guidelines.md` 참조)
 - `phase-approval.sh` — 3단계 승인 마커가 없는 Edit/Write와 메인 트리 직접 수정에 사용자 확인 요청. 사실 기록 파일(`STATE.md`, `docs/archive/`)은 묻지 않는다. 승인된 세션이 같은 저장소의 worktree 파일을 고치면 허용으로 답해, 세션 폴더 밖이라 뜨는 기본 확인 창도 건너뛴다 (`docs/approval-workflow.md` 참조). `scripts/check-phase-approval.mjs`가 판정을 고정한다
+- `agent-worktree-guard.sh` — 서브 에이전트 격리 worktree(`isolation: "worktree"`)와 `EnterWorktree`를 거부하고 형제 폴더 worktree를 쓰라고 안내한다. 둘 다 보호 경로인 `.claude/worktrees/`에 작업 폴더를 만들어 파일마다 확인 창이 뜨기 때문이다 (`docs/subagent-guide.md ### 작업 폴더`)
 
 작업 알림 훅은 여러 창을 동시에 쓸 때 완료·응답 요청을 놓치지 않기 위한 것이다.
 

@@ -56,6 +56,15 @@
             "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -x \"$root/.claude/hooks/session-coordination.sh\" ] || exit 0; bash \"$root/.claude/hooks/session-coordination.sh\"'"
           }
         ]
+      },
+      {
+        "matcher": "Agent|Task|EnterWorktree",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -x \"$root/.claude/hooks/agent-worktree-guard.sh\" ] || exit 0; bash \"$root/.claude/hooks/agent-worktree-guard.sh\"'"
+          }
+        ]
       }
     ],
     "SessionStart": [
