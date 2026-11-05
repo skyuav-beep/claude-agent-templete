@@ -61,6 +61,15 @@ const hook = (session, event, command, stateDir = SHARED) => {
 hook("B", "SessionStart");
 hook("A", "SessionStart");
 
+// 훅을 거치지 않고 만든 브랜치·worktree. 세션 레코드에 없으므로 "잃을 것이 없는지"로만 판정된다.
+git(REPO, "worktree", "add", "-q", "-b", "feat/u", path.join(TMP, "wt-u"), "origin/main");
+git(REPO, "worktree", "add", "-q", "-b", "feat/u-dirty", path.join(TMP, "wt-u-dirty"), "origin/main");
+fs.writeFileSync(path.join(TMP, "wt-u-dirty", "draft.txt"), "작업 중\n");
+git(REPO, "branch", "feat/u-local", "origin/main");
+git(path.join(TMP, "wt-u"), "commit", "-q", "--allow-empty", "-m", "unpushed");
+git(REPO, "branch", "feat/u-unpushed", "feat/u");
+git(path.join(TMP, "wt-u"), "reset", "-q", "--hard", "origin/main");
+
 /** who는 명령을 실행하는 세션이다. stateDir를 주면 다른 세션이 없는 저장소로 본다. */
 const CASES = [
   { who: "A", cmd: "git status --short", ask: false, note: "지우지 않는 명령" },
@@ -116,6 +125,15 @@ const CASES = [
   { who: "A", cmd: "git push origin main", ask: false, note: "이미 있는 원격 브랜치 push" },
   { who: "A", cmd: "git push origin --delete main", ask: true, note: "이미 있던 브랜치는 push해도 이 세션 것이 아니다" },
   { who: "A", cmd: "git branch -D 'feat/a", ask: true, note: "셸 문법으로 읽지 못하면 종전 규칙" },
+  { who: "A", cmd: "git branch -D feat/u-unpushed", ask: true, note: "레코드에 없고 원격에 없는 커밋이 있으면 확인" },
+  { who: "A", cmd: "git worktree remove --force ../wt-u-dirty", ask: true, note: "레코드에 없고 커밋 안 한 파일이 있으면 확인" },
+  { who: "A", cmd: "git branch -D feat/u-local", ask: false, note: "레코드에 없어도 커밋이 원격에 있으면 통과" },
+  {
+    who: "A",
+    cmd: "git pull -q --ff-only && git log --oneline -1 && git worktree remove --force ../wt-u && git branch -D feat/u && git worktree list",
+    ask: false,
+    note: "레코드에 없는 worktree도 깨끗하고 커밋이 원격에 있으면 정리 통과(2026-11-05 확인 창 사례)",
+  },
   { who: "C", cmd: "git branch -D anything", ask: false, stateDir: ALONE, note: "다른 세션이 없으면 개입하지 않는다" },
 ];
 
