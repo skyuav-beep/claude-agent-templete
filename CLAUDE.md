@@ -190,7 +190,7 @@ Claude와 Codex가 같은 발화에서 같은 유형을 고르도록 공통 문�
 - `block-deploy.sh` — 배포·릴리스 계열 명령 차단 (`gh workflow run`, `gh release`, `vercel/fly/netlify deploy`, `kubectl apply`, `helm upgrade`, `terraform apply`, `docker push`, `npm publish`, `prisma migrate deploy`, `staging`/`production` 환경 지정 등). 배포는 항상 사용자 수동이다
 - `block-secret-files.sh` — `.env`, `*.pem`, `*.key`, `credentials.json` 등 비밀 파일 쓰기 차단
 - `state-reminder.sh` — `git commit` 시 STATE.md 미갱신 경고 (차단하지 않음)
-- `session-coordination.sh` — 세션을 등록하고 같은 파일을 점유한 다른 세션의 수정 전에 확인 요청. 다른 세션이 있을 때 브랜치·worktree 삭제는 이 세션이 만든 것이 아닐 때만 묻는다. 머지 후 정리(머지 확인을 거친 반복 정리 포함)는 다른 세션 것이 아니면 묻지 않고, `worktree prune`도 묻지 않는다. `scripts/check-session-guard.mjs`가 판정을 고정한다
+- `session-coordination.sh` — 세션을 등록하고 같은 파일을 점유한 다른 세션의 수정 전에 확인 요청. 다른 세션이 있을 때 브랜치·worktree 삭제는 이 세션이 만든 것이 아닐 때만 묻는다. 이 세션 기록에 없어도 다른 세션 것이 아니고 지워서 잃을 것이 없으면(커밋 안 한 변경 없음, 커밋이 원격에 있음) 묻지 않는다. 머지 후 정리(머지 확인을 거친 반복 정리 포함)는 다른 세션 것이 아니면 묻지 않고, `worktree prune`도 묻지 않는다. `scripts/check-session-guard.mjs`가 판정을 고정한다
 - `warn-design-tokens.sh` — opt-in: hex 색/비-4의 배수 px 사용 경고 (기본 미등록, 활성화 방법은 `docs/design-guidelines.md` 참조)
 - `phase-approval.sh` — 3단계 승인 마커가 없는 Edit/Write와 메인 트리 직접 수정에 사용자 확인 요청. 사실 기록 파일(`STATE.md`, `docs/archive/`)은 묻지 않는다. 승인된 세션이 같은 저장소의 worktree 파일을 고치면 허용으로 답해, 세션 폴더 밖이라 뜨는 기본 확인 창도 건너뛴다 (`docs/approval-workflow.md` 참조). `scripts/check-phase-approval.mjs`가 판정을 고정한다
 - `agent-worktree-guard.sh` — 서브 에이전트 격리 worktree(`isolation: "worktree"`)와 `EnterWorktree`를 거부하고 형제 폴더 worktree를 쓰라고 안내한다. 둘 다 보호 경로인 `.claude/worktrees/`에 작업 폴더를 만들어 파일마다 확인 창이 뜨기 때문이다 (`docs/subagent-guide.md ### 작업 폴더`)

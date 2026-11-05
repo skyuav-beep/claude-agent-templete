@@ -167,6 +167,9 @@ claim() {
 # 정리로 보고, 다른 세션 레코드에 없는 대상은 이 세션이 만들지 않았어도 묻지 않는다.
 # 머지 후 정리가 `for w in <경로 glob>` 반복으로 대상을 고르면, glob이 가리키는
 # worktree와 그 브랜치가 다른 세션 것이 아닐 때 반복 안의 `$VAR` 대상도 통과시킨다.
+# 이 세션 레코드에 없는 대상이라도 다른 세션 것이 아니고 지워서 잃을 것이 없으면
+# (worktree는 커밋 안 한 변경이 없고 HEAD가 남는 곳이 있음, 브랜치는 커밋이 이 명령이
+# 지우지 않는 원격 ref에 있음) 통과시킨다.
 # 그 밖에 대상을 읽을 수 없거나(명령 치환, 값을 모르는 `$VAR` 등) 다른 세션 것이면
 # 종전대로 확인한다. 이력 덮어쓰기는 대상과 무관하게 확인한다. `worktree prune`은
 # 디렉터리가 이미 사라진 worktree의 관리 정보만 지우므로 확인하지 않는다.
@@ -407,6 +410,45 @@ for o in others:
     their_w.update([o.get("worktree") or ""] + list(o.get("worktrees") or []))
 my_b = set(mine.get("branches") or [])
 my_w = set(mine.get("worktrees") or [])
+gone = {b for b in del_b if not opaque(b)}  # 이 명령이 지우는 브랜치 이름(로컬·원격)
+
+
+def run_git(base, *args):
+    try:
+        r = subprocess.run(["git", "-C", base, *args], capture_output=True, text=True, timeout=5)
+        return r.stdout.strip() if r.returncode == 0 else None
+    except Exception:
+        return None
+
+
+def kept_elsewhere(base, sha):
+    # 이 명령이 지우지 않는 원격 ref가 그 커밋을 품고 있으면 지워도 커밋은 남는다.
+    out = run_git(base, "for-each-ref", "--contains", sha, "--format=%(refname)", "refs/remotes")
+    if not out:
+        return False
+    for ref in out.splitlines():
+        name = ref.split("/", 3)[3] if ref.count("/") >= 3 else ""
+        if name and name != "HEAD" and name not in gone:
+            return True
+    return False
+
+
+def lossless_branch(b):
+    sha = run_git(cwd, "rev-parse", "--verify", "-q", f"refs/heads/{b}^{{commit}}") or run_git(cwd, "rev-parse", "--verify", "-q", f"refs/remotes/origin/{b}^{{commit}}")
+    return bool(sha) and kept_elsewhere(cwd, sha)
+
+
+def lossless_worktree(w):
+    # 커밋하지 않은 변경·추적 안 되는 파일이 없고, HEAD 커밋이 남는 곳이 있어야 한다.
+    if not os.path.isdir(w) or run_git(w, "status", "--porcelain") != "":
+        return False
+    cur = run_git(w, "branch", "--show-current")
+    sha = run_git(w, "rev-parse", "HEAD")
+    if cur is None or not sha or (cur and cur in their_b):
+        return False
+    return bool(cur and cur not in gone) or kept_elsewhere(w, sha)
+
+
 problems = list(always)
 if merging:
     # 머지 후 정리는 사용자가 승인한 머지의 후속이다. 다른 세션 것만 확인한다.
@@ -423,8 +465,10 @@ if merging:
     problems += [b for b in del_b if (opaque(b) and not loop_safe) or b in their_b]
     problems += [w for w in del_w if (opaque(w) and not loop_safe) or w in their_w]
 else:
-    problems += [b for b in del_b if opaque(b) or b not in my_b or b in their_b]
-    problems += [w for w in del_w if opaque(w) or w not in my_w or w in their_w]
+    # 이 세션 레코드에 없어도 지워서 잃을 것이 없으면 통과시킨다. 레코드는 셸 문법으로
+    # 읽은 생성 명령만 남기므로, 다른 형태로 만든 이 세션 worktree를 놓칠 수 있다.
+    problems += [b for b in del_b if opaque(b) or b in their_b or (b not in my_b and not lossless_branch(b))]
+    problems += [w for w in del_w if opaque(w) or w in their_w or (w not in my_w and not lossless_worktree(w))]
 if not problems:
     sys.exit(0)
 
