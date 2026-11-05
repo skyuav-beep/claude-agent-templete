@@ -81,14 +81,19 @@ Codex는 `.agents/skills/*/SKILL.md`를 자연어 요청에 따라 선택하고,
 
 - `Bash` (전체 허용): `default`·`acceptEdits` 모드에서 모든 셸 명령을 바로 실행한다.
 - 좁은 규칙(`Bash(git status *)`, `Bash(gh pr view *)`, `Bash(node scripts/*)` 등): `auto` 모드용이다. `auto` 모드는 `Bash` 같은 전체 허용 규칙을 무시하고 분류기로 판정하지만, 좁은 규칙은 분류기보다 먼저 적용된다. 복합 명령(`a && b`)은 하위 명령마다 규칙이 맞아야 통과한다.
-- `auto` 모드에서 분류기가 막는 작업(force push, 리뷰 전 머지 등)은 템플릿으로 풀 수 없다. `autoMode` 키는 사용자 전역 `~/.claude/settings.json`에서만 읽히며, 사용자가 `/permissions`의 `Auto mode` 탭에서 직접 조정한다.
+- 6단계 Git 마무리(`git pull`, `git push`, `git worktree add/remove`, `git branch -D`, `gh pr merge`)와 승인 마커 생성·삭제(`mkdir -p`/`touch`/`rm -f .claude/.approval/...`)도 좁은 규칙으로 둔다. 이 중 하나라도 빠지면 머지 후 정리 같은 복합 명령 전체가 "This command requires approval" 확인 창에 걸린다.
+- force push는 `deny` 규칙(`git push --force*`, `-f*`)으로 막는다. `deny`는 `allow`보다 먼저 적용되므로 `Bash(git push *)`를 넣어도 강제 push는 통과하지 않는다. 브랜치·worktree 삭제의 안전 판정은 계속 `block-destructive.sh`·`session-coordination.sh` 훅이 한다.
+- 분류기 규칙 자체(`autoMode` 키)는 사용자 전역 `~/.claude/settings.json`에서만 읽히며, 사용자가 `/permissions`의 `Auto mode` 탭에서 직접 조정한다.
 - 이미 설치된 프로젝트의 `settings.local.json`은 자동 갱신되지 않는다. 템플릿의 `permissions` 블록을 직접 병합한다.
 
 ```bash
-jq -s '.[0] * {permissions: {allow: ((.[0].permissions.allow // []) + .[1].permissions.allow | unique)}}' \
+jq -s '.[0] * {permissions: {allow: ((.[0].permissions.allow // []) + .[1].permissions.allow | unique), deny: ((.[0].permissions.deny // []) + .[1].permissions.deny | unique)}}' \
   .claude/settings.local.json "$TEMPLATE_ROOT/.claude/settings.template.json" > /tmp/settings.merged.json \
   && mv /tmp/settings.merged.json .claude/settings.local.json
 ```
+
+- 연결 프로젝트 전체에 한 번에 적용하려면 사용자 전역 `~/.claude/settings.json`에 병합한다. 이때 `Bash` 전체 허용은 빼고 좁은 규칙과 `deny`만 넣는다(전역은 훅을 등록하지 않은 저장소에도 적용되기 때문).
+- 권한을 넓히는 편집이라 에이전트가 대신 실행하지 못한다. Claude Code 안의 `!` 명령으로도 설정 파일이 바뀌지 않을 수 있으니 별도 터미널에서 실행한다.
 
 ### worktree 폴더 쓰기 허용 (`additionalDirectories`)
 
