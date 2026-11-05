@@ -210,6 +210,10 @@
           "description": "Register sessions and ask before overlapping file edits"
         },
         {
+          "path": ".claude/hooks/agent-worktree-guard.sh",
+          "description": "Deny Agent isolation:worktree and EnterWorktree, which create worktrees under protected .claude/ and prompt on every file"
+        },
+        {
           "path": ".claude/hooks/warn-design-tokens.sh",
           "description": "Opt-in: warn on hex/non-4px usage in CSS/JSX (not registered by default)"
         },

@@ -102,6 +102,7 @@ Claude에서는 `.claude/agents/`의 정의 파일이 frontmatter로 자동 등�
 - 파일을 고치는 서브 에이전트는 본 에이전트가 만든 세션 worktree(`<프로젝트>-worktrees/<작업명>`)에서 작업하게 한다. 프롬프트에 그 절대 경로를 적고, 그 밖의 경로는 고치지 않도록 제약에 넣는다.
 - Agent 도구의 `isolation: "worktree"`는 쓰지 않는다. 이 옵션은 worktree를 `<저장소>/.claude/worktrees/agent-*`에 만드는데, Claude Code가 `.claude/` 폴더를 보호 경로로 다뤄 `auto` 모드에서도 파일을 만들거나 고칠 때마다 확인 창을 띄운다(선택지에 "this project's .claude folder"가 보이면 이 경우다).
 - 서로 다른 파일을 고치는 서브 에이전트 여러 개를 병렬로 돌려야 하면, 본 에이전트가 형제 폴더에 worktree를 하나씩 더 만들어 나눠 준다.
+- 문서 규칙만으로는 지켜지지 않아(2026-11-05 `makeupshop` 재발) `agent-worktree-guard.sh` 훅이 격리 옵션과 `EnterWorktree`를 거부한다. 거부되면 격리 옵션 없이 다시 호출한다.
 
 ### 디스패치 기준
 
