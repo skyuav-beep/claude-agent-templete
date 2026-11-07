@@ -31,7 +31,7 @@
 
 이 문서는 단계 계약의 공통 정본이다. 문서만 읽는 런타임은 에이전트가 아래 계약을 자율적으로 준수하며, 도구 실행을 실제로 차단하는 것은 런타임별 게이트의 책임이다.
 
-- Claude Code: `.claude/settings.local.json`의 `PreToolUse` 게이트가 승인 전 Edit/Write와 메인 트리 편집에 사용자 확인을 요청한다. 단 `## 재확인하지 않는 작업`의 사실 기록 파일(저장소 최상위 `STATE.md`, `docs/archive/` 아래)은 승인 마커가 없어도 묻지 않는다. 설치된 프로젝트는 기존 설정에 해당 hook을 병합해야 한다.
+- Claude Code: `.claude/settings.local.json`의 `PreToolUse` 게이트가 승인 전 Edit/Write와 메인 트리 편집에 사용자 확인을 요청한다. 단 `## 재확인하지 않는 작업`의 사실 기록 파일(저장소 최상위 `STATE.md`, `docs/archive/` 아래)은 승인 마커가 없어도 묻지 않는다. 권한 모드가 `auto`·`acceptEdits`·`bypassPermissions`이면 작업 요청이 3단계 승인을 대신하므로 같은 저장소 worktree 수정도 마커 없이 허용한다(2026-11-07 `makeupshop`: 마커를 만들지 않은 세션의 서브 에이전트가 worktree 파일마다 확인 창에 멈춤). 메인 체크아웃 수정은 모드와 무관하게 마커가 없으면 확인한다. 설치된 프로젝트는 기존 설정에 해당 hook을 병합해야 한다.
 - Codex: 저장소의 Claude 훅을 자동 실행하지 않으므로 `.agents/skills`, `.codex/workflows`, safety checklist, finish checklist가 동일 계약을 적용한다. Codex 호스트가 도구 전 승인 훅을 제공하지 않는 한 저장소 파일만으로 Edit/Write를 강제 차단할 수 없다.
 - 승인 마커는 사용자 승인 범위를 대신하지 않는다. 마커가 있어도 승인된 파일·브랜치·Git 수명주기 범위를 벗어나면 중단하고 재승인을 받는다.
 - 마커 생성은 3단계 승인 발화나 오토 모드의 작업 요청을 받은 뒤에만 한다. 게이트가 확인을 요청했다는 이유로 마커를 먼저 만들어 통과시키지 않는다.

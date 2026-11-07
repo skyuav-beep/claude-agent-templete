@@ -63,15 +63,22 @@ const CASES = [
   { cwd: REPO, file: path.join(WORKTREE, "src/new.ts"), ask: false, allow: true, withMarker: true, note: "승인 후 형제 worktree 새 파일은 허용" },
   { cwd: REPO, file: path.join(WORKTREE, "src/new.ts"), ask: true, note: "승인 전 worktree 새 파일은 확인" },
   { cwd: REPO, file: path.join(TMP, "outside.md"), ask: false, note: "저장소 밖 파일" },
+
+  // 오토 모드는 작업 요청이 승인이다. 마커를 잊어도 worktree 수정은 막지 않고, 메인 체크아웃은 그대로 묻는다.
+  { cwd: REPO, file: path.join(WORKTREE, "src/new.ts"), ask: false, allow: true, mode: "auto", note: "오토 모드 worktree 새 파일은 마커 없이 허용" },
+  { cwd: WORKTREE, file: "src/app.js", ask: false, allow: true, mode: "acceptEdits", note: "편집 자동 수락 모드도 같다" },
+  { cwd: REPO, file: "README.md", ask: true, mode: "auto", note: "오토 모드라도 메인 체크아웃은 확인" },
+  { cwd: REPO, file: path.join(WORKTREE, "src/new.ts"), ask: true, mode: "default", note: "기본 모드는 마커가 있어야 허용" },
 ];
 
-const run = ({ cwd, file }) => {
+const run = ({ cwd, file, mode }) => {
   const input = {
     hook_event_name: "PreToolUse",
     tool_name: "Edit",
     tool_input: { file_path: file },
     cwd,
     session_id: SESSION,
+    ...(mode ? { permission_mode: mode } : {}),
   };
   const result = spawnSync("bash", [HOOK], { input: JSON.stringify(input), encoding: "utf8" });
   if (result.error) throw result.error;
