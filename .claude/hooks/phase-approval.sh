@@ -90,6 +90,15 @@ marker = os.path.join(os.path.dirname(project_git), ".claude", ".approval", sess
 if os.path.exists(marker):
     passthrough("3단계 승인을 받은 세션의 worktree 수정입니다.")
 
+# In auto mode the work request itself is the Step 3 approval
+# (docs/approval-workflow.md "## 진행 모드"). Agents and their subagents still
+# forget the marker, and every worktree file then stops on a prompt. Allow
+# worktree edits in these modes even without the marker; the main checkout is
+# still asked below because implementation belongs in a worktree.
+AUTO_MODES = {"auto", "acceptEdits", "bypassPermissions"}
+if in_worktree and payload.get("permission_mode") in AUTO_MODES:
+    passthrough("오토 모드에서는 작업 요청이 3단계 승인을 대신하므로 worktree 수정을 허용합니다.")
+
 # Flag the main checkout separately in the confirmation message.
 if not in_worktree:
     reason = (
