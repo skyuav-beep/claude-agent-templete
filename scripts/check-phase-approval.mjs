@@ -39,6 +39,7 @@ fs.writeFileSync(path.join(REPO, "README.md"), "readme\n");
 git(REPO, "add", "README.md");
 git(REPO, "commit", "-q", "-m", "init");
 git(REPO, "worktree", "add", "-q", "-b", "work", WORKTREE);
+fs.mkdirSync(path.join(REPO, "backend"));
 
 const marker = path.join(REPO, ".claude", ".approval", SESSION);
 
@@ -69,6 +70,15 @@ const CASES = [
   { cwd: WORKTREE, file: "src/app.js", ask: false, allow: true, mode: "acceptEdits", note: "편집 자동 수락 모드도 같다" },
   { cwd: REPO, file: "README.md", ask: true, mode: "auto", note: "오토 모드라도 메인 체크아웃은 확인" },
   { cwd: REPO, file: path.join(WORKTREE, "src/new.ts"), ask: true, mode: "default", note: "기본 모드는 마커가 있어야 허용" },
+
+  // 새 Markdown 문서(계획서·분석 메모) 생성은 기존 내용을 건드리지 않으므로 메인 체크아웃이라도 다시 묻지 않는다.
+  { cwd: REPO, file: "docs/NEW_PLAN.md", ask: false, allow: true, mode: "auto", note: "오토 모드 메인 체크아웃 새 .md는 허용" },
+  { cwd: path.join(REPO, "backend"), file: path.join(REPO, "docs/plan.md"), ask: false, allow: true, mode: "auto", note: "하위 폴더 세션의 상위 docs/ 새 .md도 허용" },
+  { cwd: REPO, file: "docs/NEW_PLAN.md", ask: false, allow: true, withMarker: true, mode: "default", note: "승인 표시가 있으면 기본 모드도 허용" },
+  { cwd: REPO, file: "docs/NEW_PLAN.md", ask: true, mode: "default", note: "승인 전 기본 모드는 새 .md도 확인" },
+  { cwd: REPO, file: "README.md", ask: true, mode: "auto", note: "이미 있는 .md 덮어쓰기·수정은 확인" },
+  { cwd: REPO, file: "docs/99-archive/new.md", ask: true, mode: "auto", note: "보관 폴더는 구조 변경이라 확인" },
+  { cwd: REPO, file: "docs/notes.txt", ask: true, mode: "auto", note: ".md가 아닌 새 파일은 확인" },
 ];
 
 const run = ({ cwd, file, mode }) => {

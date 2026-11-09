@@ -87,6 +87,31 @@ if target_top:
 # should not be asked again, whichever tree the change lands in.
 session_id = payload.get("session_id") or "<session_id>"
 marker = os.path.join(os.path.dirname(project_git), ".claude", ".approval", session_id)
+AUTO_MODES = {"auto", "acceptEdits", "bypassPermissions"}
+auto_mode = payload.get("permission_mode") in AUTO_MODES
+
+# Creating a new Markdown document (a plan, analysis or note) only adds a file
+# without touching existing content, so an approved or auto-mode session is not
+# asked again, even in the main checkout (docs/approval-workflow.md
+# "## 재확인하지 않는 작업"). The session may have started in a subfolder such as
+# backend/, so answer allow explicitly to skip the "Do you want to create ...?"
+# prompt as well. Overwriting or editing an existing file is still asked below,
+# and docs/99-archive/ stays a structure change.
+new_markdown = (
+    target.lower().endswith(".md")
+    and not os.path.exists(target)
+    and not (target_top and relative.startswith("docs/99-archive/"))
+)
+if new_markdown and (auto_mode or os.path.exists(marker)):
+    print(json.dumps({
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "allow",
+            "permissionDecisionReason": "새 Markdown 문서 생성은 다시 묻지 않습니다.",
+        }
+    }, ensure_ascii=False))
+    sys.exit(0)
+
 if os.path.exists(marker):
     passthrough("3단계 승인을 받은 세션의 worktree 수정입니다.")
 
@@ -95,8 +120,7 @@ if os.path.exists(marker):
 # forget the marker, and every worktree file then stops on a prompt. Allow
 # worktree edits in these modes even without the marker; the main checkout is
 # still asked below because implementation belongs in a worktree.
-AUTO_MODES = {"auto", "acceptEdits", "bypassPermissions"}
-if in_worktree and payload.get("permission_mode") in AUTO_MODES:
+if in_worktree and auto_mode:
     passthrough("오토 모드에서는 작업 요청이 3단계 승인을 대신하므로 worktree 수정을 허용합니다.")
 
 # Flag the main checkout separately in the confirmation message.
