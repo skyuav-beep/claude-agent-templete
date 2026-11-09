@@ -90,24 +90,25 @@ marker = os.path.join(os.path.dirname(project_git), ".claude", ".approval", sess
 AUTO_MODES = {"auto", "acceptEdits", "bypassPermissions"}
 auto_mode = payload.get("permission_mode") in AUTO_MODES
 
-# Creating a new Markdown document (a plan, analysis or note) only adds a file
-# without touching existing content, so an approved or auto-mode session is not
-# asked again, even in the main checkout (docs/approval-workflow.md
-# "## 재확인하지 않는 작업"). The session may have started in a subfolder such as
-# backend/, so answer allow explicitly to skip the "Do you want to create ...?"
-# prompt as well. Overwriting or editing an existing file is still asked below,
-# and docs/99-archive/ stays a structure change.
-new_markdown = (
+# A Markdown document still being drafted (a plan, analysis or note that does
+# not exist yet or is not tracked by Git) touches no committed content, so an
+# approved or auto-mode session is not asked again to create or edit it, even in
+# the main checkout (docs/approval-workflow.md "## 재확인하지 않는 작업"). The
+# session may have started in a subfolder such as backend/, so answer allow
+# explicitly to skip the "Do you want to create/make this edit ...?" prompt as
+# well. Editing a committed file is still asked below, and docs/99-archive/
+# stays a structure change.
+draft_markdown = (
     target.lower().endswith(".md")
-    and not os.path.exists(target)
     and not (target_top and relative.startswith("docs/99-archive/"))
+    and (not os.path.exists(target) or not git(target_dir, "ls-files", "--", target))
 )
-if new_markdown and (auto_mode or os.path.exists(marker)):
+if draft_markdown and (auto_mode or os.path.exists(marker)):
     print(json.dumps({
         "hookSpecificOutput": {
             "hookEventName": "PreToolUse",
             "permissionDecision": "allow",
-            "permissionDecisionReason": "새 Markdown 문서 생성은 다시 묻지 않습니다.",
+            "permissionDecisionReason": "커밋 전 작성 중인 Markdown 문서의 생성·수정은 다시 묻지 않습니다.",
         }
     }, ensure_ascii=False))
     sys.exit(0)

@@ -40,6 +40,8 @@ git(REPO, "add", "README.md");
 git(REPO, "commit", "-q", "-m", "init");
 git(REPO, "worktree", "add", "-q", "-b", "work", WORKTREE);
 fs.mkdirSync(path.join(REPO, "backend"));
+fs.mkdirSync(path.join(REPO, "docs"));
+fs.writeFileSync(path.join(REPO, "docs", "DRAFT_PLAN.md"), "draft\n");
 
 const marker = path.join(REPO, ".claude", ".approval", SESSION);
 
@@ -76,9 +78,12 @@ const CASES = [
   { cwd: path.join(REPO, "backend"), file: path.join(REPO, "docs/plan.md"), ask: false, allow: true, mode: "auto", note: "하위 폴더 세션의 상위 docs/ 새 .md도 허용" },
   { cwd: REPO, file: "docs/NEW_PLAN.md", ask: false, allow: true, withMarker: true, mode: "default", note: "승인 표시가 있으면 기본 모드도 허용" },
   { cwd: REPO, file: "docs/NEW_PLAN.md", ask: true, mode: "default", note: "승인 전 기본 모드는 새 .md도 확인" },
-  { cwd: REPO, file: "README.md", ask: true, mode: "auto", note: "이미 있는 .md 덮어쓰기·수정은 확인" },
+  { cwd: REPO, file: "README.md", ask: true, mode: "auto", note: "커밋된 .md 덮어쓰기·수정은 확인" },
   { cwd: REPO, file: "docs/99-archive/new.md", ask: true, mode: "auto", note: "보관 폴더는 구조 변경이라 확인" },
   { cwd: REPO, file: "docs/notes.txt", ask: true, mode: "auto", note: ".md가 아닌 새 파일은 확인" },
+  // 만든 뒤 아직 커밋하지 않은 .md를 이어서 고치는 것도 작성 중인 문서라 묻지 않는다.
+  { cwd: path.join(REPO, "backend"), file: path.join(REPO, "docs/DRAFT_PLAN.md"), ask: false, allow: true, mode: "auto", note: "커밋 전 .md 수정은 허용" },
+  { cwd: REPO, file: "docs/DRAFT_PLAN.md", ask: true, mode: "default", note: "승인 전 기본 모드는 커밋 전 .md도 확인" },
 ];
 
 const run = ({ cwd, file, mode }) => {
