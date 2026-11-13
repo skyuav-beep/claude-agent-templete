@@ -101,7 +101,7 @@
 5. PR의 head/base, 충돌, 필수 검사와 보호 규칙을 확인한다.
 6. 게이트가 충족되면 프로젝트 기본 방식(미지정 시 squash)으로 머지한다. 머지 명령(`gh pr merge`)은 `cd`나 다른 명령과 `&&`로 묶지 않고 단독으로 실행해 권한 허용 규칙이 그대로 적용되게 한다.
 7. 원격 base가 머지 결과를 포함하는지 SHA로 검증한다.
-8. worktree를 먼저 제거해 브랜치 점유를 푼 뒤 로컬·원격 작업 브랜치를 안전 삭제하고 prune한다 (순서와 주의는 `docs/local-dev-ci-guide.md §6.5`).
+8. worktree를 먼저 제거해 브랜치 점유를 푼 뒤 로컬·원격 작업 브랜치를 안전 삭제하고 prune한다. 남은 worktree가 없으면 비어 있는 형제 폴더(`<프로젝트>-worktrees/`)도 지운다 (순서와 주의는 `docs/local-dev-ci-guide.md §6.5`).
 
 검증 실패, 충돌, 필수 review/check 미충족이면 우회하지 않고 중단해 보고한다. 배포·릴리스 Action과 `staging`/`production` migration은 항상 사용자 수동이다.
 

@@ -81,7 +81,7 @@ git 이력만으로는 "왜 그렇게 했는지"가 남지 않는다. 대화에�
 | 미push 커밋 | 없음 |
 | 열린 PR | 없음. 남긴다면 보류 사유가 `STATE.md`에 기록됨 |
 | 잔여 브랜치 | 머지 완료 브랜치는 로컬·원격 모두 삭제 |
-| 잔여 worktree | 작업용 worktree 삭제 후 `git worktree prune` |
+| 잔여 worktree | 작업용 worktree 삭제 후 `git worktree prune`. 남은 worktree가 없으면 빈 `<프로젝트>-worktrees/` 폴더도 삭제 |
 | `STATE.md` | 이번 세션 이력과 다음 재개 지점이 기록됨 |
 
 정리하지 못한 항목이 있으면 이유와 함께 최종 응답에 남긴다. 조용히 넘어가지 않는다.
