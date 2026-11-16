@@ -102,8 +102,9 @@ Claude Code와 Codex를 함께 써서 여러 프로젝트를 병렬로 개발할
     {"hooks": {"PermissionRequest": [{"hooks": [{"type": "command", "command": "bash ~/projects/claude-agent-template/.claude/hooks/agent-events.sh codex-hook"}]}]}}
     ```
 
-  - 등록·신뢰 처리는 사용자가 한다. 사용자 전역 위치(`~/.codex/hooks.json`)와 신뢰 처리 화면은 아직 실측하지 않았다. 등록 후 Codex 세션에서 신뢰를 승인하고 `agent-events.sh status`에 `codex` 행의 도구 실행이 보이는지 확인한다.
-- tmux 창 위치: tmux 안에서 실행된 세션은 `tmux`(`세션:창번호`)와 `pane`(`%번호`)을 함께 기록한다. 감시 화면은 이 값으로 그 창에 지시를 보내거나 이동한다(`## 화면에서 지시 보내기`).
+  - 등록·신뢰 처리는 사용자가 한다. 사용자 전역 `~/.codex/hooks.json`도 동작한다(2026-11-17 확인). 대화형 `codex` 시작 화면의 "Hooks need review"에서 신뢰하고, `/hooks`로 확인·관리한다. 비대화형 `codex exec`는 신뢰하지 않은 훅을 조용히 건너뛰므로 신뢰는 대화형에서 먼저 한다. 등록 후 Codex 세션에서 신뢰를 승인하고 `agent-events.sh status`에 `codex` 행의 도구 실행이 보이는지 확인한다.
+- tmux 창 위치: tmux 안에서 실행된 세션은 `tmux`(`세션:창번호`)와 `pane`(`%번호`)을 함께 기록한다. Codex 대화 화면은 tmux 창 안에 있어도 작업·훅은 별도 Codex 서버 프로세스에서 돌아 창 정보가 넘어오지 않는다. 그래서 Codex는 같은 작업 폴더에서 `codex`가 떠 있는 창이 정확히 하나일 때만 그 창으로 기록한다. 한 폴더에 Codex 창을 둘 이상 띄우면 창 위치가 비고, 그 세션에는 화면에서 지시를 보낼 수 없다.
+- 중복 방지: 사용자 전역 `~/.codex/hooks.json`에 `codex-hook`이 등록돼 있으면 턴 완료는 훅의 `Stop`이 기록하므로 notify 어댑터는 기록하지 않는다. 감시 화면은 이 값으로 그 창에 지시를 보내거나 이동한다(`## 화면에서 지시 보내기`).
 - 위치: `${XDG_STATE_HOME:-~/.local/state}/agent-events/events.jsonl`(`AGENT_EVENTS_FILE`로 변경). 20MB를 넘으면 `events.jsonl.1`로 넘긴다. 모든 프로젝트가 같은 파일을 쓰므로 한 화면에서 함께 본다.
 - 기록하지 않는 것: 프롬프트·응답 본문, 파일 내용. Bash 명령은 앞 120자만 남기고 비밀값처럼 보이는 부분(키=값, 토큰, `Bearer`, URL 계정)을 `***`로 가린다. 끄려면 `AGENT_EVENTS_DISABLE=1`.
 

@@ -61,23 +61,35 @@ append() {
   printf '%s\n' "$line" >> "$events_file"
 }
 
-# 현재 프로세스가 속한 tmux 창. tmux 밖이면 빈 값
-tmux_target() {
-  [ -n "${TMUX_PANE:-}" ] || return 0
-  tmux display-message -p -t "$TMUX_PANE" '#S:#I' 2>/dev/null || true
+# 세션이 속한 tmux 창을 "세션:창번호<TAB>pane" 한 줄로 출력한다. 모르면 빈 값.
+# 1) 훅 프로세스가 tmux 창 안에서 돌면 TMUX_PANE으로 바로 안다(Claude).
+# 2) Codex 대화 화면은 tmux 창 안에 있어도 작업·훅은 별도 Codex 서버 프로세스에서 돌아 TMUX_PANE이 없다.
+#    이때는 같은 작업 폴더에서 codex가 떠 있는 창이 정확히 하나일 때만 그 창으로 본다(여러 개면 비운다).
+tmux_locate() {
+  local provider="$1" cwd="$2" target matches
+  if [ -n "${TMUX_PANE:-}" ]; then
+    target=$(tmux display-message -p -t "$TMUX_PANE" '#S:#I' 2>/dev/null || true)
+    [ -n "$target" ] && printf '%s\t%s\n' "$target" "$TMUX_PANE"
+    return 0
+  fi
+  [ "$provider" = "codex" ] && [ -n "$cwd" ] && command -v tmux >/dev/null 2>&1 || return 0
+  matches=$(tmux list-panes -a -F '#{pane_current_command}	#{pane_current_path}	#S:#I	#{pane_id}' 2>/dev/null \
+    | awk -F'\t' -v cwd="$cwd" '$1 ~ /codex/ && $2 == cwd {print $3"\t"$4}')
+  [ -n "$matches" ] && [ "$(printf '%s\n' "$matches" | wc -l)" -eq 1 ] && printf '%s\n' "$matches"
+  return 0
 }
 
 record_claude() {
-  local provider="${1:-claude}" payload cwd project branch line tmuxt
+  local provider="${1:-claude}" payload cwd project branch line loc tmuxt panev
   payload=$(cat)
   printf '%s' "$payload" | jq -e . >/dev/null 2>&1 || return 0
   cwd=$(printf '%s' "$payload" | jq -r '.cwd // empty')
   [ -n "$cwd" ] || cwd="$PWD"
   project=$(project_of "$cwd")
   branch=$(git -C "$cwd" rev-parse --abbrev-ref HEAD 2>/dev/null || true)
-  tmuxt=$(tmux_target)
+  loc=$(tmux_locate "$provider" "$cwd"); tmuxt=${loc%%$'\t'*}; panev=${loc#*$'\t'}
   line=$(printf '%s' "$payload" | jq -c --arg provider "$provider" --arg project "$project" --arg branch "$branch" --arg cwd "$cwd" \
-      --arg tmux "$tmuxt" --arg pane "${TMUX_PANE:-}" "$JQ_MASK"'
+      --arg tmux "$tmuxt" --arg pane "$panev" "$JQ_MASK"'
     . as $p
     | ($p.tool_input // {}) as $in
     | {
@@ -105,15 +117,17 @@ record_claude() {
 }
 
 record_codex() {
-  local payload="$1" cwd project branch line tmuxt
+  local payload="$1" cwd project branch line loc tmuxt panev
   printf '%s' "$payload" | jq -e . >/dev/null 2>&1 || return 0
+  # Codex 훅(codex-hook)을 전역 등록했으면 턴 완료는 훅의 Stop이 기록하므로 notify 쪽은 건너뛴다(중복 방지)
+  grep -q 'agent-events.sh codex-hook' "${CODEX_HOME:-$HOME/.codex}/hooks.json" 2>/dev/null && return 0
   cwd=$(printf '%s' "$payload" | jq -r '.cwd // empty')
   [ -n "$cwd" ] || cwd="$PWD"
   project=$(project_of "$cwd")
   branch=$(git -C "$cwd" rev-parse --abbrev-ref HEAD 2>/dev/null || true)
-  tmuxt=$(tmux_target)
+  loc=$(tmux_locate codex "$cwd"); tmuxt=${loc%%$'\t'*}; panev=${loc#*$'\t'}
   line=$(printf '%s' "$payload" | jq -c --arg project "$project" --arg branch "$branch" --arg cwd "$cwd" \
-      --arg tmux "$tmuxt" --arg pane "${TMUX_PANE:-}" '
+      --arg tmux "$tmuxt" --arg pane "$panev" '
     {
       ts: now | floor,
       provider: "codex",

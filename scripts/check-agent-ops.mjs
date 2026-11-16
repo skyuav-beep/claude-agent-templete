@@ -124,6 +124,28 @@ expect("공통 필드", lines.every((l) => l.ts && l.provider && l.event && l.se
 expect("tmux 창 위치 기록", lines.some((l) => l.session === "s-tmux" && l.tmux === "work:3" && l.pane === "%7"), JSON.stringify(lines.find((l) => l.session === "s-tmux")));
 expect("tmux 밖이면 창 위치 없음", lines.filter((l) => l.session === "s-run").every((l) => !("tmux" in l) && !("pane" in l)));
 expect("Codex 훅 기록(provider=codex, 가림)", lines.some((l) => l.session === "cx-hook" && l.provider === "codex" && l.event === "PermissionRequest" && l.tmux === "work:3" && !/abc123/.test(l.target)));
+// Codex 창 찾기: TMUX_PANE 없이 같은 작업 폴더의 codex 창이 하나면 그 창, 둘이면 비움
+{
+  const mk = (name, body) => { const d = path.join(tmp, name); fs.mkdirSync(d, { recursive: true }); fs.writeFileSync(path.join(d, "tmux"), body, { mode: 0o755 }); return d; };
+  const one = mk("bin-one", `#!/bin/sh\n[ "$1" = list-panes ] && printf 'codex\\t${root}\\tdev:2\\t%%5\\nbash\\t${root}\\tdev:3\\t%%6\\ncodex\\t/elsewhere\\tdev:4\\t%%7\\n'\n`);
+  const two = mk("bin-two", `#!/bin/sh\n[ "$1" = list-panes ] && printf 'codex\\t${root}\\tdev:2\\t%%5\\ncodex\\t${root}\\tdev:8\\t%%9\\n'\n`);
+  const env1 = { ...evEnv, TMUX_PANE: "", PATH: `${one}:${process.env.PATH}` };
+  const env2 = { ...evEnv, TMUX_PANE: "", PATH: `${two}:${process.env.PATH}` };
+  run(events, ["codex-hook"], { input: JSON.stringify({ cwd: root, session_id: "cx-one", hook_event_name: "PreToolUse", tool_name: "Bash", tool_input: { command: "ls" } }), env: env1 });
+  run(events, ["codex-hook"], { input: JSON.stringify({ cwd: root, session_id: "cx-two", hook_event_name: "PreToolUse", tool_name: "Bash", tool_input: { command: "ls" } }), env: env2 });
+  run(events, [], { input: JSON.stringify({ cwd: root, session_id: "cl-nopane", hook_event_name: "PreToolUse", tool_name: "Read", tool_input: { file_path: "/x" } }), env: env1 });
+  const ls = fs.readFileSync(evFile, "utf8").trim().split("\n").map((l) => JSON.parse(l));
+  const g = (s) => ls.find((l) => l.session === s) || {};
+  expect("Codex 창 찾기: 같은 폴더 codex 창 하나", g("cx-one").tmux === "dev:2" && g("cx-one").pane === "%5", JSON.stringify(g("cx-one")));
+  expect("Codex 창 찾기: 후보 둘이면 비움", !("tmux" in g("cx-two")), JSON.stringify(g("cx-two")));
+  expect("Claude는 폴더로 추측하지 않음", !("tmux" in g("cl-nopane")), JSON.stringify(g("cl-nopane")));
+  // 전역 Codex 훅이 등록돼 있으면 notify 턴 완료는 중복이라 건너뜀
+  const ch = path.join(tmp, "codex-home-hooked");
+  fs.mkdirSync(ch, { recursive: true });
+  fs.writeFileSync(path.join(ch, "hooks.json"), JSON.stringify({ hooks: { Stop: [{ hooks: [{ type: "command", command: "bash x/agent-events.sh codex-hook" }] }] } }));
+  run(events, ["codex", JSON.stringify({ type: "agent-turn-complete", "thread-id": "c-dup", cwd: root })], { env: { ...evEnv, CODEX_HOME: ch } });
+  expect("Codex 훅 등록 시 notify 중복 기록 안 함", !fs.readFileSync(evFile, "utf8").includes("c-dup"));
+}
 expect("Codex 턴 완료 기록", lines.some((l) => l.provider === "codex" && l.event === "Stop" && l.session === "c-1"));
 
 // 9. 현황: 응답 필요가 맨 위, 종료 세션 숨김, 서브·작업 집계
@@ -139,7 +161,7 @@ expect("현황: 시작만 한 세션은 대기", rows.some((l) => /^대기/.test
 expect("현황: Stop 뒤 늦게 온 SubagentStop은 완료 유지", rows.some((l) => /^완료/.test(l) && /s-bg/.test(l)), r.out);
 expect("현황: 빈 최근 동작이 열을 밀지 않음(Codex 완료 행)", rows.some((l) => /c-nogit/.test(l) && /\s-\s+-\s+-\s*$/.test(l)), r.out);
 r = run(events, ["status", "--short"], { env: evEnv });
-expect("현황 한 줄", /실행 2 · 응답 2/.test(r.out), r.out);
+expect("현황 한 줄", /실행 5 · 응답 2/.test(r.out), r.out);
 
 // 9-1. watch: 터미널 없이 돌 때 바쁜 루프를 돌지 않음(간격을 지킴)
 {
