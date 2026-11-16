@@ -105,6 +105,7 @@
 
 ## 최근 완료 작업
 
+- 2순위 권한 설정 대안 2건을 `auto` 운영으로 불필요하다고 판단해 닫고 결정 사항으로 옮겼다. 설정 파일은 바꾸지 않았다. (2026-11-16)
 - 2순위 판단 대기 2건을 처리했다: 라우팅 표 축약, 머지가 막힐 때의 대처를 공통 정본으로 올림. (2026-11-16)
   - 라우팅 표(`AGENTS.md ## Context Map`): intake 설문 12종을 한 줄로 접어 68행에서 57행으로 줄였다. 같이 틀려 있던 Skills·Slash Commands 개수(12종 → 14종, `session-coordination`·`session-end` 누락)를 바로잡았다.
   - 머지 가이드: `docs/local-dev-ci-guide.md ### 6.3. 머지`에 "실행 환경이 막으면"을 추가했다. 먼저 시도하고, `gh pr merge`는 단독 명령으로 실행하며, 분류기가 거부하면 우회하지 않고 사용자에게 `! gh pr merge <num> --squash` 또는 GitHub UI를 요청한다. `riderwebapp`에만 있던 항목을 공통으로 올렸다.
@@ -465,10 +466,8 @@
 - 2026-11-16 자동 사전 점검: 3화면 × 6종 × light/dark 72조합 적용·오류·가로 넘침 0, `worknest` 화면 틀 gradient·카드 그림자 0, 대비 미달은 비활성 버튼 예시뿐. 처음 열면 기본 시안이 `wanted`라 셀렉터에서 `worknest`를 골라야 한다.
 - 의도와 다른 부분이 나오면 **Claude Design System에서 고친 뒤** `docs/design-guidelines.md` "Claude Design System 동기화"의 세션 시작 점검 3~6으로 내려받는다(`designs/*.md`·`DESIGN.md` 직접 수정 금지).
 
-### 2순위 — 사용자 판단이 필요한 5건
+### 2순위 — 사용자 판단이 필요한 3건
 
-- Bash 허용 규칙 병합 (2026-10-29, 2026-11-05 전역 병합으로 대체). 좁은 규칙과 거부 규칙은 사용자 전역 설정에 들어가 모든 프로젝트에 적용된다. 남은 판단은 `default`·`acceptEdits` 모드용 `Bash` 전체 허용을 프로젝트별 `settings.local.json`에도 넣을지 여부뿐이다. 명령은 `docs/plugin-guide.md ### Bash 명령 자동 실행`. 사용자가 별도 터미널에서 실행한다.
-- 권한 모드 적용 (2026-08-04 인계). 파일 수정 확인을 없애려면 사용자 전역 설정(`~/.claude/settings.json`)에서 권한 모드를 `acceptEdits`로 바꾸고 허용 목록에 `Write`를 추가한다. 에이전트는 이 편집을 실행할 수 없어 사용자가 직접 해야 하며 적용 후 재시작이 필요하다. 되돌리려면 `~/.claude/settings.json.bak-20260804`를 덮어쓴다. 분류기를 유지한 채 특정 작업만 여는 `autoMode.allow` 방식도 대안이며, 이 경우 저장소 설정이 아니라 전역 설정에 넣어야 적용된다. 2026-08-14 세션에서는 훅 스크립트 수정, 여러 저장소 설정을 한 번에 바꾸는 스크립트, PR 머지 세 건이 분류기에 막혀 사용자 확인을 거쳤다.
 - `aiospace` PR 39의 머지 여부. 그 저장소에서 진행한다.
 - 각 연결 프로젝트에 추가된 `.claude/CLAUDE.md`와 `.claude/statusline-notify.sh` symlink는 아직 untracked다. 커밋 여부는 저장소별로 판단하며, `.claude/`를 gitignore한 프로젝트는 그대로 두면 된다.
 - `riderwebapp`은 `.codex`가 추적되는 실체 디렉터리라 신규 파일 2건만 수동 연결했다. 내용은 템플릿과 동일해 기능 차이가 없고, 정리하려면 그 저장소에서 별도 작업으로 한다.
@@ -508,6 +507,7 @@ Windows 이식성 2건은 여기 있다. 주 개발 환경이 WSL이고 2026-09-
 
 ### 결정 사항 (재론 불필요)
 
+- 권한 설정 대안 2건(프로젝트별 `Bash` 전체 허용, 전역 `acceptEdits` 전환)은 닫았다(2026-11-16). 전역 권한 모드가 `auto`이고 `auto`는 `Bash` 같은 전체 허용 규칙을 무시하므로 둘 다 효과가 없다. 좁은 허용 규칙과 `autoMode` 규칙으로 운영한다. 권한 모드를 `default`·`acceptEdits`로 바꿀 때만 `docs/plugin-guide.md ### Bash 명령 자동 실행`을 보고 재검토한다. 권한을 넓히는 설정 편집은 분류기가 막으므로 사용자가 별도 터미널에서 직접 한다.
 - 배포 방식은 `.claude` 전체 symlink(`--link-claude-dir`)가 아니라 실행 게이트 연결(`--link`)로 확정했다. 전체 symlink는 `aiospace`(`.claude/worktrees/admin-sep`), `signal2`(세션 격리 훅·승인 상태), `riderwebapp`(머지 권한 정책), `GoldFX`(절대경로 훅 등록)의 고유 자산을 없앤다.
 
 ## 현재 기준 파일
