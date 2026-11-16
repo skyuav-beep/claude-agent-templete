@@ -106,7 +106,9 @@
   - AgentHUD 격리 시험(Docker, 세션 폴더 읽기 전용)은 오토 모드 분류기가 차단했다(외부 패키지가 세션 기록을 읽음). 우회하지 않고 공개 문서·소스로 평가했다.
   - 버그 수정: `watch`가 터미널 없이 돌면 키 입력 대기가 즉시 끝나 CPU 한 코어를 계속 썼고(이벤트 2만 줄에서 10초에 CPU 10.7초), 터미널에서도 2초마다 전체를 다시 계산했다(약 11%). 비터미널은 sleep으로 간격을 지키고, 이벤트 파일이 바뀔 때(또는 최대 15초마다)만 다시 계산하게 했다 → 30초에 CPU 0.86초(약 2.6%), RSS 24MB. `check-agent-ops`에 회귀 검사 추가(옛 코드에서 실패 확인) — 65건 통과.
   - 적용(사용자 요청): `memory-gate.sh`(PreToolUse Bash, timeout 660)와 `agent-events.sh`(async 12종)를 **사용자 전역 설정** `~/.claude/settings.json`에 이 템플릿의 절대 경로로 등록해 모든 프로젝트에서 동작한다. 두 번 실행되지 않도록 이 저장소 로컬 설정에 임시로 넣었던 13개는 지웠다(등록 전과 동일함 확인). 명령 1회당 이벤트 1줄 기록 확인. 되돌리려면 전역 설정에서 두 스크립트 항목을 지운다. 템플릿을 설치한 프로젝트의 로컬 설정에 같은 훅을 또 등록하지 않는다(중복 실행).
-  - Codex `notify`는 `~/.codex/config.toml`에 아직 등록되지 않아 Codex 턴 완료는 기록되지 않는다(등록하면 데스크톱 알림도 켜짐 — 사용자 결정 대기).
+  - Codex `notify` 등록(사용자 요청): `~/.codex/config.toml` 최상위에 `notify = ["/home/skyua/projects/claude-agent-template/.codex/hooks/notify-codex.sh"]`를 추가했다(TOML 문법 확인, 다른 키 변경 없음). 실제 `codex exec` 한 턴으로 이벤트 파일에 `codex · Stop`이 기록되는 것을 확인했다. Codex 턴 완료 시 데스크톱 알림도 함께 켜진다(60초 미만 턴은 조용히 넘김). 이미 열려 있던 Codex 세션은 다시 시작해야 설정을 읽는다. 되돌리려면 그 한 줄을 지운다.
+  - 발견: `codex exec`는 표준 입력이 터미널이 아니면 입력을 기다리며 끝나지 않는다 → 가이드에 `</dev/null` 주의를 추가했다.
+  - 전역 등록 뒤 현황에 다른 프로젝트(makeupshop, alliance)의 Claude 세션도 함께 나오는 것을 확인했다.
 - Claude-Codex 병렬 개발 체계 2단계: 메모리 자동 대기, 이벤트 기록·현황 보기, tmux 운영을 추가했다. (2026-11-16)
   - `.claude/hooks/memory-gate.sh`: PreToolUse(Bash) 훅으로 무거운 명령(새 Claude·Codex 실행, 개발 서버, Playwright, Docker 기동·빌드, Codex 리뷰·작업 스크립트)을 메모리 80% 미만이 될 때까지 30초 간격으로 기다렸다가 통과, 10분 초과 시 ask + 정리 후보. `run -- <명령>`·`wait`·`status [--short]`·`check` 하위 명령. 설정 템플릿에 timeout 660초로 등록.
   - `.claude/hooks/agent-events.sh`: Claude 훅 12종(async)과 Codex notify 턴 완료를 `~/.local/state/agent-events/events.jsonl` 하나에 기록. 본문 미기록, Bash 명령 120자·비밀값 가림, 20MB 넘김. `status`·`status --short`·`watch`(터미널 현황, q 종료)로 여러 프로젝트 세션을 응답 필요 > 오류 > 실행 중 > 멈춤? > 완료 순으로 보여 준다. Codex 대화형 진행은 실행 로그 갱신으로 보완.
