@@ -3847,6 +3847,171 @@
       display: inline-flex;
     }
   </style>
+<style id="design-shapes">
+/* scripts/design-sync.mjs preview --shapes 로 생성 — 정본은 designs/_sync/<slug>.map.json 의 preview_shape. 직접 고치지 않는다. */
+  /* aeg-soft */
+  :root[data-design="aeg-soft"][data-theme="light"] { --sig-surface-glass: #ffffffb8; --sig-gold-100: #fff3c4; --sig-gold-700: #7f5900; }
+  :root[data-design="aeg-soft"][data-theme="dark"] { --sig-surface-glass: #23272cc7; --sig-gold-100: #3a3012; --sig-gold-700: #f5c64a; }
+  :root[data-design="aeg-soft"] .button { border-radius: var(--radius-full); font-weight: 800; }
+  :root[data-design="aeg-soft"] .stat-card,
+  :root[data-design="aeg-soft"] .login-card,
+  :root[data-design="aeg-soft"] .case-card,
+  :root[data-design="aeg-soft"] .feed-card,
+  :root[data-design="aeg-soft"] .reward-card { border-color: transparent; border-radius: var(--radius-30); box-shadow: var(--shadow-1); }
+  :root[data-design="aeg-soft"] .input,
+  :root[data-design="aeg-soft"] .search-bar { border-radius: var(--radius-18); }
+  :root[data-design="aeg-soft"] .badge { border-radius: var(--radius-full); font-weight: 700; }
+  :root[data-design="aeg-soft"] .chip,
+  :root[data-design="aeg-soft"] .chip-pill { border-radius: var(--radius-full); background: var(--bg-surface); box-shadow: var(--shadow-1); font-weight: 700; }
+  :root[data-design="aeg-soft"] .icon-btn { border-radius: var(--radius-full); }
+  :root[data-design="aeg-soft"] .segmented { border-radius: var(--radius-full); background: var(--sig-surface-glass); backdrop-filter: blur(20px); }
+  :root[data-design="aeg-soft"] .segmented button { border-radius: var(--radius-full); }
+  :root[data-design="aeg-soft"] .segmented button.on,
+  :root[data-design="aeg-soft"] .segmented .seg-item.active { background: var(--bg-surface); color: var(--fg-strong); box-shadow: var(--shadow-1); }
+  :root[data-design="aeg-soft"] .nav-item.active { border-radius: var(--radius-full); }
+  :root[data-design="aeg-soft"] .bottom-nav { margin: 0 var(--space-16) var(--space-20); padding: 6px; border-top: 0; border-radius: var(--radius-full); background: var(--sig-surface-glass); backdrop-filter: blur(24px); box-shadow: var(--shadow-pop); }
+  :root[data-design="aeg-soft"] .bottom-nav .nav-tab.active { background: var(--sig-gold-100); color: var(--sig-gold-700); border-radius: var(--radius-full); }
+  :root[data-design="aeg-soft"] .bottom-nav.fab-variant .fab-button { width: 70px; height: 70px; box-shadow: var(--shadow-pop); }
+  :root[data-design="aeg-soft"] .bottom-sheet { border-radius: 28px 28px 0 0; }
+  /* aitc */
+  :root[data-design="aitc"][data-theme="light"] { --sig-hero: #16201b; --sig-on-hero: #f5f3ee; }
+  :root[data-design="aitc"][data-theme="dark"] { --sig-hero: #1f3a2e; --sig-on-hero: #f2f7f3; }
+  :root[data-design="aitc"] .button { border-radius: var(--radius-14); font-weight: 600; }
+  :root[data-design="aitc"] .stat-card,
+  :root[data-design="aitc"] .login-card,
+  :root[data-design="aitc"] .case-card,
+  :root[data-design="aitc"] .feed-card,
+  :root[data-design="aitc"] .reward-card { border: 1px solid var(--border-subtle); border-radius: var(--radius-22); box-shadow: none; }
+  :root[data-design="aitc"] .input,
+  :root[data-design="aitc"] .search-bar { border: 1px solid var(--border-default); border-radius: var(--radius-14); background: var(--bg-surface); }
+  :root[data-design="aitc"] .badge { border-radius: var(--radius-8); }
+  :root[data-design="aitc"] .chip,
+  :root[data-design="aitc"] .chip-pill { border: 1px solid var(--border-default); border-radius: var(--radius-full); background: var(--bg-surface); }
+  :root[data-design="aitc"] .segmented { border-radius: var(--radius-14); background: var(--bg-subtle); }
+  :root[data-design="aitc"] .nav-item { border-radius: var(--radius-8); }
+  :root[data-design="aitc"] .hero-banner { background: var(--sig-hero); color: var(--sig-on-hero); border-radius: var(--radius-22); }
+  :root[data-design="aitc"] .hero-banner > * { color: inherit; }
+  :root[data-design="aitc"] .bottom-nav { background: var(--bg-surface); box-shadow: var(--shadow-pop); }
+  :root[data-design="aitc"] .bottom-nav .nav-tab.active { color: var(--fg-brand); font-weight: 700; }
+  :root[data-design="aitc"] .bottom-sheet { border-radius: var(--radius-22) var(--radius-22) 0 0; box-shadow: var(--shadow-pop); }
+  /* brick-wallet */
+  :root[data-design="brick-wallet"][data-theme="light"] { --sig-up-block: #c6f432; --sig-on-block: #000000; --sig-orange: #ffb547; --sig-down-block: #ff7a7a; --sig-pink: #ff8ad8; --sig-lime: #c6f432; }
+  :root[data-design="brick-wallet"][data-theme="dark"] { --sig-up-block: #c6f432; --sig-on-block: #000000; --sig-orange: #ffb547; --sig-down-block: #ff7a7a; --sig-pink: #ff8ad8; --sig-lime: #c6f432; }
+  :root[data-design="brick-wallet"] .button { border: 2px solid var(--border-strong); border-radius: var(--radius-6); font-weight: 800; box-shadow: var(--shadow-1); transition: transform 80ms ease, box-shadow 80ms ease; }
+  :root[data-design="brick-wallet"] .button:active { transform: translate(4px, 4px); box-shadow: none; }
+  :root[data-design="brick-wallet"] .button.ghost { background: transparent; box-shadow: none; }
+  :root[data-design="brick-wallet"] .button.tertiary { background: transparent; border-color: transparent; box-shadow: none; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  :root[data-design="brick-wallet"] .input,
+  :root[data-design="brick-wallet"] .search-bar { border: 2px solid var(--border-strong); border-radius: var(--radius-6); background: var(--bg-surface); }
+  :root[data-design="brick-wallet"] .input:focus { outline: none; box-shadow: var(--shadow-1); }
+  :root[data-design="brick-wallet"] .badge { border: 2px solid var(--border-strong); border-radius: var(--radius-6); font-weight: 800; letter-spacing: .04em; }
+  :root[data-design="brick-wallet"] .badge.active { background: var(--sig-up-block); color: var(--sig-on-block); }
+  :root[data-design="brick-wallet"] .badge.pending { background: var(--sig-orange); color: var(--sig-on-block); }
+  :root[data-design="brick-wallet"] .badge.danger { background: var(--sig-down-block); color: var(--sig-on-block); }
+  :root[data-design="brick-wallet"] .chip,
+  :root[data-design="brick-wallet"] .chip-pill { border: 2px solid var(--border-strong); border-radius: var(--radius-6); box-shadow: 2px 2px 0 var(--border-strong); font-weight: 800; }
+  :root[data-design="brick-wallet"] .stat-card,
+  :root[data-design="brick-wallet"] .login-card,
+  :root[data-design="brick-wallet"] .case-card,
+  :root[data-design="brick-wallet"] .feed-card,
+  :root[data-design="brick-wallet"] .reward-card { border: 2px solid var(--border-strong); border-radius: var(--radius-12); box-shadow: var(--shadow-1); }
+  :root[data-design="brick-wallet"] .icon-btn { border: 2px solid var(--border-strong); border-radius: var(--radius-6); }
+  :root[data-design="brick-wallet"] .segmented { border: 2px solid var(--border-strong); border-radius: var(--radius-6); box-shadow: var(--shadow-1); }
+  :root[data-design="brick-wallet"] .segmented button.on,
+  :root[data-design="brick-wallet"] .segmented .seg-item.active { background: var(--bg-brand); color: var(--fg-on-brand); }
+  :root[data-design="brick-wallet"] .nav-item.active { background: var(--bg-brand); color: var(--fg-on-brand); box-shadow: inset 0 0 0 2px var(--border-strong); border-radius: var(--radius-6); }
+  :root[data-design="brick-wallet"] .bottom-nav { height: 70px; border-top: 3px solid var(--border-strong); }
+  :root[data-design="brick-wallet"] .bottom-nav .nav-tab { color: var(--fg-strong); font-weight: 800; }
+  :root[data-design="brick-wallet"] .bottom-nav .nav-tab + .nav-tab { border-left: 2px solid var(--border-strong); }
+  :root[data-design="brick-wallet"] .bottom-nav .nav-tab.active { background: var(--bg-brand); color: var(--fg-on-brand); }
+  :root[data-design="brick-wallet"] .bottom-nav.fab-variant .fab-button { width: 64px; height: 64px; top: -16px; border: 3px solid var(--border-strong); border-radius: var(--radius-6); background: var(--sig-pink); color: var(--sig-on-block); box-shadow: var(--shadow-1); }
+  :root[data-design="brick-wallet"] .bottom-sheet { border: 3px solid var(--border-strong); border-bottom: 0; border-radius: var(--radius-12) var(--radius-12) 0 0; box-shadow: var(--shadow-pop); }
+  :root[data-design="brick-wallet"] .hero-banner { background: var(--sig-lime); color: var(--sig-on-block); border: 3px solid var(--border-strong); border-radius: var(--radius-12); box-shadow: var(--shadow-pop); }
+  :root[data-design="brick-wallet"] .hero-banner > * { color: inherit; }
+  /* grove */
+  :root[data-design="grove"] .button { border-radius: var(--radius-10); font-weight: 500; }
+  :root[data-design="grove"] .stat-card,
+  :root[data-design="grove"] .login-card,
+  :root[data-design="grove"] .case-card,
+  :root[data-design="grove"] .feed-card,
+  :root[data-design="grove"] .reward-card { border: 1px solid var(--border-subtle); border-radius: var(--radius-10); box-shadow: var(--shadow-1); }
+  :root[data-design="grove"] .chip,
+  :root[data-design="grove"] .chip-pill { border-radius: var(--radius-6); height: 22px; }
+  :root[data-design="grove"] .badge { border-radius: var(--radius-6); }
+  :root[data-design="grove"] .input,
+  :root[data-design="grove"] .search-bar { border-radius: var(--radius-10); }
+  :root[data-design="grove"] .nav-item { border-radius: var(--radius-6); }
+  :root[data-design="grove"] .segmented,
+  :root[data-design="grove"] .segmented button { border-radius: var(--radius-6); }
+  /* moa */
+  :root[data-design="moa"] .button { border-radius: var(--radius-6); font-weight: 500; }
+  :root[data-design="moa"] .button.secondary { background: var(--bg-subtle); border-color: var(--border-default); }
+  :root[data-design="moa"] .button.ghost { color: var(--fg-secondary); }
+  :root[data-design="moa"] .input,
+  :root[data-design="moa"] .search-bar { border-radius: var(--radius-6); border-color: var(--border-default); }
+  :root[data-design="moa"] .chip,
+  :root[data-design="moa"] .chip-pill { border-radius: var(--radius-6); height: 24px; }
+  :root[data-design="moa"] .badge { height: 18px; padding: 0 6px; font-size: 11px; font-weight: 500; letter-spacing: .02em; }
+  :root[data-design="moa"] .stat-card,
+  :root[data-design="moa"] .login-card,
+  :root[data-design="moa"] .case-card,
+  :root[data-design="moa"] .feed-card,
+  :root[data-design="moa"] .reward-card { border: 1px solid var(--border-subtle); border-radius: var(--radius-10); box-shadow: none; }
+  :root[data-design="moa"] .nav-item { border-radius: var(--radius-6); }
+  :root[data-design="moa"] .nav-item.active { font-weight: 500; }
+  :root[data-design="moa"] .segmented,
+  :root[data-design="moa"] .segmented button { border-radius: var(--radius-6); }
+  /* orbit-wallet */
+  :root[data-design="orbit-wallet"][data-theme="light"] { --sig-accent: #f3dd3f; --sig-on-accent: #17120a; }
+  :root[data-design="orbit-wallet"][data-theme="dark"] { --sig-accent: #f3dd3f; --sig-on-accent: #17120a; }
+  :root[data-design="orbit-wallet"] .button { border-radius: var(--radius-full); font-weight: 700; }
+  :root[data-design="orbit-wallet"] .button.ghost { background: transparent; color: var(--fg-strong); box-shadow: inset 0 0 0 1px var(--border-default); }
+  :root[data-design="orbit-wallet"] .button.tertiary { background: transparent; color: var(--fg-brand); }
+  :root[data-design="orbit-wallet"] .input { border-color: transparent; border-radius: var(--radius-16); background: var(--bg-subtle); }
+  :root[data-design="orbit-wallet"] .search-bar { border-color: transparent; border-radius: var(--radius-full); background: var(--bg-subtle); }
+  :root[data-design="orbit-wallet"] .badge { border-radius: var(--radius-10); font-weight: 700; }
+  :root[data-design="orbit-wallet"] .chip,
+  :root[data-design="orbit-wallet"] .chip-pill { border-radius: var(--radius-full); background: var(--bg-subtle); color: var(--fg-secondary); font-weight: 700; }
+  :root[data-design="orbit-wallet"] .stat-card,
+  :root[data-design="orbit-wallet"] .login-card,
+  :root[data-design="orbit-wallet"] .case-card,
+  :root[data-design="orbit-wallet"] .feed-card,
+  :root[data-design="orbit-wallet"] .reward-card { border-color: transparent; border-radius: var(--radius-22); box-shadow: none; }
+  :root[data-design="orbit-wallet"] .icon-btn { border-radius: var(--radius-full); background: var(--bg-subtle); }
+  :root[data-design="orbit-wallet"] .segmented { border-radius: var(--radius-full); background: var(--bg-subtle); }
+  :root[data-design="orbit-wallet"] .segmented button { border-radius: var(--radius-full); }
+  :root[data-design="orbit-wallet"] .nav-item.active { border-radius: var(--radius-full); }
+  :root[data-design="orbit-wallet"] .bottom-nav { height: 76px; background: var(--bg-muted); border-top: 0; border-radius: var(--radius-32) var(--radius-32) 0 0; box-shadow: var(--shadow-pop); }
+  :root[data-design="orbit-wallet"] .bottom-nav .nav-tab.active { color: var(--fg-strong); }
+  :root[data-design="orbit-wallet"] .bottom-nav .nav-tab.active::after { content: ""; width: 4px; height: 4px; border-radius: var(--radius-full); background: var(--sig-accent); }
+  :root[data-design="orbit-wallet"] .bottom-nav.fab-variant .fab-button { width: 56px; height: 56px; background: var(--sig-accent); color: var(--sig-on-accent); }
+  /* pulse-wallet */
+  :root[data-design="pulse-wallet"][data-theme="light"] { --sig-pastel-a: #8ff0d0; --sig-pastel-b: #b8b5ff; --sig-pastel-c: #f6a8e8; --sig-on-pastel: #14151b; }
+  :root[data-design="pulse-wallet"][data-theme="dark"] { --sig-pastel-a: #8ff0d0; --sig-pastel-b: #b8b5ff; --sig-pastel-c: #f6a8e8; --sig-on-pastel: #14151b; }
+  :root[data-design="pulse-wallet"] .button { border-radius: var(--radius-full); font-weight: 600; }
+  :root[data-design="pulse-wallet"] .button.primary { box-shadow: var(--shadow-2); }
+  :root[data-design="pulse-wallet"] .input { border-color: transparent; border-radius: var(--radius-16); background: var(--bg-subtle); }
+  :root[data-design="pulse-wallet"] .search-bar { border-color: transparent; border-radius: var(--radius-full); background: var(--bg-subtle); }
+  :root[data-design="pulse-wallet"] .badge { border-radius: var(--radius-10); font-weight: 700; }
+  :root[data-design="pulse-wallet"] .chip,
+  :root[data-design="pulse-wallet"] .chip-pill { border-radius: var(--radius-full); background: var(--bg-subtle); }
+  :root[data-design="pulse-wallet"] .stat-card,
+  :root[data-design="pulse-wallet"] .login-card,
+  :root[data-design="pulse-wallet"] .case-card,
+  :root[data-design="pulse-wallet"] .feed-card,
+  :root[data-design="pulse-wallet"] .reward-card { border-color: transparent; border-radius: var(--radius-24); box-shadow: var(--shadow-1); }
+  :root[data-design="pulse-wallet"] .icon-btn { border-radius: var(--radius-full); background: var(--bg-subtle); }
+  :root[data-design="pulse-wallet"] .segmented { border-radius: var(--radius-full); background: transparent; gap: var(--space-8); }
+  :root[data-design="pulse-wallet"] .segmented button { border-radius: var(--radius-full); }
+  :root[data-design="pulse-wallet"] .segmented button.on,
+  :root[data-design="pulse-wallet"] .segmented .seg-item.active { background: var(--bg-brand); color: var(--fg-on-brand); box-shadow: var(--shadow-2); }
+  :root[data-design="pulse-wallet"] .nav-item.active { background: var(--bg-brand); color: var(--fg-on-brand); border-radius: var(--radius-full); box-shadow: var(--shadow-2); }
+  :root[data-design="pulse-wallet"] .bottom-nav { height: 84px; background: var(--bg-surface); border-top: 1px solid var(--border-subtle); }
+  :root[data-design="pulse-wallet"] .bottom-nav .nav-tab.active::after { content: ""; width: 5px; height: 5px; border-radius: var(--radius-full); background: var(--fg-brand); }
+  :root[data-design="pulse-wallet"] .bottom-nav.fab-variant .fab-button { width: 52px; height: 52px; box-shadow: var(--shadow-2); }
+  :root[data-design="pulse-wallet"] .hero-banner { background: linear-gradient(115deg, var(--sig-pastel-a) 0%, var(--sig-pastel-b) 55%, var(--sig-pastel-c) 100%); color: var(--sig-on-pastel); border-radius: var(--radius-24); }
+  :root[data-design="pulse-wallet"] .hero-banner > * { color: inherit; }
+</style>
 </head>
 
 <body>
@@ -4374,6 +4539,10 @@
         </div>
         <p style="margin-top:var(--space-12);font-size:13px;color:var(--fg-secondary)">
           brand는 gradient pair(violet→teal). accent는 CTA·강조 텍스트·selection에 적극 사용. 다른 시안의 단색 brand와 직교.
+    </p>
+  </div>
+</section>
+
           <!-- ===== user FE 전용 CSS (viewport simulator + user FE 컴포넌트 클래스) ===== -->
           <style>
             /* viewport simulator — 모든 .uf-frame은 data-viewport에 따라 width가 바뀜 */

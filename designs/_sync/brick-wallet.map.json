@@ -192,6 +192,104 @@
     "mobile.bottom-sheet": "원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음",
     "mobile.nav-drawer": "원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음"
   },
+  "preview_shape": [
+    [
+      ".button",
+      "border: 2px solid var(--border-strong); border-radius: var(--radius-6); font-weight: 800; box-shadow: var(--shadow-1); transition: transform 80ms ease, box-shadow 80ms ease;"
+    ],
+    [
+      ".button:active",
+      "transform: translate(4px, 4px); box-shadow: none;"
+    ],
+    [
+      ".button.ghost",
+      "background: transparent; box-shadow: none;"
+    ],
+    [
+      ".button.tertiary",
+      "background: transparent; border-color: transparent; box-shadow: none; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px;"
+    ],
+    [
+      ".input, .search-bar",
+      "border: 2px solid var(--border-strong); border-radius: var(--radius-6); background: var(--bg-surface);"
+    ],
+    [
+      ".input:focus",
+      "outline: none; box-shadow: var(--shadow-1);"
+    ],
+    [
+      ".badge",
+      "border: 2px solid var(--border-strong); border-radius: var(--radius-6); font-weight: 800; letter-spacing: .04em;"
+    ],
+    [
+      ".badge.active",
+      "background: sig(up-block); color: sig(on-block);"
+    ],
+    [
+      ".badge.pending",
+      "background: sig(orange); color: sig(on-block);"
+    ],
+    [
+      ".badge.danger",
+      "background: sig(down-block); color: sig(on-block);"
+    ],
+    [
+      ".chip, .chip-pill",
+      "border: 2px solid var(--border-strong); border-radius: var(--radius-6); box-shadow: 2px 2px 0 var(--border-strong); font-weight: 800;"
+    ],
+    [
+      ".stat-card, .login-card, .case-card, .feed-card, .reward-card",
+      "border: 2px solid var(--border-strong); border-radius: var(--radius-12); box-shadow: var(--shadow-1);"
+    ],
+    [
+      ".icon-btn",
+      "border: 2px solid var(--border-strong); border-radius: var(--radius-6);"
+    ],
+    [
+      ".segmented",
+      "border: 2px solid var(--border-strong); border-radius: var(--radius-6); box-shadow: var(--shadow-1);"
+    ],
+    [
+      ".segmented button.on, .segmented .seg-item.active",
+      "background: var(--bg-brand); color: var(--fg-on-brand);"
+    ],
+    [
+      ".nav-item.active",
+      "background: var(--bg-brand); color: var(--fg-on-brand); box-shadow: inset 0 0 0 2px var(--border-strong); border-radius: var(--radius-6);"
+    ],
+    [
+      ".bottom-nav",
+      "height: 70px; border-top: 3px solid var(--border-strong);"
+    ],
+    [
+      ".bottom-nav .nav-tab",
+      "color: var(--fg-strong); font-weight: 800;"
+    ],
+    [
+      ".bottom-nav .nav-tab + .nav-tab",
+      "border-left: 2px solid var(--border-strong);"
+    ],
+    [
+      ".bottom-nav .nav-tab.active",
+      "background: var(--bg-brand); color: var(--fg-on-brand);"
+    ],
+    [
+      ".bottom-nav.fab-variant .fab-button",
+      "width: 64px; height: 64px; top: -16px; border: 3px solid var(--border-strong); border-radius: var(--radius-6); background: sig(pink); color: sig(on-block); box-shadow: var(--shadow-1);"
+    ],
+    [
+      ".bottom-sheet",
+      "border: 3px solid var(--border-strong); border-bottom: 0; border-radius: var(--radius-12) var(--radius-12) 0 0; box-shadow: var(--shadow-pop);"
+    ],
+    [
+      ".hero-banner",
+      "background: sig(lime); color: sig(on-block); border: 3px solid var(--border-strong); border-radius: var(--radius-12); box-shadow: var(--shadow-pop);"
+    ],
+    [
+      ".hero-banner > *",
+      "color: inherit;"
+    ]
+  ],
   "notes": [
     "원본 테마 이름은 paper(라이트)·night(다크)다. 템플릿 light ← paper, dark ← night로 옮겼다.",
     "원본 선 색은 line 하나(2–3px, Paper 검정 / Night 크림)라 테두리 별칭 4종이 모두 같다. 상태 '옅은 바탕' 별칭은 중립 면(surface-alt)이다 — 원본 배지처럼 원색 블록(up-block·orange·down-block)+on-block 글자를 쓰려면 원본 색 표의 토큰을 직접 쓴다.",

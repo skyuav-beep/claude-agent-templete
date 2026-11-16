@@ -185,6 +185,64 @@
     "variants.input.disabled": "입력 비활성 상태 정의 없음",
     "mobile.nav-drawer": "README 6장: 햄버거 드로어를 세그먼트 탭으로 대체해 없앰"
   },
+  "preview_shape": [
+    [
+      ".button",
+      "border-radius: var(--radius-full); font-weight: 800;"
+    ],
+    [
+      ".stat-card, .login-card, .case-card, .feed-card, .reward-card",
+      "border-color: transparent; border-radius: var(--radius-30); box-shadow: var(--shadow-1);"
+    ],
+    [
+      ".input, .search-bar",
+      "border-radius: var(--radius-18);"
+    ],
+    [
+      ".badge",
+      "border-radius: var(--radius-full); font-weight: 700;"
+    ],
+    [
+      ".chip, .chip-pill",
+      "border-radius: var(--radius-full); background: var(--bg-surface); box-shadow: var(--shadow-1); font-weight: 700;"
+    ],
+    [
+      ".icon-btn",
+      "border-radius: var(--radius-full);"
+    ],
+    [
+      ".segmented",
+      "border-radius: var(--radius-full); background: sig(surface-glass); backdrop-filter: blur(20px);"
+    ],
+    [
+      ".segmented button",
+      "border-radius: var(--radius-full);"
+    ],
+    [
+      ".segmented button.on, .segmented .seg-item.active",
+      "background: var(--bg-surface); color: var(--fg-strong); box-shadow: var(--shadow-1);"
+    ],
+    [
+      ".nav-item.active",
+      "border-radius: var(--radius-full);"
+    ],
+    [
+      ".bottom-nav",
+      "margin: 0 var(--space-16) var(--space-20); padding: 6px; border-top: 0; border-radius: var(--radius-full); background: sig(surface-glass); backdrop-filter: blur(24px); box-shadow: var(--shadow-pop);"
+    ],
+    [
+      ".bottom-nav .nav-tab.active",
+      "background: sig(gold-100); color: sig(gold-700); border-radius: var(--radius-full);"
+    ],
+    [
+      ".bottom-nav.fab-variant .fab-button",
+      "width: 70px; height: 70px; box-shadow: var(--shadow-pop);"
+    ],
+    [
+      ".bottom-sheet",
+      "border-radius: 28px 28px 0 0;"
+    ]
+  ],
   "notes": [
     "한 시스템 안에 두 컨셉(Soft · Clear)이 있다. 토큰은 공유하고 Clear는 bundle.css의 cl- 클래스만 다르다.",
     "원본 간격 이름은 단계 번호(space-1=4px … space-8=32px)라 템플릿 이름(space-4=4px)으로 값 기준 재매핑했다.",

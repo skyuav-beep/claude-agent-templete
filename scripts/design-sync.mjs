@@ -761,8 +761,56 @@ function status() {
   }
 }
 
+// ── 프리뷰 모양 (adopt 시안의 시그니처를 프리뷰 3화면 컴포넌트에 입힌다) ──────────────
+// 대응표 preview_shape: [[선택자, 선언], ...]. 선언 안의 sig(<원본 토큰>)은 원본 색(시안 파일의 원본 색 표)으로 바뀐다.
+const SHAPE_START = '<style id="design-shapes">';
+function shapeCss() {
+  const out = ['', '/* scripts/design-sync.mjs preview --shapes 로 생성 — 정본은 designs/_sync/<slug>.map.json 의 preview_shape. 직접 고치지 않는다. */'];
+  const problems = [];
+  for (const slug of slugs()) {
+    const mapPath = join(DESIGNS, '_sync', `${slug}.map.json`);
+    if (!existsSync(mapPath)) continue;
+    const rules = JSON.parse(readFileSync(mapPath, 'utf8')).preview_shape;
+    if (!rules?.length) continue;
+    const md = readFileSync(join(DESIGNS, `${slug}.md`), 'utf8');
+    const src = new Map([...md.matchAll(/^\| `([\w-]+)` \| ([^|]+) \| ([^|]*) \|/gm)].map((m) => [m[1], [m[2].trim(), m[3].trim()]]));
+    const used = new Set();
+    const body = rules.map(([sel, decl]) => {
+      const d = decl.replace(/sig\(([\w-]+)\)/g, (_, n) => { used.add(n); return `var(--sig-${n})`; });
+      const s = sel.split(',').map((x) => `:root[data-design="${slug}"] ${x.trim()}`).join(',\n  ');
+      return `  ${s} { ${d} }`;
+    });
+    const vars = (i) => [...used].map((n) => {
+      const v = src.get(n)?.[i] || src.get(n)?.[0];
+      if (!v || !COLOR_RE.test(v)) { problems.push(`${slug}: sig(${n}) 원본 색 없음`); return ''; }
+      return `--sig-${n}: ${v};`;
+    }).join(' ');
+    out.push(`  /* ${slug} */`);
+    if (used.size) out.push(`  :root[data-design="${slug}"][data-theme="light"] { ${vars(0)} }`, `  :root[data-design="${slug}"][data-theme="dark"] { ${vars(1)} }`);
+    out.push(...body);
+  }
+  if (problems.length) { for (const p of problems) console.error(`  - ${p}`); process.exit(2); }
+  return `${SHAPE_START}${out.join('\n')}\n</style>`;
+}
+function shapes(write) {
+  const css = shapeCss();
+  let stale = 0;
+  for (const rel of PREVIEWS) {
+    const file = join(ROOT, rel);
+    const html = readFileSync(file, 'utf8');
+    const re = /<style id="design-shapes">[\s\S]*?<\/style>/;
+    const next = re.test(html) ? html.replace(re, () => css) : html.replace('</head>', () => `${css}\n</head>`);
+    if (next === html) continue;
+    stale++;
+    if (write) { writeFileSync(file, next); console.log(`${rel}: 시안 모양 블록 갱신`); } else console.log(`${rel}: 시안 모양 블록이 최신이 아님 — preview --shapes`);
+  }
+  if (!stale) console.log('프리뷰: 시안 모양 블록 최신');
+  return stale;
+}
+
 function check() {
   let bad = 0;
+  bad += shapes(false) ? 1 : 0;
   for (const slug of slugs()) {
     const { front, link, body } = splitDoc(readFileSync(join(DESIGNS, `${slug}.md`), 'utf8'));
     const { tokens } = buildTokens(slug, front, body);
@@ -794,7 +842,8 @@ if (cmd === 'export') {
   adoptOne(slug, opt('--from'), opt('--url'), opt('--version'));
 } else if (cmd === 'preview') {
   if (opt('--register')) { registerPreview(opt('--register')); process.exit(0); }
+  if (rest.includes('--shapes')) { shapes(true); process.exit(0); }
   process.exit(preview(rest.includes('--fix')) && !rest.includes('--fix') ? 1 : 0);
 } else if (cmd === 'status') status();
 else if (cmd === 'check') check();
-else { console.error('사용: export | import | adopt | preview [--fix|--register <slug>] | status | check'); process.exit(1); }
+else { console.error('사용: export | import | adopt | preview [--fix|--register <slug>|--shapes] | status | check'); process.exit(1); }

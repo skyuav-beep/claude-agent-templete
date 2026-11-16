@@ -101,13 +101,19 @@
 
 ## 최근 완료 작업
 
+- 프리뷰 3화면에 adopt 시안 7종의 모양(시그니처)을 반영하고, 사용자 화면·모바일 프리뷰에서 섹션이 숨던 문제를 고쳤다. (2026-11-16)
+  - `scripts/design-sync.mjs preview --shapes`: 대응표 `preview_shape`([선택자, 선언], `sig(<원본 토큰>)` = 원본 색)로 프리뷰 `<head>`의 `<style id="design-shapes">` 블록을 다시 만든다. `check`가 블록 최신 여부를 검사한다.
+  - 시안별 규칙(원본 CSS 근거): brick 굵은 선·딱딱한 그림자·눌림 이동·블록 탭·분홍 사각 FAB·원색 배지, pulse 알약 버튼·파란 글로우 선택 탭·파스텔 히어로, orbit 알약·위 모서리 32 하단 탭·노란 FAB·점 표시, aitc 22 모서리 헤어라인 카드·짙은 히어로, aeg-soft 유리 알약 하단 바·골드 선택 탭·30 모서리 카드, moa·grove 작은 모서리·헤어라인 카드.
+  - 버그 수정(기존, 이번 작업 전부터): `user-fe-preview.html`·`user-fe-mobile-preview.html`의 linear-like 시그너처 예시 끝에 `</p></div></section>`이 빠져, 뒤의 모바일 섹션 12/16개(하단 탭·앱 바·바텀 시트·화면 예시 등)가 linear-like가 아닌 모든 시안에서 숨어 있었다. 닫는 태그를 넣어 모두 보이게 했다.
+  - 검증: `design-sync check`·`check-html`·`build-nav --check`·`check-runtime-parity`·`check-codex-skills` 통과, 프리뷰 3화면 × 13종 × light/dark 적용·넘침 0, 하단 탭·세그먼트 스크린샷 확인.
+  - ⚠️ 새로 보이게 된 섹션의 기존 대비 문제(이번 변경과 무관): 모바일 토스트의 '취소' 버튼이 다크에서 대비 1.0~1.6(거의 모든 시안), 스와이프 '별표' 버튼 aeg-soft·brick 라이트 1.3~1.8. 대비 검사 도구는 gradient 배경을 읽지 못해 linear-like 강조 글자·pulse 파스텔 히어로를 낮게 잘못 잰다.
 - adopt 시안 7종에 빠졌던 컴포넌트 모양·모바일 대응·시그니처·규칙을 보완했다. (2026-11-16)
   - 사용자 지적: 모바일·시그니처가 옮겨지지 않았다. 확인 결과 컴포넌트 README(한 줄 설명)만 받고 실제 모양이 담긴 `components/bundle.css`·`index.d.ts`·화면 `preview.html`은 받지 않았고, 템플릿 모바일 5종·변형 대응·`Do's and Don'ts`·반응형 섹션도 없었다.
   - `scripts/design-sync.mjs adopt` 확장: 대응표 필수 항목 `variants`(button 6·input 4·badge 4 + `_extra`)·`mobile`(5종)·`signatures`·`dos`·`donts`·`responsive` 검사(비면 종료 2), 선택 `screens`·`null_reasons`. 생성 섹션: 변형 대응, 모바일 컴포넌트 대응, 시그니처, 원본 컴포넌트 변형·속성(`index.d.ts` union), 원본 화면 예시, 원본 컴포넌트 스타일(`bundle.css` 구역별 요약, 없으면 화면 미리보기 `<style>`), `## Do's and Don'ts`, `## Responsive Behavior`.
   - 대응표 7종 보강(초안은 서브 에이전트가 원본 파일 근거로 작성, 주요 수치를 원본 CSS와 대조). 원본 버전은 그대로(재내려받기 불필요). Grove는 원본에 `bundle.css`가 없어 표지 미리보기 스타일로 요약.
   - 모바일 대응(원본에 있는 것/5): moa 3, grove 3, aeg-soft 4, aitc 2, orbit·pulse·brick 3. 없는 항목은 '원본 없음 — 템플릿 기본 명세를 이 시안 토큰으로' + 이유. danger 버튼은 7종 모두 원본에 없음.
   - 검증: `design-sync check`·`check-html`·`build-nav --check`·`check-runtime-parity`·`check-codex-skills` 통과, adopt 재실행 결과 동일, 필수 항목 누락 시 종료 2·기존 파일 보존 확인.
-  - 남은 일(선택): 프리뷰 화면에 시안별 모양(선 두께·그림자·탭 모양) 반영은 하지 않음.
+  - 프리뷰 모양 반영은 바로 다음 작업(`preview --shapes`)에서 했다.
 - 남은 Claude Design System 4종(AITC·Orbit Wallet·Pulse Wallet·Brick Wallet)도 같은 `adopt` 방식으로 연결했다. 시안은 13종. (2026-11-16)
   - 결과: `designs/aitc.md`(FRUXaMrwcG3vhTK5Dgr4d1 v1794601408-7081, 합성 별칭 8), `orbit-wallet.md`(RnTCYCVwS81WFjeqkw1kSj v1794797836-a44b, 3), `pulse-wallet.md`(ScsxyrtVoxCFY4J4q265KY v1794797837-735c, 5), `brick-wallet.md`(GBDRB53TjJPVyeWEJjfBDT v1794797833-2694, 10). 원본은 수정하지 않음. 내용이 빈 제목 없는 Design System은 연결하지 않음.
   - 판단: AITC는 색인 제목이 MOA라 기존 `moa`와 겹치지 않게 slug `aitc`. Pulse·Brick의 테마 이름(midnight/daylight, paper/night)은 light/dark로 대응. Brick의 상태 바탕은 원본이 진한 원색 블록이라 그대로 대응하면 상태색 글자 대비가 1.0까지 떨어져 중립 면(`surface-alt`)으로 대응했다(가이드 7번에 규칙화).

@@ -175,6 +175,72 @@
     "mobile.bottom-sheet": "원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음",
     "mobile.nav-drawer": "원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음"
   },
+  "preview_shape": [
+    [
+      ".button",
+      "border-radius: var(--radius-full); font-weight: 700;"
+    ],
+    [
+      ".button.ghost",
+      "background: transparent; color: var(--fg-strong); box-shadow: inset 0 0 0 1px var(--border-default);"
+    ],
+    [
+      ".button.tertiary",
+      "background: transparent; color: var(--fg-brand);"
+    ],
+    [
+      ".input",
+      "border-color: transparent; border-radius: var(--radius-16); background: var(--bg-subtle);"
+    ],
+    [
+      ".search-bar",
+      "border-color: transparent; border-radius: var(--radius-full); background: var(--bg-subtle);"
+    ],
+    [
+      ".badge",
+      "border-radius: var(--radius-10); font-weight: 700;"
+    ],
+    [
+      ".chip, .chip-pill",
+      "border-radius: var(--radius-full); background: var(--bg-subtle); color: var(--fg-secondary); font-weight: 700;"
+    ],
+    [
+      ".stat-card, .login-card, .case-card, .feed-card, .reward-card",
+      "border-color: transparent; border-radius: var(--radius-22); box-shadow: none;"
+    ],
+    [
+      ".icon-btn",
+      "border-radius: var(--radius-full); background: var(--bg-subtle);"
+    ],
+    [
+      ".segmented",
+      "border-radius: var(--radius-full); background: var(--bg-subtle);"
+    ],
+    [
+      ".segmented button",
+      "border-radius: var(--radius-full);"
+    ],
+    [
+      ".nav-item.active",
+      "border-radius: var(--radius-full);"
+    ],
+    [
+      ".bottom-nav",
+      "height: 76px; background: var(--bg-muted); border-top: 0; border-radius: var(--radius-32) var(--radius-32) 0 0; box-shadow: var(--shadow-pop);"
+    ],
+    [
+      ".bottom-nav .nav-tab.active",
+      "color: var(--fg-strong);"
+    ],
+    [
+      ".bottom-nav .nav-tab.active::after",
+      "content: \"\"; width: 4px; height: 4px; border-radius: var(--radius-full); background: sig(accent);"
+    ],
+    [
+      ".bottom-nav.fab-variant .fab-button",
+      "width: 56px; height: 56px; background: sig(accent); color: sig(on-accent);"
+    ]
+  ],
   "notes": [
     "원본은 다크가 1차 테마다(테마 순서 dark → light). 템플릿 표기는 light/dark 순서를 따른다.",
     "바탕 위쪽 보랏빛 글로우(bg-glow)는 방사형 gradient 재료라 별칭에 넣지 않고 원본 색 표에만 둔다.",

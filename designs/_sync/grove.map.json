@@ -183,6 +183,36 @@
     "mobile.nav-drawer": "원본에 드로어 언급 없음",
     "mobile.fab": "원본에 FAB 없음"
   },
+  "preview_shape": [
+    [
+      ".button",
+      "border-radius: var(--radius-10); font-weight: 500;"
+    ],
+    [
+      ".stat-card, .login-card, .case-card, .feed-card, .reward-card",
+      "border: 1px solid var(--border-subtle); border-radius: var(--radius-10); box-shadow: var(--shadow-1);"
+    ],
+    [
+      ".chip, .chip-pill",
+      "border-radius: var(--radius-6); height: 22px;"
+    ],
+    [
+      ".badge",
+      "border-radius: var(--radius-6);"
+    ],
+    [
+      ".input, .search-bar",
+      "border-radius: var(--radius-10);"
+    ],
+    [
+      ".nav-item",
+      "border-radius: var(--radius-6);"
+    ],
+    [
+      ".segmented, .segmented button",
+      "border-radius: var(--radius-6);"
+    ]
+  ],
   "notes": [
     "원본 간격 이름은 단계 번호(space-1=4px … space-8=32px)라 템플릿 이름(space-4=4px)으로 값 기준 재매핑했다.",
     "라운드 6·10·14는 4의 배수가 아니라 시안 전용 토큰(radius-6/10/14)으로 원래 값을 유지한다(계약 9b).",
