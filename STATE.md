@@ -101,6 +101,13 @@
 
 ## 최근 완료 작업
 
+- adopt 시안 7종에 빠졌던 컴포넌트 모양·모바일 대응·시그니처·규칙을 보완했다. (2026-11-16)
+  - 사용자 지적: 모바일·시그니처가 옮겨지지 않았다. 확인 결과 컴포넌트 README(한 줄 설명)만 받고 실제 모양이 담긴 `components/bundle.css`·`index.d.ts`·화면 `preview.html`은 받지 않았고, 템플릿 모바일 5종·변형 대응·`Do's and Don'ts`·반응형 섹션도 없었다.
+  - `scripts/design-sync.mjs adopt` 확장: 대응표 필수 항목 `variants`(button 6·input 4·badge 4 + `_extra`)·`mobile`(5종)·`signatures`·`dos`·`donts`·`responsive` 검사(비면 종료 2), 선택 `screens`·`null_reasons`. 생성 섹션: 변형 대응, 모바일 컴포넌트 대응, 시그니처, 원본 컴포넌트 변형·속성(`index.d.ts` union), 원본 화면 예시, 원본 컴포넌트 스타일(`bundle.css` 구역별 요약, 없으면 화면 미리보기 `<style>`), `## Do's and Don'ts`, `## Responsive Behavior`.
+  - 대응표 7종 보강(초안은 서브 에이전트가 원본 파일 근거로 작성, 주요 수치를 원본 CSS와 대조). 원본 버전은 그대로(재내려받기 불필요). Grove는 원본에 `bundle.css`가 없어 표지 미리보기 스타일로 요약.
+  - 모바일 대응(원본에 있는 것/5): moa 3, grove 3, aeg-soft 4, aitc 2, orbit·pulse·brick 3. 없는 항목은 '원본 없음 — 템플릿 기본 명세를 이 시안 토큰으로' + 이유. danger 버튼은 7종 모두 원본에 없음.
+  - 검증: `design-sync check`·`check-html`·`build-nav --check`·`check-runtime-parity`·`check-codex-skills` 통과, adopt 재실행 결과 동일, 필수 항목 누락 시 종료 2·기존 파일 보존 확인.
+  - 남은 일(선택): 프리뷰 화면에 시안별 모양(선 두께·그림자·탭 모양) 반영은 하지 않음.
 - 남은 Claude Design System 4종(AITC·Orbit Wallet·Pulse Wallet·Brick Wallet)도 같은 `adopt` 방식으로 연결했다. 시안은 13종. (2026-11-16)
   - 결과: `designs/aitc.md`(FRUXaMrwcG3vhTK5Dgr4d1 v1794601408-7081, 합성 별칭 8), `orbit-wallet.md`(RnTCYCVwS81WFjeqkw1kSj v1794797836-a44b, 3), `pulse-wallet.md`(ScsxyrtVoxCFY4J4q265KY v1794797837-735c, 5), `brick-wallet.md`(GBDRB53TjJPVyeWEJjfBDT v1794797833-2694, 10). 원본은 수정하지 않음. 내용이 빈 제목 없는 Design System은 연결하지 않음.
   - 판단: AITC는 색인 제목이 MOA라 기존 `moa`와 겹치지 않게 slug `aitc`. Pulse·Brick의 테마 이름(midnight/daylight, paper/night)은 light/dark로 대응. Brick의 상태 바탕은 원본이 진한 원색 블록이라 그대로 대응하면 상태색 글자 대비가 1.0까지 떨어져 중립 면(`surface-alt`)으로 대응했다(가이드 7번에 규칙화).

@@ -3,8 +3,14 @@
   "name": "Brick Wallet",
   "category": "finance",
   "lang": "ko",
-  "source": { "title": "Brick Wallet", "url": "https://claude.ai/artifact/GBDRB53TjJPVyeWEJjfBDT" },
-  "themes": { "light": "paper", "dark": "night" },
+  "source": {
+    "title": "Brick Wallet",
+    "url": "https://claude.ai/artifact/GBDRB53TjJPVyeWEJjfBDT"
+  },
+  "themes": {
+    "light": "paper",
+    "dark": "night"
+  },
   "tagline": "네오 브루탈리즘 CEX 커스터디 지갑 — 크림색 종이 위 검은 굵은 선, 4–6px 딱딱한 그림자, 라임·핑크·블루·오렌지 원색 블록이 벽돌처럼 쌓이는 시안.",
   "related_services": [],
   "policy": {
@@ -14,33 +20,68 @@
     "dark_mode": "supported",
     "non_4_spacing": false
   },
-  "brand": { "brand-primary": "lime", "pink": "pink", "blue": "blue", "orange": "orange" },
+  "brand": {
+    "brand-primary": "lime",
+    "pink": "pink",
+    "blue": "blue",
+    "orange": "orange"
+  },
   "alias": {
     "bg-canvas": "bg",
     "bg-surface": "surface",
     "bg-subtle": "surface-alt",
     "bg-muted": "surface-alt",
     "bg-elevated": "surface",
-    "bg-inverse": { "src": "ink", "note": "합성 — 원본에 반전 면이 없어 본문 잉크를 재사용" },
+    "bg-inverse": {
+      "src": "ink",
+      "note": "합성 — 원본에 반전 면이 없어 본문 잉크를 재사용"
+    },
     "bg-brand": "lime",
-    "bg-brand-subtle": { "src": "surface-alt", "note": "합성 — 원본에 브랜드 옅은 바탕이 없음(원색 블록만)" },
-    "bg-success-subtle": { "src": "surface-alt", "note": "합성 — 원본 상태 표시는 진한 원색 블록(up-block)+on-block 글자라, 템플릿의 '옅은 바탕+상태색 글자' 조합에서 읽히도록 중립 면 재사용" },
-    "bg-warning-subtle": { "src": "surface-alt", "note": "합성 — 원본 대기·경고는 orange 블록+on-block 글자(위와 같은 이유로 중립 면)" },
-    "bg-danger-subtle": { "src": "surface-alt", "note": "합성 — 원본 실패는 down-block 블록+on-block 글자(위와 같은 이유로 중립 면)" },
+    "bg-brand-subtle": {
+      "src": "surface-alt",
+      "note": "합성 — 원본에 브랜드 옅은 바탕이 없음(원색 블록만)"
+    },
+    "bg-success-subtle": {
+      "src": "surface-alt",
+      "note": "합성 — 원본 상태 표시는 진한 원색 블록(up-block)+on-block 글자라, 템플릿의 '옅은 바탕+상태색 글자' 조합에서 읽히도록 중립 면 재사용"
+    },
+    "bg-warning-subtle": {
+      "src": "surface-alt",
+      "note": "합성 — 원본 대기·경고는 orange 블록+on-block 글자(위와 같은 이유로 중립 면)"
+    },
+    "bg-danger-subtle": {
+      "src": "surface-alt",
+      "note": "합성 — 원본 실패는 down-block 블록+on-block 글자(위와 같은 이유로 중립 면)"
+    },
     "fg-strong": "ink",
     "fg-default": "ink",
     "fg-secondary": "ink-muted",
-    "fg-tertiary": { "src": "ink-muted", "note": "합성 — 원본 글자색은 ink·ink-muted 두 단계뿐" },
-    "fg-disabled": { "src": "ink-muted", "note": "합성 — 원본에 비활성 글자색 없음" },
+    "fg-tertiary": {
+      "src": "ink-muted",
+      "note": "합성 — 원본 글자색은 ink·ink-muted 두 단계뿐"
+    },
+    "fg-disabled": {
+      "src": "ink-muted",
+      "note": "합성 — 원본에 비활성 글자색 없음"
+    },
     "fg-on-brand": "on-block",
-    "fg-brand": { "src": "ink", "note": "합성 — 라임은 글자로 쓰지 않는다(브랜드 강조 글자는 ink)" },
+    "fg-brand": {
+      "src": "ink",
+      "note": "합성 — 라임은 글자로 쓰지 않는다(브랜드 강조 글자는 ink)"
+    },
     "fg-success": "up",
-    "fg-warning": { "src": "ink", "note": "합성 — 원본에 경고 글자색이 없음(주황 블록 위 on-block 글자)" },
+    "fg-warning": {
+      "src": "ink",
+      "note": "합성 — 원본에 경고 글자색이 없음(주황 블록 위 on-block 글자)"
+    },
     "fg-danger": "down",
     "border-subtle": "line",
     "border-default": "line",
     "border-strong": "line",
-    "border-brand": { "src": "line", "note": "합성 — 원본의 모든 테두리는 line(Paper 검정 / Night 크림)" }
+    "border-brand": {
+      "src": "line",
+      "note": "합성 — 원본의 모든 테두리는 line(Paper 검정 / Night 크림)"
+    }
   },
   "type": {
     "display1": "display",
@@ -56,8 +97,15 @@
     "body2": "body-sm",
     "caption1": "label"
   },
-  "radius": { "radius-0": "radius-none", "radius-6": "radius-sm", "radius-12": "radius-md" },
-  "shadow": { "shadow-1": "shadow-hard", "shadow-pop": "shadow-hard-lg" },
+  "radius": {
+    "radius-0": "radius-none",
+    "radius-6": "radius-sm",
+    "radius-12": "radius-md"
+  },
+  "shadow": {
+    "shadow-1": "shadow-hard",
+    "shadow-pop": "shadow-hard-lg"
+  },
   "requiredComponents": {
     "button": "원본 Button (라임 블록 + 검은 선 + shadow-hard, 누르면 4px 이동)",
     "input": "원본 입력 컴포넌트 (surface + 2px line)",
@@ -66,6 +114,83 @@
     "avatar": "코인 아바타 (사각 블록)",
     "icon-button": "아이콘 버튼 (사각 블록 + 선)",
     "icon": "굵은 라인 아이콘, currentColor"
+  },
+  "variants": {
+    "button": {
+      "primary": "primary (lime 블록 + on-block 검정 글자, 2px line 테두리 + 4px 딱딱한 그림자, 화면당 하나의 확정 동작)",
+      "secondary": "secondary (surface 바탕, primary와 짝을 이루는 대안)",
+      "tertiary": "ghost (배경·테두리·그림자 없음, 2px 밑줄 텍스트 링크)",
+      "ghost": "outline (투명 바탕 + 2px 테두리, 그림자 없음 — 부담 적은 취소)",
+      "danger": null,
+      "disabled": ":disabled (불투명도 45%, 그림자 제거 — .bk-btn:disabled)",
+      "_extra": [
+        "accent: pink 블록, 스캔·카메라 순간에만",
+        "크기 sm 36 / md 48 / lg 58, 하단 CTA는 lg + block",
+        "누르면 블록이 그림자 위로 4px 이동(shadow-pressed)",
+        "원본 ghost는 밑줄 링크라 템플릿 tertiary에, 원본 outline은 그림자 없는 투명 버튼이라 템플릿 ghost에 대응"
+      ]
+    },
+    "input": {
+      "default": "TextField (.bk-field-box: 최소 높이 50px, 2px line 테두리, radius-sm 6, surface 바탕, 라벨은 대문자 11px 800 자간 .08em)",
+      "focus": ":focus-within (shadow-hard 4px 딱딱한 그림자가 나타남), 전역 포커스 링은 focus 3px + 3px 오프셋",
+      "error": ".is-error (테두리 down + 4px 4px 0 down 그림자) + 아래 .bk-field-error down 12px 800, role=alert",
+      "disabled": null
+    },
+    "badge": {
+      "active": "up (up-block 라임 + on-block, 완료·답변완료)",
+      "pending": "warn (orange + on-block, 처리중·답변대기)",
+      "inactive": "neutral (surface-alt + ink)",
+      "danger": "down (down-block 코랄 + on-block, 실패·거절)"
+    }
+  },
+  "mobile": {
+    "bottom-sheet": null,
+    "mobile-nav": "BottomNav — 테두리로 나뉜 평평한 탭 바, 활성 탭은 lime으로 채움",
+    "nav-drawer": null,
+    "fab": "BottomNav의 fab 항목(.bk-nav-fab) — 64px pink 사각 스캔 버튼이 바 위로 22px 튀어나옴",
+    "card-row": "TokenRow / TxRow / SettingsRow — surface 바탕 radius-sm 행, 2px 테두리 + 4px 딱딱한 그림자"
+  },
+  "signatures": [
+    "벽돌 블록 — 2px line 테두리 + shadow-hard 4px(히어로·팝업 6px) 흐림 없는 그림자, 누르면 translate(4px,4px)(.bk-btn 외 공통 규칙)",
+    "점 종이 바탕 — bg 위 bg-dots 1.2px 원형 도트 16px 격자(.bk-screen)",
+    "라임 총 자산 블록 — lime 바탕 + 3px 테두리 + radius-md, 금액 40px 700 자간 -.03em(.bk-balance, .bk-balance-amount)",
+    "하단 탭 — 높이 70px, 위 3px 테두리, 탭 사이 2px 세로선, 활성 탭 lime 채움, 64px pink 사각 FAB가 -22px 위로(.bk-nav, .bk-nav-fab)",
+    "시세 띠 — lime 마퀴, 위아래 2px 테두리, 항목 사이 세로선, 24s 무한 흐름(.bk-ticker)",
+    "기울어진 스티커 — 2px 테두리 + 2px 그림자, 대문자 11px 800, −6~6도 기울임, 블록당 하나(.bk-sticker)"
+  ],
+  "dos": [
+    "블록 색 의미 고정 — lime 주 동작·활성·총 자산·상승, pink 스캔·출금·스티커·공지, blue 입금·정보, orange 교환·처리중·경고",
+    "블록 위 글자는 언제나 on-block(검정)",
+    "면 구분은 선으로, 테두리·그림자 색은 line",
+    "숫자는 항상 부호(U+2212)나 ▲▼와 함께",
+    "라벨·스티커·표 머리는 대문자 영문 또는 짧은 한글, 자간 넓게",
+    "액션 타일 색은 앱 전체에서 고정(입금 blue·출금 pink·교환 orange·내 QR surface)",
+    "출금은 OTP 후, 스캔한 주소는 입력만 채우기"
+  ],
+  "donts": [
+    "흐림 그림자 쓰지 않기",
+    "이모지 쓰지 않기(장식은 스티커와 블록으로)",
+    "스티커는 블록당 하나, 목록 행에는 붙이지 않기",
+    "코인 로고를 직접 그리지 않기",
+    "색만으로 방향·상태 전달하지 않기",
+    "텍스트 라벨이 있는 동작에 IconButton 쓰지 않기",
+    "필드 오류를 토스트로 중복 표시하지 않기"
+  ],
+  "responsive": [
+    "목업 프레임 390×820(.bk-screen)",
+    "화면 여백 space-4, 섹션 사이 space-6, 행 사이 space-3",
+    "컨트롤 높이 36/48/58, 하단 CTA는 lg + block",
+    "prefers-reduced-motion에서 시세 띠와 스캔 라인 정지"
+  ],
+  "screens": {
+    "AppScreens": "390px 화면 13종 그리드 — 로그인(대형 디스플레이 문구 + 스티커)·Web3 가입·홈(시세 띠·라임 총 자산·2×2 액션 타일)·코인 상세·입금 QR(TRC-20 ONLY 스티커)·출금·거래내역·QR 스캔·팝업 공지·공지/문의·문의 작성·설정·언어",
+    "Cover": "960×320 표지 — lime·pink·blue·orange·surface 벽돌을 3px 테두리와 6px 딱딱한 그림자로 엇갈려 쌓은 패턴, 태그라인 '네오 브루탈리즘 커스터디 지갑 — 굵은 선, 단단한 그림자, 원색 블록'"
+  },
+  "null_reasons": {
+    "variants.button.danger": "파괴 행동 전용 버튼 변형 없음",
+    "variants.input.disabled": "입력 비활성 상태 정의 없음",
+    "mobile.bottom-sheet": "원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음",
+    "mobile.nav-drawer": "원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음"
   },
   "notes": [
     "원본 테마 이름은 paper(라이트)·night(다크)다. 템플릿 light ← paper, dark ← night로 옮겼다.",

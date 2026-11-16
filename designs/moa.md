@@ -225,30 +225,307 @@ shadow-pop: "0 8px 24px rgba(31,33,29,0.12)"  # ← shadow-pop · dark 0 8px 24p
 | icon-button | Controls (아이콘 버튼) |
 | icon | README §3 아이콘 (24 그리드, 선 1.6, Lucide 계열) |
 
+### 변형 대응
+
+#### button
+
+| 계약 변형 | 원본 대응 |
+|---|---|
+| primary | .btn.primary (brand 바탕·on-brand 글자, Controls README: 화면당 하나) |
+| secondary | .btn 기본형 (surface-200 바탕 + line-strong 1px 테두리, 별도 변형명 없음) |
+| tertiary | 원본 없음(원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| ghost | .btn.ghost (투명 바탕·테두리, ink-muted 글자, Controls README: 취소·보조) |
+| danger | 원본 없음(파괴 행동 전용 버튼 변형 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| disabled | 원본 없음(원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| (원본 추가) | .btn.ai: ai-soft 바탕·ai 글자, AI 호출에만 쓰는 버튼(Controls README) |
+| (원본 추가) | .btn.sm: 높이 26px 작은 크기 |
+| (원본 추가) | .send: 컴포저 전송 30px 정사각 brand 버튼 |
+| (원본 추가) | tertiary·danger·disabled: 원본 bundle.css와 README에 정의 없음 |
+
+#### input
+
+| 계약 변형 | 원본 대응 |
+|---|---|
+| default | .input (높이 30px, line-strong 1px 테두리, radius-sm, surface-200 바탕) |
+| focus | 원본 없음(원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| error | 원본 없음(원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| disabled | 원본 없음(입력 비활성 상태 정의 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+
+#### badge
+
+| 계약 변형 | 원본 대응 |
+|---|---|
+| active | .badge.brand (brand-soft 바탕·brand-strong 글자, ERPDashboard README: 승인=brand) |
+| pending | 원본 없음(README에 대기 warning 배지가 언급되지만(ERPDashboard) bundle.css에 .badge.warning 정의 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| inactive | .badge 기본형 (surface-300 바탕·ink-muted 글자) |
+| danger | .badge.danger (surface-300 바탕·danger 글자, ERPDashboard README: 반려=danger) |
+
+### 모바일 컴포넌트 대응
+
+| 템플릿 모바일 컴포넌트 | 원본 대응 |
+|---|---|
+| bottom-sheet | AIPanel 전체 화면 시트 — 01-layout.md 반응형 표: <1024에서 AI 패널은 전체 화면 시트(전용 컴포넌트 없음) |
+| mobile-nav | 하단 탭바(이름 없음) — 01-layout.md 반응형 표: <1024에서 사이드바가 하단 탭바(홈·라이브러리·+·AI·나)로 바뀜, 전용 컴포넌트·CSS 없음 |
+| nav-drawer | Sidebar 아이콘 레일 — AppShell README: 1280px 미만에서 sidebar-rail-w(56) 레일로 접힘 |
+| fab | 원본 없음(원본에 FAB 컴포넌트·CSS 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| card-row | 원본 없음(모바일 목록 행 컴포넌트 없음(데스크톱 셸 중심)) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+
+### 시그니처
+
+이 시안을 알아보게 하는 원본 고유 모양이다. 화면을 만들 때 표준 컴포넌트에 이 모양을 입힌다.
+
+- 활성 탭 상단 인디케이터 — 높이 2px, radius 2px, 모듈 색 var(--m, --brand), 좌우 8px 들여씀(.tab.on::before)
+- AI 인라인 제안 카드 — 1px dashed ai 테두리 + ai-soft 바탕 + radius-md(.ai-inline)
+- AI diff 표시 — 추가 brand-soft 하이라이트(.ins), 삭제 danger 취소선(.del)
+- AI 생성 중 표시 — ai 색 6px 점 3개(.thinking i), 스켈레톤·그라디언트 대신
+- 포스트잇 — 168×148 이상, mod-note 바탕, 모서리 4px 4px radius-md 4px, shadow-1, 기울임 -1.5deg(.sticky, .sticky.tilt)
+- 사이드바 활성 항목 — brand-soft 바탕 + brand-strong 글자, AI 세션 활성은 ai-soft(.nav.on, .sess.on)
+
 ### 원본 컴포넌트 (20종)
 
-| 컴포넌트 | 요약 |
-|---|---|
-| AIPanel | 우측 AI 대화 패널로, 대화·제안·실행 세 모드와 컨텍스트 칩, 액션 카드, 컴포저를 포함합니다. |
-| AISuggestion | 작업 캔버스 안에 도착하는 인라인 AI 제안 카드와 `/` 블록 메뉴입니다. |
-| AppShell | Moa의 전체 화면 셸로, 상단바·사이드바·탭시트·작업 캔버스·AI 패널·상태바 5+1 영역을 한 화면에 배치합니다. |
-| BlockDoc | 노션 스타일 블록 문서(Docs) 편집기입니다. |
-| ContactCard | 연락처 카드와 연결 항목 패널입니다. |
-| Controls | 버튼·아이콘 버튼·배지·칩·세그먼트 토글·단축키 표시 등 기본 컨트롤입니다. |
-| DiagramEditor | 텍스트 설명을 다이어그램으로 바꾸는 Diagram 편집기입니다. |
-| ERPDashboard | 비즈니스 팩의 운영 대시보드로, KPI 카드 4개와 전자결재 목록을 보여 줍니다. |
-| IdeaCanvas | Ideas 무한 캔버스로, 발산(AI 유령 노드)과 수렴(묶기·점수)을 지원합니다. |
-| LayoutMap | 화면 영역 정의도입니다. |
-| MarkdownEditor | MD 문서 편집기로, 왼쪽 원문(`mono`)과 오른쪽 미리보기를 나란히 보여 줍니다. |
-| ModuleBadge | 모듈 식별 칩으로, 아이콘 + 라벨에 모듈 색(`mod-*`)을 입혀 기본 모듈·Studio·비즈니스 팩을 구분합니다. |
-| Sidebar | 좌측 내비게이션으로, 새로 만들기·홈·라이브러리 9개 모듈·Studio·AI 세션 기록을 담습니다. |
-| StickyNote | 포스트잇 카드로, 제목 없이 바로 쓰는 짧은 메모입니다. |
-| StudioWorkspace | Studio 확장(이미지·설계·3D·영상)이 공유하는 3단 편집 셸입니다. |
-| TabSheet | 열린 작업을 탭으로 관리하는 탭시트와 그 아래 컨텍스트 툴바입니다. |
-| TaskBoard | Tasks 모듈의 보드(칸반) 보기입니다. |
-| ThemeCompare | Paper · White · Dark 세 테마를 같은 셸 축약도로 나란히 비교합니다. |
-| WhiteModeBusiness | White 테마의 ERP 대시보드로, 기업판 기본 테마 제안의 예시입니다. |
-| WhiteModeShell | White 테마로 고정해 보여 주는 전체 셸입니다. |
+| 컴포넌트 | 요약 | 변형·속성 |
+|---|---|---|
+| AIPanel | 우측 AI 대화 패널로, 대화·제안·실행 세 모드와 컨텍스트 칩, 액션 카드, 컴포저를 포함합니다. |  |
+| AISuggestion | 작업 캔버스 안에 도착하는 인라인 AI 제안 카드와 `/` 블록 메뉴입니다. |  |
+| AppShell | Moa의 전체 화면 셸로, 상단바·사이드바·탭시트·작업 캔버스·AI 패널·상태바 5+1 영역을 한 화면에 배치합니다. |  |
+| BlockDoc | 노션 스타일 블록 문서(Docs) 편집기입니다. |  |
+| ContactCard | 연락처 카드와 연결 항목 패널입니다. |  |
+| Controls | 버튼·아이콘 버튼·배지·칩·세그먼트 토글·단축키 표시 등 기본 컨트롤입니다. |  |
+| DiagramEditor | 텍스트 설명을 다이어그램으로 바꾸는 Diagram 편집기입니다. |  |
+| ERPDashboard | 비즈니스 팩의 운영 대시보드로, KPI 카드 4개와 전자결재 목록을 보여 줍니다. |  |
+| IdeaCanvas | Ideas 무한 캔버스로, 발산(AI 유령 노드)과 수렴(묶기·점수)을 지원합니다. |  |
+| LayoutMap | 화면 영역 정의도입니다. |  |
+| MarkdownEditor | MD 문서 편집기로, 왼쪽 원문(`mono`)과 오른쪽 미리보기를 나란히 보여 줍니다. |  |
+| ModuleBadge | 모듈 식별 칩으로, 아이콘 + 라벨에 모듈 색(`mod-*`)을 입혀 기본 모듈·Studio·비즈니스 팩을 구분합니다. |  |
+| Sidebar | 좌측 내비게이션으로, 새로 만들기·홈·라이브러리 9개 모듈·Studio·AI 세션 기록을 담습니다. |  |
+| StickyNote | 포스트잇 카드로, 제목 없이 바로 쓰는 짧은 메모입니다. |  |
+| StudioWorkspace | Studio 확장(이미지·설계·3D·영상)이 공유하는 3단 편집 셸입니다. |  |
+| TabSheet | 열린 작업을 탭으로 관리하는 탭시트와 그 아래 컨텍스트 툴바입니다. |  |
+| TaskBoard | Tasks 모듈의 보드(칸반) 보기입니다. |  |
+| ThemeCompare | Paper · White · Dark 세 테마를 같은 셸 축약도로 나란히 비교합니다. |  |
+| WhiteModeBusiness | White 테마의 ERP 대시보드로, 기업판 기본 테마 제안의 예시입니다. |  |
+| WhiteModeShell | White 테마로 고정해 보여 주는 전체 셸입니다. |  |
+
+### 원본 화면 예시
+
+원본 Design System의 미리보기에만 있는 전체 화면·표지다(설명 문서 없음).
+
+- `Cover` — 960×288 표지 — 상단바·사이드바(brand)·AI 패널(ai)·포스트잇(mod-note) 5영역 셸을 추상화한 블록, 태그라인 '직접 쓰고, AI와 함께 다듬는 하나의 작업대.'
+
+### 원본 컴포넌트 스타일
+
+원본 `components/bundle.css`의 스타일을 구역별로 요약했다(크기·모서리·색·테두리·그림자·글꼴). `var(--x)`는 원본 토큰 `x`다.
+
+| 구역 | 선택자 | 핵심 속성 |
+|---|---|---|
+|  | `body` | background surface-0 · color ink · font-family font-sans · font-size 14px |
+|  | `.pad` | padding space-4 |
+|  | `.row` | gap space-2 |
+|  | `.stack` | gap space-2 |
+|  | `.muted` | color ink-muted |
+|  | `.lbl` | font-size 12px · font-weight 500 |
+|  | `.cap` | font-size 11px · font-weight 500 · letter-spacing .02em |
+|  | `.mono` | font-family font-mono · font-size 13px |
+| ---------- buttons, chips, badges ---------- | `.btn` | gap 6px · height 32px · padding 0 space-3 · border-radius radius-sm · border 1px solid line-strong · background surface-200 · color ink · font 500 12px/16px font-sans |
+| ---------- buttons, chips, badges ---------- | `.btn.primary` | background brand · color on-brand |
+| ---------- buttons, chips, badges ---------- | `.btn.ai` | background ai-soft · color ai |
+| ---------- buttons, chips, badges ---------- | `.btn.ghost` | background transparent · color ink-muted |
+| ---------- buttons, chips, badges ---------- | `.btn.sm` | height 26px · padding 0 space-2 |
+| ---------- buttons, chips, badges ---------- | `.iconbtn` | width 28px · height 28px · border-radius radius-sm · color ink-muted · border 0 · background transparent |
+| ---------- buttons, chips, badges ---------- | `.iconbtn:hover` | background surface-300 · color ink |
+| ---------- buttons, chips, badges ---------- | `.chip` | gap space-1 · height 24px · padding 0 space-2 · border-radius radius-sm · background surface-300 · color ink · font 500 12px/16px font-sans |
+| ---------- buttons, chips, badges ---------- | `.chip .x` | color ink-muted |
+| ---------- buttons, chips, badges ---------- | `.badge` | height 18px · padding 0 6px · border-radius radius-pill · font 500 11px/14px font-sans · letter-spacing .02em · background surface-300 · color ink-muted |
+| ---------- buttons, chips, badges ---------- | `.badge.brand` | background brand-soft · color brand-strong |
+| ---------- buttons, chips, badges ---------- | `.badge.ai` | background ai-soft · color ai |
+| ---------- buttons, chips, badges ---------- | `.badge.danger` | background surface-300 · color danger |
+| ---------- buttons, chips, badges ---------- | `.dot` | width 8px · height 8px · border-radius 50% |
+| ---------- buttons, chips, badges ---------- | `.kbd` | font 500 11px/14px font-mono · padding 1px 5px · border-radius 4px · border 1px solid line-strong · color ink-muted · background surface-200 |
+| module colours | `.mod-ic` | color m |
+| module colours | `.mod-dot` | background m |
+| module colours | `.modchip` | gap 6px · height 28px · padding 0 10px 0 8px · border-radius radius-sm · border 1px solid line · background surface-200 · font 500 12px/16px font-sans · color ink |
+| module colours | `.modchip .ic` | color m |
+| ---------- topbar ---------- | `.topbar` | min-width 0 · height topbar-h · gap space-3 · padding 0 space-3 · background surface-0 · border-bottom 1px solid line |
+| ---------- topbar ---------- | `.logo` | gap space-2 · font-weight 700 · font-size 15px · letter-spacing -.01em |
+| ---------- topbar ---------- | `.logo-mark` | width 22px · height 22px · border-radius radius-sm · background brand · gap 2px · padding 4px |
+| ---------- topbar ---------- | `.logo-mark i` | background on-brand · border-radius 2px |
+| ---------- topbar ---------- | `.logo-mark i:nth-child(4)` | background ai |
+| ---------- topbar ---------- | `.menu` | gap 2px |
+| ---------- topbar ---------- | `.menu a` | padding 4px space-2 · border-radius radius-sm · font-size 13px · color ink-muted |
+| ---------- topbar ---------- | `.menu a:hover, .menu a.on` | background surface-300 · color ink |
+| ---------- topbar ---------- | `.search` | max-width 420px · height 30px · gap space-2 · padding 0 space-2 0 space-3 · border-radius radius-sm · background surface-300 · color ink-faint · font-size 13px |
+| ---------- topbar ---------- | `.avatar` | width 26px · height 26px · border-radius radius-pill · background mod-project · color on-brand · font 600 11px/1 font-sans |
+| ---------- topbar ---------- | `.ws` | gap 6px · height 30px · padding 0 space-2 · border-radius radius-sm · border 1px solid line · font 500 12px/16px font-sans · background surface-200 |
+| ---------- sidebar ---------- | `.sidebar` | width sidebar-w · background surface-100 |
+| ---------- sidebar ---------- | `.sb-new .btn` | width 100% |
+| ---------- sidebar ---------- | `.sb-sec` | padding space-2 space-2 0 |
+| ---------- sidebar ---------- | `.sb-h` | padding space-2 space-2 space-1 · font 500 11px/14px font-sans · letter-spacing .04em · color ink-muted |
+| ---------- sidebar ---------- | `.nav` | gap space-2 · height 30px · padding 0 space-2 · border-radius radius-sm · font-size 13px · color ink |
+| ---------- sidebar ---------- | `.nav .ic` | color ink-muted |
+| ---------- sidebar ---------- | `.nav.mod .ic` | color m |
+| ---------- sidebar ---------- | `.nav .n` | font 500 11px/14px font-sans · color ink-muted |
+| ---------- sidebar ---------- | `.nav:hover` | background surface-300 |
+| ---------- sidebar ---------- | `.nav.on` | background brand-soft · color brand-strong · font-weight 500 |
+| ---------- sidebar ---------- | `.nav.on .ic, .nav.on .n` | color brand-strong |
+| ---------- sidebar ---------- | `.sess` | gap 1px · padding 6px space-2 · border-radius radius-sm |
+| ---------- sidebar ---------- | `.sess b` | font-weight 500 · font-size 13px · gap 6px |
+| ---------- sidebar ---------- | `.sess span` | font-size 11px · color ink-muted |
+| ---------- sidebar ---------- | `.sess .ic` | color ai |
+| ---------- sidebar ---------- | `.sess.on` | background ai-soft |
+| ---------- sidebar ---------- | `.sb-foot` | border-top 1px solid line · padding space-2 space-3 · gap space-2 · font-size 12px · color ink-muted |
+| ---------- tab sheet ---------- | `.tabbar` | min-width 0 · height tabbar-h · gap 2px · padding 0 space-2 · background surface-0 · border-bottom 1px solid line |
+| ---------- tab sheet ---------- | `.tab` | min-width 0 · gap 6px · height 32px · max-width 200px · padding 0 space-2 0 space-3 · border-radius radius-sm radius-sm 0 0 · font-size 13px · color ink-muted · background transparent · border 1px solid transparent · bo… |
+| ---------- tab sheet ---------- | `.tab .x` | opacity .7 |
+| ---------- tab sheet ---------- | `.tab:hover` | background surface-300 |
+| ---------- tab sheet ---------- | `.tab.on` | background surface-100 · color ink · height 33px · font-weight 500 |
+| ---------- tab sheet ---------- | `.tab.on::before` | height 2px · border-radius 2px · background var(--m, brand) |
+| ---------- tab sheet ---------- | `.tab.pin` | padding 0 space-2 |
+| ---------- tab sheet ---------- | `.tab .ai-dot` | width 6px · height 6px · border-radius 50% · background ai |
+| ---------- tab sheet ---------- | `.toolbar` | height 40px · gap 2px · padding 0 space-4 · border-bottom 1px solid line · background surface-100 · color ink-muted · font-size 12px |
+| ---------- tab sheet ---------- | `.toolbar .sep` | width 1px · height 18px · background line |
+| ---------- tab sheet ---------- | `.crumb` | gap 4px · font-size 12px · color ink-muted |
+| ---------- docs blocks ---------- | `.doc` | padding space-8 space-6 · max-width 720px |
+| ---------- docs blocks ---------- | `.doc h1` | font-size 26px · font-weight 700 · letter-spacing -.01em |
+| ---------- docs blocks ---------- | `.doc .props` | gap 6px space-3 · font-size 13px |
+| ---------- docs blocks ---------- | `.doc .props dt` | color ink-muted |
+| ---------- docs blocks ---------- | `.doc .props dd` | gap 6px |
+| ---------- docs blocks ---------- | `.blk` | gap space-2 · padding 3px space-2 · border-radius radius-sm |
+| ---------- docs blocks ---------- | `.blk .grip` | color ink-faint · opacity 0 |
+| ---------- docs blocks ---------- | `.blk:hover` | background surface-300 |
+| ---------- docs blocks ---------- | `.blk:hover .grip, .blk.sel .grip` | opacity 1 |
+| ---------- docs blocks ---------- | `.blk.sel` | background brand-soft |
+| ---------- docs blocks ---------- | `.blk h2` | font-size 18px · font-weight 600 |
+| ---------- docs blocks ---------- | `.todo` | gap space-2 |
+| ---------- docs blocks ---------- | `.cb` | width 16px · height 16px · border-radius 4px · border 1.5px solid line-strong |
+| ---------- docs blocks ---------- | `.cb.on` | background brand · color on-brand |
+| ---------- docs blocks ---------- | `.done` | color ink-muted |
+| ---------- docs blocks ---------- | `.callout` | gap space-2 · padding space-3 · border-radius radius-md · background surface-300 · width 100% |
+| ---------- docs blocks ---------- | `.mention` | gap 3px · padding 0 4px · border-radius 4px · background surface-300 · font-weight 500 · font-size 13px |
+| ---------- docs blocks ---------- | `.mention .ic` | color m |
+| ---------- docs blocks ---------- | `.ai-inline` | border 1px dashed ai · background ai-soft · border-radius radius-md · padding space-3 · width 100% |
+| ---------- docs blocks ---------- | `.ai-inline .hd` | gap 6px · color ai · font 500 12px/16px font-sans |
+| ---------- docs blocks ---------- | `.ai-inline .acts` | gap 6px |
+| ---------- docs blocks ---------- | `.ins` | background brand-soft · color brand-strong · border-radius 3px · padding 0 2px |
+| ---------- docs blocks ---------- | `.del` | color danger |
+| ---------- docs blocks ---------- | `.slash` | width 240px · background surface-200 · border 1px solid line · border-radius radius-md · box-shadow shadow-pop · padding 6px |
+| ---------- docs blocks ---------- | `.slash .it` | gap space-2 · padding 6px space-2 · border-radius radius-sm · font-size 13px |
+| ---------- docs blocks ---------- | `.slash .it small` | color ink-muted · font-size 11px |
+| ---------- docs blocks ---------- | `.slash .it.on` | background surface-300 |
+| ---------- docs blocks ---------- | `.slash .grp` | padding 6px space-2 2px · font 500 11px/14px font-sans · color ink-muted |
+| ---------- AI panel ---------- | `.ai-panel` | width ai-panel-w · background surface-100 |
+| ---------- AI panel ---------- | `.ai-hd` | height tabbar-h · gap space-2 · padding 0 space-2 0 space-4 · border-bottom 1px solid line · background surface-0 |
+| ---------- AI panel ---------- | `.ai-hd .ttl` | font-weight 600 · font-size 13px · gap 6px |
+| ---------- AI panel ---------- | `.ai-hd .ttl .ic` | color ai |
+| ---------- AI panel ---------- | `.seg` | padding 2px · border-radius radius-pill · background surface-300 |
+| ---------- AI panel ---------- | `.seg span` | padding 2px 10px · border-radius radius-pill · font 500 12px/18px font-sans · color ink-muted |
+| ---------- AI panel ---------- | `.seg span.on` | background surface-200 · color ink · box-shadow shadow-1 |
+| ---------- AI panel ---------- | `.ai-body` | padding space-4 · gap space-4 |
+| ---------- AI panel ---------- | `.msg-u` | max-width 85% · background surface-300 · border-radius radius-md radius-md 4px radius-md · padding space-2 space-3 |
+| ---------- AI panel ---------- | `.msg-a` | gap space-2 |
+| ---------- AI panel ---------- | `.msg-a .who` | width 24px · height 24px · border-radius radius-pill · background ai-soft · color ai |
+| ---------- AI panel ---------- | `.msg-a .txt` | min-width 0 |
+| ---------- AI panel ---------- | `.act` | border 1px solid line · background surface-200 · border-radius radius-md |
+| ---------- AI panel ---------- | `.act-hd` | gap 6px · padding space-2 space-3 · border-bottom 1px solid line · font 500 12px/16px font-sans |
+| ---------- AI panel ---------- | `.act-hd .ic` | color var(--m, ai) |
+| ---------- AI panel ---------- | `.act-li` | gap space-2 · padding 6px space-3 · font-size 13px · border-bottom 1px solid line |
+| ---------- AI panel ---------- | `.act-li:last-of-type` | border-bottom 0 |
+| ---------- AI panel ---------- | `.act-li .muted` | font-size 11px |
+| ---------- AI panel ---------- | `.act-ft` | gap 6px · padding space-2 space-3 · background surface-100 · border-top 1px solid line |
+| ---------- AI panel ---------- | `.ctx` | gap 6px |
+| ---------- AI panel ---------- | `.ctx .chip` | background surface-200 · border 1px solid line |
+| ---------- AI panel ---------- | `.ctx .chip .ic` | color var(--m, ink-muted) |
+| ---------- AI panel ---------- | `.composer` | border 1px solid line-strong · border-radius radius-lg · background surface-200 · padding space-2 space-2 space-2 space-3 |
+| ---------- AI panel ---------- | `.composer .ph` | color ink-faint · font-size 14px · padding 2px 0 space-2 |
+| ---------- AI panel ---------- | `.composer .bar` | gap 2px |
+| ---------- AI panel ---------- | `.send` | width 30px · height 30px · border-radius radius-sm · background brand · color on-brand |
+| ---------- AI panel ---------- | `.thinking` | gap 6px · color ai · font 500 12px/16px font-sans |
+| ---------- AI panel ---------- | `.thinking i` | width 6px · height 6px · border-radius 50% · background ai · opacity .5 |
+| ---------- content cards ---------- | `.sticky` | width 168px · min-height 148px · padding space-3 · border-radius 4px 4px radius-md 4px · background mod-note · color mod-note-ink · box-shadow shadow-1 · font-size 13px · gap 6px |
+| ---------- content cards ---------- | `.sticky .meta` | gap 4px · font 500 11px/14px font-sans · opacity .8 |
+| ---------- content cards ---------- | `.sticky.tilt` | transform rotate(-1.5deg) |
+| ---------- content cards ---------- | `.sticky.tint` | background surface-200 · color ink · border 1px solid line · border-top 4px solid m |
+| ---------- content cards ---------- | `.card` | background surface-200 · border 1px solid line · border-radius radius-md · padding space-3 |
+| ---------- content cards ---------- | `.card h4` | font-size 14px · font-weight 600 |
+| ---------- content cards ---------- | `.kanban` | gap space-3 |
+| ---------- content cards ---------- | `.col` | background surface-100 · border 1px solid line · border-radius radius-lg · padding space-2 · gap space-2 |
+| ---------- content cards ---------- | `.col-h` | gap 6px · padding 4px 6px · font 600 12px/16px font-sans |
+| ---------- content cards ---------- | `.col-h .n` | color ink-muted · font-weight 500 |
+| ---------- content cards ---------- | `.task` | gap 6px |
+| ---------- content cards ---------- | `.task .ft` | gap 6px · font-size 11px · color ink-muted |
+| ---------- content cards ---------- | `.task .ft .avatar` | width 20px · height 20px · font-size 10px |
+| ---------- content cards ---------- | `.contact` | gap space-3 |
+| ---------- content cards ---------- | `.contact .avatar` | width 40px · height 40px · font-size 14px · background mod-contact |
+| ---------- content cards ---------- | `.kv` | gap 4px space-2 · font-size 12px |
+| ---------- content cards ---------- | `.kv dt` | color ink-muted |
+| ---------- canvas (ideas / diagram) ---------- | `.canvas` | background-color surface-100 |
+| ---------- canvas (ideas / diagram) ---------- | `.node` | background surface-200 · border 1.5px solid m · border-radius radius-md · padding 6px space-3 · font 500 13px/18px font-sans · color ink |
+| ---------- canvas (ideas / diagram) ---------- | `.node.root` | background brand · color on-brand |
+| ---------- canvas (ideas / diagram) ---------- | `.node.ghost` | border-width 1px · background ai-soft · color ai |
+| ---------- canvas (ideas / diagram) ---------- | `.cv-tools` | transform translateY(-50%) · background surface-200 · border 1px solid line · border-radius radius-md · padding 4px · gap 2px · box-shadow shadow-1 |
+| ---------- canvas (ideas / diagram) ---------- | `.cv-tools .on` | background brand-soft · color brand-strong |
+| ---------- canvas (ideas / diagram) ---------- | `.cv-float` | background surface-200 · border 1px solid line · border-radius radius-pill · box-shadow shadow-pop · padding 4px · gap 2px |
+| ---------- studio ---------- | `.studio` | height 100% · border 1px solid line · border-radius radius-lg · background surface-100 |
+| ---------- studio ---------- | `.rail` | padding space-2 0 · gap 4px · background surface-0 |
+| ---------- studio ---------- | `.rail .iconbtn` | width 36px · height 36px |
+| ---------- studio ---------- | `.rail .iconbtn.on` | background brand-soft · color brand-strong |
+| ---------- studio ---------- | `.stage` | background surface-300 |
+| ---------- studio ---------- | `.inspector` | padding space-3 · gap space-3 · font-size 12px |
+| ---------- studio ---------- | `.field` | gap 4px |
+| ---------- studio ---------- | `.input` | height 30px · border 1px solid line-strong · border-radius radius-sm · background surface-200 · padding 0 space-2 · font-size 12px |
+| ---------- studio ---------- | `.timeline` | height 56px · border-top 1px solid line · background surface-100 · padding 8px 12px · gap 4px |
+| ---------- studio ---------- | `.clip` | height 16px · border-radius 4px |
+| ---------- business ---------- | `.kpis` | gap space-3 |
+| ---------- business ---------- | `.kpi` | background surface-200 · border 1px solid line · border-radius radius-md · padding space-3 |
+| ---------- business ---------- | `.kpi .v` | font-size 22px · font-weight 700 · letter-spacing -.01em |
+| ---------- business ---------- | `.kpi .d` | font-size 11px · color brand-strong |
+| ---------- business ---------- | `.kpi .d.down` | color danger |
+| ---------- business ---------- | `.tbl` | width 100% · font-size 13px · background surface-200 · border 1px solid line · border-radius radius-md |
+| ---------- business ---------- | `.tbl th` | font 500 11px/14px font-sans · letter-spacing .02em · color ink-muted · background surface-100 · padding space-2 space-3 · border-bottom 1px solid line |
+| ---------- business ---------- | `.tbl td` | padding space-2 space-3 · border-bottom 1px solid line |
+| ---------- business ---------- | `.tbl tr:last-child td` | border-bottom 0 |
+| ---------- shell ---------- | `.shell` | width 1280px · height 780px · background surface-0 |
+| ---------- shell ---------- | `.shell-mid` | min-height 0 |
+| ---------- shell ---------- | `.main` | min-width 0 · background surface-100 |
+| ---------- shell ---------- | `.statusbar` | gap space-4 · padding 0 space-3 · border-top 1px solid line · background surface-0 · font 500 11px/14px font-sans · color ink-muted |
+| ---------- shell ---------- | `.statusbar .ok` | gap 4px |
+| ---------- shell ---------- | `.statusbar .ok .dot` | background brand · width 6px · height 6px |
+| ---------- shell ---------- | `.zone` | font 600 11px/14px font-sans · background ink · color surface-200 · border-radius radius-pill · padding 3px 8px |
+| 면이 모두 흰색이므로 구분은 선·상태 표시·떠 있는 요소의 그림자가 맡는다 | `[data-theme="white"] .nav.on` | background surface-300 · color ink |
+| 면이 모두 흰색이므로 구분은 선·상태 표시·떠 있는 요소의 그림자가 맡는다 | `[data-theme="white"] .nav.on .ic, [data-theme="white"] .nav.on .n` | color brand |
+| 면이 모두 흰색이므로 구분은 선·상태 표시·떠 있는 요소의 그림자가 맡는다 | `[data-theme="white"] .search` | background surface-200 · border 1px solid line |
+| 면이 모두 흰색이므로 구분은 선·상태 표시·떠 있는 요소의 그림자가 맡는다 | `[data-theme="white"] .composer` | box-shadow shadow-1 |
+| 면이 모두 흰색이므로 구분은 선·상태 표시·떠 있는 요소의 그림자가 맡는다 | `[data-theme="white"] .tbl th` | background surface-300 |
+
+## Do's and Don'ts
+
+**Do**
+
+- brand는 행동과 활성 상태에만 — 주요 버튼은 화면당 1개
+- ai 색은 AI 출처 표시(AI 버튼·제안 카드·생성 중·세션 아이콘)에만
+- AI 변경은 항상 미리보기 → 적용(액션 카드·인라인 diff)
+- 면 경계는 그림자 대신 line hairline, 면 계층은 surface-0~300 4단계
+- 모듈 색은 항상 아이콘+라벨과 함께, 식별용 작은 요소에만
+- UI 문구는 해요체·짧게, 버튼은 동사형 명사구
+- AI가 만든 항목엔 AI 배지를 남기고 사람이 수정하면 제거
+
+**Don't**
+
+- 사람이 만든 콘텐츠에 ai 색 쓰지 않기
+- 모듈 색으로 넓은 면 채우기 금지(포스트잇 mod-note 예외)
+- 상태색(danger·warning)을 큰 면에 깔지 않기
+- AI 생성 중 스켈레톤 반짝임·무지개 그라디언트 금지
+- 한 화면에 굵기 3개 초과 사용 금지
+- AI 문구에 과장·감탄사·이모지 금지
+- White 테마에서 회색 채움 입력창·면 색으로 구획하기 금지
+
+## Responsive Behavior
+
+- ≥1440 사이드바 펼침·AI 패널 고정, 1280–1439 캔버스 축소(01-layout.md)
+- 1024–1279 사이드바 아이콘 레일(56px), AI 패널은 캔버스를 덮는 시트
+- <1024(태블릿·모바일) 하단 탭바, AI 패널 전체 화면 시트, 탭시트는 상단 드롭다운
+- 문서형 캔버스 본문 폭 720px 가운데 정렬, 캔버스형은 전체 폭
+- 밀도 Comfortable(행 36px)·Compact(행 28px) 전환, 토큰 같고 컴포넌트 높이만 변경
+- prefers-reduced-motion에서 모든 모션 즉시 전환
 
 ## Known Gaps
 

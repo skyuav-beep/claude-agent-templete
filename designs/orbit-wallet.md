@@ -213,39 +213,317 @@ shadow-pop: "0 -12px 40px rgba(40, 20, 70, 0.14)"  # ← shadow-sheet · dark 0 
 | icon-button | IconButton (원형 surface-2) |
 | icon | Icon (라인 아이콘, currentColor) |
 
+### 변형 대응
+
+#### button
+
+| 계약 변형 | 원본 대응 |
+|---|---|
+| primary | primary (brand 보라 알약 + on-brand, 화면당 하나의 확정 동작 — 출금 신청·로그인) |
+| secondary | secondary (surface-2 바탕, primary와 짝을 이루는 대안 — 교환 옆 보내기) |
+| tertiary | ghost (투명 바탕 + brand-ink 글자, '전체 보기' 같은 인라인 링크형) |
+| ghost | outline (투명 바탕 + 1px line 안쪽 테두리, 취소용) |
+| danger | 원본 없음(파괴 행동 전용 버튼 변형 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| disabled | :disabled (불투명도 45%, not-allowed — .ow-btn:disabled) |
+| (원본 추가) | accent: 노랑 accent + on-accent, 히어로 스캔·MAX 순간에만(화면당 한 번) |
+| (원본 추가) | 크기 sm 36 / md 48 / lg 56, block(가로 꽉 참), 하단 CTA는 lg + block |
+| (원본 추가) | 원본 ghost는 링크형이라 템플릿 tertiary에, 원본 outline은 배경 없는 버튼이라 템플릿 ghost에 대응 |
+
+#### input
+
+| 계약 변형 | 원본 대응 |
+|---|---|
+| default | TextField (.ow-field-box: 최소 높이 48px, radius-md, surface-2 바탕, 라벨은 위 13px 600) |
+| focus | :focus-within (안쪽 2px brand 테두리) |
+| error | .is-error (안쪽 2px down 테두리) + 아래 .ow-field-error down 12px 600, role=alert |
+| disabled | 원본 없음(입력 비활성 상태 정의 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+
+#### badge
+
+| 계약 변형 | 원본 대응 |
+|---|---|
+| active | up (up-soft + up, 완료·답변완료) |
+| pending | warn (warn-soft + warn, 처리중·답변대기) |
+| inactive | neutral (surface-2 + ink-muted) |
+| danger | down (down-soft + down, 실패·거절) |
+
+### 모바일 컴포넌트 대응
+
+| 템플릿 모바일 컴포넌트 | 원본 대응 |
+|---|---|
+| bottom-sheet | 원본 없음(원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| mobile-nav | BottomNav — 5슬롯 하단 탭(홈·지갑·[QR 스캔]·내역·설정), 가운데 노란 스캔 버튼 |
+| nav-drawer | 원본 없음(원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| fab | BottomNav 가운데 fab 항목(.ow-nav-fab) — control-lg 56px accent 원형 + shadow-accent |
+| card-row | TokenRow / TxRow / SettingsRow — surface-1 바탕 radius-lg 카드형 행, 8px 간격 .ow-list |
+
+### 시그니처
+
+이 시안을 알아보게 하는 원본 고유 모양이다. 화면을 만들 때 표준 컴포넌트에 이 모양을 입힌다.
+
+- 하단 탭 — 높이 76px, surface-3, 위 모서리 radius-xl, 선택 표시 accent 4px 점(.ow-nav, .ow-nav-item[aria-current]::after)
+- 가운데 스캔 FAB — 56px accent 노랑 원형 + shadow-accent, 홈의 유일한 accent(.ow-nav-fab)
+- 화면 배경 글로우 — 오른쪽 위에서 퍼지는 radial-gradient(120% 60% at 70% -10%, bg-glow → bg 62%)(.ow-screen)
+- 총 자산 숫자 — 44px/48px 800, 자간 -.02em, 가운데 정렬(.ow-balance-amount)
+- QR 스캐너 프레임 — 240px 창 radius 28px, accent 4px 코너 44px, 글로우 스캔 라인 2.2s(.ow-scanner-win, .ow-scanner-corner, .ow-scanner-line)
+- 부호 붙은 변동 필 — 높이 28px 알약, up/down + soft 바탕, tabular-nums(.ow-change-pill)
+
 ### 원본 컴포넌트 (29종)
 
-| 컴포넌트 | 요약 |
-|---|---|
-| ActionButton | 56px disc with a label below — the quick-action row under the balance on Home. |
-| AddressQR | Deposit card: coin + network, the address as a QR code, copy/share, and the wrong-network warning. |
-| AmountField | Large numeric input for withdraw / transfer, with available balance, MAX, fiat estimate and network fee. |
-| AuthPanel | Login / signup panel with two methods: 아이디·비밀번호 and Web3 지갑 (sign-in with a wallet signature). |
-| Badge | Small status label: network names, notice pins, transaction and inquiry status. |
-| BalanceHeader | Hero total-asset figure for Home, centered, in `num-hero`. |
-| BottomNav | Five-slot tab bar with the yellow Scan button in the centre: 홈 · 지갑 · [QR 스캔] · 내역 · 설정. |
-| Button | Pill-shaped buttons; `primary` (brand fill) is the one committing action per screen — 출금 신청, 로그인, Send. |
-| ChangePill | Signed price change in `up` / `down`, as a soft pill or bare text. |
-| CoinAvatar | Round coin logo. |
-| Icon | Line icon set drawn on a 24px grid, 1.8 stroke, round caps — inherits `currentColor`. |
-| IconButton | Round 40px icon-only button for headers and inline copy actions. |
-| InquiryItem | A ticket in 1:1 문의 내역: category, title, date and 답변대기 / 답변완료. |
-| LanguageList | Radio list for 언어 설정; each option shows its native name and the English name. |
-| NoticeItem | A row in the 공지사항 list. |
-| NoticePopup | Launch popup for notices/events, with optional image, CTA, paging dots and “오늘 하루 보지 않기”. |
-| PriceChart | Smoothed line + soft area price chart with dashed grid and a live end dot, coloured by `chart-line`. |
-| QRScanner | Full-screen scanner overlay: dimmed mask, yellow corner frame, scan line, and 앨범 / 플래시 / 내 QR buttons. |
-| RangeChips | Round period chips under the price chart: 1H · 1D · 1W · 1M · 1Y. |
-| Screen | Phone screen shell: status bar, optional app bar (`title`, back, `action`), padded body and a bottom slot (`nav`). |
-| SearchField | Pill search input for the token list and coin search. |
-| SegmentedTabs | Pill segmented control for switching views in place: login method, history filter, notice/inquiry tabs. |
-| SelectField | Button that looks like a field and opens a bottom sheet — network, coin and category pickers. |
-| SettingsRow | Settings / My-page list row: icon disc, label, optional sub line, value or badge, chevron. |
-| StatPair | Two figures split by a hairline — 보유 수량 / 평가 금액 on coin detail. |
-| TextField | Labelled input with optional leading icon, hint and error; `type="password"` adds a show/hide toggle; `multiline` gives a textarea (1:1 문의 본문). |
-| TokenRow | A holding in the token list: coin, name, held amount, fiat value and 24h change. |
-| TopBar | Home header: avatar, handle + account name (opens account switcher), QR scan and bell. |
-| TxRow | Transaction history row: kind icon, title, date/network or short hash, signed amount, then fiat or a status badge. |
+| 컴포넌트 | 요약 | 변형·속성 |
+|---|---|---|
+| ActionButton | 56px disc with a label below — the quick-action row under the balance on Home. | tone default/accent |
+| AddressQR | Deposit card: coin + network, the address as a QR code, copy/share, and the wrong-network warning. |  |
+| AmountField | Large numeric input for withdraw / transfer, with available balance, MAX, fiat estimate and network fee. |  |
+| AuthPanel | Login / signup panel with two methods: 아이디·비밀번호 and Web3 지갑 (sign-in with a wallet signature). | mode login/signup · method id/web3 |
+| Badge | Small status label: network names, notice pins, transaction and inquiry status. | tone neutral/brand/up/down/warn |
+| BalanceHeader | Hero total-asset figure for Home, centered, in `num-hero`. |  |
+| BottomNav | Five-slot tab bar with the yellow Scan button in the centre: 홈 · 지갑 · [QR 스캔] · 내역 · 설정. |  |
+| Button | Pill-shaped buttons; `primary` (brand fill) is the one committing action per screen — 출금 신청, 로그인, Send. | variant primary/secondary/accent/outline/ghost · size sm/md/lg |
+| ChangePill | Signed price change in `up` / `down`, as a soft pill or bare text. | kind percent/fiat · variant pill/text |
+| CoinAvatar | Round coin logo. |  |
+| Icon | Line icon set drawn on a 24px grid, 1.8 stroke, round caps — inherits `currentColor`. |  |
+| IconButton | Round 40px icon-only button for headers and inline copy actions. |  |
+| InquiryItem | A ticket in 1:1 문의 내역: category, title, date and 답변대기 / 답변완료. | status waiting/answered |
+| LanguageList | Radio list for 언어 설정; each option shows its native name and the English name. |  |
+| NoticeItem | A row in the 공지사항 list. |  |
+| NoticePopup | Launch popup for notices/events, with optional image, CTA, paging dots and “오늘 하루 보지 않기”. |  |
+| PriceChart | Smoothed line + soft area price chart with dashed grid and a live end dot, coloured by `chart-line`. |  |
+| QRScanner | Full-screen scanner overlay: dimmed mask, yellow corner frame, scan line, and 앨범 / 플래시 / 내 QR buttons. |  |
+| RangeChips | Round period chips under the price chart: 1H · 1D · 1W · 1M · 1Y. |  |
+| Screen | Phone screen shell: status bar, optional app bar (`title`, back, `action`), padded body and a bottom slot (`nav`). |  |
+| SearchField | Pill search input for the token list and coin search. |  |
+| SegmentedTabs | Pill segmented control for switching views in place: login method, history filter, notice/inquiry tabs. |  |
+| SelectField | Button that looks like a field and opens a bottom sheet — network, coin and category pickers. |  |
+| SettingsRow | Settings / My-page list row: icon disc, label, optional sub line, value or badge, chevron. |  |
+| StatPair | Two figures split by a hairline — 보유 수량 / 평가 금액 on coin detail. |  |
+| TextField | Labelled input with optional leading icon, hint and error; `type="password"` adds a show/hide toggle; `multiline` gives a textarea (1:1 문의 본문). |  |
+| TokenRow | A holding in the token list: coin, name, held amount, fiat value and 24h change. | changeKind percent/fiat |
+| TopBar | Home header: avatar, handle + account name (opens account switcher), QR scan and bell. |  |
+| TxRow | Transaction history row: kind icon, title, date/network or short hash, signed amount, then fiat or a status badge. | kind deposit/withdraw/swap/transfer · status done/pending/failed |
+
+### 원본 화면 예시
+
+원본 Design System의 미리보기에만 있는 전체 화면·표지다(설명 문서 없음).
+
+- `AppScreens` — 390px 화면 13종 그리드 — 로그인·Web3 가입·홈(총 자산·액션 4개·토큰)·코인 상세 차트·입금 QR·출금·거래내역·QR 스캔·팝업 공지·공지/1:1 문의·문의 작성·설정·언어 선택
+- `Cover` — 960×320 표지 — brand 슬랩 위 노란 accent 원판과 동심원 궤도 2개, 태그라인 '중앙화 커스터디 지갑 — 숫자가 주인공인 다크 퍼스트 모바일 UI'
+
+### 원본 컴포넌트 스타일
+
+원본 `components/bundle.css`의 스타일을 구역별로 요약했다(크기·모서리·색·테두리·그림자·글꼴). `var(--x)`는 원본 토큰 `x`다.
+
+| 구역 | 선택자 | 핵심 속성 |
+|---|---|---|
+|  | `html, body` | background bg · color ink · font-family font-sans |
+|  | `body` | padding 16px |
+|  | `.ow-num, .ow-num *` | font-family font-num |
+|  | `button` | font inherit · color inherit |
+|  | `:where(button, a, input, textarea, select, [tabindex]):focus-visible` | outline 2px solid focus |
+|  | `.ow-row` | gap space-3 |
+|  | `.ow-stack` | gap space-2 |
+|  | `.ow-sr` | width 1px · height 1px |
+| Button | `.ow-btn` | gap space-2 · border 0 · border-radius radius-pill · padding 0 space-6 · height control-md · font-size 15px · font-weight 700 |
+| Button | `.ow-btn:active` | transform scale(.98) |
+| Button | `.ow-btn:disabled` | opacity .45 · transform none |
+| Button | `.ow-btn-sm` | height control-sm · padding 0 space-4 · font-size 13px |
+| Button | `.ow-btn-lg` | height control-lg · font-size 16px |
+| Button | `.ow-btn-block` | width 100% |
+| Button | `.ow-btn-primary` | background brand · color on-brand |
+| Button | `.ow-btn-primary:hover:not(:disabled)` | background brand-hover |
+| Button | `.ow-btn-secondary` | background surface-2 · color ink |
+| Button | `.ow-btn-secondary:hover:not(:disabled)` | background surface-3 |
+| Button | `.ow-btn-accent` | background accent · color on-accent |
+| Button | `.ow-btn-ghost` | background transparent · color brand-ink · padding 0 space-3 |
+| Button | `.ow-btn-outline` | background transparent · color ink · box-shadow inset 0 0 0 1px line |
+| Button | `.ow-btn-outline:hover:not(:disabled)` | background surface-2 |
+| Icon button (header) | `.ow-iconbtn` | width 40px · height 40px · border-radius radius-pill · border 0 · background surface-2 · color ink |
+| Icon button (header) | `.ow-iconbtn:hover` | background surface-3 |
+| Icon button (header) | `.ow-iconbtn-dot` | min-width 16px · height 16px · padding 0 4px · border-radius radius-pill · background down · color #fff · font-size 10px · font-weight 800 · box-shadow 0 0 0 2px surface-2 |
+| Action button (round disc + label) | `.ow-actions` | gap space-2 |
+| Action button (round disc + label) | `.ow-action` | gap space-2 · background none · border 0 · padding 0 · color ink |
+| Action button (round disc + label) | `.ow-action-disc` | width control-lg · height control-lg · border-radius radius-pill · background surface-2 |
+| Action button (round disc + label) | `.ow-action:hover .ow-action-disc` | background surface-3 |
+| Action button (round disc + label) | `.ow-action-accent .ow-action-disc` | background accent · color on-accent |
+| Action button (round disc + label) | `.ow-action-label` | font-size 12px · font-weight 600 |
+| Badge & change pill | `.ow-badge` | gap space-1 · height 24px · padding 0 space-2 · border-radius radius-sm · font-size 12px · font-weight 700 |
+| Badge & change pill | `.ow-badge-neutral` | background surface-2 · color ink-muted |
+| Badge & change pill | `.ow-badge-brand` | background brand-soft · color brand-ink |
+| Badge & change pill | `.ow-badge-up` | background up-soft · color up |
+| Badge & change pill | `.ow-badge-down` | background down-soft · color down |
+| Badge & change pill | `.ow-badge-warn` | background warn-soft · color warn |
+| Badge & change pill | `.ow-change` | gap 2px · font-weight 700 · font-size 13px · font-family font-num |
+| Badge & change pill | `.ow-change-up` | color up |
+| Badge & change pill | `.ow-change-down` | color down |
+| Badge & change pill | `.ow-change-pill` | height 28px · padding 0 space-3 · border-radius radius-pill |
+| Badge & change pill | `.ow-change-pill.ow-change-up` | background up-soft |
+| Badge & change pill | `.ow-change-pill.ow-change-down` | background down-soft |
+| Coin avatar | `.ow-coin` | border-radius radius-pill · font-weight 800 · color #fff · letter-spacing -.02em |
+| Coin avatar | `.ow-coin img` | width 100% · height 100% |
+| Coin avatar | `.ow-coin-ring` | box-shadow 0 0 0 4px surface-2 |
+| Top bar | `.ow-topbar` | gap space-3 |
+| Top bar | `.ow-topbar-who` | min-width 0 · background none · border 0 · padding 0 |
+| Top bar | `.ow-topbar-handle` | font-size 13px · color ink-muted · font-weight 500 |
+| Top bar | `.ow-topbar-name` | gap space-1 · font-size 16px · font-weight 700 · color ink |
+| Top bar | `.ow-avatar` | width 44px · height 44px · border-radius radius-pill · background brand-soft · color brand-ink · font-weight 800 |
+| Top bar | `.ow-avatar img` | width 100% · height 100% |
+| Balance header | `.ow-balance` | gap space-2 |
+| Balance header | `.ow-balance-label` | gap space-2 · font-size 13px · font-weight 600 · color ink-muted · background none · border 0 · padding 0 |
+| Balance header | `.ow-balance-amount` | font-size 44px · font-weight 800 · letter-spacing -.02em |
+| Balance header | `.ow-balance-change` | gap space-2 |
+| Fields | `.ow-field` | gap space-2 |
+| Fields | `.ow-field-label` | font-size 13px · font-weight 600 · color ink-muted · gap space-2 |
+| Fields | `.ow-field-box` | gap space-3 · min-height control-md · padding 0 space-4 · border-radius radius-md · background surface-2 · box-shadow inset 0 0 0 1px transparent · color ink-muted |
+| Fields | `.ow-field-box:focus-within` | box-shadow inset 0 0 0 2px brand |
+| Fields | `.ow-field-box.is-error` | box-shadow inset 0 0 0 2px down |
+| Fields | `.ow-field-box input, .ow-field-box textarea` | min-width 0 · border 0 · outline 0 · background transparent · color ink · font inherit · font-size 15px · font-weight 600 · padding 0 |
+| Fields | `.ow-field-box textarea` | padding space-3 0 · min-height 112px |
+| Fields | `.ow-field-box input::placeholder, .ow-field-box textarea::placeholder` | color ink-faint · font-weight 500 |
+| Fields | `.ow-field-hint` | font-size 12px · color ink-muted |
+| Fields | `.ow-field-error` | font-size 12px · color down · font-weight 600 |
+| Fields | `.ow-search` | border-radius radius-pill |
+| Fields | `.ow-select` | gap space-3 · width 100% · min-height control-md · padding space-2 space-4 · border-radius radius-md · background surface-2 · border 0 |
+| Fields | `.ow-select:hover` | background surface-3 |
+| Fields | `.ow-select-value` | font-size 15px · font-weight 700 · color ink |
+| Fields | `.ow-select-sub` | font-size 12px · color ink-muted · font-weight 500 |
+| Amount field | `.ow-amount` | padding space-4 · border-radius radius-lg · background surface-1 · box-shadow inset 0 0 0 1px line · gap space-2 |
+| Amount field | `.ow-amount:focus-within` | box-shadow inset 0 0 0 2px brand |
+| Amount field | `.ow-amount-top, .ow-amount-bottom` | gap space-2 · font-size 12px · color ink-muted · font-weight 600 |
+| Amount field | `.ow-amount-main` | gap space-3 |
+| Amount field | `.ow-amount-main input` | min-width 0 · border 0 · outline 0 · background transparent · color ink · font-family font-num · font-size 28px · font-weight 700 · padding 0 |
+| Amount field | `.ow-amount-main input::placeholder` | color ink-faint |
+| Amount field | `.ow-amount-sym` | font-weight 700 · font-size 15px · color ink · gap space-2 |
+| Amount field | `.ow-max` | height 28px · padding 0 space-3 · border 0 · border-radius radius-pill · background accent · color on-accent · font-size 12px · font-weight 800 |
+| Lists & rows | `.ow-list` | gap space-2 |
+| Lists & rows | `.ow-section-head` | gap space-3 |
+| Lists & rows | `.ow-section-title` | font-size 18px · font-weight 700 |
+| Lists & rows | `.ow-tokenrow, .ow-txrow, .ow-noticeitem, .ow-inquiry, .ow-setrow` | gap space-3 · width 100% · padding space-4 · border-radius radius-lg · background surface-1 · border 0 · color ink |
+| Lists & rows | `.ow-tokenrow:hover, .ow-txrow:hover, .ow-noticeitem:hover, .ow-inquir…` | background surface-2 |
+| Lists & rows | `.ow-rowmain` | min-width 0 · gap 2px |
+| Lists & rows | `.ow-rowtitle` | font-size 15px · font-weight 700 · gap space-2 |
+| Lists & rows | `.ow-rowsub` | font-size 13px · color ink-muted · font-weight 500 |
+| Lists & rows | `.ow-rowend` | gap 2px |
+| Lists & rows | `.ow-rowvalue` | font-size 16px · font-weight 700 · font-family font-num |
+| Lists & rows | `.ow-txicon` | width 44px · height 44px · border-radius radius-pill |
+| Lists & rows | `.ow-txicon-deposit` | background up-soft · color up |
+| Lists & rows | `.ow-txicon-withdraw` | background down-soft · color down |
+| Lists & rows | `.ow-txicon-swap, .ow-txicon-transfer` | background brand-soft · color brand-ink |
+| Lists & rows | `.ow-setrow-icon` | width 40px · height 40px · border-radius radius-pill · background surface-2 · color ink |
+| Lists & rows | `.ow-setrow-value` | font-size 13px · color ink-muted · font-weight 600 |
+| Lists & rows | `.ow-chev` | color ink-faint |
+| Lists & rows | `.ow-new-dot` | width 6px · height 6px · border-radius radius-pill · background brand-ink |
+| Segmented / range | `.ow-seg` | padding 4px · gap 4px · border-radius radius-pill · background surface-2 |
+| Segmented / range | `.ow-seg-item` | height 36px · border 0 · border-radius radius-pill · background transparent · color ink-muted · font-size 14px · font-weight 700 |
+| Segmented / range | `.ow-seg-item[aria-selected="true"]` | background surface-1 · color ink · box-shadow 0 2px 8px rgba(0,0,0,.18) |
+| Segmented / range | `.ow-chips` | gap space-3 |
+| Segmented / range | `.ow-chip` | min-width 44px · height 44px · padding 0 space-3 · border-radius radius-pill · border 0 · background surface-2 · color ink-muted · font-size 14px · font-weight 700 |
+| Segmented / range | `.ow-chip[aria-selected="true"]` | background brand · color on-brand |
+| Chart | `.ow-chart` | width 100% |
+| Chart | `.ow-chart-halo` | opacity .25 |
+| Stat pair | `.ow-stats` | padding space-4 0 · border-top 1px solid line · border-bottom 1px solid line |
+| Stat pair | `.ow-stats-sep` | width 1px · height 48px · background line |
+| Stat pair | `.ow-stat` | gap space-2 |
+| Stat pair | `.ow-stat-label` | font-size 13px · color ink-muted · font-weight 600 |
+| Stat pair | `.ow-stat-value` | gap space-2 · font-size 22px · font-weight 700 · font-family font-num |
+| QR | `.ow-qr` | gap space-4 · padding space-6 space-5 · border-radius radius-xl · background surface-1 |
+| QR | `.ow-qr-code` | padding 14px · border-radius radius-lg · background #ffffff |
+| QR | `.ow-qr-badge` | transform translate(-50%, -50%) · box-shadow 0 0 0 5px #ffffff |
+| QR | `.ow-qr-net` | gap space-2 |
+| QR | `.ow-qr-addr` | width 100% · gap space-3 · padding space-3 space-4 · border-radius radius-md · background surface-2 |
+| QR | `.ow-qr-addr code` | min-width 0 · font-family font-num · font-size 13px · font-weight 600 · color ink |
+| QR | `.ow-qr-actions` | gap space-2 · width 100% |
+| QR | `.ow-warnbox` | gap space-3 · padding space-3 space-4 · border-radius radius-md · background warn-soft · color warn · font-size 13px · font-weight 600 · width 100% |
+| Scanner | `.ow-scanner` | width 100% · height 100% · min-height 420px · background #000 · border-radius inherit · color #ffffff |
+| Scanner | `.ow-scanner-media > *` | width 100% · height 100% |
+| Scanner | `.ow-scanner-win` | width 240px · height 240px · border-radius 28px · box-shadow 0 0 0 2000px scrim |
+| Scanner | `.ow-scanner-corner` | width 44px · height 44px · border 4px solid accent |
+| Scanner | `.ow-scanner-corner.tl` | border-bottom 0 |
+| Scanner | `.ow-scanner-corner.tr` | border-bottom 0 |
+| Scanner | `.ow-scanner-corner.bl` | border-top 0 |
+| Scanner | `.ow-scanner-corner.br` | border-top 0 |
+| Scanner | `.ow-scanner-line` | height 2px · border-radius 2px · background accent · box-shadow 0 0 12px accent |
+| Scanner | `.ow-scanner-top, .ow-scanner-bottom` | padding space-5 · gap space-3 |
+| Scanner | `.ow-scanner-top` | font-weight 700 · font-size 16px |
+| Scanner | `.ow-scanner-hint` | font-size 14px · font-weight 600 · padding 0 space-6 · color #ffffff |
+| Scanner | `.ow-scanner-bottom` | gap space-8 |
+| Scanner | `.ow-scanner-btn` | gap space-2 · background none · border 0 · color #ffffff · font-size 12px · font-weight 600 |
+| Scanner | `.ow-scanner-btn span` | width 52px · height 52px · border-radius radius-pill · background rgba(255,255,255,.16) |
+| Scanner | `.ow-scanner-btn[aria-pressed="true"] span` | background accent · color on-accent |
+| Notice popup | `.ow-layer` | padding space-5 · background scrim |
+| Notice popup | `.ow-layer.is-contained` | border-radius inherit |
+| Notice popup | `.ow-popup` | width 100% · max-width 340px · border-radius radius-xl · background surface-1 · box-shadow shadow-popup |
+| Notice popup | `.ow-popup-media` | background brand-soft |
+| Notice popup | `.ow-popup-media img` | width 100% · height 100% |
+| Notice popup | `.ow-popup-body` | padding space-5 · gap space-2 |
+| Notice popup | `.ow-popup-title` | font-size 18px · font-weight 800 |
+| Notice popup | `.ow-popup-text` | font-size 14px · color ink-muted · font-weight 500 |
+| Notice popup | `.ow-popup-foot` | border-top 1px solid line |
+| Notice popup | `.ow-popup-foot button` | height 52px · border 0 · background none · font-size 14px · font-weight 700 · color ink-muted |
+| Notice popup | `.ow-popup-foot button + button` | color ink |
+| Notice popup | `.ow-dots` | gap 6px |
+| Notice popup | `.ow-dots i` | width 6px · height 6px · border-radius radius-pill · background line |
+| Notice popup | `.ow-dots i.on` | width 18px · background brand |
+| Language list | `.ow-lang` | gap space-1 |
+| Language list | `.ow-lang-item` | gap space-3 · padding space-3 space-4 · border-radius radius-md · background none · border 0 · color ink · width 100% |
+| Language list | `.ow-lang-item:hover` | background surface-2 |
+| Language list | `.ow-lang-item[aria-checked="true"]` | background brand-soft |
+| Language list | `.ow-lang-code` | width 36px · height 36px · border-radius radius-pill · background surface-2 · font-size 12px · font-weight 800 · color ink-muted |
+| Language list | `.ow-lang-item[aria-checked="true"] .ow-lang-code` | background brand · color on-brand |
+| Language list | `.ow-lang-check` | color brand-ink |
+| Auth | `.ow-auth` | gap space-4 |
+| Auth | `.ow-auth-title` | font-size 24px · font-weight 800 |
+| Auth | `.ow-auth-sub` | font-size 14px · color ink-muted · font-weight 500 |
+| Auth | `.ow-divider` | gap space-3 · color ink-faint · font-size 12px · font-weight 600 |
+| Auth | `.ow-divider::before, .ow-divider::after` | height 1px · background line |
+| Auth | `.ow-connector` | gap space-3 · width 100% · min-height control-lg · padding 0 space-4 · border-radius radius-md · background surface-1 · border 0 · box-shadow inset 0 0 0 1px line · color ink |
+| Auth | `.ow-connector:hover` | background surface-2 |
+| Auth | `.ow-connector-glyph` | width 36px · height 36px · border-radius 12px · background surface-2 · color brand-ink |
+| Auth | `.ow-connector-name` | font-size 15px · font-weight 700 |
+| Auth | `.ow-auth-links` | gap space-4 · font-size 13px |
+| Auth | `.ow-auth-links a` | color ink-muted · font-weight 600 |
+| Auth | `.ow-auth-links a:hover` | color ink |
+| Bottom nav | `.ow-nav` | height 76px · padding 0 space-3 · background surface-3 · border-radius radius-xl radius-xl 0 0 · box-shadow shadow-sheet |
+| Bottom nav | `.ow-nav-item` | gap 4px · background none · border 0 · color ink-muted · width 56px · padding space-2 0 · font-size 11px · font-weight 600 |
+| Bottom nav | `.ow-nav-item[aria-current="page"]` | color ink |
+| Bottom nav | `.ow-nav-item[aria-current="page"]::after` | width 4px · height 4px · border-radius radius-pill · background accent |
+| Bottom nav | `.ow-nav-fab` | width control-lg · height control-lg · border-radius radius-pill · border 0 · background accent · color on-accent · box-shadow shadow-accent |
+| Screen shell | `.ow-screen` | width 390px · height 820px · border-radius 44px · background radial-gradient(120% 60% at 70% -10%, bg-glow 0%, bg 62%) · color ink · box-shadow 0 0 0 8px surface-3, 0 30px 80px rgba(0,0,0,.35) |
+| Screen shell | `.ow-status` | padding 16px 28px 6px · font-size 14px · font-weight 700 · font-family font-num |
+| Screen shell | `.ow-screen-body` | min-height 0 · padding space-3 space-5 space-5 · gap space-5 |
+| Screen shell | `.ow-appbar` | gap space-3 · min-height 44px |
+| Screen shell | `.ow-appbar-title` | font-size 17px · font-weight 800 |
+| Screen shell | `.ow-appbar-spacer` | width 40px |
+
+## Do's and Don'ts
+
+**Do**
+
+- brand 보라는 화면당 하나의 주 동작에만
+- accent 노랑은 화면당 한 번(스캔 버튼·MAX·스캐너 프레임)
+- 숫자는 항상 부호를 붙이고 마이너스는 U+2212
+- 네트워크(TRC-20, ERC-20)는 항상 표기, 주소는 앞 5자…뒤 3자
+- 상태 배지는 항상 아이콘 + 단어
+- 출금은 항상 2단계 인증 후, 스캔한 주소는 입력만 채움
+- 버튼은 동사로 끝내고 마침표 없음
+- 카드는 그림자 없이 면 색으로 구분
+
+**Don't**
+
+- accent를 큰 면적이나 텍스트 색으로 쓰지 않기
+- 금액에 ink-faint 쓰지 않기
+- primary 버튼 두 개를 나란히 두지 않기
+- 색만으로 방향·상태 전달하지 않기
+- 이모지 쓰지 않기
+- 지갑 브랜드 로고·코인 로고를 직접 그리지 않기
+- 스캔한 주소로 자동 전송하지 않기
+- 필드 오류를 토스트로 중복 표시하지 않기
+
+## Responsive Behavior
+
+- 목업 프레임 390×820, radius 44px — 실제로는 레이아웃 라우트가 셸 역할(Screen README)
+- 화면 좌우 여백 space-5, 섹션 사이 space-6
+- 컨트롤 높이 36/48/56, 하단 CTA·원형 액션·스캔 버튼은 56px
+- prefers-reduced-motion에서 스캔 라인 정지, 그 외 모션은 150ms 색 전환뿐
 
 ## Known Gaps
 

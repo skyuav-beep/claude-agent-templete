@@ -3,35 +3,62 @@
   "name": "AEG Soft",
   "category": "consumer",
   "lang": "ko",
-  "source": { "title": "AEG Soft", "url": "https://claude.ai/artifact/65R8okgmxrb2cHf92VHXBC" },
-  "themes": { "light": "light", "dark": "dark" },
+  "source": {
+    "title": "AEG Soft",
+    "url": "https://claude.ai/artifact/65R8okgmxrb2cHf92VHXBC"
+  },
+  "themes": {
+    "light": "light",
+    "dark": "dark"
+  },
   "tagline": "Samsung Health(One UI) 스타일로 다시 정리한 AEG 회원 앱 — 밝은 파스텔 바탕 위 큰 라운드 흰 카드, 카드마다 굵은 고딕 숫자 하나가 먼저 읽히는 모바일 시안.",
-  "related_services": ["Samsung Health"],
+  "related_services": [
+    "Samsung Health"
+  ],
   "policy": {
     "shadow_on_cards": true,
-    "gradient_locations": ["background", "hero"],
+    "gradient_locations": [
+      "background",
+      "hero"
+    ],
     "copy_tone": "ko-friendly",
     "dark_mode": "supported",
     "non_4_spacing": false
   },
-  "brand": { "brand-primary": "gold-500", "brand-text": "gold-700", "brand-tint": "gold-100" },
+  "brand": {
+    "brand-primary": "gold-500",
+    "brand-text": "gold-700",
+    "brand-tint": "gold-100"
+  },
   "alias": {
     "bg-canvas": "bg-base",
     "bg-surface": "surface-card",
     "bg-subtle": "surface-sunken",
     "bg-muted": "surface-sunken",
     "bg-elevated": "surface-card",
-    "bg-inverse": { "src": "ink", "note": "합성 — 원본에 반전 면이 없어 본문 잉크를 재사용(칩 선택 상태가 ink 면)" },
+    "bg-inverse": {
+      "src": "ink",
+      "note": "합성 — 원본에 반전 면이 없어 본문 잉크를 재사용(칩 선택 상태가 ink 면)"
+    },
     "bg-brand": "gold-500",
     "bg-brand-subtle": "gold-100",
-    "bg-success-subtle": { "src": "surface-sunken", "note": "합성 — 원본에 성공 바탕이 없음(중립 타일)" },
+    "bg-success-subtle": {
+      "src": "surface-sunken",
+      "note": "합성 — 원본에 성공 바탕이 없음(중립 타일)"
+    },
     "bg-warning-subtle": "warn-100",
-    "bg-danger-subtle": { "src": "warn-100", "note": "합성 — 원본에 위험 바탕이 없어 경고 바탕 재사용" },
+    "bg-danger-subtle": {
+      "src": "warn-100",
+      "note": "합성 — 원본에 위험 바탕이 없어 경고 바탕 재사용"
+    },
     "fg-strong": "ink",
     "fg-default": "ink",
     "fg-secondary": "ink-2",
     "fg-tertiary": "ink-3",
-    "fg-disabled": { "src": "ink-3", "note": "합성 — 원본은 ink-3보다 연한 글자를 금지" },
+    "fg-disabled": {
+      "src": "ink-3",
+      "note": "합성 — 원본은 ink-3보다 연한 글자를 금지"
+    },
     "fg-on-brand": "on-gold",
     "fg-brand": "gold-700",
     "fg-success": "up",
@@ -39,7 +66,10 @@
     "fg-danger": "down",
     "border-subtle": "line",
     "border-default": "line",
-    "border-strong": { "src": "line", "note": "합성 — 원본은 선 색 하나(카드 바깥 테두리 금지)" },
+    "border-strong": {
+      "src": "line",
+      "note": "합성 — 원본은 선 색 하나(카드 바깥 테두리 금지)"
+    },
     "border-brand": "gold-500"
   },
   "type": {
@@ -56,8 +86,17 @@
     "body2": "body-sm",
     "caption1": "caption"
   },
-  "radius": { "radius-12": "radius-sm", "radius-18": "radius-md", "radius-24": "radius-lg", "radius-30": "radius-xl", "radius-full": "radius-pill" },
-  "shadow": { "shadow-1": "shadow-card", "shadow-pop": "shadow-float" },
+  "radius": {
+    "radius-12": "radius-sm",
+    "radius-18": "radius-md",
+    "radius-24": "radius-lg",
+    "radius-30": "radius-xl",
+    "radius-full": "radius-pill"
+  },
+  "shadow": {
+    "shadow-1": "shadow-card",
+    "shadow-pop": "shadow-float"
+  },
   "requiredComponents": {
     "button": "Button (primary 골드·tonal, 높이 52/38, pill)",
     "input": "원본 없음 — surface-sunken 입력칸(radius-md) 규칙만 README에 있음",
@@ -66,6 +105,85 @@
     "avatar": "ScreenSettings 프로필 골드 아바타",
     "icon-button": "ActionCircle (64px 원형 컬러 버튼)",
     "icon": "README §8 아이콘 (Lucide, 24 그리드, 선 2, currentColor)"
+  },
+  "variants": {
+    "button": {
+      "primary": ".ag-btn.primary (gold-500 알약 + on-gold 글자, 화면당 하나, 흰 글씨 금지)",
+      "secondary": ".ag-btn.tonal (surface-sunken 면 + ink 글자, primary 외 나머지 버튼)",
+      "tertiary": null,
+      "ghost": null,
+      "danger": null,
+      "disabled": ".cl-cta .ag-btn[disabled] (Clear 컨셉 하단 고정 버튼 비활성: surface-sunken + ink-3)",
+      "_extra": [
+        ".ag-btn.sm: 높이 38px 작은 알약",
+        ".ag-fab: 70px gold-500 원형 FAB(QR 입금·송금)",
+        ".ag-circle: 64px 원형 컬러 액션 버튼, 기능별 circle-* 색 고정",
+        "ScreenWalletTxDetail README: 파괴적 행동 '출금 취소'도 별도 danger 변형 없이 tonal 사용"
+      ]
+    },
+    "input": {
+      "default": null,
+      "focus": ".ag :focus-visible (focus 2px 실선 + 2px 오프셋, 입력 전용이 아닌 전역 규칙)",
+      "error": null,
+      "disabled": null
+    },
+    "badge": {
+      "active": ".ag-badge.ok (bg-glow-mint 바탕 + up 글자, 완료 등 긍정)",
+      "pending": ".ag-badge.wait (surface-sunken + ink-2, '처리중' 등 진행 중)",
+      "inactive": ".ag-badge 기본 (gold-100 + gold-700, PV·등급·프로모션 메타)",
+      "danger": ".ag-badge.err (warn-100 + down 글자, '실패')"
+    }
+  },
+  "mobile": {
+    "bottom-sheet": "cl-sheet — Clear 출금 확인 시트(ClearWithdrawConfirm), 위 모서리 28px + 40×5 그랩 핸들",
+    "mobile-nav": "BottomNav — 떠 있는 유리 알약 4탭(홈·쇼핑몰·마이너·지갑), Clear 대안은 화면에 붙은 .cl-tabbar",
+    "nav-drawer": null,
+    "fab": "BottomNav의 .ag-fab — 70px gold-500 원형, QR 입금·송금",
+    "card-row": "ListRow — 리스트 카드 안 최소 68px 한 줄(아이콘 타일·제목·캡션·금액/셰브런)"
+  },
+  "signatures": [
+    "파스텔 글로우 바탕 — bg-base 위 bg-glow-butter/mint/sky 방사형 3종(README 3장)",
+    "큰 라운드 흰 카드 — surface-card + radius-xl(30) + shadow-card, 테두리 없음, 패딩 space-6(.ag-card)",
+    "떠 있는 유리 하단 바 — surface-glass + blur 24px 알약, 탭 높이 58px, 현재 탭 gold-100 캡슐 + gold-700 아이콘, 하단 22px 위(.ag-nav, .ag-navwrap)",
+    "골드 원형 FAB — 70px gold-500 + on-gold 아이콘(.ag-fab)",
+    "유리 세그먼트 탭 — surface-glass + blur 20px, 선택 탭만 흰 캡슐 + shadow-card, 높이 46px(.ag-seg)",
+    "히어로 숫자 — num-hero 44 / num-xl 32, 굵기 800, 자간 -0.03em, tabular-nums(README 1·4장)"
+  ],
+  "dos": [
+    "카드당 주인공 숫자는 하나, 나머지는 ink-3 캡션",
+    "한 카드 = 한 주제로 쪼개기",
+    "구분은 테두리 대신 흰 카드와 파스텔 바탕의 명도 차",
+    "gold-500 면 위 글자는 반드시 on-gold",
+    "모든 숫자는 tabular-nums, 천 단위 콤마",
+    "버튼 라벨은 동사로 끝나는 짧은 한국어",
+    "한국어 줄바꿈은 word-break: keep-all"
+  ],
+  "donts": [
+    "카드에 테두리 금지",
+    "한 카드에 큰 숫자 두 개 금지",
+    "골드를 넓은 배경으로 쓰지 않기",
+    "흰 글자 on 골드 금지",
+    "13px 미만 텍스트 금지",
+    "그라데이션 버튼 금지",
+    "이모지·3D 일러스트 아이콘 금지"
+  ],
+  "responsive": [
+    "기준 폭 390px, 좌우 여백 space-5(20), 카드 사이 space-3(12)",
+    "하단 내비는 화면 하단 22px 위 고정, 콘텐츠 하단 120px 여백",
+    "Clear 컨셉 하단 고정 CTA 높이 56px(.cl-cta)",
+    "prefers-reduced-motion이면 궤도·진행 링 애니메이션 정지"
+  ],
+  "screens": {
+    "Cover": "960×300 표지 — gold-500 큰 슬랩 + 하늘색 파스텔 블록(7일 막대 알약) + navy-900 카드 위 골드 코인, 태그라인 '밝은 파스텔 바탕, 큰 라운드 카드, 굵은 고딕 숫자.'"
+  },
+  "null_reasons": {
+    "variants.button.tertiary": "원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음",
+    "variants.button.ghost": "원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음",
+    "variants.button.danger": "파괴 행동 전용 버튼 변형 없음",
+    "variants.input.default": "입력 필드 컴포넌트·CSS 없음(Clear 출금은 키패드 방식)",
+    "variants.input.error": "원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음",
+    "variants.input.disabled": "입력 비활성 상태 정의 없음",
+    "mobile.nav-drawer": "README 6장: 햄버거 드로어를 세그먼트 탭으로 대체해 없앰"
   },
   "notes": [
     "한 시스템 안에 두 컨셉(Soft · Clear)이 있다. 토큰은 공유하고 Clear는 bundle.css의 cl- 클래스만 다르다.",
