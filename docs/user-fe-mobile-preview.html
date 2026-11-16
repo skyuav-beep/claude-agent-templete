@@ -1769,7 +1769,7 @@
 
     /* ===== atomic (button/input/badge) ===== */
     .button {
-      display: inline-flex; align-items: center; justify-content: center;
+      display: inline-flex; align-items: center; justify-content: center; white-space: nowrap;
       gap: var(--space-8);
       padding: 0 var(--space-16); height: 40px;
       border-radius: var(--radius-8);
@@ -3049,7 +3049,7 @@
       <span class="avatar" style="width:40px;height:40px;font-size:14px">김</span>
       <span class="avatar" style="width:48px;height:48px;font-size:16px">이</span>
       <span class="avatar" style="background:var(--bg-brand-subtle);color:var(--fg-brand)">박</span>
-      <span class="avatar" style="background:var(--bg-inverse);color:var(--fg-on-brand)">최</span>
+      <span class="avatar" style="background:var(--bg-inverse);color:var(--bg-canvas)">최</span>
     </div>
     <p style="margin-top:var(--space-12);font-size:12px;color:var(--fg-secondary)">
       시안 차이: <code class="annot">linear-like 24</code> 컴팩트 · <code class="annot">wanted/minimal-mono/material-3 32</code> · <code class="annot">toss-like 40</code> 모바일 우선. 본 specimen의 그라디언트 채움은 wanted 시그너처(다른 시안에서는 단색 fallback 권장).
