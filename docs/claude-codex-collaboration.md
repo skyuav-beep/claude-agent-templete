@@ -72,11 +72,87 @@ Claude Code와 Codex를 함께 써서 여러 프로젝트를 병렬로 개발할
   ```
 
 - 오래 대기하면(기본 10분) 사용자에게 알리고, 끝난 개발 서버·브라우저·컨테이너처럼 정리할 수 있는 것을 제안한다. 다른 세션의 프로세스는 묻지 않고 끄지 않는다.
-- 대기와 재확인을 자동으로 하는 스크립트와 tmux 운영 가이드는 2단계에서 추가한다. 그 전까지는 위 명령으로 직접 확인한다.
+
+### 자동 대기 (`memory-gate.sh`)
+
+`.claude/hooks/memory-gate.sh` 하나가 세 방식으로 위 규칙을 실행한다. 무거운 명령인지의 판정 정본은 이 스크립트다.
+
+| 방식 | 명령 | 동작 |
+|---|---|---|
+| 훅 | `PreToolUse(Bash)`에 등록(`.claude/settings.template.json`, `timeout` 660초) | 에이전트가 무거운 명령(새 Claude·Codex 실행, 개발 서버, Playwright, Docker 기동·빌드, Codex 리뷰·작업 스크립트)을 실행하려 하면 한도 아래로 내려갈 때까지 기다렸다가 통과시킨다. 10분을 넘기면 사용자 확인(ask)으로 넘기고 많이 쓰는 프로세스를 정리 후보로 보여 준다 |
+| 대기 후 실행 | `bash .claude/hooks/memory-gate.sh run -- <명령>` | 사람이 tmux 창에서 새 세션을 띄울 때 쓴다. 예: `... run -- claude`, `... run -- codex` |
+| 상태 | `bash .claude/hooks/memory-gate.sh status` (`--short`는 tmux 상태줄용) | 현재 사용률·한도·많이 쓰는 프로세스 |
+
+- 판정 확인: `bash .claude/hooks/memory-gate.sh check "<명령>"` → `heavy`/`light`
+- 조정: `AGENT_MEM_LIMIT`(80), `AGENT_MEM_INTERVAL`(30초), `AGENT_MEM_MAX_WAIT`(600초), `AGENT_MEM_EXTRA`(추가 판정 정규식), `AGENT_MEM_DISABLE=1`(끄기)
+- Codex는 Claude 훅을 실행하지 않으므로 무거운 명령 전에 `memory-gate.sh wait`를 직접 호출한다(`.codex/checks/safety-checklist.md`).
+- 판정은 `node scripts/check-agent-ops.mjs`가 고정한다.
+
+## 이벤트 기록과 현황 보기
+
+여러 프로젝트의 Claude·Codex 세션 상태를 파일 하나에 모은다. 감시 화면(TUI·GUI)은 이 파일만 읽으면 되므로 화면 기술과 무관하게 유지된다.
+
+- 기록기: `.claude/hooks/agent-events.sh`. Claude 훅 12종(`SessionStart`, `UserPromptSubmit`, `PreToolUse`, `Notification`, `PermissionRequest`, `Stop`, `StopFailure`, `SubagentStart`, `SubagentStop`, `TaskCreated`, `TaskCompleted`, `SessionEnd`)에 `async`로 등록해 작업을 늦추지 않는다. Codex는 `notify` 어댑터(`.codex/hooks/notify-codex.sh`)가 턴 완료를 같은 파일에 기록한다.
+- 위치: `${XDG_STATE_HOME:-~/.local/state}/agent-events/events.jsonl`(`AGENT_EVENTS_FILE`로 변경). 20MB를 넘으면 `events.jsonl.1`로 넘긴다. 모든 프로젝트가 같은 파일을 쓰므로 한 화면에서 함께 본다.
+- 기록하지 않는 것: 프롬프트·응답 본문, 파일 내용. Bash 명령은 앞 120자만 남기고 비밀값처럼 보이는 부분(키=값, 토큰, `Bearer`, URL 계정)을 `***`로 가린다. 끄려면 `AGENT_EVENTS_DISABLE=1`.
+
+한 줄 형식:
+
+| 필드 | 뜻 |
+|---|---|
+| `ts` | 기록 시각(epoch 초) |
+| `provider` | `claude` 또는 `codex` |
+| `event` | 훅 이벤트 이름. Codex 턴 완료는 `Stop` |
+| `session` | 세션 ID(Codex는 thread ID) |
+| `project` / `branch` / `cwd` | 저장소 이름(worktree도 원래 저장소 이름), 브랜치, 작업 폴더 |
+| `tool` / `target` | 도구 이름과 대상(파일 경로, 가린 명령 등) |
+| `agent` | 서브 에이전트 종류 |
+| `kind` / `note` | 알림 종류, 작업 제목·알림 문구·오류(가림 적용) |
+
+현황 보기:
+
+| 명령 | 용도 |
+|---|---|
+| `bash .claude/hooks/agent-events.sh watch` | 터미널 화면. 2초마다 다시 그리고 `q`로 끝낸다 |
+| `bash .claude/hooks/agent-events.sh status` | 표 한 번 출력. `--hours N`으로 범위 조정(기본 12시간) |
+| `bash .claude/hooks/agent-events.sh status --short` | tmux 상태줄용 한 줄 (`실행 2 · 응답 1 · mem 41%/80`) |
+
+- 상태는 마지막 이벤트로 정한다: `응답 필요`(권한·입력 요청) > `오류` > `실행 중` > `멈춤?`(실행 중인데 30분 이상 이벤트 없음) > `완료`. 끝난 세션은 숨긴다.
+- `서브`는 이번 턴에 실행 중인 서브 에이전트 수, `작업`은 완료/생성한 작업 수다. 진행률이 아니다 — 진행률은 작업 카드의 완료 조건으로만 계산한다.
+- Codex 대화형 세션은 턴 완료 사이에 이벤트가 없으므로, 실행 로그(`~/.codex/sessions`)가 5분 안에 갱신됐으면 `실행 중`으로 본다.
+
+## tmux 운영
+
+여러 프로젝트를 터미널 하나에서 돌리는 기본 구성이다. 설정 파일은 바꾸지 않고 명령으로만 쓴다.
+
+| 단위 | 규칙 |
+|---|---|
+| tmux 세션 | 프로젝트 1개. 이름은 저장소 이름 |
+| 창(window) | 작업 카드 1개. 이름은 카드 ID. 작업 폴더는 그 카드의 worktree |
+| 감시 창 | 세션마다 0번 창에 `agent-events.sh watch` |
+
+```bash
+H=~/projects/claude-agent-template/.claude/hooks          # 이 템플릿의 훅 위치
+tmux new-session -d -s myapp -n watch -c ~/projects/myapp "bash $H/agent-events.sh watch"
+tmux new-window -t myapp -n T-001 -c ~/projects/myapp-worktrees/T-001 "bash $H/memory-gate.sh run -- claude"
+tmux new-window -t myapp -n T-002 -c ~/projects/myapp-worktrees/T-002 "bash $H/memory-gate.sh run -- codex"
+tmux attach -t myapp
+```
+
+- 다른 창에 지시 보내기: `tmux send-keys -t myapp:T-001 "<지시>" Enter`. 실행 중인 에이전트에 보내는 입력이므로 내용과 대상 창을 확인하고 보낸다.
+- 상태줄에 현황 띄우기(원하면 `~/.tmux.conf`에 직접 추가):
+
+  ```
+  set -g status-interval 10
+  set -g status-right "#(bash ~/projects/claude-agent-template/.claude/hooks/agent-events.sh status --short)"
+  ```
+
+- 세션 목록 `tmux ls`, 전환 `prefix s`. 백그라운드 Claude 작업은 `claude agents`, Codex 백그라운드 작업은 `/codex:status`로 따로 본다.
 
 ## 여러 프로젝트 운영
 
-- 프로젝트마다 별도 터미널 세션(권장: tmux 세션 1개 = 프로젝트 1개, 창 1개 = 작업 카드 1개)을 쓰고, 작업 카드마다 전용 worktree를 쓴다.
+- 프로젝트마다 별도 터미널 세션(tmux 세션 1개 = 프로젝트 1개, 창 1개 = 작업 카드 1개, 위 `## tmux 운영`)을 쓰고, 작업 카드마다 전용 worktree를 쓴다.
+- 세션 현황은 `agent-events.sh watch`로 한 화면에서 본다.
 - 응답이 필요한 순간은 작업 알림 훅(`docs/notification-guide.md`)으로 받는다. 백그라운드 Claude 작업은 `claude agents`, 백그라운드 Codex 작업은 `/codex:status`로 본다.
 - 모니터링 화면(TUI·GUI)은 기존 도구를 먼저 시험한 뒤 정한다. 직접 만드는 감시 프로그램은 이 템플릿이 아니라 별도 저장소에서 개발한다.
 

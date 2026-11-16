@@ -23,6 +23,11 @@
           {
             "type": "command",
             "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -x \"$root/.claude/hooks/session-coordination.sh\" ] || exit 0; bash \"$root/.claude/hooks/session-coordination.sh\"'"
+          },
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/memory-gate.sh\"'",
+            "timeout": 660
           }
         ]
       },
@@ -65,6 +70,16 @@
             "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -x \"$root/.claude/hooks/agent-worktree-guard.sh\" ] || exit 0; bash \"$root/.claude/hooks/agent-worktree-guard.sh\"'"
           }
         ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/agent-events.sh\"'",
+            "async": true
+          }
+        ]
       }
     ],
     "SessionStart": [
@@ -73,6 +88,11 @@
           {
             "type": "command",
             "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -x \"$root/.claude/hooks/session-coordination.sh\" ] || exit 0; bash \"$root/.claude/hooks/session-coordination.sh\"'"
+          },
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/agent-events.sh\"'",
+            "async": true
           }
         ]
       }
@@ -83,6 +103,110 @@
           {
             "type": "command",
             "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -x \"$root/.claude/hooks/session-coordination.sh\" ] || exit 0; bash \"$root/.claude/hooks/session-coordination.sh\"'"
+          },
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/agent-events.sh\"'",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/agent-events.sh\"'",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/agent-events.sh\"'",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/agent-events.sh\"'",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/agent-events.sh\"'",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/agent-events.sh\"'",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/agent-events.sh\"'",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/agent-events.sh\"'",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "TaskCreated": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/agent-events.sh\"'",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); while [ \"$root\" != \"/\" ] && [ ! -d \"$root/.claude/hooks\" ]; do root=$(dirname \"$root\"); done; [ -d \"$root/.claude/hooks\" ] || exit 0; bash \"$root/.claude/hooks/agent-events.sh\"'",
+            "async": true
           }
         ]
       }

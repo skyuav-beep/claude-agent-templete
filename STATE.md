@@ -101,6 +101,12 @@
 
 ## 최근 완료 작업
 
+- Claude-Codex 병렬 개발 체계 2단계: 메모리 자동 대기, 이벤트 기록·현황 보기, tmux 운영을 추가했다. (2026-11-16)
+  - `.claude/hooks/memory-gate.sh`: PreToolUse(Bash) 훅으로 무거운 명령(새 Claude·Codex 실행, 개발 서버, Playwright, Docker 기동·빌드, Codex 리뷰·작업 스크립트)을 메모리 80% 미만이 될 때까지 30초 간격으로 기다렸다가 통과, 10분 초과 시 ask + 정리 후보. `run -- <명령>`·`wait`·`status [--short]`·`check` 하위 명령. 설정 템플릿에 timeout 660초로 등록.
+  - `.claude/hooks/agent-events.sh`: Claude 훅 12종(async)과 Codex notify 턴 완료를 `~/.local/state/agent-events/events.jsonl` 하나에 기록. 본문 미기록, Bash 명령 120자·비밀값 가림, 20MB 넘김. `status`·`status --short`·`watch`(터미널 현황, q 종료)로 여러 프로젝트 세션을 응답 필요 > 오류 > 실행 중 > 멈춤? > 완료 순으로 보여 준다. Codex 대화형 진행은 실행 로그 갱신으로 보완.
+  - `.codex/hooks/notify-codex.sh`: 턴 완료를 이벤트 파일에도 기록(알림을 꺼도 기록). 기존 버그 수정 — Codex 0.16x 실행 로그가 `.jsonl.zst` 압축본이라 찾지 못해 확인(ACK) 감지가 동작하지 않던 것을 압축본도 찾게 했다(시작 시각은 압축본에서 읽지 않음).
+  - 문서: `docs/claude-codex-collaboration.md`에 자동 대기, `## 이벤트 기록과 현황 보기`(형식 표), `## tmux 운영`(세션=프로젝트, 창=작업 카드, 감시 창, send-keys, 상태줄). `CLAUDE.md` Hooks Layer, `.codex/checks/safety-checklist.md`(Codex는 `memory-gate.sh wait` 직접 호출), `docs/agent-runtime-matrix.md`, manifest.
+  - 검증: `scripts/check-agent-ops.mjs` 64건(판정 27, 대기·ask·한도·비활성, run/wait/status, 기록·가림·본문 미기록, 현황 정렬·집계, 넘김, 설정 등록) 통과. 기존 검사(`check-destructive-guard` 66, `check-session-guard` 38, `check-phase-approval` 27, parity·codex-skills·html·nav·design-sync) 통과. 이벤트 20,000줄 현황 0.22초, 기록 1회 33ms. 별도 tmux 서버에서 가이드 명령(감시 창, 대기 후 실행, 상태줄, q 종료) 실행 확인.
 - Claude-Codex 병렬 개발 체계 1단계: 협업 규칙을 문서화했다. (2026-11-16)
   - 배경: 사용자가 준 검토 자료 5종(협업 체계, 기존 모니터링 도구, 통합 관리 화면 설계, Rust 도입, TUI vs GUI)을 정리해 5층 구조(실행 tmux·worktree / 협업 Claude+Codex 플러그인 / 규칙 / 이벤트 기록 / TUI 감시)를 제안했고, 템플릿에는 규칙·양식만 넣고 감시 프로그램은 별도 저장소로 두기로 했다.
   - 사용자 결정: 무거운 작업은 메모리 사용률 80% 미만에서만 시작하고 넘으면 대기 후 실행, Codex 리뷰는 작업이 끝날 때만(턴마다 리뷰 게이트 끔), 배포는 계속 사용자 수동.
