@@ -107,6 +107,10 @@
 
 ## 최근 완료 작업
 
+- 활성 시안 `worknest` light의 배지·보조 글자 대비를 기준(4.5) 이상으로 보정했다. Claude Design System을 먼저 고치고 내려받았다. (2026-11-16)
+  - 색: `fg-success`·`green-text`·`status-done` `#059669` → `#007C51`, `fg-warning`·`amber-text`·`status-hold` `#D97706` → `#B45500`, `fg-secondary`·`neutral-600`·`status-neutral` `#6B7280` → `#676E7C`. 색상·채도는 유지하고 OKLCH 밝기만 낮췄다. dark는 바꾸지 않았다.
+  - 결과(배지 바탕 기준): 진행중 3.38 → 4.70, 대기 2.97 → 4.61, 완료·v1.0.0 4.39 → 4.66, +12.4% 3.38 → 4.70. 흰 표면·캔버스·사이드바 위에서도 4.5 이상이고, `bg-active` 위의 warning(4.26)·secondary(4.41)만 4.5 미만이다(배지 조합에는 안 쓰임).
+  - 절차: 로컬 수정 → `design-sync export` → Design System 게시(v1794835613-8e5f, 게시 직전 원본 버전이 1794835542-f483으로 바뀌어 있어 다시 읽고 내용이 같은지 비교 후 진행) → `import` → `preview --fix`(3화면 9곳) → `DESIGN.md` 동기화.
 - 디자인 시안 시각 검수(에이전트 브라우저 1차)와 프리뷰 오류 2건 수정. (2026-11-16)
   - 범위: 프리뷰 3화면 × 13종 × light/dark 자동 측정(줄바꿈·가로 넘침·글자 대비, 화면 전환 애니메이션을 끄고 측정)과 `worknest` 화면 캡처 확인.
   - 수정 1: 표 동작 열의 `보기` 버튼이 13종 모두에서 두 줄로 깨졌다(열 폭 80px, 버튼 내용 50px > 48px). 프리뷰 3화면의 버튼 규칙에 줄바꿈 금지를 넣어 0건이 됐다.
@@ -483,7 +487,6 @@
 색을 바꾸는 일이라 Claude Design System에서 고친 뒤 내려받아야 한다(`designs/*.md`·`DESIGN.md` 직접 수정 금지). 방향을 정하면 진행한다.
 
 - 위험 버튼(빨강 바탕 + 흰 글자)이 기준 4.5에 못 미친다. dark: wanted 3.07, toss-like·linear-like 2.99, orbit-wallet 2.78, pulse-wallet 2.74. light: aeg-soft 3.40, brick-wallet 3.46. dark의 위험색이 밝아서 흰 글자가 묻힌다. 시안별로 위험색을 고치거나, 템플릿이 dark에서 진한 위험 바탕을 쓰도록 별칭 계약을 바꾸는 두 방향이 있다.
-- 활성 시안 `worknest` light의 상태 배지 글자: 진행중 3.38, 대기 2.97, 완료 4.39, +12.4% 3.38.
 - 모바일 하단 탭의 비활성 라벨: worknest light 2.60·dark 3.57, minimal-mono light 2.88, material-3 light 2.76 등 여러 시안이 4.5 미만. 비활성 탭도 읽혀야 하는 글자라 기준 대상이다. 대비만 올릴지, 시안 고유 표현으로 둘지 판단이 필요하다.
 - 사람 눈 확인이 남은 것: adopt 7종을 원본 Design System 페이지와 나란히 놓는 모양 비교.
 
