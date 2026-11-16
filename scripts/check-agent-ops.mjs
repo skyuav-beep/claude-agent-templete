@@ -100,11 +100,14 @@ send({ session_id: "s-done", hook_event_name: "TaskCreated", task_id: "1", task_
 send({ session_id: "s-done", hook_event_name: "TaskCompleted", task_id: "1", task_subject: "login" });
 send({ session_id: "s-done", hook_event_name: "Stop", last_assistant_message: "ANSWER-BODY-SHOULD-NOT-APPEAR" });
 send({ session_id: "s-end", hook_event_name: "SessionEnd" });
+send({ session_id: "s-bg", hook_event_name: "Stop" });
+send({ session_id: "s-bg", hook_event_name: "SubagentStop", agent_id: "b", agent_type: "Explore" });
 run(events, [], { input: "not json", env: evEnv });
 run(events, ["codex", JSON.stringify({ type: "agent-turn-complete", "thread-id": "c-1", cwd: root, "last-assistant-message": "ANSWER-BODY-SHOULD-NOT-APPEAR" })], { env: evEnv });
+run(events, ["codex", JSON.stringify({ type: "agent-turn-complete", "thread-id": "c-nogit", cwd: tmp })], { env: evEnv });
 const text = fs.existsSync(evFile) ? fs.readFileSync(evFile, "utf8") : "";
 const lines = text.trim().split("\n").filter(Boolean).map((l) => JSON.parse(l));
-expect("기록 줄 수(잘못된 입력 제외)", lines.length === 9, String(lines.length));
+expect("기록 줄 수(잘못된 입력 제외)", lines.length === 12, String(lines.length));
 expect("본문 미기록", !/SHOULD-NOT-APPEAR/.test(text));
 expect("비밀값 가림", !/abc123|xyz\.abc|u:p@|sk-proj-abcdefghij12|ghp_abcdefghijklmnopqrstuv/.test(text), lines[1]?.target);
 expect("공통 필드", lines.every((l) => l.ts && l.provider && l.event && l.session && l.project));
@@ -117,6 +120,8 @@ expect("현황: 응답 필요 우선", /^응답 필요/.test(rows[0] ?? ""), r.o
 expect("현황: 종료 세션 숨김", !/s-end/.test(r.out));
 expect("현황: 실행 중 + 서브 1", rows.some((l) => /^실행 중/.test(l) && /\s1\s/.test(l)), r.out);
 expect("현황: 작업 1/1", rows.some((l) => /1\/1/.test(l)), r.out);
+expect("현황: Stop 뒤 늦게 온 SubagentStop은 완료 유지", rows.some((l) => /^완료/.test(l) && /s-bg/.test(l)), r.out);
+expect("현황: 빈 최근 동작이 열을 밀지 않음(Codex 완료 행)", rows.some((l) => /c-nogit/.test(l) && /\s-\s+-\s+-\s*$/.test(l)), r.out);
 r = run(events, ["status", "--short"], { env: evEnv });
 expect("현황 한 줄", /실행 1 · 응답 1/.test(r.out), r.out);
 
