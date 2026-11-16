@@ -263,6 +263,7 @@ git 작업(브랜치 생성 → 빠른 검증 → push → 머지 → 정리)의
   git merge --squash feat/orders-cancel-window && git commit
   git push origin main
   ```
+- 실행 환경이 막으면: 승인 범위 안의 머지는 미리 묻지 않고 먼저 시도한다. `gh pr merge <num> --squash`는 다른 명령과 묶지 말고 단독으로 실행한다(복합 명령은 허용 규칙에 걸리지 않아 분류기 거부가 늘어난다). 런타임 권한 분류기나 호스트 승인이 거부하면 명령을 바꿔 다시 시도하거나 우회하지 않는다. 머지를 멈추고, 사용자에게 `! gh pr merge <num> --squash` 입력 또는 GitHub UI 머지를 요청한다. 브랜치·worktree 정리는 사용자가 머지한 뒤 아래 완료 검증을 거쳐 이어간다.
 - 완료 검증: PR 상태가 merged인지 확인하고 `git fetch origin` 후 원격 base가 머지 결과를 포함하는지 확인한다. 검증 전에는 완료로 보고하거나 브랜치를 삭제하지 않는다.
 
 ### 6.4. GitHub Actions 처리 (자동 CI 비활성)

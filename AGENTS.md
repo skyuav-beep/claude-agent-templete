@@ -198,18 +198,7 @@ Claude Code는 `.claude/skills/`, Codex는 `.agents/skills/`가 이 기준을 �
 - **[리팩터링 요청 템플릿](./templates/refactor-request.md)** - 구조 개선 범위와 유지 조건을 명시할 때.
 - **[비즈니스 로직 요청 템플릿](./templates/business-logic-request.md)** - 로직 변경의 요구사항, 시나리오, 영향 범위, Git 작업 계획을 정리할 때.
 - **[초기 시작 체크리스트](./templates/startup-checklist.md)** - 새 프로젝트 시작 시 에이전트가 사용자에게 QnA로 진행하는 전체 설정 체크리스트.
-- **[프로젝트 시작 설문](./templates/project-intake.md)** - 프로젝트 목표, 사용자, 범위, 성공 기준을 수집할 때.
-- **[UI 설문](./templates/ui-intake.md)** - 화면 톤, 주요 사용자 흐름, 참고 서비스, 상태 정의를 수집할 때.
-- **[반응형 설문](./templates/responsive-intake.md)** - PC/모바일 우선순위와 breakpoint별 요구사항을 정리할 때.
-- **[기술 스택 설문](./templates/tech-intake.md)** - framework, 테스트, 배포, 개발 명령을 수집할 때.
-- **[프레임워크 구조 설문](./templates/framework-structure-intake.md)** - 레포 형태, 디렉터리 분리 기준, 파일 크기 기준을 수집할 때.
-- **[다국어 설문](./templates/i18n-intake.md)** - 지원 언어, 기본 locale, 번역 범위, 포맷 정책을 수집할 때.
-- **[포맷/타임존 설문](./templates/format-intake.md)** - 세계시(UTC), 화폐 기호, 천 단위 구분자 등 포맷 설정 기준을 수집할 때.
-- **[API 설문](./templates/api-intake.md)** - API 데이터 페칭 방식, 명세서 이용, Mocking 전략을 수집할 때.
-- **[에러 처리 설문](./templates/error-intake.md)** - 글로벌 Error Boundary, 화면 노출 방식, 로깅 서비스 연동 정책을 수집할 때.
-- **[라우팅 정책 설문](./templates/routing-intake.md)** - 파라미터 기반 상태 동기화 및 권한에 따른 라우팅 제어 기준을 수집할 때.
-- **[폼 유효성 설문](./templates/form-intake.md)** - 입력 폼 상태 관리 및 Zod 등 검증 스키마 사용 여부를 수집할 때.
-- **[QA/워크플로우 설문](./templates/qa-intake.md)** - 에이전트 테스트 강제 유무, Git 커밋 컨벤션, CI/CD 연동 정책을 수집할 때.
+- **[Intake 설문 12종](./templates/)** - 프로젝트·UI·반응형·기술 스택·프레임워크 구조·다국어·포맷/타임존·API·에러 처리·라우팅·폼 유효성·QA/워크플로우 기준을 수집할 때. 파일명은 `templates/<주제>-intake.md`, 주제 선택은 `intake` skill.
 - **[프로젝트 가이드 정본](./docs/project-guide.md)** - 현재 프로젝트의 목표, 기술·업무·검증 기준을 확인할 때.
 - **[프로젝트 가이드 템플릿](./docs/project-guide-template.md)** - intake 답변을 프로젝트 가이드 구조로 옮길 때.
 - **[프로젝트 지식 관리 가이드](./docs/knowledge-management-guide.md)** - 사용자 입력부터 개념·백서·요구사항·설계·개발계획까지의 분류, 시간순 명명, 문서 생명주기를 확인할 때.
@@ -237,8 +226,8 @@ Claude Code는 `.claude/skills/`, Codex는 `.agents/skills/`가 이 기준을 �
 - **[개발 프로세스 시각화](./docs/development-process.html)** - 브라우저에서 시각 가이드, 단계별 체크리스트, STATE 미니 대시보드 확인 시.
 - **[개발 전략 매뉴얼](./docs/development-strategy.html)** - 브라우저에서 UI-first 기본 경로와 DB/로직 우선 예외 경로를 비교할 때.
 - **[Intake 폼 UI](./docs/intake.html)** - 브라우저에서 Startup QnA 위저드 또는 요청 템플릿(feature/bugfix/refactor/review/business-logic/knowledge) 입력 후 Markdown으로 내보낼 때.
-- **[Skills Layer](./.claude/skills/)** - 자연어 트리거 기반 자동 활성화 SKILL.md 12종. `start`, `dev-start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`, `stack-upgrade`, `git-cleanup`. 우선순위와 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
-- **[Slash Commands](./.claude/commands/)** - skills와 동일 이름의 명시적 slash command 12종. `/start`, `/dev-start`, `/intake`, `/request`, `/feature`, `/bugfix`, `/refactor`, `/review`, `/business-logic`, `/design`, `/stack-upgrade`, `/git-cleanup`. 사용자가 직접 호출할 때만 동작.
+- **[Skills Layer](./.claude/skills/)** - 자연어 트리거 기반 자동 활성화 SKILL.md 14종. `start`, `dev-start`, `intake`, `request`, `feature`, `bugfix`, `refactor`, `review`, `business-logic`, `design`, `stack-upgrade`, `git-cleanup`, `session-coordination`, `session-end`. 우선순위와 연계 흐름은 `CLAUDE.md`의 Skills Layer 섹션 참조.
+- **[Slash Commands](./.claude/commands/)** - skills와 동일 이름의 명시적 slash command 14종. `/start`, `/dev-start`, `/intake`, `/request`, `/feature`, `/bugfix`, `/refactor`, `/review`, `/business-logic`, `/design`, `/stack-upgrade`, `/git-cleanup`, `/session-coordination`, `/session-end`. 사용자가 직접 호출할 때만 동작.
 - **[Hooks Layer](./.claude/hooks/)** - 파괴적 명령 차단, 배포·릴리스 명령 차단, 비밀 파일 쓰기 차단, STATE.md 갱신 리마인더, 3단계 승인 전 파일 수정 확인, 세션 파일 겹침 조정. 설정은 `.claude/settings.local.json`.
 - **[서브에이전트 정의](./.claude/agents/)** - frontmatter로 자동 등록되는 역할별 서브에이전트 6종 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer). Agent 도구의 `subagent_type`에 이름을 지정해 호출한다. 디스패치 기준은 `docs/subagent-guide.md`.
 - **[Plugins Layer](./.claude/plugins/)** - manifest.json, VERSION, install.sh. 다른 프로젝트에 설치 시 `docs/plugin-guide.md` 참조.
