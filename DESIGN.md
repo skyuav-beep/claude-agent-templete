@@ -16,6 +16,10 @@ policy:
   copy_tone: "ko-friendly"       # 시스템 카피 -요/-어요, 네비게이션은 영문 + 한글 병기
   dark_mode: "supported"         # light 기본, dark 토글
   non_4_spacing: false           # 레이아웃 spacing은 4 ladder만. 컴포넌트 로컬 관찰값은 본문에 명시
+claude_design_system:
+  url: https://claude.ai/artifact/NzFKeAmC85AYt1JB3mT9uW
+  version: "1794797137-5888"
+  synced: "2026-11-16"
 ---
 
 # WorkNest — design.md

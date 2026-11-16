@@ -7,7 +7,7 @@ PC를 켜고 개발을 재개할 때 이 절차를 따른다.
 ## 절차
 
 1. `docs/local-dev-ci-guide.md`의 **개발 세션 부트스트랩** 절을 읽는다. 절차의 정본이다. 프로젝트가 자체 가이드를 두지 않았으면 공통 가이드(`rules/docs/local-dev-ci-guide.md §2.0`)를 쓴다. 섹션 번호가 아니라 절 이름으로 찾는다.
-2. 상태 브리핑 — `STATE.md`의 최근 완료 사이클과 `## 다음 작업`을 읽고 직전 지점과 이어서 할 일을 요약한다.
+2. 상태 브리핑 — `STATE.md`의 최근 완료 사이클과 `## 다음 작업`을 읽고 직전 지점과 이어서 할 일을 요약한다. 시안이 Claude Design System과 연결돼 있으면 `node scripts/design-sync.mjs status`로 마지막 동기화 날짜만 알린다(Codex는 Claude Artifact를 읽을 수 없어 최신 확인·들여오기는 Claude Code 세션 몫, `docs/design-guidelines.md` "Claude Design System 동기화").
 3. dev 기동 — 가이드의 부트스트랩 절이 지정한 compose/host 명령으로 기동한다. 기동 대상, 컨테이너 모델, watcher 확인, 재빌드 판단은 가이드의 개발 루프/재빌드 절을 따른다. 가이드가 hot reload 대상에서 제외한 정적 serve 컨테이너는 세션 기동 대상이 아니다.
 4. UI/로직 점검 준비 — 개발용 서비스 URL(hot reload가 걸린 포트)과 (있으면) preview HTML 경로 안내 + 트리비얼 변경으로 hot reload 반영 확인.
 5. 점검 후 `STATE.md ## 다음 작업`부터 개발을 이어간다.

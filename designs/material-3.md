@@ -17,6 +17,10 @@ policy:
   copy_tone: "en-sentence"
   dark_mode: "supported"
   non_4_spacing: false
+claude_design_system:
+  url: https://claude.ai/artifact/GDhDukpEPsUugNz378HNQX
+  version: "1794797270-f15d"
+  synced: "2026-11-16"
 ---
 
 # Material 3 — design.md
