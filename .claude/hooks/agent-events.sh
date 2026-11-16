@@ -6,10 +6,14 @@
 # 사용 방식
 #   (인자 없음)           Claude 훅. stdin의 훅 입력을 한 줄로 정규화해 기록한다. 반드시 "async": true로 등록한다
 #   codex <payload>       Codex notify 어댑터(.codex/hooks/notify-codex.sh)가 턴 완료를 기록할 때 쓴다
+#   codex-hook            Codex 훅(hooks.json). stdin의 훅 입력을 Claude 훅과 같은 형식으로 기록한다(provider=codex)
 #   status [--hours N]    세션별 현재 상태 표 (기본 최근 12시간)
 #   status --short        tmux 상태줄용 한 줄 요약
 #   watch [--interval S]  status를 S초(기본 2)마다 다시 그리는 터미널 화면. q 또는 Ctrl-C로 종료
 #   path                  이벤트 파일 경로 출력
+#
+# tmux 안에서 실행된 세션은 창 위치(tmux: "세션:창번호", pane: "%번호")를 함께 남긴다.
+# 감시 화면은 이 값으로 해당 창에 지시를 보내거나 창으로 이동한다.
 #
 # 기록하지 않는 것: 프롬프트 본문, 응답 본문, 파일 내용. Bash 명령은 앞 120자만 남기고
 # 비밀값으로 보이는 부분(키=값, 토큰, Bearer, URL 계정)은 *** 로 가린다.
@@ -57,25 +61,35 @@ append() {
   printf '%s\n' "$line" >> "$events_file"
 }
 
+# 현재 프로세스가 속한 tmux 창. tmux 밖이면 빈 값
+tmux_target() {
+  [ -n "${TMUX_PANE:-}" ] || return 0
+  tmux display-message -p -t "$TMUX_PANE" '#S:#I' 2>/dev/null || true
+}
+
 record_claude() {
-  local payload cwd project branch line
+  local provider="${1:-claude}" payload cwd project branch line tmuxt
   payload=$(cat)
   printf '%s' "$payload" | jq -e . >/dev/null 2>&1 || return 0
   cwd=$(printf '%s' "$payload" | jq -r '.cwd // empty')
   [ -n "$cwd" ] || cwd="$PWD"
   project=$(project_of "$cwd")
   branch=$(git -C "$cwd" rev-parse --abbrev-ref HEAD 2>/dev/null || true)
-  line=$(printf '%s' "$payload" | jq -c --arg project "$project" --arg branch "$branch" --arg cwd "$cwd" "$JQ_MASK"'
+  tmuxt=$(tmux_target)
+  line=$(printf '%s' "$payload" | jq -c --arg provider "$provider" --arg project "$project" --arg branch "$branch" --arg cwd "$cwd" \
+      --arg tmux "$tmuxt" --arg pane "${TMUX_PANE:-}" "$JQ_MASK"'
     . as $p
     | ($p.tool_input // {}) as $in
     | {
         ts: now | floor,
-        provider: "claude",
+        provider: $provider,
         event: ($p.hook_event_name // "unknown"),
         session: ($p.session_id // ""),
         project: $project,
         branch: $branch,
         cwd: $cwd,
+        tmux: $tmux,
+        pane: $pane,
         tool: ($p.tool_name // null),
         target: (
           if $p.tool_name == "Bash" then ($in.command // "" | mask)
@@ -91,13 +105,15 @@ record_claude() {
 }
 
 record_codex() {
-  local payload="$1" cwd project branch line
+  local payload="$1" cwd project branch line tmuxt
   printf '%s' "$payload" | jq -e . >/dev/null 2>&1 || return 0
   cwd=$(printf '%s' "$payload" | jq -r '.cwd // empty')
   [ -n "$cwd" ] || cwd="$PWD"
   project=$(project_of "$cwd")
   branch=$(git -C "$cwd" rev-parse --abbrev-ref HEAD 2>/dev/null || true)
-  line=$(printf '%s' "$payload" | jq -c --arg project "$project" --arg branch "$branch" --arg cwd "$cwd" '
+  tmuxt=$(tmux_target)
+  line=$(printf '%s' "$payload" | jq -c --arg project "$project" --arg branch "$branch" --arg cwd "$cwd" \
+      --arg tmux "$tmuxt" --arg pane "${TMUX_PANE:-}" '
     {
       ts: now | floor,
       provider: "codex",
@@ -105,7 +121,9 @@ record_codex() {
       session: (."thread-id" // ."session-id" // ""),
       project: $project,
       branch: $branch,
-      cwd: $cwd
+      cwd: $cwd,
+      tmux: $tmux,
+      pane: $pane
     } | with_entries(select(.value != null and .value != ""))' 2>/dev/null) || return 0
   [ -n "$line" ] && append "$line"
 }
@@ -133,9 +151,11 @@ summarize() {
            elif $l.event == "PermissionRequest" then "응답 필요"
            elif $l.event == "Notification" and (($l.kind // "") | test("permission|idle|needs_input|elicitation")) then "응답 필요"
            elif $l.event == "Stop" then "완료"
+           elif $l.event == "SessionStart" then "대기"
            elif $age > ($stale * 60) then "멈춤?"
            else "실행 중" end) as $state
         | ($ev | map(select(.event == "PreToolUse")) | last) as $act
+        | ($ev | map(select((.tmux // "") != "")) | last | .tmux // "-") as $win
         | {
             state: $state,
             provider: $l.provider,
@@ -147,11 +167,12 @@ summarize() {
                    elif $state == "응답 필요" then ($l.note // $l.kind // "확인 요청")
                    else ($l.branch // "") end) | (if . == "" then "-" else . end),
             subs: (if $subs > 0 then $subs else 0 end),
-            tasks: (if $tc > 0 then "\($td)/\($tc)" else "" end)
+            tasks: (if $tc > 0 then "\($td)/\($tc)" else "-" end),
+            win: $win
           })
     | map(select(.state != "종료" and .age <= ($hours * 3600)))
-    | sort_by([({"응답 필요":0,"오류":1,"실행 중":2,"멈춤?":3,"완료":4}[.state] // 9), .age])
-    | .[] | [.state, .provider, .project, .session, (.age|tostring), .last, (.subs|tostring), .tasks] | @tsv' 2>/dev/null
+    | sort_by([({"응답 필요":0,"오류":1,"실행 중":2,"멈춤?":3,"완료":4,"대기":5}[.state] // 9), .age])
+    | .[] | [.state, .provider, .project, .session, (.age|tostring), .last, (.subs|tostring), .tasks, .win] | @tsv' 2>/dev/null
 }
 
 # 이벤트에 없는 최근 Codex 실행(대화형 세션 진행 중)을 실행 로그 갱신 시각으로 찾는다
@@ -166,7 +187,7 @@ codex_live() {
       # 기록상 '완료'인데 로그가 그 뒤에 갱신됐으면 다음 턴이 진행 중이다
       printf 'UPDATE\t%s\t%s\n' "$id" "$age"
     else
-      printf '실행 중\tcodex\t-\t%s\t%s\t실행 로그 갱신 중\t0\t\n' "$id" "$age"
+      printf '실행 중\tcodex\t-\t%s\t%s\t실행 로그 갱신 중\t0\t-\t-\n' "$id" "$age"
     fi
   done
 }
@@ -202,9 +223,9 @@ status() {
   fi
   printf '%s · 이벤트 %s\n\n' "${mem:-mem ?}" "$events_file"
   if [ -z "$rows" ]; then echo "최근 ${hours}시간 안에 기록된 세션이 없습니다."; return 0; fi
-  printf '%-8s %-6s %-22s %-9s %-6s %-5s %-5s %s\n' "상태" "제공자" "프로젝트" "세션" "경과" "서브" "작업" "최근 동작"
-  printf '%s\n' "$rows" | while IFS=$'\t' read -r state provider project session age last subs tasks; do
-    printf '%-8s %-6s %-22.22s %-9.8s %-6s %-5s %-5s %s\n' "$state" "$provider" "$project" "$session" "$(fmt_age "$age")" \
+  printf '%-8s %-6s %-22s %-9s %-12s %-6s %-5s %-5s %s\n' "상태" "제공자" "프로젝트" "세션" "창" "경과" "서브" "작업" "최근 동작"
+  printf '%s\n' "$rows" | while IFS=$'\t' read -r state provider project session age last subs tasks win; do
+    printf '%-8s %-6s %-22.22s %-9.8s %-12.12s %-6s %-5s %-5s %s\n' "$state" "$provider" "$project" "$session" "${win:--}" "$(fmt_age "$age")" \
       "$([ "$subs" != 0 ] && echo "$subs" || echo -)" "${tasks:--}" "$last"
   done
 }
@@ -240,9 +261,10 @@ command -v jq >/dev/null 2>&1 || { [ "${1:-}" = "" ] && exit 0; echo "jq가 필�
 case "${1:-}" in
   "") [ "${AGENT_EVENTS_DISABLE:-0}" = "1" ] && exit 0; record_claude ;;
   codex) [ "${AGENT_EVENTS_DISABLE:-0}" = "1" ] && exit 0; shift; record_codex "${1:-}" ;;
+  codex-hook) [ "${AGENT_EVENTS_DISABLE:-0}" = "1" ] && exit 0; record_claude codex ;;
   status) shift; status "$@" ;;
   watch) shift; watch_loop "$@" ;;
   path) echo "$events_file" ;;
-  *) echo "사용: agent-events.sh [codex <payload>|status [--hours N|--short]|watch [--interval S]|path]" >&2; exit 2 ;;
+  *) echo "사용: agent-events.sh [codex <payload>|codex-hook|status [--hours N|--short]|watch [--interval S]|path]" >&2; exit 2 ;;
 esac
 exit 0
