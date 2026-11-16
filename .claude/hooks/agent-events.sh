@@ -120,7 +120,8 @@ summarize() {
     | group_by(.provider + ":" + .session)
     | map(
         . as $ev
-        | ($ev | last) as $l
+        # 서브 에이전트·작업 종료는 비동기로 Stop 뒤에 도착할 수 있어 상태 판정에서 뺀다
+        | ($ev | map(select(.event != "SubagentStop" and .event != "TaskCompleted")) | last // ($ev | last)) as $l
         | ($ev | map(select(.event == "UserPromptSubmit")) | last | .ts // 0) as $turn
         | ($ev | map(select(.ts >= $turn))) as $cur
         | (($cur | map(select(.event == "SubagentStart")) | length) - ($cur | map(select(.event == "SubagentStop")) | length)) as $subs
@@ -144,7 +145,7 @@ summarize() {
             last: (if $state == "실행 중" or $state == "멈춤?" then
                      (if $act then (($act.tool // "") + (if $act.agent then "(" + $act.agent + ")" else "" end) + " " + ($act.target // "")) else $l.event end)
                    elif $state == "응답 필요" then ($l.note // $l.kind // "확인 요청")
-                   else ($l.branch // "") end),
+                   else ($l.branch // "") end) | (if . == "" then "-" else . end),
             subs: (if $subs > 0 then $subs else 0 end),
             tasks: (if $tc > 0 then "\($td)/\($tc)" else "" end)
           })
