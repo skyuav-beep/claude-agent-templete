@@ -3,6 +3,8 @@
 프로젝트가 사용할 수 있는 디자인 시스템 카탈로그 라이브러리다. root `DESIGN.md`(active)는 이 디렉터리의 한 파일을 복사해 만들어진다.
 
 > 2026-11-16부터 각 시안의 원본은 Claude 안의 Design System이고, 이 폴더의 `<slug>.md`는 그 스냅샷이다(frontmatter `claude_design_system`). 시안은 Claude 쪽에서 고치고 `scripts/design-sync.mjs import`로 내려받는다 — 여기서 직접 고치지 않는다. 절차: `docs/design-guidelines.md` "Claude Design System 동기화".
+>
+> 형식이 다른 기존 Design System에서 온 시안(`moa`, `grove`, `aeg-soft`)은 `_sync/<slug>.map.json` 대응표로 `adopt`해 만든다(같은 절 "기존 Design System 연결").
 
 ## 구성
 

@@ -299,6 +299,11 @@ function stripGenerated(readme) {
 }
 
 function importOne(slug, from, url, version) {
+  const existing = join(DESIGNS, `${slug}.md`);
+  if (existsSync(existing) && splitDoc(readFileSync(existing, 'utf8')).link.mode === 'adopt') {
+    console.error(`${slug}: 대응표로 연결된 시안입니다 — import 대신 adopt를 쓰세요(designs/_sync/${slug}.map.json)`);
+    process.exit(1);
+  }
   const proj = existsSync(join(from, 'project')) ? join(from, 'project') : from;
   const readme = stripGenerated(readFileSync(join(proj, 'README.md'), 'utf8'));
   const front = readFileSync(join(proj, 'frontmatter.txt'), 'utf8').replace(/\n+$/, '');
@@ -340,6 +345,271 @@ function importOne(slug, from, url, version) {
   writeFileSync(join(DESIGNS, `${slug}.md`), joinDoc(front, { url, version, synced }, body));
   console.log(`${slug}: designs/${slug}.md 갱신 (버전 ${version}${patched.length ? `, 페이지 색 변경 ${patched.length}건 반영` : ''})`);
   for (const p of patched) console.log(`  - ${p}`);
+}
+
+// ── adopt (형식이 다른 기존 Design System → 대응표로 시안 생성) ──────────────────
+const CONTRACT_ALIAS = ['bg-canvas', 'bg-surface', 'bg-subtle', 'bg-muted', 'bg-elevated', 'bg-inverse', 'bg-brand', 'bg-brand-subtle',
+  'bg-success-subtle', 'bg-warning-subtle', 'bg-danger-subtle', 'fg-strong', 'fg-default', 'fg-secondary', 'fg-tertiary', 'fg-disabled',
+  'fg-on-brand', 'fg-brand', 'fg-success', 'fg-warning', 'fg-danger', 'border-subtle', 'border-default', 'border-strong', 'border-brand'];
+const CONTRACT_TYPE = ['display1', 'display2', 'display3', 'title1', 'title2', 'title3', 'label1', 'label2', 'body1', 'body1-read', 'body2', 'caption1'];
+const SPACE_LADDER = [4, 8, 12, 16, 20, 24, 32, 40, 48, 56, 64, 80, 96, 128];
+const RADIUS_LADDER = [2, 4, 8, 12, 16];
+
+function adoptOne(slug, from, url, version) {
+  const map = JSON.parse(readFileSync(join(DESIGNS, '_sync', `${slug}.map.json`), 'utf8'));
+  const proj = existsSync(join(from, 'project')) ? join(from, 'project') : from;
+  const src = JSON.parse(readFileSync(join(proj, 'tokens.json'), 'utf8'));
+  const problems = [];
+  const colors = new Map((src.color?.tokens ?? []).map((t) => [t.name, t]));
+  const first = src.color?.themes?.[0]?.id ?? 'light';
+  const colorOf = (name, theme, depth = 0) => {
+    const t = colors.get(name);
+    if (!t || depth > 16) return null;
+    let v = typeof t.value === 'string' ? t.value : (t.value[theme] ?? t.value[first]);
+    const alias = /^\{([^}]+)\}$/.exec(v ?? '');
+    return alias ? colorOf(alias[1], theme, depth + 1) : v;
+  };
+  const th = map.themes ?? { light: 'light', dark: 'dark' };
+  const missing = CONTRACT_ALIAS.filter((a) => !map.alias?.[a]);
+  if (missing.length) problems.push(`대응표에 없는 별칭: ${missing.join(', ')}`);
+  const aliasRows = { light: [], dark: [] }, synth = [];
+  for (const a of CONTRACT_ALIAS) {
+    const m = map.alias?.[a]; if (!m) continue;
+    const name = typeof m === 'string' ? m : m.src;
+    for (const theme of ['light', 'dark']) {
+      const v = colorOf(name, th[theme]);
+      if (!v || !COLOR_RE.test(v)) { problems.push(`${a}(${theme}) ← ${name}: 원본 값 없음/형식 아님 (${v})`); continue; }
+      aliasRows[theme].push(`${a}: "${v.toLowerCase()}"`.padEnd(34) + `  # ← ${name}${typeof m === 'object' && m.note ? ` · ${m.note}` : ''}`);
+    }
+    if (typeof m === 'object' && m.note) synth.push(`\`${a}\` ← \`${name}\`: ${m.note}`);
+  }
+  const brandRows = Object.entries(map.brand ?? {}).map(([n, s]) => {
+    const v = colorOf(s, th.light);
+    if (!v || !COLOR_RE.test(v)) { problems.push(`brand ${n} ← ${s}: 원본 값 없음`); return null; }
+    return `${n}: "${v.toLowerCase()}"`.padEnd(30) + `  # ← ${s}`;
+  }).filter(Boolean);
+  // 글꼴
+  const styles = new Map();
+  for (const g of src.type?.groups ?? []) for (const s of g.styles ?? []) styles.set(s.name, { ...s, family: s.family ?? g.family });
+  const num = (v) => parseFloat(String(v));
+  const ramp = (s) => {
+    const size = num(s.fontSize);
+    const lh = String(s.lineHeight ?? '').endsWith('px') ? +(num(s.lineHeight) / size).toFixed(2) : (s.lineHeight ?? 1.5);
+    return `${size}/${s.fontWeight ?? 400}/${lh}/${s.letterSpacing ?? 0}`;
+  };
+  const typeRows = [];
+  for (const t of CONTRACT_TYPE) {
+    const s = styles.get(map.type?.[t]);
+    if (!s) { problems.push(`글꼴 ${t} ← ${map.type?.[t]}: 원본 스타일 없음`); continue; }
+    typeRows.push(`${t}: ${ramp(s)}`.padEnd(32) + `  # ← ${s.name} (${s.fontSize}/${s.lineHeight})${s.usage ? ` ${s.usage}` : ''}`);
+  }
+  const usedStyles = new Set(Object.values(map.type ?? {}));
+  const extraStyles = [...styles.values()].filter((s) => !usedStyles.has(s.name));
+  const stack = src.type?.families?.sans ?? 'system-ui, sans-serif';
+  // 간격·라운드·그림자
+  const srcSpace = new Map((src.spacing?.tokens ?? []).map((t) => [num(t.value), t]));
+  const spaceRows = SPACE_LADDER.map((n) => `space-${n}: ${n}`.padEnd(16) + (srcSpace.has(n) ? `  # ← ${srcSpace.get(n).name} ${srcSpace.get(n).usage ?? ''}`.trimEnd() : '  # 표준 ladder (원본에 없음)'));
+  const srcRadius = new Map((src.radius?.tokens ?? []).map((t) => [t.name, t]));
+  const radiusRows = RADIUS_LADDER.filter((n) => !Object.keys(map.radius ?? {}).includes(`radius-${n}`)).map((n) => `radius-${n}: ${n}`.padEnd(18) + '  # 표준 ladder');
+  for (const [name, s] of Object.entries(map.radius ?? {})) {
+    const t = srcRadius.get(s);
+    if (!t) { problems.push(`라운드 ${name} ← ${s}: 원본 없음`); continue; }
+    const v = name === 'radius-full' ? 9999 : num(t.value);
+    const special = name !== 'radius-full' && v % 4 !== 0;
+    radiusRows.push(`${name}: ${v}`.padEnd(18) + `  # ← ${s} ${t.value}${special ? ' · 시안 전용(비-4)' : ''} — ${t.usage ?? ''}`.trimEnd());
+  }
+  const srcShadow = new Map((src.shadow?.tokens ?? []).map((t) => [t.name, t]));
+  const shadowRows = [];
+  for (const [name, s] of Object.entries(map.shadow ?? {})) {
+    const t = srcShadow.get(s);
+    if (!t) { problems.push(`그림자 ${name} ← ${s}: 원본 없음`); continue; }
+    const light = typeof t.value === 'string' ? t.value : t.value[th.light] ?? Object.values(t.value)[0];
+    const dark = typeof t.value === 'string' ? '' : t.value[th.dark] ?? '';
+    shadowRows.push(`${name}: "${light}"`.padEnd(40) + `  # ← ${s}${dark ? ` · dark ${dark}` : ''}`);
+  }
+  if (problems.length) {
+    console.error(`${slug}: 대응표 적용 실패 ${problems.length}건 — designs/${slug}.md를 쓰지 않았습니다`);
+    for (const p of problems) console.error(`  - ${p}`);
+    process.exit(2);
+  }
+  // 원본 문서(README·추가 절·컴포넌트 설명)
+  const demote = (md) => md.replace(/^(#{1,3}) /gm, (h, m) => `${'#'.repeat(m.length + 3)} `);
+  const sections = readdirSync(proj).filter((f) => f.endsWith('.md') && f !== 'README.md').sort();
+  const compDir = join(proj, 'components');
+  const comps = existsSync(compDir) ? readdirSync(compDir).filter((c) => existsSync(join(compDir, c, 'README.md'))).sort() : [];
+  const summary = (c) => readFileSync(join(compDir, c, 'README.md'), 'utf8').split('\n').map((l) => l.trim())
+    .filter((l) => l && !l.startsWith('#')).join(' ').split(/(?<=[.다요])\s/)[0].replace(/\|/g, '/').slice(0, 160);
+  const colorTable = [...colors.values()].map((t) => {
+    const v = (theme) => (colorOf(t.name, th[theme]) ?? '').toLowerCase();
+    return `| \`${t.name}\` | ${v('light')} | ${v('dark')} | ${(t.usage ?? '').replace(/\|/g, '/').replace(/\n/g, ' ')} |`;
+  });
+  const today = new Date().toISOString().slice(0, 10);
+  const p = map.policy;
+  const front = [
+    `name: ${map.name}`, `slug: ${slug}`, `category: ${map.category}`, `last_updated: "${today}"`,
+    'sources:', `  - ${map.source.url}`,
+    `related_services: [${(map.related_services ?? []).map((s) => `"${s}"`).join(', ')}]`,
+    `lang: ${map.lang ?? 'ko'}`,
+    'policy:',
+    `  shadow_on_cards: ${p.shadow_on_cards}`, `  gradient_locations: ${JSON.stringify(p.gradient_locations)}`,
+    `  copy_tone: "${p.copy_tone}"`, `  dark_mode: "${p.dark_mode}"`, `  non_4_spacing: ${p.non_4_spacing}`,
+    `${LINK_KEY}:`, `  url: ${url}`, `  version: "${version}"`, `  synced: "${today}"`, '  mode: adopt', `  map: designs/_sync/${slug}.map.json`,
+  ].join('\n');
+  const body = `
+# ${map.name} — design.md
+
+> ${map.tagline}
+
+본 시안은 Claude Design System 「${map.source.title}」(${map.source.url})의 **스냅샷**이다. 원본 토큰 이름을 템플릿 별칭 계약(\`designs/_alias-contract.md\`)으로 옮긴 대응표는 \`designs/_sync/${slug}.map.json\`이고, \`node scripts/design-sync.mjs adopt\`가 이 파일을 다시 만든다. 이 파일을 직접 고치지 않는다 — 디자인은 Claude 쪽에서, 대응은 대응표에서 고친다.
+
+## Brand & Style
+
+${map.tagline}
+
+- 카드 그림자: ${p.shadow_on_cards ? '허용' : '금지(헤어라인 우선)'} · gradient: ${p.gradient_locations.length ? p.gradient_locations.join(', ') : '전면 금지'} · 카피: ${p.copy_tone} · 다크 모드: ${p.dark_mode}
+- 원칙·보이스·레이아웃의 원문은 아래 \`## 원본 문서\`에 그대로 있다.
+
+## Colors
+
+### Brand
+
+\`\`\`yaml
+${brandRows.join('\n')}
+\`\`\`
+
+### Semantic alias — Light
+
+\`\`\`yaml
+${aliasRows.light.join('\n')}
+\`\`\`
+
+### Semantic alias — Dark
+
+\`\`\`yaml
+${aliasRows.dark.join('\n')}
+\`\`\`
+
+### 원본 색 토큰 (시안 전용 포함)
+
+| 원본 토큰 | light | dark | 용도 |
+|---|---|---|---|
+${colorTable.join('\n')}
+
+## Typography
+
+### 서체 선택
+
+- **Primary**: \`${stack}\`${src.type?.families?.mono ? `\n- **Mono**: \`${src.type.families.mono}\`` : ''}
+
+### Type ramp
+
+\`\`\`yaml
+${typeRows.join('\n')}
+\`\`\`
+
+${extraStyles.length ? `### 시안 전용 글꼴 스타일\n\n| 원본 스타일 | 크기/굵기/줄높이/자간 | 용도 |\n|---|---|---|\n${extraStyles.map((s) => `| \`${s.name}\` | ${ramp(s)} | ${(s.usage ?? '').replace(/\|/g, '/')} |`).join('\n')}\n` : ''}
+## Spacing
+
+\`\`\`yaml
+${spaceRows.join('\n')}
+\`\`\`
+
+원본 간격은 단계 번호 이름(\`space-1\`=4px …)이라 값 기준으로 템플릿 이름(\`space-4\`=4px)에 옮겼다.
+
+## Rounded
+
+\`\`\`yaml
+${radiusRows.join('\n')}
+\`\`\`
+
+## Elevation & Depth
+
+\`\`\`yaml
+${shadowRows.join('\n')}
+\`\`\`
+
+## Components
+
+### 필수 컴포넌트 대응 (계약 §5)
+
+| 계약 컴포넌트 | 원본 대응 |
+|---|---|
+${Object.entries(map.requiredComponents ?? {}).map(([k, v]) => `| ${k} | ${v} |`).join('\n')}
+
+### 원본 컴포넌트 (${comps.length}종)
+
+| 컴포넌트 | 요약 |
+|---|---|
+${comps.map((c) => `| ${c} | ${summary(c)} |`).join('\n')}
+
+## Known Gaps
+
+${[...(map.notes ?? []), ...synth].map((n) => `- ${n}`).join('\n')}
+
+## 원본 문서
+
+아래는 원본 Design System의 문서를 그대로 옮긴 것이다(제목 단계만 낮춤).
+
+${demote(stripGenerated(readFileSync(join(proj, 'README.md'), 'utf8'))).trim()}
+
+${sections.map((f) => demote(readFileSync(join(proj, f), 'utf8')).trim()).join('\n\n')}
+`;
+  writeFileSync(join(DESIGNS, `${slug}.md`), `---\n${front}\n---\n${body.replace(/\n{3,}/g, '\n\n')}`);
+  console.log(`${slug}: designs/${slug}.md 생성 (대응표 적용, 원본 버전 ${version}) · 합성 별칭 ${synth.length}개 · 원본 컴포넌트 ${comps.length}종 · 추가 문서 ${sections.length}개`);
+}
+
+// ── preview 등록 (새 시안을 프리뷰 3화면에 추가) ─────────────────────────────────
+function registerPreview(slug) {
+  const { front, body } = splitDoc(readFileSync(join(DESIGNS, `${slug}.md`), 'utf8'));
+  const blocks = yamlBlocks(body);
+  const get = (k) => blocks.filter((b) => kind(b) === k).flatMap((b) => b.entries);
+  const varLines = (entries, fmt) => entries.map((e) => `--${e.name}: ${fmt(e)};`);
+  const typeVars = get('type').flatMap((e) => {
+    const s = typeStyle(e.name, e.value);
+    return s ? [`--font-size-${e.name}: ${s.fontSize};`, `--font-weight-${e.name}: ${s.fontWeight};`, `--line-height-${e.name}: ${s.lineHeight};`,
+      `--letter-spacing-${e.name}: ${s.letterSpacing ?? 0};`] : [];
+  });
+  const stack = fontStack(body);
+  const policy = { shadow_on_cards: /shadow_on_cards:\s*true/.test(front), gradient_locations: JSON.parse((/gradient_locations:\s*(\[.*\])/.exec(front) || [])[1] || '[]'),
+    copy_tone: (/copy_tone:\s*"([^"]+)"/.exec(front) || [])[1] || 'ko-friendly', dark_mode: (/dark_mode:\s*"([^"]+)"/.exec(front) || [])[1] || 'supported',
+    non_4_spacing: /non_4_spacing:\s*true/.test(front) };
+  for (const file of PREVIEWS) {
+    let html = readFileSync(join(ROOT, file), 'utf8');
+    if (html.includes(`data-design="${slug}"`)) { console.log(`${file}: ${slug} 이미 등록됨`); continue; }
+    // CSS: 마지막 시안 dark 블록 뒤에 넣는다.
+    const re = /^([ \t]*):root\[data-design="[^"]+"\]\[data-theme="dark"\]\s*\{/gm;
+    let m, last = null;
+    while ((m = re.exec(html))) last = m;
+    if (!last) throw new Error(`${file}: 시안 블록을 찾지 못함`);
+    const ind = last[1];
+    let i = last.index + last[0].length, depth = 1;
+    while (depth) { if (html[i] === '{') depth++; else if (html[i] === '}') depth--; i++; }
+    const block = (theme, lines) => `${ind}:root[data-design="${slug}"][data-theme="${theme}"] {\n${lines.map((l) => `${ind}  ${l}`).join('\n')}\n${ind}}`;
+    const light = [
+      '/* scripts/design-sync.mjs preview --register 로 생성 — 값은 designs 시안 파일이 정본 */',
+      ...varLines(get('light'), (e) => e.value),
+      ...varLines(get('spacing'), (e) => px(e.value)),
+      ...varLines(get('radius'), (e) => px(e.value)),
+      ...varLines(get('shadow'), (e) => e.value),
+      ...(stack ? [`--font-sans: ${stack};`] : []),
+      ...typeVars,
+    ];
+    const css = `\n\n${block('light', light)}\n\n${block('dark', varLines(get('dark'), (e) => e.value))}`;
+    html = html.slice(0, i) + css + html.slice(i);
+    // DESIGNS 등록
+    const start = html.indexOf('const DESIGNS = {');
+    if (start < 0) throw new Error(`${file}: DESIGNS 목록을 찾지 못함`);
+    let j = html.indexOf('{', start) + 1; depth = 1;
+    while (depth) { if (html[j] === '{') depth++; else if (html[j] === '}') depth--; j++; }
+    const close = html.lastIndexOf('\n', j - 1) + 1;
+    const keyInd = (/\n([ \t]+)\S/.exec(html.slice(html.indexOf('{', start)))) [1];
+    const entry = [`${keyInd}'${slug}': {`, `${keyInd}  label: '${slug}',`, `${keyInd}  policy: {`,
+      ...Object.entries(policy).map(([k, v]) => `${keyInd}    ${k}: ${JSON.stringify(v).replace(/"/g, "'")},`), `${keyInd}  },`, `${keyInd}},`].join('\n');
+    const before = html.slice(0, close).replace(/\s*$/, '');
+    html = `${before}${before.endsWith(',') ? '' : ','}\n${entry}\n${html.slice(close)}`;
+    writeFileSync(join(ROOT, file), html);
+    console.log(`${file}: ${slug} 등록`);
+  }
 }
 
 // ── preview ───────────────────────────────────────────────────────────────────
@@ -395,7 +665,7 @@ function preview(fix) {
 function status() {
   for (const slug of slugs()) {
     const { front, link } = splitDoc(readFileSync(join(DESIGNS, `${slug}.md`), 'utf8'));
-    console.log(`${slug}\t${frontValue(front, 'name') || ''}\t${link.url || '(연결 없음)'}\t${link.version || '-'}\t${link.synced || '-'}`);
+    console.log(`${slug}\t${frontValue(front, 'name') || ''}\t${link.url || '(연결 없음)'}\t${link.version || '-'}\t${link.synced || '-'}\t${link.mode === 'adopt' ? 'adopt' : 'import'}`);
   }
 }
 
@@ -426,8 +696,13 @@ if (cmd === 'export') {
   const [slug] = positional;
   if (!slug || !opt('--from') || !opt('--url') || !opt('--version')) { console.error('import <slug> --from <dir> --url <url> --version <ver>'); process.exit(1); }
   importOne(slug, opt('--from'), opt('--url'), opt('--version'));
+} else if (cmd === 'adopt') {
+  const [slug] = positional;
+  if (!slug || !opt('--from') || !opt('--url') || !opt('--version')) { console.error('adopt <slug> --from <dir> --url <url> --version <ver>'); process.exit(1); }
+  adoptOne(slug, opt('--from'), opt('--url'), opt('--version'));
 } else if (cmd === 'preview') {
+  if (opt('--register')) { registerPreview(opt('--register')); process.exit(0); }
   process.exit(preview(rest.includes('--fix')) && !rest.includes('--fix') ? 1 : 0);
 } else if (cmd === 'status') status();
 else if (cmd === 'check') check();
-else { console.error('사용: export | import | preview [--fix] | status | check'); process.exit(1); }
+else { console.error('사용: export | import | adopt | preview [--fix|--register <slug>] | status | check'); process.exit(1); }
