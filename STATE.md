@@ -107,6 +107,11 @@
 
 ## 최근 완료 작업
 
+- 입력·모니터링 TUI `agent-deck` 1차 버전을 별도 저장소에 만들고 템플릿 문서에 연결했다. (2026-11-16)
+  - 저장소: 사용자가 만든 `mcmkr-dev/agent-deck`(비공개). 템플릿 안 배치는 검토 후 제외(연결 프로젝트 21곳 노출, 헌법의 런타임 코드 없음).
+  - 기능: 현황 표·상세(창·작업 카드·최근 이벤트), Enter로 tmux 창 이동, 확인 후 지시 전송, 거부(응답 필요·창 없음·다른 프로그램·배포 문구), 본문 없는 전송 기록(`InputSent`).
+  - 검증: 테스트 7건, clippy 경고 0, 실제 tmux에서 전송·거부 3종·기록 확인, 실제 이벤트 파일로 템플릿 `status`와 세션 8개 상태 일치. 시험 중 거부 사유가 입력 화면에 안 보이던 문제를 고쳤다.
+  - 템플릿 문서: 감시 화면 결정 표에 `agent-deck` 추가, 4단계 착수 기록, Codex 훅 등록 예.
 - Codex 연동 실측: 로그인 후 notify 턴 완료 기록을 확인했고, Codex 훅이 Claude와 같은 설정·입력 형식임을 확인했다. (2026-11-16)
   - 시험 폴더(scratchpad)의 `.codex/hooks.json`에 기록 전용 훅을 두고 실행. 신뢰하지 않은 폴더라 훅이 조용히 건너뛰어졌고, 신뢰 확인 생략 옵션은 Claude Code 분류기가 거부해 사용자가 직접 한 번 실행했다.
   - 캡처한 입력 5종(`SessionStart`·`UserPromptSubmit`·`PreToolUse`·`PostToolUse`·`Stop`)을 `agent-events.sh codex-hook`에 넣어 `provider=codex`로 기록되고 프롬프트·응답·도구 결과 본문이 남지 않음을 확인했다. `session_id`가 notify의 thread ID와 같다.
@@ -488,8 +493,8 @@
 
 - 완료(2026-11-16): Codex 로그인, notify 턴 완료 기록 확인, Codex 훅 실측(프로젝트 `.codex/hooks.json`, Claude와 같은 설정·입력 형식, 신뢰 확인 필요, 기록기 `codex-hook`으로 5종 기록·본문 미기록 확인).
 - 사용자 작업: Codex 훅 등록(전역 또는 프로젝트별)과 신뢰 승인. 전역 위치·신뢰 화면은 미실측이라 등록할 때 함께 확인한다. 등록 방법은 `docs/claude-codex-collaboration.md ## 이벤트 기록과 현황 보기`.
-- 사용자 결정 대기: 개발 언어(Rust는 도구 미설치, Node는 바로 가능), 저장소 이름·위치·GitHub 생성 여부. 입력 방식은 tmux 화면 입력으로 시작을 권장했다.
-- 1차 버전 범위: 세션 목록·상세, 세션을 골라 지시 입력 → 해당 tmux 창 전송(`## 화면에서 지시 보내기` 규칙), `응답 필요` 강조와 창 이동, 작업 카드 진행률.
+- 완료(2026-11-16): TUI 1차 버전 `agent-deck` v0.1.0을 별도 저장소 `mcmkr-dev/agent-deck`(비공개, 로컬 `~/projects/agent-deck`)에 Rust 1.100 + ratatui 0.29로 만들었다(PR #1, `fbe0d65`). 진행 기록은 그 저장소 `STATE.md`.
+- 다음: tmux 안에서 Claude·Codex 창과 `agent-deck` 감시 창을 함께 띄워 실사용, Codex 훅 등록(사용자) 후 Codex `응답 필요` 표시 확인.
 
 ### 1순위 — 사용자 시각 검수 (재개 지점)
 

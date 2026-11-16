@@ -96,6 +96,12 @@ Claude Code와 Codex를 함께 써서 여러 프로젝트를 병렬로 개발할
 - 기록기: `.claude/hooks/agent-events.sh`. Claude 훅 12종(`SessionStart`, `UserPromptSubmit`, `PreToolUse`, `Notification`, `PermissionRequest`, `Stop`, `StopFailure`, `SubagentStart`, `SubagentStop`, `TaskCreated`, `TaskCompleted`, `SessionEnd`)에 `async`로 등록해 작업을 늦추지 않는다. Codex는 `notify` 어댑터(`.codex/hooks/notify-codex.sh`)가 턴 완료를 같은 파일에 기록한다.
 - Codex 훅: Codex 0.166은 Claude와 같은 형식의 훅을 지원한다(기능 `hooks` 안정, 2026-11-16 실측). 프로젝트 `.codex/hooks.json`에 Claude 설정과 같은 모양(`{"hooks": {"<이벤트>": [{"hooks": [{"type": "command", "command": "..."}]}]}}`)으로 적으면, 입력도 Claude와 같은 필드(`hook_event_name`, `session_id`, `cwd`, `tool_name`, `tool_input` 등)로 들어온다. 실측한 이벤트는 `SessionStart`·`UserPromptSubmit`·`PreToolUse`·`PostToolUse`·`Stop`이고, 실행 파일에는 `PermissionRequest`·`SubagentStart`·`SubagentStop`·`PreCompact`·`SessionEnd`도 있다. `session_id`는 notify의 thread ID와 같아서 한 세션으로 묶인다. 기록 명령은 `bash <템플릿>/.claude/hooks/agent-events.sh codex-hook`이다.
   - 훅은 **신뢰 확인을 거쳐야 실행된다.** 신뢰하지 않은 폴더의 훅은 경고 없이 건너뛴다. 실측은 사용자가 `--dangerously-bypass-hook-trust`를 한 번만 붙여 실행했다. 에이전트는 이 옵션을 쓰지 않는다(Claude Code 분류기가 감독 약화로 거부한다).
+  - 등록 예(프로젝트 `.codex/hooks.json`, 같은 명령을 `SessionStart`·`UserPromptSubmit`·`PreToolUse`·`PermissionRequest`·`Stop`에 둔다):
+
+    ```json
+    {"hooks": {"PermissionRequest": [{"hooks": [{"type": "command", "command": "bash ~/projects/claude-agent-template/.claude/hooks/agent-events.sh codex-hook"}]}]}}
+    ```
+
   - 등록·신뢰 처리는 사용자가 한다. 사용자 전역 위치(`~/.codex/hooks.json`)와 신뢰 처리 화면은 아직 실측하지 않았다. 등록 후 Codex 세션에서 신뢰를 승인하고 `agent-events.sh status`에 `codex` 행의 도구 실행이 보이는지 확인한다.
 - tmux 창 위치: tmux 안에서 실행된 세션은 `tmux`(`세션:창번호`)와 `pane`(`%번호`)을 함께 기록한다. 감시 화면은 이 값으로 그 창에 지시를 보내거나 이동한다(`## 화면에서 지시 보내기`).
 - 위치: `${XDG_STATE_HOME:-~/.local/state}/agent-events/events.jsonl`(`AGENT_EVENTS_FILE`로 변경). 20MB를 넘으면 `events.jsonl.1`로 넘긴다. 모든 프로젝트가 같은 파일을 쓰므로 한 화면에서 함께 본다.
@@ -180,12 +186,13 @@ tmux attach -t myapp
 
 | 후보 | 방식 | 리소스 | 판단 |
 |---|---|---|---|
+| `agent-deck` (별도 저장소) | 같은 이벤트 파일을 읽는 Rust TUI. 세션 상세, tmux 창 이동, 확인 후 지시 보내기 | 측정 전 | 2026-11-16 1차 버전. 입력이 필요할 때 쓴다. `cargo run --release` |
 | `agent-events.sh watch` | 이벤트 파일 하나를 읽는 터미널 화면(bash + jq). 파일이 바뀔 때만 다시 계산 | RSS 약 24MB, 이벤트 20,000줄에서 CPU 약 2.6%(한 코어 기준) | **기본 채택.** Claude·Codex·여러 프로젝트를 한 화면에, 응답 필요를 맨 위에 |
 | AgentHUD 0.19.0 | 각 에이전트의 세션 기록을 2초마다 읽는 TUI(Node, Ink) | 측정 못 함 | 선택 시험. 읽기 전용이고 대화 흐름 상세·일일 요약이 강점이다. 요약은 에이전트 CLI를 불러 사용량을 쓴다. 외부 패키지가 세션 기록을 읽으므로 에이전트가 대신 실행하지 않고(오토 모드에서 차단됨) 사용자가 직접 `npx agenthud@0.19.0`으로 실행한다 |
 | ccdeck | 첫 실행 때 Claude 훅을 직접 등록, 웹 화면(127.0.0.1:4317) | 측정 안 함 | **권하지 않음.** 훅을 템플릿 밖에서 등록하고, 사용 통계를 보내며, 다른 기기의 Claude 로그인을 복사해 오는 기능이 있어 비밀값 규칙과 맞지 않는다(AGPL-3.0) |
 | `claude agents` | Claude Code 공식 백그라운드 작업 관리 | 추가 없음 | 백그라운드 Claude 작업 확인용으로 함께 쓴다 |
 
-Rust TUI(4단계)는 아래 중 하나가 실제로 생길 때만 시작한다. 2026-11-16 사용자가 화면 안 입력(지시 보내기)을 요청해 두 번째 조건이 생겼다. 개발 언어·저장소는 사용자 결정 대기다. 시작하면 별도 저장소에서 만들고, 입력은 이벤트 파일(`events.jsonl`)과 작업 카드(`docs/tasks/`)만 쓴다.
+Rust TUI(4단계)는 아래 중 하나가 실제로 생길 때만 시작한다. 2026-11-16 사용자가 화면 안 입력(지시 보내기)을 요청해 두 번째 조건이 생겼고, 같은 날 Rust(ratatui)로 별도 저장소 `mcmkr-dev/agent-deck`(로컬 `~/projects/agent-deck`)에서 시작했다. 템플릿 안에 두지 않은 이유: 연결 프로젝트 21곳이 `rules/`로 템플릿 폴더 전체를 보고, 헌법의 "런타임 코드 없음"과 맞지 않기 때문이다. 이벤트 형식과 지시 보내기 규칙의 정본은 이 문서이고 agent-deck이 따라간다. 시작하면 별도 저장소에서 만들고, 입력은 이벤트 파일(`events.jsonl`)과 작업 카드(`docs/tasks/`)만 쓴다.
 
 - 현황 계산이 1초를 넘는다(세션 30개 이상, 이벤트 10만 줄 수준).
 - 화면 안에서 세션을 골라 상세를 보거나 지시를 보내는 상호작용이 필요하다(tmux `send-keys`로 부족할 때).
