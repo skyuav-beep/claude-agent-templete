@@ -90,7 +90,7 @@ expect("status --short: 대기 표시", /85%>=80 대기/.test(r.out), r.out);
 
 // 8. 이벤트 기록: 정규화, 비밀값 가림, 본문 미기록
 const evFile = path.join(tmp, "events.jsonl");
-const evEnv = { AGENT_EVENTS_FILE: evFile };
+const evEnv = { AGENT_EVENTS_FILE: evFile, CODEX_HOME: path.join(tmp, "codex-home") };
 const send = (obj) => run(events, [], { input: JSON.stringify({ cwd: root, ...obj }), env: evEnv });
 send({ session_id: "s-run", hook_event_name: "UserPromptSubmit", prompt: "PROMPT-BODY-SHOULD-NOT-APPEAR" });
 send({ session_id: "s-run", hook_event_name: "PreToolUse", tool_name: "Bash", tool_input: { command: "TOKEN=abc123 curl -H 'Authorization: Bearer xyz.abc' https://u:p@h && echo sk-proj-abcdefghij12 ghp_abcdefghijklmnopqrstuv" } });
@@ -101,29 +101,45 @@ send({ session_id: "s-done", hook_event_name: "TaskCompleted", task_id: "1", tas
 send({ session_id: "s-done", hook_event_name: "Stop", last_assistant_message: "ANSWER-BODY-SHOULD-NOT-APPEAR" });
 send({ session_id: "s-end", hook_event_name: "SessionEnd" });
 send({ session_id: "s-bg", hook_event_name: "Stop" });
+send({ session_id: "s-idle", hook_event_name: "SessionStart" });
+// tmux 창 위치: 가짜 tmux가 "work:3"을 돌려준다
+{
+  const bin = path.join(tmp, "bin");
+  fs.mkdirSync(bin, { recursive: true });
+  fs.writeFileSync(path.join(bin, "tmux"), "#!/bin/sh\necho work:3\n", { mode: 0o755 });
+  const tmuxEnv = { ...evEnv, TMUX_PANE: "%7", PATH: `${bin}:${process.env.PATH}` };
+  run(events, [], { input: JSON.stringify({ cwd: root, session_id: "s-tmux", hook_event_name: "PreToolUse", tool_name: "Read", tool_input: { file_path: "/x" } }), env: tmuxEnv });
+  run(events, ["codex-hook"], { input: JSON.stringify({ cwd: root, session_id: "cx-hook", hook_event_name: "PermissionRequest", tool_name: "Bash", tool_input: { command: "TOKEN=abc123 ls" } }), env: tmuxEnv });
+}
 send({ session_id: "s-bg", hook_event_name: "SubagentStop", agent_id: "b", agent_type: "Explore" });
 run(events, [], { input: "not json", env: evEnv });
 run(events, ["codex", JSON.stringify({ type: "agent-turn-complete", "thread-id": "c-1", cwd: root, "last-assistant-message": "ANSWER-BODY-SHOULD-NOT-APPEAR" })], { env: evEnv });
 run(events, ["codex", JSON.stringify({ type: "agent-turn-complete", "thread-id": "c-nogit", cwd: tmp })], { env: evEnv });
 const text = fs.existsSync(evFile) ? fs.readFileSync(evFile, "utf8") : "";
 const lines = text.trim().split("\n").filter(Boolean).map((l) => JSON.parse(l));
-expect("기록 줄 수(잘못된 입력 제외)", lines.length === 12, String(lines.length));
+expect("기록 줄 수(잘못된 입력 제외)", lines.length === 15, String(lines.length));
 expect("본문 미기록", !/SHOULD-NOT-APPEAR/.test(text));
 expect("비밀값 가림", !/abc123|xyz\.abc|u:p@|sk-proj-abcdefghij12|ghp_abcdefghijklmnopqrstuv/.test(text), lines[1]?.target);
 expect("공통 필드", lines.every((l) => l.ts && l.provider && l.event && l.session && l.project));
+expect("tmux 창 위치 기록", lines.some((l) => l.session === "s-tmux" && l.tmux === "work:3" && l.pane === "%7"), JSON.stringify(lines.find((l) => l.session === "s-tmux")));
+expect("tmux 밖이면 창 위치 없음", lines.filter((l) => l.session === "s-run").every((l) => !("tmux" in l) && !("pane" in l)));
+expect("Codex 훅 기록(provider=codex, 가림)", lines.some((l) => l.session === "cx-hook" && l.provider === "codex" && l.event === "PermissionRequest" && l.tmux === "work:3" && !/abc123/.test(l.target)));
 expect("Codex 턴 완료 기록", lines.some((l) => l.provider === "codex" && l.event === "Stop" && l.session === "c-1"));
 
 // 9. 현황: 응답 필요가 맨 위, 종료 세션 숨김, 서브·작업 집계
 r = run(events, ["status"], { env: evEnv });
-const rows = r.out.split("\n").filter((l) => /^(응답 필요|실행 중|완료|오류|멈춤\?)/.test(l));
+const rows = r.out.split("\n").filter((l) => /^(응답 필요|실행 중|완료|오류|멈춤\?|대기)/.test(l));
 expect("현황: 응답 필요 우선", /^응답 필요/.test(rows[0] ?? ""), r.out);
 expect("현황: 종료 세션 숨김", !/s-end/.test(r.out));
 expect("현황: 실행 중 + 서브 1", rows.some((l) => /^실행 중/.test(l) && /\s1\s/.test(l)), r.out);
 expect("현황: 작업 1/1", rows.some((l) => /1\/1/.test(l)), r.out);
+expect("현황: 창 열 표시", rows.some((l) => /s-tmux/.test(l) && /work:3/.test(l)), r.out);
+expect("현황: Codex 훅 응답 필요", rows.some((l) => /^응답 필요/.test(l) && /codex/.test(l) && /cx-hook/.test(l)), r.out);
+expect("현황: 시작만 한 세션은 대기", rows.some((l) => /^대기/.test(l) && /s-idle/.test(l)) && !rows.some((l) => /^멈춤/.test(l)), r.out);
 expect("현황: Stop 뒤 늦게 온 SubagentStop은 완료 유지", rows.some((l) => /^완료/.test(l) && /s-bg/.test(l)), r.out);
 expect("현황: 빈 최근 동작이 열을 밀지 않음(Codex 완료 행)", rows.some((l) => /c-nogit/.test(l) && /\s-\s+-\s+-\s*$/.test(l)), r.out);
 r = run(events, ["status", "--short"], { env: evEnv });
-expect("현황 한 줄", /실행 1 · 응답 1/.test(r.out), r.out);
+expect("현황 한 줄", /실행 2 · 응답 2/.test(r.out), r.out);
 
 // 9-1. watch: 터미널 없이 돌 때 바쁜 루프를 돌지 않음(간격을 지킴)
 {

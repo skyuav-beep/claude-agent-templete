@@ -94,6 +94,8 @@ Claude Code와 Codex를 함께 써서 여러 프로젝트를 병렬로 개발할
 여러 프로젝트의 Claude·Codex 세션 상태를 파일 하나에 모은다. 감시 화면(TUI·GUI)은 이 파일만 읽으면 되므로 화면 기술과 무관하게 유지된다.
 
 - 기록기: `.claude/hooks/agent-events.sh`. Claude 훅 12종(`SessionStart`, `UserPromptSubmit`, `PreToolUse`, `Notification`, `PermissionRequest`, `Stop`, `StopFailure`, `SubagentStart`, `SubagentStop`, `TaskCreated`, `TaskCompleted`, `SessionEnd`)에 `async`로 등록해 작업을 늦추지 않는다. Codex는 `notify` 어댑터(`.codex/hooks/notify-codex.sh`)가 턴 완료를 같은 파일에 기록한다.
+- Codex 훅: Codex 0.166 실행 파일에는 Claude와 같은 계열의 훅(`SessionStart`, `UserPromptSubmit`, `PreToolUse`, `PermissionRequest`, `PostToolUse`, `SubagentStart`·`SubagentStop`, `Stop`, `SessionEnd` 등, `hooks.json`, 훅 신뢰 확인)이 들어 있다(2026-11-16 실행 파일 확인). 기록기는 `agent-events.sh codex-hook`으로 Codex 훅 입력을 `provider=codex`로 받을 준비가 돼 있다. 등록 위치·형식과 실제 입력 필드는 Codex 로그인 후 실측해 확정한다 — 확인 전에는 등록하지 않는다. 등록하면 Codex 세션의 `응답 필요`(권한 요청)와 도구 실행이 현황에 나온다.
+- tmux 창 위치: tmux 안에서 실행된 세션은 `tmux`(`세션:창번호`)와 `pane`(`%번호`)을 함께 기록한다. 감시 화면은 이 값으로 그 창에 지시를 보내거나 이동한다(`## 화면에서 지시 보내기`).
 - 위치: `${XDG_STATE_HOME:-~/.local/state}/agent-events/events.jsonl`(`AGENT_EVENTS_FILE`로 변경). 20MB를 넘으면 `events.jsonl.1`로 넘긴다. 모든 프로젝트가 같은 파일을 쓰므로 한 화면에서 함께 본다.
 - 기록하지 않는 것: 프롬프트·응답 본문, 파일 내용. Bash 명령은 앞 120자만 남기고 비밀값처럼 보이는 부분(키=값, 토큰, `Bearer`, URL 계정)을 `***`로 가린다. 끄려면 `AGENT_EVENTS_DISABLE=1`.
 
@@ -107,6 +109,7 @@ Claude Code와 Codex를 함께 써서 여러 프로젝트를 병렬로 개발할
 | `session` | 세션 ID(Codex는 thread ID) |
 | `project` / `branch` / `cwd` | 저장소 이름(worktree도 원래 저장소 이름), 브랜치, 작업 폴더 |
 | `tool` / `target` | 도구 이름과 대상(파일 경로, 가린 명령 등) |
+| `tmux` / `pane` | tmux 창 위치(`세션:창번호`)와 pane ID. tmux 밖이면 없음 |
 | `agent` | 서브 에이전트 종류 |
 | `kind` / `note` | 알림 종류, 작업 제목·알림 문구·오류(가림 적용) |
 
@@ -118,7 +121,8 @@ Claude Code와 Codex를 함께 써서 여러 프로젝트를 병렬로 개발할
 | `bash .claude/hooks/agent-events.sh status` | 표 한 번 출력. `--hours N`으로 범위 조정(기본 12시간) |
 | `bash .claude/hooks/agent-events.sh status --short` | tmux 상태줄용 한 줄 (`실행 2 · 응답 1 · mem 41%/80`) |
 
-- 상태는 마지막 이벤트로 정한다: `응답 필요`(권한·입력 요청) > `오류` > `실행 중` > `멈춤?`(실행 중인데 30분 이상 이벤트 없음) > `완료`. 끝난 세션은 숨긴다.
+- 상태는 마지막 이벤트로 정한다: `응답 필요`(권한·입력 요청) > `오류` > `실행 중` > `멈춤?`(실행 중인데 30분 이상 이벤트 없음) > `완료` > `대기`(세션을 열고 아직 지시가 없음). 끝난 세션은 숨긴다. 세션이 끝난 뒤 늦게 도착하는 서브 에이전트·작업 종료 기록은 상태 판정에 쓰지 않는다.
+- `창`은 그 세션이 마지막으로 기록된 tmux 창이다. 지시를 보낼 대상이다.
 - `서브`는 이번 턴에 실행 중인 서브 에이전트 수, `작업`은 완료/생성한 작업 수다. 진행률이 아니다 — 진행률은 작업 카드의 완료 조건으로만 계산한다.
 - Codex 대화형 세션은 턴 완료 사이에 이벤트가 없으므로, 실행 로그(`~/.codex/sessions`)가 5분 안에 갱신됐으면 `실행 중`으로 본다.
 
@@ -150,6 +154,17 @@ tmux attach -t myapp
 
 - 세션 목록 `tmux ls`, 전환 `prefix s`. 백그라운드 Claude 작업은 `claude agents`, Codex 백그라운드 작업은 `/codex:status`로 따로 본다.
 
+## 화면에서 지시 보내기
+
+감시 화면(TUI)에서 세션을 골라 지시를 보내는 기능의 규칙이다. 첫 구현은 tmux 창에 키 입력을 보내는 방식(`tmux send-keys`)이고, 대상은 이벤트 기록의 `tmux`/`pane` 값이다.
+
+- 보내기 전에 대상(프로젝트·세션·창)과 보낼 내용을 화면에 보여 주고 사용자가 확정한 뒤 보낸다. 대상 창이 사라졌거나 기록과 다른 프로그램이 떠 있으면 보내지 않는다.
+- 사람이 입력한 지시만 보낸다. 감시 화면이 지시를 스스로 만들거나, 이벤트·작업 카드·로그 내용을 지시로 바꿔 보내지 않는다.
+- 권한·승인 요청(`응답 필요`)에 자동으로 답하지 않는다. 화면은 그 창으로 이동만 시키고 승인은 사용자가 그 창에서 한다.
+- 배포·릴리스·원격 migration·강제 push를 지시하는 입력은 보내지 않는다. 받는 쪽 에이전트의 가드레일 훅도 그대로 적용되지만, 화면에서 먼저 막는다.
+- 메모리 80% 이상이면 새 세션을 띄우는 지시는 보내지 않는다(`## 동시 실행과 메모리 한도`). 이미 실행 중인 세션에 보내는 지시는 막지 않는다.
+- 보낸 지시는 본문 없이 이벤트로 기록한다(시각·대상·길이). 본문은 받는 세션의 기록에 남는다.
+
 ## 여러 프로젝트 운영
 
 - 프로젝트마다 별도 터미널 세션(tmux 세션 1개 = 프로젝트 1개, 창 1개 = 작업 카드 1개, 위 `## tmux 운영`)을 쓰고, 작업 카드마다 전용 worktree를 쓴다.
@@ -168,7 +183,7 @@ tmux attach -t myapp
 | ccdeck | 첫 실행 때 Claude 훅을 직접 등록, 웹 화면(127.0.0.1:4317) | 측정 안 함 | **권하지 않음.** 훅을 템플릿 밖에서 등록하고, 사용 통계를 보내며, 다른 기기의 Claude 로그인을 복사해 오는 기능이 있어 비밀값 규칙과 맞지 않는다(AGPL-3.0) |
 | `claude agents` | Claude Code 공식 백그라운드 작업 관리 | 추가 없음 | 백그라운드 Claude 작업 확인용으로 함께 쓴다 |
 
-Rust TUI(4단계)는 아래 중 하나가 실제로 생길 때만 시작한다. 시작하면 별도 저장소에서 만들고, 입력은 이벤트 파일(`events.jsonl`)과 작업 카드(`docs/tasks/`)만 쓴다.
+Rust TUI(4단계)는 아래 중 하나가 실제로 생길 때만 시작한다. 2026-11-16 사용자가 화면 안 입력(지시 보내기)을 요청해 두 번째 조건이 생겼다. 개발 언어·저장소는 사용자 결정 대기다. 시작하면 별도 저장소에서 만들고, 입력은 이벤트 파일(`events.jsonl`)과 작업 카드(`docs/tasks/`)만 쓴다.
 
 - 현황 계산이 1초를 넘는다(세션 30개 이상, 이벤트 10만 줄 수준).
 - 화면 안에서 세션을 골라 상세를 보거나 지시를 보내는 상호작용이 필요하다(tmux `send-keys`로 부족할 때).

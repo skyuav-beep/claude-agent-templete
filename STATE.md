@@ -107,6 +107,13 @@
 
 ## 최근 완료 작업
 
+- 입력·모니터링 TUI 선행 작업: 이벤트에 tmux 창 위치 기록, Codex 훅 기록 준비, 입력 안전 규칙. (2026-11-16)
+  - 기록기: tmux 안의 세션은 `tmux`(`세션:창번호`)·`pane`을 함께 남긴다(실제 tmux 창에서 확인). 현황 표에 `창` 열을 추가했다. 감시 화면이 지시를 보낼 대상이다.
+  - Codex 훅: Codex 0.166 실행 파일에 Claude 계열 훅(`PermissionRequest`·`PreToolUse`·`Stop` 등, `hooks.json`, 훅 신뢰 확인)이 있음을 확인했다. `agent-events.sh codex-hook`으로 `provider=codex` 기록을 받을 준비만 했고, 등록 위치·형식은 로그인 후 실측해 확정한다.
+  - 현황 판정: 세션을 열고 지시가 없는 경우(`SessionStart`만 있음)를 `멈춤?` 대신 `대기`로 표시한다(riderwebapp 세션에서 발견).
+  - 회귀 검사: 실제 `~/.codex/sessions`를 읽어 결과가 흔들리던 것을 임시 폴더로 격리했다. 검사 67 → 73건(창 위치·tmux 밖·Codex 훅·대기·창 열).
+  - 문서: `docs/claude-codex-collaboration.md`에 Codex 훅, 창 위치 필드, `## 화면에서 지시 보내기`(확정 후 전송, 사람 입력만, 승인 자동 응답 금지, 배포 지시 차단, 메모리 한도, 본문 없는 전송 기록), 4단계 착수 조건 충족을 기록했다.
+  - 막힘: Codex가 로그아웃 상태(`codex login status` → Not logged in, `~/.codex/auth.json` 없음)라 Codex 실사용 기록 검증은 하지 못했다. 시험 실행은 401로 끝났다.
 - 활성 시안 `worknest` light의 배지·보조 글자 대비를 기준(4.5) 이상으로 보정했다. Claude Design System을 먼저 고치고 내려받았다. (2026-11-16)
   - 색: `fg-success`·`green-text`·`status-done` `#059669` → `#007C51`, `fg-warning`·`amber-text`·`status-hold` `#D97706` → `#B45500`, `fg-secondary`·`neutral-600`·`status-neutral` `#6B7280` → `#676E7C`. 색상·채도는 유지하고 OKLCH 밝기만 낮췄다. dark는 바꾸지 않았다.
   - 결과(배지 바탕 기준): 진행중 3.38 → 4.70, 대기 2.97 → 4.61, 완료·v1.0.0 4.39 → 4.66, +12.4% 3.38 → 4.70. 흰 표면·캔버스·사이드바 위에서도 4.5 이상이고, `bg-active` 위의 warning(4.26)·secondary(4.41)만 4.5 미만이다(배지 조합에는 안 쓰임).
@@ -473,6 +480,13 @@
 ## 다음 작업
 
 성격별로 묶었다. 위에서 아래로 진행하면 된다.
+
+### 진행 중 — Claude·Codex 입력·모니터링 TUI (2026-11-16 사용자 요청, 디자인 검수보다 우선)
+
+- 사용자 작업: Codex 로그인(`! codex login`). 로그인 전에는 Codex 쪽 검증·훅 등록을 할 수 없다.
+- 로그인 후: ① `codex exec "..." </dev/null` 한 턴으로 notify 기록 확인 ② Codex `hooks.json` 위치·형식·입력 필드를 실측하고, `agent-events.sh codex-hook` 등록 방법을 문서에 확정(전역 설정 등록은 사용자 확인 후).
+- 사용자 결정 대기: 개발 언어(Rust는 도구 미설치, Node는 바로 가능), 저장소 이름·위치·GitHub 생성 여부. 입력 방식은 tmux 화면 입력으로 시작을 권장했다.
+- 1차 버전 범위: 세션 목록·상세, 세션을 골라 지시 입력 → 해당 tmux 창 전송(`## 화면에서 지시 보내기` 규칙), `응답 필요` 강조와 창 이동, 작업 카드 진행률.
 
 ### 1순위 — 사용자 시각 검수 (재개 지점)
 
