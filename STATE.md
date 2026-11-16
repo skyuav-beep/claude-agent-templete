@@ -101,6 +101,11 @@
 
 ## 최근 완료 작업
 
+- Claude-Codex 병렬 개발 체계 3단계: 감시 화면을 평가해 결정하고, `watch`의 CPU 과다 사용을 고쳤다. (2026-11-16)
+  - 결정(`docs/claude-codex-collaboration.md ## 감시 화면 결정`): 기본은 `agent-events.sh watch`. AgentHUD는 선택 시험(사용자가 직접 `npx agenthud@0.19.0`), ccdeck은 비권장(템플릿 밖 훅 등록, 사용 통계 전송, 기기 간 Claude 로그인 복사), `claude agents` 병행. Rust TUI(4단계)는 착수 조건 3가지(현황 계산 1초 초과, 화면 안 상호작용 필요, 여러 PC 통합) 중 하나가 생길 때만 별도 저장소에서.
+  - AgentHUD 격리 시험(Docker, 세션 폴더 읽기 전용)은 오토 모드 분류기가 차단했다(외부 패키지가 세션 기록을 읽음). 우회하지 않고 공개 문서·소스로 평가했다.
+  - 버그 수정: `watch`가 터미널 없이 돌면 키 입력 대기가 즉시 끝나 CPU 한 코어를 계속 썼고(이벤트 2만 줄에서 10초에 CPU 10.7초), 터미널에서도 2초마다 전체를 다시 계산했다(약 11%). 비터미널은 sleep으로 간격을 지키고, 이벤트 파일이 바뀔 때(또는 최대 15초마다)만 다시 계산하게 했다 → 30초에 CPU 0.86초(약 2.6%), RSS 24MB. `check-agent-ops`에 회귀 검사 추가(옛 코드에서 실패 확인) — 65건 통과.
+  - 이 저장소 로컬 설정(`.claude/settings.local.json`, 커밋 대상 아님)에 `memory-gate.sh`·`agent-events.sh`를 등록해 실제로 동작 중(이 세션 기록 확인). Codex `notify`는 `~/.codex/config.toml`에 아직 등록되지 않아 Codex 턴 완료는 기록되지 않는다.
 - Claude-Codex 병렬 개발 체계 2단계: 메모리 자동 대기, 이벤트 기록·현황 보기, tmux 운영을 추가했다. (2026-11-16)
   - `.claude/hooks/memory-gate.sh`: PreToolUse(Bash) 훅으로 무거운 명령(새 Claude·Codex 실행, 개발 서버, Playwright, Docker 기동·빌드, Codex 리뷰·작업 스크립트)을 메모리 80% 미만이 될 때까지 30초 간격으로 기다렸다가 통과, 10분 초과 시 ask + 정리 후보. `run -- <명령>`·`wait`·`status [--short]`·`check` 하위 명령. 설정 템플릿에 timeout 660초로 등록.
   - `.claude/hooks/agent-events.sh`: Claude 훅 12종(async)과 Codex notify 턴 완료를 `~/.local/state/agent-events/events.jsonl` 하나에 기록. 본문 미기록, Bash 명령 120자·비밀값 가림, 20MB 넘김. `status`·`status --short`·`watch`(터미널 현황, q 종료)로 여러 프로젝트 세션을 응답 필요 > 오류 > 실행 중 > 멈춤? > 완료 순으로 보여 준다. Codex 대화형 진행은 실행 로그 갱신으로 보완.
