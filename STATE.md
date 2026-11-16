@@ -107,6 +107,8 @@
 
 ## 최근 완료 작업
 
+- agent-deck v0.2 자동 분배를 템플릿 협업 문서에 연결했다(`## 작업 자동 분배`, 감시 화면 표 갱신). (2026-11-17)
+  - 리드 실행 제한(오토 권한, 머지·강제 push·워크플로·릴리스 금지), PR까지 범위, Codex 작업자 `workspace-write`, 동시 2개, 기록 위치를 규칙으로 적었다.
 - Codex 세션의 tmux 창 연결과 턴 완료 중복 정리. (2026-11-17)
   - 원인: Codex 대화 화면은 tmux 창 안에 있지만 작업·훅은 별도 Codex 서버 프로세스(app-server)에서 돌아 `TMUX_PANE`이 없다. 전역 훅 등록 후 Codex 기록은 들어왔지만 창 위치가 비어 agent-deck에서 지시를 보낼 수 없었다.
   - 해결: Codex는 같은 작업 폴더에서 `codex`가 떠 있는 창이 정확히 하나일 때 그 창으로 기록한다(실제 `work:1` 연결 확인). 전역 Codex 훅이 등록돼 있으면 notify의 턴 완료 기록을 건너뛴다.
@@ -498,7 +500,8 @@
 - 완료(2026-11-16): Codex 로그인, notify 턴 완료 기록 확인, Codex 훅 실측(프로젝트 `.codex/hooks.json`, Claude와 같은 설정·입력 형식, 신뢰 확인 필요, 기록기 `codex-hook`으로 5종 기록·본문 미기록 확인).
 - 사용자 작업: Codex 훅 등록(전역 또는 프로젝트별)과 신뢰 승인. 전역 위치·신뢰 화면은 미실측이라 등록할 때 함께 확인한다. 등록 방법은 `docs/claude-codex-collaboration.md ## 이벤트 기록과 현황 보기`.
 - 완료(2026-11-16): TUI 1차 버전 `agent-deck` v0.1.0을 별도 저장소 `mcmkr-dev/agent-deck`(비공개, 로컬 `~/projects/agent-deck`)에 Rust 1.100 + ratatui 0.29로 만들었다(PR #1, `fbe0d65`). 진행 기록은 그 저장소 `STATE.md`.
-- 다음: tmux 안에서 Claude·Codex 창과 `agent-deck` 감시 창을 함께 띄워 실사용, Codex 훅 등록(사용자) 후 Codex `응답 필요` 표시 확인.
+- 완료(2026-11-17): agent-deck v0.2 자동 분배(작업 탭, PR #2 `4dd9cf6`). 진짜 리드로 임시 저장소 시험 성공(카드·worktree 커밋·Codex 교차 리뷰·확인 필요 질문). Codex 훅 전역 등록·신뢰 완료, Codex 창 연결 수정(#135).
+- 다음: 실제 프로젝트(원격 있음)에 작은 요청으로 PR 준비 → 머지 승인까지 실사용. '확인 필요'에 답해 이어가는 기능은 agent-deck 다음 작업.
 
 ### 1순위 — 사용자 시각 검수 (재개 지점)
 
