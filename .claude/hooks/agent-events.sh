@@ -208,17 +208,30 @@ status() {
   done
 }
 
+# 터미널 현황. 이벤트 파일이 바뀌었을 때만 다시 계산하고, 바뀌지 않아도 경과 시간이 맞도록
+# 최대 AGENT_EVENTS_REFRESH_MAX(기본 15)초마다 한 번은 다시 계산한다. 키 입력이 없는 환경(파이프·백그라운드)에서는
+# read가 즉시 끝나므로 sleep으로 간격을 지킨다(그러지 않으면 CPU 한 코어를 계속 쓴다).
 watch_loop() {
-  local every=2
+  local every=2 max_stale="${AGENT_EVENTS_REFRESH_MAX:-15}" key="" out="" last_mtime="" last_calc=0 mtime now tty=0
   [ "${1:-}" = "--interval" ] && every="${2:-2}"
+  [ -t 0 ] && tty=1
   trap 'tput cnorm 2>/dev/null; exit 0' INT TERM
-  tput civis 2>/dev/null
+  [ "$tty" = 1 ] && tput civis 2>/dev/null
   while :; do
-    local out; out=$(status)
-    printf '\033[H\033[2J%s\n\n%s초마다 갱신 · q 종료\n' "$out" "$every"
-    if read -rsn1 -t "$every" key 2>/dev/null && [ "$key" = "q" ]; then break; fi
+    mtime=$(stat -c %Y "$events_file" 2>/dev/null || echo 0)
+    now=$(date +%s)
+    if [ "$mtime" != "$last_mtime" ] || [ $((now - last_calc)) -ge "$max_stale" ]; then
+      out=$(status)
+      last_mtime="$mtime"; last_calc="$now"
+      printf '\033[H\033[2J%s\n\n%s초마다 확인 · 바뀐 경우에만 다시 계산 · q 종료\n' "$out" "$every"
+    fi
+    if [ "$tty" = 1 ]; then
+      if read -rsn1 -t "$every" key 2>/dev/null && [ "$key" = "q" ]; then break; fi
+    else
+      sleep "$every"
+    fi
   done
-  tput cnorm 2>/dev/null
+  [ "$tty" = 1 ] && tput cnorm 2>/dev/null
 }
 
 command -v jq >/dev/null 2>&1 || { [ "${1:-}" = "" ] && exit 0; echo "jq가 필요합니다" >&2; exit 1; }

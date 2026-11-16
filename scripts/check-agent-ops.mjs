@@ -120,6 +120,15 @@ expect("현황: 작업 1/1", rows.some((l) => /1\/1/.test(l)), r.out);
 r = run(events, ["status", "--short"], { env: evEnv });
 expect("현황 한 줄", /실행 1 · 응답 1/.test(r.out), r.out);
 
+// 9-1. watch: 터미널 없이 돌 때 바쁜 루프를 돌지 않음(간격을 지킴)
+{
+  const t = spawnSync("bash", ["-c", `TIMEFORMAT='%U %S'; time (timeout 4 bash "${events}" watch --interval 1 >/dev/null 2>&1 </dev/null)`], {
+    encoding: "utf8", env: { ...process.env, ...evEnv }, timeout: 20000,
+  });
+  const [u, s] = (t.stderr || "").trim().split(/\s+/).slice(-2).map(Number);
+  expect("watch: 비터미널에서 CPU 1초 미만 사용(4초 실행)", u + s < 1, t.stderr);
+}
+
 // 10. 비활성화와 파일 넘김
 const before = fs.readFileSync(evFile, "utf8").length;
 run(events, [], { input: JSON.stringify({ session_id: "x", cwd: root, hook_event_name: "Stop" }), env: { ...evEnv, AGENT_EVENTS_DISABLE: "1" } });
