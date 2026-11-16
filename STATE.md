@@ -101,6 +101,13 @@
 
 ## 최근 완료 작업
 
+- Claude-Codex 병렬 개발 체계 1단계: 협업 규칙을 문서화했다. (2026-11-16)
+  - 배경: 사용자가 준 검토 자료 5종(협업 체계, 기존 모니터링 도구, 통합 관리 화면 설계, Rust 도입, TUI vs GUI)을 정리해 5층 구조(실행 tmux·worktree / 협업 Claude+Codex 플러그인 / 규칙 / 이벤트 기록 / TUI 감시)를 제안했고, 템플릿에는 규칙·양식만 넣고 감시 프로그램은 별도 저장소로 두기로 했다.
+  - 사용자 결정: 무거운 작업은 메모리 사용률 80% 미만에서만 시작하고 넘으면 대기 후 실행, Codex 리뷰는 작업이 끝날 때만(턴마다 리뷰 게이트 끔), 배포는 계속 사용자 수동.
+  - 사전 작업: OpenAI 공식 Claude Code 플러그인 `codex@openai-codex` 1.0.6을 사용자 전역에 설치(구성·훅 사전 확인, 리뷰 게이트 기본 꺼짐 확인, 자체 점검 `ready: true`). 저장소 밖 설치라 템플릿이 배포하지 않는다.
+  - 추가: `docs/claude-codex-collaboration.md`(역할 분담, 교차 리뷰와 에이전트용 리뷰 실행 명령, 작업 카드, 품질 게이트와 6단계 대응, 같은 실패 자동 수정 2회 한도, 메모리 80% 측정식과 대기 규칙, 여러 프로젝트 운영, 하지 않는 것), `templates/task-card.md`.
+  - 연결: `AGENTS.md` Context Map 2줄, `CLAUDE.md` Repo Map, `docs/agent-runtime-matrix.md` 행, `docs/subagent-guide.md`·`docs/session-coordination-guide.md` 참조, `.claude/plugins/manifest.json`.
+  - 다음(2단계): 메모리 대기 자동화 스크립트와 tmux 운영 가이드, 이벤트 기록 훅(비밀값 가림). 3단계: 기존 TUI 도구 시험. 4단계(필요 시): Rust TUI 별도 저장소.
 - 시안 3종의 브랜드·위험 색을 대비 기준(4.5)에 맞게 보정했다. Claude Design System을 먼저 고치고 내려받았다(B 방식). (2026-11-16)
   - toss-like 브랜드 파랑 `oklch(0.620 0.180 245)` → `oklch(0.555 0.180 245)`(흰 글자 3.54 → 4.56), linear-like 브랜드 보라 `oklch(0.620 0.180 268)` → `oklch(0.570 0.180 268)`(3.77 → 4.64), worknest 라이트 위험 빨강 `#EF4444` → `#C81E1E`(바탕 3.54 → 5.40, 옅은 위험 바탕 3.29 → 5.02). 색상(hue)·채도는 유지하고 밝기만 낮췄다.
   - 절차: 로컬 수정 → `design-sync export` → Claude Design System 3종 게시(toss-like v1794804616-bb4a, linear-like v1794804619-a4fd, worknest v1794804622-9a56, 게시 전 기록 버전과 일치 확인) → `import` → `preview --fix`(3화면 27곳) → 활성 시안 worknest라 `DESIGN.md` 동기화.

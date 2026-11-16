@@ -26,6 +26,7 @@
 | 미완료 Git 작업 정리 | `.claude/skills/git-cleanup/SKILL.md` 자동 활성화 + `/git-cleanup` | `.agents/skills/git-cleanup/SKILL.md` 자동 선택 -> `.codex/workflows/git-cleanup.md` | `docs/approval-workflow.md`, `docs/finish-checklist.md` |
 | 세션 종료와 인계 정리 | `.claude/skills/session-end/SKILL.md` 자동 활성화 + `/session-end` | `.agents/skills/session-end/SKILL.md` 자동 선택 -> `.codex/workflows/session-end.md` | `docs/finish-checklist.md`, `docs/approval-workflow.md` |
 | 세션 충돌 조정 | `.claude/skills/session-coordination/SKILL.md` + `session-coordination.sh` 파일 점유 hook | `.agents/skills/session-coordination/SKILL.md` 자동 선택 -> `.codex/workflows/session-coordination.md` (동일 스크립트 호출) | `docs/session-coordination-guide.md` |
+| Claude-Codex 협업 | Codex 공식 플러그인 `codex@openai-codex`(사용자 전역 설치) — 작업이 끝날 때 `/codex:review`, 위임은 `codex-rescue` | Codex CLI 세션이 같은 작업 카드·worktree 규칙을 따름 | `docs/claude-codex-collaboration.md`, `templates/task-card.md` |
 | 토픽 intake | `.claude/skills/intake/SKILL.md` | `.agents/skills/intake/SKILL.md` 자동 선택 -> `.codex/workflows/intake.md` | `templates/*-intake.md` |
 | 모호한 작업 요청 라우팅 | `.claude/skills/request/SKILL.md` 자동 분류 | `.agents/skills/request/SKILL.md` 자동 선택 -> `.codex/workflows/request.md` | `agents/main-agent.md`, `templates/*-request.md` |
 | 작업 요청 구조화 | `.claude/skills/{feature,bugfix,refactor,review,business-logic}` | `.agents/skills/{feature,bugfix,refactor,review,business-logic}` 자동 선택 -> 동명 `.codex/workflows/*` | `templates/*-request.md` |
