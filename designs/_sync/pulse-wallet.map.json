@@ -179,6 +179,76 @@
     "mobile.bottom-sheet": "원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음",
     "mobile.nav-drawer": "원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음"
   },
+  "preview_shape": [
+    [
+      ".button",
+      "border-radius: var(--radius-full); font-weight: 600;"
+    ],
+    [
+      ".button.primary",
+      "box-shadow: var(--shadow-2);"
+    ],
+    [
+      ".input",
+      "border-color: transparent; border-radius: var(--radius-16); background: var(--bg-subtle);"
+    ],
+    [
+      ".search-bar",
+      "border-color: transparent; border-radius: var(--radius-full); background: var(--bg-subtle);"
+    ],
+    [
+      ".badge",
+      "border-radius: var(--radius-10); font-weight: 700;"
+    ],
+    [
+      ".chip, .chip-pill",
+      "border-radius: var(--radius-full); background: var(--bg-subtle);"
+    ],
+    [
+      ".stat-card, .login-card, .case-card, .feed-card, .reward-card",
+      "border-color: transparent; border-radius: var(--radius-24); box-shadow: var(--shadow-1);"
+    ],
+    [
+      ".icon-btn",
+      "border-radius: var(--radius-full); background: var(--bg-subtle);"
+    ],
+    [
+      ".segmented",
+      "border-radius: var(--radius-full); background: transparent; gap: var(--space-8);"
+    ],
+    [
+      ".segmented button",
+      "border-radius: var(--radius-full);"
+    ],
+    [
+      ".segmented button.on, .segmented .seg-item.active",
+      "background: var(--bg-brand); color: var(--fg-on-brand); box-shadow: var(--shadow-2);"
+    ],
+    [
+      ".nav-item.active",
+      "background: var(--bg-brand); color: var(--fg-on-brand); border-radius: var(--radius-full); box-shadow: var(--shadow-2);"
+    ],
+    [
+      ".bottom-nav",
+      "height: 84px; background: var(--bg-surface); border-top: 1px solid var(--border-subtle);"
+    ],
+    [
+      ".bottom-nav .nav-tab.active::after",
+      "content: \"\"; width: 5px; height: 5px; border-radius: var(--radius-full); background: var(--fg-brand);"
+    ],
+    [
+      ".bottom-nav.fab-variant .fab-button",
+      "width: 52px; height: 52px; box-shadow: var(--shadow-2);"
+    ],
+    [
+      ".hero-banner",
+      "background: linear-gradient(115deg, sig(pastel-a) 0%, sig(pastel-b) 55%, sig(pastel-c) 100%); color: sig(on-pastel); border-radius: var(--radius-24);"
+    ],
+    [
+      ".hero-banner > *",
+      "color: inherit;"
+    ]
+  ],
   "notes": [
     "원본 테마 이름은 midnight(다크)·daylight(라이트)다. 템플릿 light ← daylight, dark ← midnight로 옮겼다.",
     "파스텔 그라데이션 카드(pastel-a/b/c), 아이콘 타일 그라데이션(tile-*), 차트 막대(bar-a/b), 바탕 블룸(bg-glow)은 별칭에 넣지 않고 원본 색 표에만 둔다.",

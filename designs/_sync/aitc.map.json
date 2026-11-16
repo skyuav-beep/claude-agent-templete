@@ -199,6 +199,56 @@
     "mobile.nav-drawer": "ux-concept.md: 서랍 대신 하단 '전체' 탭 페이지 사용",
     "mobile.fab": "원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음"
   },
+  "preview_shape": [
+    [
+      ".button",
+      "border-radius: var(--radius-14); font-weight: 600;"
+    ],
+    [
+      ".stat-card, .login-card, .case-card, .feed-card, .reward-card",
+      "border: 1px solid var(--border-subtle); border-radius: var(--radius-22); box-shadow: none;"
+    ],
+    [
+      ".input, .search-bar",
+      "border: 1px solid var(--border-default); border-radius: var(--radius-14); background: var(--bg-surface);"
+    ],
+    [
+      ".badge",
+      "border-radius: var(--radius-8);"
+    ],
+    [
+      ".chip, .chip-pill",
+      "border: 1px solid var(--border-default); border-radius: var(--radius-full); background: var(--bg-surface);"
+    ],
+    [
+      ".segmented",
+      "border-radius: var(--radius-14); background: var(--bg-subtle);"
+    ],
+    [
+      ".nav-item",
+      "border-radius: var(--radius-8);"
+    ],
+    [
+      ".hero-banner",
+      "background: sig(hero); color: sig(on-hero); border-radius: var(--radius-22);"
+    ],
+    [
+      ".hero-banner > *",
+      "color: inherit;"
+    ],
+    [
+      ".bottom-nav",
+      "background: var(--bg-surface); box-shadow: var(--shadow-pop);"
+    ],
+    [
+      ".bottom-nav .nav-tab.active",
+      "color: var(--fg-brand); font-weight: 700;"
+    ],
+    [
+      ".bottom-sheet",
+      "border-radius: var(--radius-22) var(--radius-22) 0 0; box-shadow: var(--shadow-pop);"
+    ]
+  ],
   "notes": [
     "Design System 목록 제목은 AITC, 색인(design-system.json) 제목은 MOA다. 시안 slug는 기존 `moa`(AI 작업대)와 겹치지 않게 `aitc`로 했다.",
     "원본은 주의와 실패를 `caution` 하나로 쓴다 — warning·danger 별칭이 같은 값이다(항상 단어·아이콘과 함께 쓰는 원칙).",

@@ -189,6 +189,48 @@
     "mobile.fab": "원본에 FAB 컴포넌트·CSS 없음",
     "mobile.card-row": "모바일 목록 행 컴포넌트 없음(데스크톱 셸 중심)"
   },
+  "preview_shape": [
+    [
+      ".button",
+      "border-radius: var(--radius-6); font-weight: 500;"
+    ],
+    [
+      ".button.secondary",
+      "background: var(--bg-subtle); border-color: var(--border-default);"
+    ],
+    [
+      ".button.ghost",
+      "color: var(--fg-secondary);"
+    ],
+    [
+      ".input, .search-bar",
+      "border-radius: var(--radius-6); border-color: var(--border-default);"
+    ],
+    [
+      ".chip, .chip-pill",
+      "border-radius: var(--radius-6); height: 24px;"
+    ],
+    [
+      ".badge",
+      "height: 18px; padding: 0 6px; font-size: 11px; font-weight: 500; letter-spacing: .02em;"
+    ],
+    [
+      ".stat-card, .login-card, .case-card, .feed-card, .reward-card",
+      "border: 1px solid var(--border-subtle); border-radius: var(--radius-10); box-shadow: none;"
+    ],
+    [
+      ".nav-item",
+      "border-radius: var(--radius-6);"
+    ],
+    [
+      ".nav-item.active",
+      "font-weight: 500;"
+    ],
+    [
+      ".segmented, .segmented button",
+      "border-radius: var(--radius-6);"
+    ]
+  ],
   "notes": [
     "원본 테마는 light(Paper)·white·dark 3종이다. 템플릿은 light/dark 2종만 받으므로 white 값은 원본 문서 06 'White 모드'에만 남는다.",
     "원본 간격 이름은 단계 번호(space-1=4px … space-8=32px)라 템플릿 이름(space-4=4px)으로 값 기준 재매핑했다.",
