@@ -17,6 +17,10 @@
 - 커밋·push·PR·머지·브랜치 정리가 덜 끝난 작업은 `git-cleanup` 스킬(`/git-cleanup`)로 한 번에 점검한다.
 - 세션을 닫을 때는 `session-end` 스킬(`/session-end`)로 이번 세션 이력과 다음 재개 지점을 `STATE.md`에 남기고 Git 잔여물 없이 마감한다. Git 상태만 정리하면 `git-cleanup`이다.
 - Claude와 Codex 양쪽에 작업 유형·가드레일이 같이 있는지는 `node scripts/check-runtime-parity.mjs`가 검사한다. 한쪽에만 스킬을 추가하면 실패한다.
+- Claude·Codex 병렬 개발은 `docs/claude-codex-collaboration.md`를 따른다(역할 분담, 작업 끝 교차 리뷰, 작업 카드, 메모리 80% 자동 대기, 이벤트 기록·`agent-events.sh watch` 현황, tmux 운영). 실행 보조 훅 2종은 사용자 전역 설정에, Codex `notify`는 `~/.codex/config.toml`에 등록돼 모든 프로젝트에서 동작한다(2026-11-16).
+- 디자인 시안은 13종이고 원본은 모두 Claude Design System이다(6종 import, 7종 대응표 adopt). 동기화는 `docs/design-guidelines.md` "Claude Design System 동기화".
+
+**세션 종료 (2026-11-16, 마지막)** — 긴 세션이었다. 흐름 순으로: ① 테스트 자동화 skill 조사 후 사용자 전역에 `webapp-testing`·`login-flows`·`e2e-auth-test`(로그인·OTP·Turnstile 처리, 가상환경 `~/.local/share/claude-e2e/venv`)를 설치했고, `makeupshop` 육안 점검과 bugfix 4건(#1026~#1029)은 그 저장소에서 머지한 뒤 다른 세션으로 넘겼다. ② 디자인: 시안 원본을 Claude Design System으로 옮기고(#113), 기존 Design System 7종을 대응표로 연결했으며(#114·#115), 빠졌던 컴포넌트 모양·모바일 대응·Do/Don't를 보완했다(#116). 프리뷰에 시안별 모양을 반영하면서 사용자·모바일 프리뷰의 섹션 12/16개가 linear-like 외 시안에서 숨던 오래된 버그를 고쳤고(#117), 새로 보인 버튼 대비(#118)와 시안 토큰 대비(#119, toss-like·linear-like 브랜드와 worknest 위험 색 — Claude Design System 3종을 먼저 고치고 내려받음)를 바로잡았다. ③ Claude·Codex 병렬 개발: 사용자가 준 검토 자료 5종을 정리해 5층 구조를 제안했고, 사용자 결정(메모리 80% 미만에서만 시작·넘으면 대기, Codex 리뷰는 작업 끝에만, 배포 수동)으로 1단계 규칙(#120), 2단계 메모리 자동 대기·이벤트 기록·tmux(#121), 3단계 감시 화면 결정과 `watch` CPU 과다 사용 수정(#122)을 진행했다. OpenAI 공식 Codex 플러그인(`codex@openai-codex` 1.0.6)을 사용자 전역에 설치했고, 훅을 전역 등록(#123)하고 Codex `notify`를 등록(#124)해 실제 Codex 턴 기록까지 확인했다. 공유 페이지: https://claude.ai/artifact/PBLdWt7U2dW18cCsHEwi4a (비공개). 판단 근거로 남길 것: 감시 프로그램은 템플릿 밖 별도 저장소로 두고 Rust TUI는 착수 조건이 생길 때만 한다. AgentHUD 격리 시험은 외부 패키지가 세션 기록을 읽어 오토 모드가 막았고 우회하지 않았다. 저장소 밖 변경: `~/.claude/settings.json`(훅 13개), `~/.codex/config.toml`(`notify` 1줄), `~/.claude/skills/` 3종, Claude Design System 10종 갱신(시안 3종 대비 보정 포함). 남은 리스크: 훅이 이 템플릿 폴더의 절대 경로를 가리키므로 폴더를 옮기면 멈춘다. 메모리가 80%를 넘으면 무거운 명령이 최대 10분 대기한다. 이미 열려 있던 Codex 창은 다시 시작해야 기록·알림이 동작한다. `~/.cache/e2e-auth/makeupshop-admin.json`(makeupshop 관리자 로그인 상태, 권한 600)이 남아 있다 — 더 쓰지 않으면 지운다. 문서 서버(8765)는 백그라운드로 켜져 있었고 세션이 끝나면 함께 꺼진다. 미커밋·열린 PR·잔여 브랜치·잔여 worktree·승인 마커 없음(이 기록 PR 제외). 재개 지점은 `## 다음 작업` 1순위(시안 13종 시각 검수)다.
 
 **작업 기록 (2026-11-13, 마지막 worktree 정리 시 빈 형제 폴더도 삭제)** — 머지·정리가 끝난 뒤에도 빈 `<프로젝트>-worktrees/` 폴더가 프로젝트 폴더 옆에 계속 남아 관리가 어렵다는 사용자 요청으로, 정리 단계에 "남은 worktree가 없으면 빈 형제 폴더도 `rmdir`로 삭제"를 넣었다. 반영 위치: `docs/local-dev-ci-guide.md §6.5`(명령 예시·주의, 예시 경로를 `../<repo>-worktrees/<주제>`로 통일), `docs/approval-workflow.md` 6단계 8번, `session-end` 완료 기준 표(Claude 스킬·Codex workflow). 비어 있지 않으면 `rmdir`가 거부하므로 다른 세션 worktree는 지워지지 않고, `rm -r`은 쓰지 않는다. 다음 작업에서 `git worktree add`가 폴더를 다시 만든다. 검증: `check-runtime-parity` OK, `build-nav --check` 최신. 이번 작업의 빈 `claude-agent-template-worktrees/`도 머지 후 이 규칙대로 지웠다.
 
@@ -450,8 +454,8 @@
 
 ### 1순위 — 사용자 시각 검수 (재개 지점)
 
-- 디자인 시안 6종을 light/dark·viewport 조합으로 검수한다. 사전 점검은 끝났고 남은 것은 눈으로 보는 확인뿐이다.
-- 시작: `node scripts/serve-docs.mjs`로 서버를 띄우고(기본 `http://127.0.0.1:8765`) 상단 이동 바로 admin·user·user-mobile 세 화면을 오가며 시안 셀렉터에서 6종을 순회한다. 문서를 바로 고치려면 `--edit`을 붙인다. 2026-08-14에 세 화면 응답과 셀렉터 6종 구성을, 2026-08-21에 이동 바 왕복 동선을 확인해 뒀다.
+- 디자인 시안 13종(기존 6종 + adopt 7종: moa·grove·aeg-soft·aitc·orbit-wallet·pulse-wallet·brick-wallet)을 light/dark·viewport 조합으로 검수한다. 사전 점검은 끝났고 남은 것은 눈으로 보는 확인뿐이다. adopt 7종은 시안별 모양(선 두께·모서리·하단 탭·FAB)까지 프리뷰에 반영돼 있으니 원본 Design System 페이지와 나란히 비교한다.
+- 시작: `node scripts/serve-docs.mjs`로 서버를 띄우고(기본 `http://127.0.0.1:8765`) 상단 이동 바로 admin·user·user-mobile 세 화면을 오가며 시안 셀렉터에서 13종을 순회한다. 2026-11-16 수정으로 user·mobile 화면의 하단 탭·앱 바·바텀 시트·화면 예시 섹션이 모든 시안에서 보인다. 문서를 바로 고치려면 `--edit`을 붙인다. 2026-08-14에 세 화면 응답과 셀렉터 6종 구성을, 2026-08-21에 이동 바 왕복 동선을 확인해 뒀다.
 - 중점: 활성 시안 `worknest`의 light/dark 대비, 카드 헤어라인 보더와 그림자 정책(hover lift·overlay 한정), gradient 전면 금지 준수, 사이드바·active 채움 전용 토큰 렌더링.
 - 2026-11-16 자동 사전 점검: 3화면 × 6종 × light/dark 72조합 적용·오류·가로 넘침 0, `worknest` 화면 틀 gradient·카드 그림자 0, 대비 미달은 비활성 버튼 예시뿐. 처음 열면 기본 시안이 `wanted`라 셀렉터에서 `worknest`를 골라야 한다.
 - 의도와 다른 부분이 나오면 **Claude Design System에서 고친 뒤** `docs/design-guidelines.md` "Claude Design System 동기화"의 세션 시작 점검 3~6으로 내려받는다(`designs/*.md`·`DESIGN.md` 직접 수정 금지).
@@ -469,6 +473,8 @@
 - `riderwebapp`은 `.codex`가 추적되는 실체 디렉터리라 신규 파일 2건만 수동 연결했다. 내용은 템플릿과 동일해 기능 차이가 없고, 정리하려면 그 저장소에서 별도 작업으로 한다.
 
 ### 3순위 — 며칠 사용 후 판단할 관찰 항목
+
+- Claude·Codex 병렬 개발 실사용 확인(2026-11-16 #120~#124). ① 메모리 80% 자동 대기가 실제 무거운 명령에서 의도대로 기다렸다 진행하는지, 무거운 명령 판정(`memory-gate.sh check`)에 빠지거나 잘못 걸리는 명령이 있는지 ② `agent-events.sh watch`가 여러 프로젝트의 Claude·Codex 세션을 맞게 보여 주는지(특히 Codex 창 재시작 후 턴 완료 기록, 대화형 Codex의 `실행 중` 판정) ③ 작업 카드(`templates/task-card.md`)와 작업 끝 Codex 리뷰를 첫 실제 기능 작업에 적용해 본다 ④ 필요하면 사용자가 직접 `npx agenthud@0.19.0`을 시험한다. Rust TUI는 `docs/claude-codex-collaboration.md ## 감시 화면 결정`의 착수 조건이 생길 때만 시작한다.
 
 - 완료 알림 기준 60초, 재알림 90초 간격 6회, 격상 3회째가 실사용에 맞는지 조정한다. 환경변수만 바꾸면 되고 스크립트 수정은 필요 없다.
 - 가드레일 오탐이 재발하는지 본다. 현재 남은 한계는 두 가지다. 명령 문자열 안에 데이터로 들어 있는 `git commit`에 상태 리마인더가 반응하는 것, 그리고 파일 수정·stage·commit을 한 명령에 묶으면 훅이 도는 시점에는 아직 수정 전이라 감지하지 못하는 것이다. 둘 다 차단하지 않는 경고여서 실해는 없다. 병합 뒤 원격 브랜치를 지우는 `git push origin --delete` 오탐은 2026-08-23 실측에서 해소를 확인했다. 훅 패턴이 `-f`/`--force`에만 반응하고 `--delete`와 `:branch` 형식은 통과하며, 같은 세션의 6단계 cleanup에서 실제로 차단 없이 삭제됐다. 더 볼 항목이 아니다.
