@@ -14,6 +14,10 @@ policy:
   copy_tone: "ko-friendly"
   dark_mode: "supported"
   non_4_spacing: false
+claude_design_system:
+  url: https://claude.ai/artifact/7YbM8t8vbUG3Ssa2iLfJcw
+  version: "1794797272-8226"
+  synced: "2026-11-16"
 ---
 
 # Toss-like — design.md

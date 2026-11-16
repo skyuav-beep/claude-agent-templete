@@ -14,6 +14,10 @@ policy:
   copy_tone: "ko-friendly"
   dark_mode: "supported"
   non_4_spacing: false
+claude_design_system:
+  url: https://claude.ai/artifact/XGvCqqEEWWFYFCQQbbQZ5a
+  version: "1794797182-bac2"
+  synced: "2026-11-16"
 ---
 
 # Minimal Mono — design.md

@@ -6,7 +6,7 @@ description: 개발 세션을 재개하거나 PC를 켜고 프로젝트 작업�
 # Dev Start Skill
 
 1. `docs/local-dev-ci-guide.md`의 개발 세션 부트스트랩을 읽는다.
-2. `STATE.md`의 최근 완료와 다음 작업을 요약한다.
+2. `STATE.md`의 최근 완료와 다음 작업을 요약한다. 시안이 Claude Design System과 연결돼 있으면 `node scripts/design-sync.mjs status`로 마지막 동기화 날짜만 알린다(최신 확인·들여오기는 Claude Code 세션 몫).
 3. 가이드가 지정한 local 개발 서비스를 `up -d`로 기동한다.
 4. hot reload와 핵심 UI·로직 점검 결과를 보고한다.
 5. `STATE.md`의 다음 작업부터 이어간다.

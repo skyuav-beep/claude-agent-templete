@@ -101,6 +101,14 @@
 
 ## 최근 완료 작업
 
+- 디자인 시안 6종의 원본을 Claude Design System으로 옮기고, `designs/*.md`를 그 스냅샷으로 바꿨다(B 방식). (2026-11-16)
+  - 배경: 단독 Claude Design(claude.ai/design)이 2026-12-14에 닫히고 디자인 기능이 Claude 안의 Design System·Design 캔버스로 옮겨짐. 사용자 결정 — 원본은 Claude, 작업할 때 Claude Code가 내려받아 저장소에 스냅샷 커밋(Codex·연결 프로젝트는 스냅샷 사용).
+  - 새 `scripts/design-sync.mjs`(Node 내장만): `export`(시안 → Design System 파일: README=본문 그대로, `frontmatter.txt`, yaml 블록에서 뽑은 `tokens.json`, 기본 표지) · `import`(내려받은 폴더 → 시안 파일, 페이지 토큰 편집기 색 변경은 README yaml 줄에 되돌림, 되돌릴 수 없는 차이면 종료 코드 2) · `preview [--fix]`(프리뷰 3화면 별칭 색 일치) · `status` · `check`.
+  - Design System 6개 생성·게시(이름 뒤 `(claude-agent-template)`, 기존 `Wanted Design System`은 손대지 않음): worknest `NzFKeAmC85AYt1JB3mT9uW`, wanted `6nxbAMo3WeeuiCn8B1dT69`, minimal-mono `XGvCqqEEWWFYFCQQbbQZ5a`, toss-like `7YbM8t8vbUG3Ssa2iLfJcw`, material-3 `GDhDukpEPsUugNz378HNQX`, linear-like `J3nqoTDNN6zZoiNMyAEcYZ`(모두 `https://claude.ai/artifact/<id>`, 비공개). 각 시안 frontmatter `claude_design_system`에 주소·버전 기록, `DESIGN.md`도 활성 시안과 같게.
+  - 문서: `docs/design-guidelines.md` "Claude Design System 동기화"(세션 시작 점검·새 시안 추가·디자인 작업 연결), `designs/README.md`, dev-start(Claude 점검 단계, Codex는 `status`만), `CLAUDE.md` Repo Map.
+  - 검증: 6종 왕복(export→import) 연결 정보 외 변경 0줄, Claude를 거친 실제 왕복 6종, 페이지 색 변경 되돌림·간격 충돌 거부·프리뷰 어긋남 검출/고침 시험, `design-sync check`·`build-nav --check`·`check-html`·`check-runtime-parity` 통과.
+  - 게시 중 발견해 고친 변환 결함: 여러 줄 그림자 값(wanted `>` 접기, material-3 쉼표 줄바꿈)이 첫 줄만 들어감, toss-like `amount` 글자 간격에 `tabular-nums` 섞임 → 고친 `tokens.json`을 세 시스템에 다시 게시.
+  - 참고: `worknest` 원본 프로토타입은 aiospace 저장소 `mockup/WorkNest.html`·`mockup/worknest/`에 커밋돼 있어 단독 Claude Design 종료와 무관. 다크 주 색이 하늘색인 것은 시안에 '프로토타입 정의'로 적힌 의도.
 - admin 콘텐츠 폭 규칙을 '1920 상한·가운데 정렬'에서 '폭 상한 없음(가용 폭 전체)'으로 바꿨다. (2026-10-31)
   - 연결 프로젝트 makeupshop의 사용자 결정(넓은 화면 좌우 여백 제거, admin 전체, makeupshop #613·#614)을 공통 템플릿에도 반영.
   - `docs/admin-fe-design-guide.md`(가용 폭 채우기·content padding·2열 구성), `docs/user-fe-design-guide.md`, `designs/minimal-mono.md`, `designs/wanted.md` 적용 메모 2곳, `docs/admin-fe-preview.html` 조립 예시.
@@ -390,7 +398,8 @@
 - 디자인 시안 6종을 light/dark·viewport 조합으로 검수한다. 사전 점검은 끝났고 남은 것은 눈으로 보는 확인뿐이다.
 - 시작: `node scripts/serve-docs.mjs`로 서버를 띄우고(기본 `http://127.0.0.1:8765`) 상단 이동 바로 admin·user·user-mobile 세 화면을 오가며 시안 셀렉터에서 6종을 순회한다. 문서를 바로 고치려면 `--edit`을 붙인다. 2026-08-14에 세 화면 응답과 셀렉터 6종 구성을, 2026-08-21에 이동 바 왕복 동선을 확인해 뒀다.
 - 중점: 활성 시안 `worknest`의 light/dark 대비, 카드 헤어라인 보더와 그림자 정책(hover lift·overlay 한정), gradient 전면 금지 준수, 사이드바·active 채움 전용 토큰 렌더링.
-- 의도와 다른 부분이 나오면 관련 카탈로그와 `DESIGN.md`, `STATE.md`를 같은 작업에서 갱신한다.
+- 2026-11-16 자동 사전 점검: 3화면 × 6종 × light/dark 72조합 적용·오류·가로 넘침 0, `worknest` 화면 틀 gradient·카드 그림자 0, 대비 미달은 비활성 버튼 예시뿐. 처음 열면 기본 시안이 `wanted`라 셀렉터에서 `worknest`를 골라야 한다.
+- 의도와 다른 부분이 나오면 **Claude Design System에서 고친 뒤** `docs/design-guidelines.md` "Claude Design System 동기화"의 세션 시작 점검 3~6으로 내려받는다(`designs/*.md`·`DESIGN.md` 직접 수정 금지).
 
 ### 2순위 — 사용자 판단이 필요한 8건
 

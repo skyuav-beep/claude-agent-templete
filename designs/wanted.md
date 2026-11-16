@@ -19,6 +19,10 @@ policy:
   copy_tone: "ko-friendly"
   dark_mode: "supported"
   non_4_spacing: false
+claude_design_system:
+  url: https://claude.ai/artifact/6nxbAMo3WeeuiCn8B1dT69
+  version: "1794797267-fdf6"
+  synced: "2026-11-16"
 ---
 
 # 원티드 (Wanted) — design.md

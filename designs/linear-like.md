@@ -14,6 +14,10 @@ policy:
   copy_tone: "en-sentence"
   dark_mode: "supported"
   non_4_spacing: false
+claude_design_system:
+  url: https://claude.ai/artifact/J3nqoTDNN6zZoiNMyAEcYZ
+  version: "1794797190-9d9b"
+  synced: "2026-11-16"
 ---
 
 # Linear-like — design.md
