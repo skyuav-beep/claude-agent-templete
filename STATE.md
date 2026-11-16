@@ -107,6 +107,9 @@
 
 ## 최근 완료 작업
 
+- Codex 연동 실측: 로그인 후 notify 턴 완료 기록을 확인했고, Codex 훅이 Claude와 같은 설정·입력 형식임을 확인했다. (2026-11-16)
+  - 시험 폴더(scratchpad)의 `.codex/hooks.json`에 기록 전용 훅을 두고 실행. 신뢰하지 않은 폴더라 훅이 조용히 건너뛰어졌고, 신뢰 확인 생략 옵션은 Claude Code 분류기가 거부해 사용자가 직접 한 번 실행했다.
+  - 캡처한 입력 5종(`SessionStart`·`UserPromptSubmit`·`PreToolUse`·`PostToolUse`·`Stop`)을 `agent-events.sh codex-hook`에 넣어 `provider=codex`로 기록되고 프롬프트·응답·도구 결과 본문이 남지 않음을 확인했다. `session_id`가 notify의 thread ID와 같다.
 - 입력·모니터링 TUI 선행 작업: 이벤트에 tmux 창 위치 기록, Codex 훅 기록 준비, 입력 안전 규칙. (2026-11-16)
   - 기록기: tmux 안의 세션은 `tmux`(`세션:창번호`)·`pane`을 함께 남긴다(실제 tmux 창에서 확인). 현황 표에 `창` 열을 추가했다. 감시 화면이 지시를 보낼 대상이다.
   - Codex 훅: Codex 0.166 실행 파일에 Claude 계열 훅(`PermissionRequest`·`PreToolUse`·`Stop` 등, `hooks.json`, 훅 신뢰 확인)이 있음을 확인했다. `agent-events.sh codex-hook`으로 `provider=codex` 기록을 받을 준비만 했고, 등록 위치·형식은 로그인 후 실측해 확정한다.
@@ -483,8 +486,8 @@
 
 ### 진행 중 — Claude·Codex 입력·모니터링 TUI (2026-11-16 사용자 요청, 디자인 검수보다 우선)
 
-- 사용자 작업: Codex 로그인(`! codex login`). 로그인 전에는 Codex 쪽 검증·훅 등록을 할 수 없다.
-- 로그인 후: ① `codex exec "..." </dev/null` 한 턴으로 notify 기록 확인 ② Codex `hooks.json` 위치·형식·입력 필드를 실측하고, `agent-events.sh codex-hook` 등록 방법을 문서에 확정(전역 설정 등록은 사용자 확인 후).
+- 완료(2026-11-16): Codex 로그인, notify 턴 완료 기록 확인, Codex 훅 실측(프로젝트 `.codex/hooks.json`, Claude와 같은 설정·입력 형식, 신뢰 확인 필요, 기록기 `codex-hook`으로 5종 기록·본문 미기록 확인).
+- 사용자 작업: Codex 훅 등록(전역 또는 프로젝트별)과 신뢰 승인. 전역 위치·신뢰 화면은 미실측이라 등록할 때 함께 확인한다. 등록 방법은 `docs/claude-codex-collaboration.md ## 이벤트 기록과 현황 보기`.
 - 사용자 결정 대기: 개발 언어(Rust는 도구 미설치, Node는 바로 가능), 저장소 이름·위치·GitHub 생성 여부. 입력 방식은 tmux 화면 입력으로 시작을 권장했다.
 - 1차 버전 범위: 세션 목록·상세, 세션을 골라 지시 입력 → 해당 tmux 창 전송(`## 화면에서 지시 보내기` 규칙), `응답 필요` 강조와 창 이동, 작업 카드 진행률.
 
