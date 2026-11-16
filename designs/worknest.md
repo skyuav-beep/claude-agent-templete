@@ -18,7 +18,7 @@ policy:
   non_4_spacing: false           # 레이아웃 spacing은 4 ladder만. 컴포넌트 로컬 관찰값은 본문에 명시
 claude_design_system:
   url: https://claude.ai/artifact/NzFKeAmC85AYt1JB3mT9uW
-  version: "1794804622-9a56"
+  version: "1794835613-8e5f"
   synced: "2026-11-16"
 ---
 
@@ -60,7 +60,7 @@ neutral-300: "#E7E9EC"   # hairline
 neutral-350: "#DCDEE3"   # strong hairline
 neutral-400: "#C9CDD4"   # 합성 — 강조 보더
 neutral-500: "#9AA1AC"   # tertiary text
-neutral-600: "#6B7280"   # secondary text
+neutral-600: "#676E7C"   # secondary text
 neutral-800: "#1F2937"   # default text
 neutral-900: "#111827"   # strong text
 
@@ -69,9 +69,9 @@ indigo-600:  "#4338CA"
 indigo-50:   "#EEF0FE"   # brand subtle fill
 
 green-signal:  "#10B981"  # 진행률·아이콘 시그널
-green-text:    "#059669"  # 배지·본문 성공 텍스트
+green-text:    "#007C51"  # 배지·본문 성공 텍스트
 amber-signal:  "#F59E0B"
-amber-text:    "#D97706"
+amber-text:    "#B45500"
 red-signal:    "#C81E1E"
 ```
 
@@ -94,13 +94,13 @@ bg-danger-subtle:  "#FDECEC"   # 합성 — red-signal 기준 약한 채움
 # Foreground
 fg-strong:    "#111827"
 fg-default:   "#1F2937"
-fg-secondary: "#6B7280"
+fg-secondary: "#676E7C"
 fg-tertiary:  "#9AA1AC"
 fg-disabled:  "#B6BCC6"   # 합성 — tertiary 한 단계 연함
 fg-on-brand:  "#FFFFFF"
 fg-brand:     "#4F46E5"
-fg-success:   "#059669"
-fg-warning:   "#D97706"
+fg-success:   "#007C51"
+fg-warning:   "#B45500"
 fg-danger:    "#C81E1E"
 
 # Borders
@@ -158,9 +158,9 @@ border-brand:   "#38BDF8"
 ```yaml
 status-planning: { text: "#8B5CF6", bg: "#F3F0FF" }   # 기획중 / Review
 status-active:   { text: "#2563EB", bg: "#EAF1FE" }   # 진행중 / Doing / 상담중
-status-hold:     { text: "#D97706", bg: "#FEF6E7" }   # 보류 / Hold
-status-done:     { text: "#059669", bg: "#E7F6EF" }   # 완료 / Done / 협업중
-status-neutral:  { text: "#6B7280", bg: "#F1F2F4" }   # 신규 / To-do / 잠재고객
+status-hold:     { text: "#B45500", bg: "#FEF6E7" }   # 보류 / Hold
+status-done:     { text: "#007C51", bg: "#E7F6EF" }   # 완료 / Done / 협업중
+status-neutral:  { text: "#676E7C", bg: "#F1F2F4" }   # 신규 / To-do / 잠재고객
 status-info:     { text: "#0891B2", bg: "#E6F6FA" }   # 기존고객
 priority-urgent: { text: "#C81E1E" }
 priority-high:   { text: "#F59E0B" }
@@ -429,13 +429,13 @@ data-table 행의 모바일 카드 변형 — `{colors.bg-surface}` + `{colors.b
   /* Foreground */
   --fg-strong:    #111827;
   --fg-default:   #1F2937;
-  --fg-secondary: #6B7280;
+  --fg-secondary: #676E7C;
   --fg-tertiary:  #9AA1AC;
   --fg-disabled:  #B6BCC6;
   --fg-on-brand:  #FFFFFF;
   --fg-brand:     #4F46E5;
-  --fg-success:   #059669;
-  --fg-warning:   #D97706;
+  --fg-success:   #007C51;
+  --fg-warning:   #B45500;
   --fg-danger:    #C81E1E;
 
   /* Border */
