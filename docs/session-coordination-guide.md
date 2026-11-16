@@ -88,6 +88,8 @@ bash .claude/hooks/session-coordination.sh prune <session-id> # 특정 세션 �
 
 ## 개발 리소스 격리
 
+새 세션·개발 서버·테스트 브라우저를 시작하기 전의 메모리 한도(사용률 80% 미만에서만 시작, 넘으면 대기)는 `docs/claude-codex-collaboration.md ## 동시 실행과 메모리 한도`를 따른다.
+
 Compose·DB를 사용하는 프로젝트는 세션별 이름을 먼저 계산할 수 있다.
 
 ```bash

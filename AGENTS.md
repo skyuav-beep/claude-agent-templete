@@ -217,6 +217,7 @@ Claude Code는 `.claude/skills/`, Codex는 `.agents/skills/`가 이 기준을 �
 - **[개념·백서 템플릿](./templates/whitepaper-note.md)** - 개념과 백서 정보를 근거 중심으로 정리할 때.
 - **[개발계획 템플릿](./templates/development-plan.md)** - 근거 문서, 마일스톤, 완료 조건, 검증 계획을 정리할 때.
 - **[의사결정 기록 템플릿](./templates/decision-record.md)** - 중요한 기술·제품·운영 결정을 ADR 형태로 남길 때.
+- **[작업 카드 템플릿](./templates/task-card.md)** - 병렬로 나눈 작업의 ID·담당·범위·완료 조건·검증 증거를 기록할 때.
 - **[다국어 가이드](./docs/i18n-guidelines.md)** - i18n 구조, key 규칙, formatting, fallback 기준을 정리할 때.
 - **[비즈니스 로직 플레이북](./docs/business-logic-playbook.md)** - 요구사항, 시나리오, 구현, 검증, 빌드, Git 작업 기준을 확인할 때.
 - **[금액·수량 처리 기준](./docs/money-quantity-guidelines.md)** - 금액/수량의 계산·확정·표시·저장 계층 규칙, 잔차 배분, 통화 최소 단위, 실수 타입 금지 기준을 확인할 때.
@@ -230,6 +231,7 @@ Claude Code는 `.claude/skills/`, Codex는 `.agents/skills/`가 이 기준을 �
 - **[Claude 실행 가이드](./docs/claude-guide.md)** - Claude Code의 `.claude/*` 자동화 레이어 사용 기준을 확인할 때.
 - **[Codex 실행 가이드](./docs/codex-guide.md)** - Codex에서 `.agents/skills/*`와 `.codex/*` workflow/check로 동일 운영 절차를 수행할 때.
 - **[서브에이전트 가이드](./docs/subagent-guide.md)** - 역할 분리나 협업 흐름 예시를 확인할 때.
+- **[Claude-Codex 협업 운영](./docs/claude-codex-collaboration.md)** - Claude와 Codex 역할 분담, 작업이 끝날 때만 하는 교차 리뷰, 품질 게이트, 자동 수정 2회 한도, 메모리 80% 동시 실행 한도를 확인할 때.
 - **[개발 프로세스 문서](./docs/development-process.md)** - 문서형 개발 프로세스 초안을 확인할 때.
 - **[개발 전략 가이드](./docs/development-strategy.md)** - UI Mock First와 Logic/DB First 중 개발 진행 방식을 선택할 때.
 - **[개발 프로세스 시각화](./docs/development-process.html)** - 브라우저에서 시각 가이드, 단계별 체크리스트, STATE 미니 대시보드 확인 시.
