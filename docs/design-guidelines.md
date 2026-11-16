@@ -119,7 +119,8 @@ Claude에 이미 있는 Design System(토큰 이름·구성이 템플릿과 다�
 3. `node scripts/design-sync.mjs adopt <slug> --from <폴더> --url <url> --version <버전>` → `designs/<slug>.md`(대응 결과 + 원본 색·글꼴 표 + 원본 문서 전문).
 4. `node scripts/design-sync.mjs preview --register <slug>`로 프리뷰 3화면에 등록하고, `check`·화면 점검 후 커밋한다.
 5. 간격은 원본 단계 번호(`space-1`=4px)를 값 기준으로 템플릿 이름(`space-4`=4px)에 옮긴다. 이름 그대로 옮기면 값이 달라진다.
-6. 2026-11-16 연결: `moa`(Moa), `grove`(Grove), `aeg-soft`(AEG Soft).
+6. 2026-11-16 연결: `moa`(Moa), `grove`(Grove), `aeg-soft`(AEG Soft), `aitc`(AITC·MOA 출금), `orbit-wallet`, `pulse-wallet`, `brick-wallet`. 내용이 없는 제목 없는 Design System은 연결하지 않았다.
+7. 상태 바탕 별칭(`bg-*-subtle`)은 템플릿 컴포넌트가 그 위에 상태색 글자(`fg-*`)를 올린다. 원본이 진한 원색 블록 + 검은 글자 방식이면(예: brick-wallet) 블록을 그대로 대응하지 말고 글자가 읽히는 중립 면으로 대응한다.
 
 ### 디자인 작업과의 연결
 
