@@ -233,19 +233,159 @@ shadow-pop: "0 8px 24px rgba(23,32,27,0.12)"  # ← shadow-pop · dark 0 8px 24p
 | icon-button | 원본 없음 — Button ghost + 아이콘으로 대체 |
 | icon | README 아이콘 (Lucide 1.5px, 16/14px, currentColor) |
 
+### 변형 대응
+
+#### button
+
+| 계약 변형 | 원본 대응 |
+|---|---|
+| primary | primary (brand 채움·on-brand 글자, 화면당 하나 — Button README / .btn-primary) |
+| secondary | secondary (bg-surface 바탕 + border-control 테두리 — Button README / .btn-secondary) |
+| tertiary | 원본 없음(원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| ghost | ghost (툴바·탭용 투명 버튼, hover bg-hover — Button README / .btn-ghost) |
+| danger | 원본 없음(파괴 행동 전용 버튼 변형 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| disabled | 원본 없음(원본 README·컴포넌트 문서·bundle.css·index.d.ts에 해당 정의 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| (원본 추가) | ai: ai-soft 바탕·ai-ink 글자, AI 패널 토글·AI에게 묻기 전용 |
+| (원본 추가) | ai-solid: ai 채움·on-ai 글자, 제안 카드의 '적용' 전용 |
+| (원본 추가) | sm: 높이 28px, radius-sm |
+| (원본 추가) | tertiary·danger·disabled: README와 Cover 인라인 CSS에 정의 없음 |
+
+#### input
+
+| 계약 변형 | 원본 대응 |
+|---|---|
+| default | 입력창 (bg-sunken 바탕 — README 색 섹션, 전용 컴포넌트·CSS 없음) |
+| focus | focus 2px 실선 링 + 2px 오프셋, :focus-visible에만 (README 상태와 인터랙션) |
+| error | 원본 없음(입력 오류 상태 정의 없음, bundle.css 원본에 없음(파일 미존재)) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| disabled | 원본 없음(입력 비활성 상태 정의 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+
+#### badge
+
+| 계약 변형 | 원본 대응 |
+|---|---|
+| active | StatusChip progress (진행중, brand-soft 바탕·brand-ink 글자) |
+| pending | StatusChip hold (보류, warn-soft 바탕·warn 글자) — 기획중 plan(info-soft·info)도 대기 성격 |
+| inactive | StatusChip done (완료, bg-sunken·ink-muted + 체크 아이콘) / cancel (취소, bg-sunken·ink-subtle + 취소선) |
+| danger | 원본 없음(StatusChip kind에 실패·위험 상태 없음(danger 토큰만 존재)) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+
+### 모바일 컴포넌트 대응
+
+| 템플릿 모바일 컴포넌트 | 원본 대응 |
+|---|---|
+| bottom-sheet | AssistantPanel 전체 화면 시트 — README 레이아웃: 768px 미만에서 AI는 전체 화면 시트(1280 미만은 오버레이 시트) |
+| mobile-nav | 하단 탭(이름 없음) — README 레이아웃: 768px 미만에서 내비가 하단 탭(Today·Projects·Tasks·AI·더보기)으로, 전용 컴포넌트 없음 |
+| nav-drawer | 원본 없음(원본에 드로어 언급 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| fab | 원본 없음(원본에 FAB 없음) — 템플릿 기본 명세를 이 시안 토큰으로 쓴다 |
+| card-row | ItemRow — 모든 항목 종류가 공유하는 한 줄 목록 행(종류 아이콘·이름·메타·칩) |
+
+### 시그니처
+
+이 시안을 알아보게 하는 원본 고유 모양이다. 화면을 만들 때 표준 컴포넌트에 이 모양을 입힌다.
+
+- AI 단일 색 — ai 보라(#5a4bd1 계열) + sparkles 아이콘은 AI 출처에만, 제안 카드 바탕 ai-soft·글자 ai-ink(SuggestionCard README, .btn-ai/.c-ai)
+- 상태 칩 — 높이 22px, radius-sm, 12px 500, *-soft 바탕 + 대응 글자색, 완료 체크·취소 취소선(StatusChip README, .chip/.c-done/.c-cancel)
+- 카드 표면 — bg-surface + border-subtle 1px + shadow-card(0 1px 2px), radius-md(.card)
+- 진행 막대 — 높이 6px, radius-full, bg-sunken 트랙 위 brand 채움(.bar)
+- 제안 카드 버튼 순서 — 적용(ai-solid) · 수정(secondary) · 무시(ghost) 고정(SuggestionCard README)
+- 내비 라벨 — 영문 + 한글 보조 라벨(ink-subtle, meta 12/18), 선택은 bg-selected + brand-ink(AppShell README)
+
 ### 원본 컴포넌트 (9종)
 
-| 컴포넌트 | 요약 |
-|---|---|
-| AppShell | 앱 전체의 3단 레이아웃: 왼쪽 내비(`sidebar-width`) · 가운데 작업 영역 · 오른쪽 AI 비서(`assistant-width`). |
-| AssistantPanel | 작업 영역 오른쪽에 붙는 AI 비서 대화 패널(폭 `assistant-width` 360px). |
-| Button | 행동을 실행하는 버튼. |
-| CommandBar | ⌘K로 여는 단일 입력창. |
-| ItemRow | 모든 항목 종류가 공유하는 한 줄 목록 행. |
-| PlanCard | 행사·여행·출장·미팅·런칭처럼 날짜에 맞춰 준비하는 기획 카드. |
-| ProjectCard | 보드·카드 보기에서 프로젝트 하나를 요약하는 카드. |
-| StatusChip | 상태·우선순위·메타 값을 보여 주는 작은 라벨. |
-| SuggestionCard | AI가 데이터 변경을 제안할 때 쓰는 카드. |
+| 컴포넌트 | 요약 | 변형·속성 |
+|---|---|---|
+| AppShell | 앱 전체의 3단 레이아웃: 왼쪽 내비(`sidebar-width`) · 가운데 작업 영역 · 오른쪽 AI 비서(`assistant-width`). |  |
+| AssistantPanel | 작업 영역 오른쪽에 붙는 AI 비서 대화 패널(폭 `assistant-width` 360px). |  |
+| Button | 행동을 실행하는 버튼. |  |
+| CommandBar | ⌘K로 여는 단일 입력창. |  |
+| ItemRow | 모든 항목 종류가 공유하는 한 줄 목록 행. |  |
+| PlanCard | 행사·여행·출장·미팅·런칭처럼 날짜에 맞춰 준비하는 기획 카드. |  |
+| ProjectCard | 보드·카드 보기에서 프로젝트 하나를 요약하는 카드. |  |
+| StatusChip | 상태·우선순위·메타 값을 보여 주는 작은 라벨. |  |
+| SuggestionCard | AI가 데이터 변경을 제안할 때 쓰는 카드. |  |
+
+### 원본 화면 예시
+
+원본 Design System의 미리보기에만 있는 전체 화면·표지다(설명 문서 없음).
+
+- `Cover` — 960×288 표지 — 높이가 다른 칸반 컬럼(brand·warn-soft·ai·ink)에 카드 블록을 쌓은 패턴, 태그라인 '정리는 사람이, 정돈은 AI가 — 프로젝트 중심 워크스페이스'
+
+### 원본 컴포넌트 스타일
+
+원본 `components/Cover/preview.html`의 스타일을 구역별로 요약했다(크기·모서리·색·테두리·그림자·글꼴). `var(--x)`는 원본 토큰 `x`다.
+
+| 구역 | 선택자 | 핵심 속성 |
+|---|---|---|
+|  | `body` | padding 16px · background bg-canvas · color ink · font 400 14px/22px font-sans |
+|  | `.row` | gap 8px |
+|  | `.col` | gap 8px |
+|  | `.meta` | font-size 12px · color ink-muted |
+|  | `.sub` | color ink-subtle |
+|  | `svg.i` | width 16px · height 16px |
+|  | `svg.s` | width 14px · height 14px |
+|  | `.btn` | gap 6px · height 32px · padding 0 12px · border-radius radius-md · font 500 13px/20px font-sans · border 1px solid transparent · background transparent · color ink |
+|  | `.btn:focus-visible` | outline 2px solid focus |
+|  | `.btn-primary` | background brand · color on-brand |
+|  | `.btn-primary:hover` | background brand-hover |
+|  | `.btn-secondary` | background bg-surface |
+|  | `.btn-secondary:hover` | background bg-hover |
+|  | `.btn-ghost:hover` | background bg-hover |
+|  | `.btn-ai` | background ai-soft · color ai-ink |
+|  | `.btn-ai-solid` | background ai · color on-ai |
+|  | `.btn-sm` | height 28px · padding 0 10px · font-size 12px · border-radius radius-sm |
+|  | `.chip` | gap 4px · height 22px · padding 0 8px · border-radius radius-sm · font 500 12px/18px font-sans |
+|  | `.c-plan` | background info-soft · color info |
+|  | `.c-prog` | background brand-soft · color brand-ink |
+|  | `.c-hold` | background warn-soft · color warn |
+|  | `.c-done` | background bg-sunken · color ink-muted |
+|  | `.c-cancel` | background bg-sunken · color ink-subtle |
+|  | `.c-high` | background high-soft · color high |
+|  | `.c-ai` | background ai-soft · color ai-ink |
+|  | `.c-neutral` | background bg-sunken · color ink-muted |
+|  | `.dot` | width 8px · height 8px · border-radius radius-full |
+|  | `.av` | width 22px · height 22px · border-radius radius-full · font 700 10px/1 font-sans · color #3b2400 · background #f5b041 · border 2px solid bg-surface |
+|  | `.av.b` | background ai · color on-ai |
+|  | `.card` | background bg-surface · border 1px solid border-subtle · border-radius radius-md · box-shadow shadow-card · padding 12px 14px |
+|  | `.ct` | font 600 15px/22px font-sans |
+|  | `.fig` | font 500 13px/20px font-mono |
+|  | `.bar` | height 6px · border-radius radius-full · background bg-sunken |
+|  | `.bar>i` | height 100% · background brand |
+|  | `body` | padding 0 · background bg-canvas |
+|  | `.cv` | width 960px · height 288px · background bg-canvas |
+|  | `.g` | opacity .92 |
+|  | `.g3` | opacity .9 |
+|  | `.g4` | opacity .9 |
+|  | `.tx` | max-width 440px |
+|  | `.nm` | font 800 120px/.92 font-sans · letter-spacing -.04em · color ink |
+|  | `.tg` | font 400 14px/20px font-sans · color ink-muted |
+
+## Do's and Don'ts
+
+**Do**
+
+- 강조색은 화면당 brand 버튼 하나(전역 '빠른 생성'은 예외)
+- AI 변경은 항상 미리보기 카드로 먼저, 적용/수정/무시로 끝내기
+- 제안 카드에는 반드시 근거 한 줄
+- 상태 칩은 반드시 단어 포함 — 색만으로 구분하지 않기
+- 버튼 라벨은 동사(새 프로젝트, 적용, 일정에 추가)
+- 포커스 링은 키보드(:focus-visible)에만 2px + 2px 오프셋
+- 다크 테마에서 on-brand는 토큰으로 — 흰 글자 하드코딩 금지
+
+**Don't**
+
+- 사람이 만든 콘텐츠에 ai 보라색 쓰지 않기
+- 한 화면에 primary 버튼 두 개 금지
+- '확인'·'OK' 같은 모호한 버튼 라벨 금지
+- AI가 아닌 기능에 sparkles 아이콘·ai 변형 금지
+- 카드·버튼·내비에 이모지 금지(AI 인사 첫 줄 하나만 허용)
+- 회색 세 단계 이상 만들지 않기
+- AI 스트리밍 중 반짝이·그라데이션 애니메이션 금지
+- 한 화면에 제안 카드 2개 이상 금지
+
+## Responsive Behavior
+
+- 3단 셸: 내비 232px · 작업 영역 · AI 비서 360px, 상단 바 48px
+- 1280px 미만: AI 패널이 오버레이 시트
+- 768px 미만: 내비가 하단 탭(Today·Projects·Tasks·AI·더보기), AI 전체 화면 시트, 좌우 여백 space-4
 
 ## Known Gaps
 

@@ -354,6 +354,37 @@ const CONTRACT_ALIAS = ['bg-canvas', 'bg-surface', 'bg-subtle', 'bg-muted', 'bg-
 const CONTRACT_TYPE = ['display1', 'display2', 'display3', 'title1', 'title2', 'title3', 'label1', 'label2', 'body1', 'body1-read', 'body2', 'caption1'];
 const SPACE_LADDER = [4, 8, 12, 16, 20, 24, 32, 40, 48, 56, 64, 80, 96, 128];
 const RADIUS_LADDER = [2, 4, 8, 12, 16];
+const CONTRACT_VARIANTS = {
+  button: ['primary', 'secondary', 'tertiary', 'ghost', 'danger', 'disabled'],
+  input: ['default', 'focus', 'error', 'disabled'],
+  badge: ['active', 'pending', 'inactive', 'danger'],
+};
+const MOBILE_COMPONENTS = ['bottom-sheet', 'mobile-nav', 'nav-drawer', 'fab', 'card-row'];
+const CSS_KEEP = /^(height|min-height|max-height|width|min-width|max-width|border-radius|background|background-color|color|border|border-top|border-bottom|border-width|box-shadow|padding|font|font-family|font-size|font-weight|letter-spacing|gap|outline|transform|backdrop-filter|opacity|filter)$/;
+
+// bundle.css → 구역(/* 주석 */)별 "선택자 | 핵심 속성" 행. 미디어쿼리·keyframes 안쪽도 같은 방식으로 읽는다.
+function cssSummary(css) {
+  const rows = [];
+  let section = '';
+  const rules = [];
+  for (const part of css.split(/(\/\*[\s\S]*?\*\/)/)) {
+    if (part.startsWith('/*')) { const t = part.slice(2, -2).trim().replace(/\s+/g, ' '); if (t && t.length < 60) section = t; continue; }
+    for (const m of part.matchAll(/([^{}]+)\{([^{}]*)\}/g)) rules.push([section, m[1], m[2]]);
+  }
+  for (const [sec, rawSel, body] of rules) {
+    section = sec;
+    const m = [null, null, rawSel, body];
+    const sel = m[2].trim().replace(/\s+/g, ' ');
+    if (!sel || sel.startsWith('@') || /^(from|to|[0-9.]+%)$/.test(sel)) continue;
+    const decl = m[3].split(';').map((d) => d.trim()).filter(Boolean).map((d) => {
+      const i = d.indexOf(':'); return [d.slice(0, i).trim(), d.slice(i + 1).trim()];
+    }).filter(([k]) => CSS_KEEP.test(k)).map(([k, v]) => `${k} ${v.replace(/var\(--([\w-]+)\)/g, '$1')}`);
+    if (!decl.length) continue;
+    const cut = (s, n) => (s.length > n ? `${s.slice(0, n - 1)}…` : s);
+    rows.push(`| ${section.replace(/\|/g, '/')} | \`${cut(sel, 70).replace(/\|/g, '\\|')}\` | ${cut(decl.join(' · '), 220).replace(/\|/g, '/')} |`);
+  }
+  return rows;
+}
 
 function adoptOne(slug, from, url, version) {
   const map = JSON.parse(readFileSync(join(DESIGNS, '_sync', `${slug}.map.json`), 'utf8'));
@@ -427,6 +458,14 @@ function adoptOne(slug, from, url, version) {
     const dark = typeof t.value === 'string' ? '' : t.value[th.dark] ?? '';
     shadowRows.push(`${name}: "${light}"`.padEnd(40) + `  # ← ${s}${dark ? ` · dark ${dark}` : ''}`);
   }
+  // 변형·모바일·규칙 — 대응표 필수 항목(값이 null이면 '원본 없음'으로 적는다)
+  for (const [comp, keys] of Object.entries(CONTRACT_VARIANTS)) {
+    const miss = keys.filter((k) => !(k in (map.variants?.[comp] ?? {})));
+    if (miss.length) problems.push(`대응표 variants.${comp}에 없는 변형: ${miss.join(', ')}`);
+  }
+  const missMobile = MOBILE_COMPONENTS.filter((k) => !(k in (map.mobile ?? {})));
+  if (missMobile.length) problems.push(`대응표 mobile에 없는 항목: ${missMobile.join(', ')}`);
+  for (const k of ['signatures', 'dos', 'donts', 'responsive']) if (!map[k]?.length) problems.push(`대응표 ${k}가 비어 있음`);
   if (problems.length) {
     console.error(`${slug}: 대응표 적용 실패 ${problems.length}건 — designs/${slug}.md를 쓰지 않았습니다`);
     for (const p of problems) console.error(`  - ${p}`);
@@ -439,6 +478,28 @@ function adoptOne(slug, from, url, version) {
   const comps = existsSync(compDir) ? readdirSync(compDir).filter((c) => existsSync(join(compDir, c, 'README.md'))).sort() : [];
   const summary = (c) => readFileSync(join(compDir, c, 'README.md'), 'utf8').split('\n').map((l) => l.trim())
     .filter((l) => l && !l.startsWith('#')).join(' ').split(/(?<=[.다요])\s/)[0].replace(/\|/g, '/').slice(0, 160);
+  // 원본 컴포넌트 속성(index.d.ts의 문자열 union)과 스타일(bundle.css 구역별 핵심 속성)
+  const dts = existsSync(join(compDir, 'index.d.ts')) ? readFileSync(join(compDir, 'index.d.ts'), 'utf8') : '';
+  const unions = new Map();
+  for (const m of dts.matchAll(/interface (\w+?)Props\b[^{]*\{([^\n]*)\}/g)) {
+    const props = [...m[2].matchAll(/(\w+)\??:\s*((?:'[^']*'\s*\|?\s*)+)(?=[;}])/g)]
+      .map(([, k, v]) => `${k} ${v.match(/'([^']*)'/g).map((s) => s.slice(1, -1)).join('/')}`);
+    if (props.length) unions.set(m[1], props.join(' · '));
+  }
+  const screens = existsSync(compDir) ? readdirSync(compDir).filter((c) => !comps.includes(c) && existsSync(join(compDir, c, 'preview.html'))).sort() : [];
+  // 스타일 근거: components/bundle.css, 없으면 화면·표지 미리보기의 <style>
+  const bundle = join(compDir, 'bundle.css');
+  const cssSource = existsSync(bundle) ? 'components/bundle.css' : screens.length ? screens.map((s) => `components/${s}/preview.html`).join(', ') : '';
+  const cssRows = cssSummary(existsSync(bundle) ? readFileSync(bundle, 'utf8')
+    : screens.map((s) => [...readFileSync(join(compDir, s, 'preview.html'), 'utf8').matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map((m) => m[1]).join('\n')).join('\n'));
+  const cell = (s) => String(s ?? '').replace(/\|/g, '/').replace(/\n/g, ' ');
+  const reasons = map.null_reasons ?? {};
+  const orNone = (v, path) => (v == null ? `원본 없음${reasons[path] ? `(${cell(reasons[path])})` : ''} — 템플릿 기본 명세를 이 시안 토큰으로 쓴다` : cell(v));
+  const variantTables = Object.entries(CONTRACT_VARIANTS).map(([comp, keys]) => {
+    const v = map.variants[comp];
+    const extra = (v._extra ?? []).map((e) => `| (원본 추가) | ${cell(e)} |`);
+    return `#### ${comp}\n\n| 계약 변형 | 원본 대응 |\n|---|---|\n${[...keys.map((k) => `| ${k} | ${orNone(v[k], `variants.${comp}.${k}`)} |`), ...extra].join('\n')}`;
+  }).join('\n\n');
   const colorTable = [...colors.values()].map((t) => {
     const v = (theme) => (colorOf(t.name, th[theme]) ?? '').toLowerCase();
     return `| \`${t.name}\` | ${v('light')} | ${v('dark')} | ${(t.usage ?? '').replace(/\|/g, '/').replace(/\n/g, ' ')} |`;
@@ -536,11 +597,42 @@ ${shadowRows.join('\n')}
 |---|---|
 ${Object.entries(map.requiredComponents ?? {}).map(([k, v]) => `| ${k} | ${v} |`).join('\n')}
 
+### 변형 대응
+
+${variantTables}
+
+### 모바일 컴포넌트 대응
+
+| 템플릿 모바일 컴포넌트 | 원본 대응 |
+|---|---|
+${MOBILE_COMPONENTS.map((k) => `| ${k} | ${orNone(map.mobile[k], `mobile.${k}`)} |`).join('\n')}
+
+### 시그니처
+
+이 시안을 알아보게 하는 원본 고유 모양이다. 화면을 만들 때 표준 컴포넌트에 이 모양을 입힌다.
+
+${map.signatures.map((s) => `- ${s}`).join('\n')}
+
 ### 원본 컴포넌트 (${comps.length}종)
 
-| 컴포넌트 | 요약 |
-|---|---|
-${comps.map((c) => `| ${c} | ${summary(c)} |`).join('\n')}
+| 컴포넌트 | 요약 | 변형·속성 |
+|---|---|---|
+${comps.map((c) => `| ${c} | ${summary(c)} | ${cell(unions.get(c) ?? '')} |`).join('\n')}
+${screens.length ? `\n### 원본 화면 예시\n\n원본 Design System의 미리보기에만 있는 전체 화면·표지다(설명 문서 없음).\n\n${screens.map((s) => `- \`${s}\`${map.screens?.[s] ? ` — ${map.screens[s]}` : ''}`).join('\n')}\n` : ''}
+${cssRows.length ? `### 원본 컴포넌트 스타일\n\n원본 \`${cssSource}\`의 스타일을 구역별로 요약했다(크기·모서리·색·테두리·그림자·글꼴). \`var(--x)\`는 원본 토큰 \`x\`다.\n\n| 구역 | 선택자 | 핵심 속성 |\n|---|---|---|\n${cssRows.join('\n')}\n` : ''}
+## Do's and Don'ts
+
+**Do**
+
+${map.dos.map((s) => `- ${s}`).join('\n')}
+
+**Don't**
+
+${map.donts.map((s) => `- ${s}`).join('\n')}
+
+## Responsive Behavior
+
+${map.responsive.map((s) => `- ${s}`).join('\n')}
 
 ## Known Gaps
 

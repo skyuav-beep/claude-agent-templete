@@ -101,7 +101,7 @@
    `node scripts/design-sync.mjs import <slug> --from <폴더> --url <url> --version <버전>`
    - 페이지 토큰 편집기로 바꾼 색은 README의 해당 yaml 줄에 되돌려 반영된다.
    - 되돌릴 수 없는 차이(간격·라운드 등 색 외 값, README에 없는 토큰)가 있으면 파일을 쓰지 않고 종료 코드 2로 멈춘다. 이때는 Claude 쪽 README를 고쳐 맞춘 뒤 다시 들여온다.
-   - `status`의 마지막 칸이 `adopt`인 시안(형식이 다른 기존 Design System)은 `import` 대신 원본의 `project/` 전체 문서(README·추가 `*.md`·`tokens.json`·`components/*/README.md`)를 내려받아 `node scripts/design-sync.mjs adopt <slug> --from <폴더> --url <url> --version <버전>`으로 다시 만든다. 대응표에 없는 새 별칭 대상이 원본에서 사라지면 종료 코드 2로 멈추니 대응표를 고친다.
+   - `status`의 마지막 칸이 `adopt`인 시안(형식이 다른 기존 Design System)은 `import` 대신 원본의 `project/` 전체 문서(README·추가 `*.md`·`tokens.json`·`components/*/README.md`)와 모양 근거(`components/bundle.css`·`components/index.d.ts`, README 없는 화면 폴더의 `preview.html`)를 내려받아 `node scripts/design-sync.mjs adopt <slug> --from <폴더> --url <url> --version <버전>`으로 다시 만든다. 대응표에 없는 새 별칭 대상이 원본에서 사라지면 종료 코드 2로 멈추니 대응표를 고친다.
 4. `node scripts/design-sync.mjs preview`로 프리뷰 3화면의 별칭 색이 맞는지 보고, 어긋나면 `--fix`로 값만 고친다.
 5. 활성 시안이 바뀌었으면 `cp designs/<slug>.md DESIGN.md`로 활성 사본을 맞춘다(`select-design.sh`는 직접 편집으로 보고 백업을 남기므로 이 경우엔 쓰지 않는다).
 6. 바뀐 파일은 평소처럼 6단계 절차로 커밋·PR한다. Codex와 연결 프로젝트는 이 커밋된 스냅샷을 쓴다.
@@ -114,9 +114,9 @@
 
 Claude에 이미 있는 Design System(토큰 이름·구성이 템플릿과 다른 것)을 시안으로 들일 때는 원본을 바꾸지 않고 **대응표**로 옮긴다.
 
-1. 원본의 `project/` 문서와 `tokens.json`을 내려받아 토큰 이름·테마·간격 단계를 확인한다.
-2. `designs/_sync/<slug>.map.json`을 쓴다: 별칭 25종(`alias`, 원본 토큰 이름 또는 `{ "src", "note" }` — 원본에 없는 별칭은 가장 가까운 원본 토큰을 재사용하고 이유를 `note`에 적는다. 새 색을 만들지 않는다), 글꼴 12종(`type`), 라운드(`radius` — 4의 배수가 아니면 원래 값으로 시안 전용 토큰), 그림자(`shadow`), 정책(`policy`), 필수 컴포넌트 대응(`requiredComponents`), 메모(`notes`).
-3. `node scripts/design-sync.mjs adopt <slug> --from <폴더> --url <url> --version <버전>` → `designs/<slug>.md`(대응 결과 + 원본 색·글꼴 표 + 원본 문서 전문).
+1. 원본의 `project/` 문서와 `tokens.json`, 모양 근거(`components/bundle.css`·`index.d.ts`·화면 `preview.html`)를 내려받아 토큰 이름·테마·간격 단계·컴포넌트 모양을 확인한다. 컴포넌트 README는 한 줄 설명뿐이라 모양(크기·모서리·색·상태)은 스타일 파일에만 있다.
+2. `designs/_sync/<slug>.map.json`을 쓴다: 별칭 25종(`alias`, 원본 토큰 이름 또는 `{ "src", "note" }` — 원본에 없는 별칭은 가장 가까운 원본 토큰을 재사용하고 이유를 `note`에 적는다. 새 색을 만들지 않는다), 글꼴 12종(`type`), 라운드(`radius` — 4의 배수가 아니면 원래 값으로 시안 전용 토큰), 그림자(`shadow`), 정책(`policy`), 필수 컴포넌트 대응(`requiredComponents`), 변형 대응(`variants` — button 6·input 4·badge 4, 템플릿에 없는 원본 변형은 `_extra`), 모바일 5종 대응(`mobile` — bottom-sheet·mobile-nav·nav-drawer·fab·card-row), 시그니처(`signatures` — 원본을 알아보게 하는 모양, 수치와 근거 선택자), 규칙(`dos`·`donts`·`responsive`), 화면 설명(`screens`), 원본에 없는 항목의 이유(`null_reasons`), 메모(`notes`). 값이 `null`이면 '원본 없음 — 템플릿 기본 명세를 이 시안 토큰으로 쓴다'로 적힌다. 근거 없는 내용은 쓰지 않는다.
+3. `node scripts/design-sync.mjs adopt <slug> --from <폴더> --url <url> --version <버전>` → `designs/<slug>.md`(대응 결과 + 변형·모바일 대응 + 시그니처 + 원본 컴포넌트 변형·스타일 요약 + `Do's and Don'ts`·반응형 + 원본 색·글꼴 표 + 원본 문서 전문). 변형·모바일·시그니처·규칙 항목이 비면 종료 코드 2로 멈춘다.
 4. `node scripts/design-sync.mjs preview --register <slug>`로 프리뷰 3화면에 등록하고, `check`·화면 점검 후 커밋한다.
 5. 간격은 원본 단계 번호(`space-1`=4px)를 값 기준으로 템플릿 이름(`space-4`=4px)에 옮긴다. 이름 그대로 옮기면 값이 달라진다.
 6. 2026-11-16 연결: `moa`(Moa), `grove`(Grove), `aeg-soft`(AEG Soft), `aitc`(AITC·MOA 출금), `orbit-wallet`, `pulse-wallet`, `brick-wallet`. 내용이 없는 제목 없는 Design System은 연결하지 않았다.
