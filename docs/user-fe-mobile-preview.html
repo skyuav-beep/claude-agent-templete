@@ -3313,8 +3313,8 @@
     color: white; font-size: 13px; font-weight: 600;
     border: none; cursor: pointer;
   }
-  .swipe-row .swipe-action.danger { background: var(--fg-danger); }
-  .swipe-row .swipe-action.brand { background: var(--bg-brand); }
+  .swipe-row .swipe-action.danger { background: var(--fg-danger); color: var(--bg-canvas); }
+  .swipe-row .swipe-action.brand { background: var(--bg-brand); color: var(--fg-on-brand); }
   .swipe-row .swipe-body { flex: 1; min-width: 0; }
   .swipe-row .swipe-body .title { font-size: 14px; font-weight: 600; color: var(--fg-strong); }
   .swipe-row .swipe-body .meta { font-size: 12px; color: var(--fg-tertiary); margin-top: 2px; }
@@ -3355,6 +3355,7 @@
     cursor: pointer;
   }
   :root[data-theme="dark"] .toast-mobile { background: var(--bg-surface); color: var(--fg-strong); border: 1px solid var(--border-subtle); }
+  :root[data-theme="dark"] .toast-mobile .toast-action { color: var(--fg-brand); }
 
   /* app-bar */
   .app-bar {
