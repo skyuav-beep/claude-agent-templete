@@ -214,6 +214,14 @@
           "description": "Deny Agent isolation:worktree and EnterWorktree, which create worktrees under protected .claude/ and prompt on every file"
         },
         {
+          "path": ".claude/hooks/memory-gate.sh",
+          "description": "PreToolUse(Bash): wait while memory use >= 80% before heavy commands (agent CLIs, dev servers, browser tests, docker); run/status/wait subcommands"
+        },
+        {
+          "path": ".claude/hooks/agent-events.sh",
+          "description": "Async hooks: record Claude/Codex session state to one JSONL (masked, no bodies); status/watch terminal view across projects"
+        },
+        {
           "path": ".claude/hooks/warn-design-tokens.sh",
           "description": "Opt-in: warn on hex/non-4px usage in CSS/JSX (not registered by default)"
         },

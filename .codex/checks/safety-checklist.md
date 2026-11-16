@@ -45,6 +45,15 @@ echo '{"command":"<실행할 명령>"}' | bash .claude/hooks/block-deploy.sh
 echo '{"tool_name":"Write","tool_input":{"file_path":"<경로>"}}' | bash .claude/hooks/block-secret-files.sh
 ```
 
+무거운 작업(새 Codex·Claude 실행, 개발 서버, 브라우저 테스트, Docker 기동·빌드) 실행 전:
+
+```bash
+bash .claude/hooks/memory-gate.sh check "<실행할 명령>"   # heavy면 아래로 대기
+bash .claude/hooks/memory-gate.sh wait                     # 메모리 80% 미만이 될 때까지 대기, 10분 초과 시 종료 코드 1
+```
+
+`wait`가 종료 코드 `1`이면 실행하지 않고, 출력된 사용률과 정리 후보를 사용자에게 보여 준 뒤 확인을 받는다. 규칙: `docs/claude-codex-collaboration.md ## 동시 실행과 메모리 한도`.
+
 - 종료 코드 `0`이고 출력이 없으면 그대로 진행한다.
 - 종료 코드 `0`이지만 출력에 `"permissionDecision": "ask"`가 있으면 출력된 사유를 사용자에게 보여 주고 Codex 승인 요청으로 확인받은 뒤 실행한다.
 - 종료 코드 `2`면 실행하지 않는다. 출력된 사유와 필요한 명령을 사용자에게 전달하고 사용자가 직접 실행하도록 둔다.

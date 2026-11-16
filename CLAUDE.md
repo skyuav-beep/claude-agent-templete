@@ -124,7 +124,7 @@
 - `.claude/CLAUDE.md` — Claude 실행 게이트. 루트 `CLAUDE.md`와 함께 자동 로드되어 읽기 순서, 6단계 승인 절차, 시작·종료 게이트를 주입한다 (`.codex/README.md` 대응)
 - `.claude/skills/` — L2 Skills (자연어 트리거 기반 자동 활성화 SKILL.md 14종)
 - `.claude/commands/` — L2 보조 (명시적 slash command 14종, skills와 병존)
-- `.claude/hooks/` — L3 Guardrails (가드레일 8종 + 작업 알림 3종, opt-in 1종 포함). 상태줄은 `.claude/statusline-notify.sh`
+- `.claude/hooks/` — L3 Guardrails (가드레일 8종 + 실행 보조 2종 + 작업 알림 3종, opt-in 1종 포함). 상태줄은 `.claude/statusline-notify.sh`
 - `.claude/agents/` — L4 서브에이전트 정의 6종, frontmatter로 자동 등록 (explorer, code-reviewer, planner, test-runner, feature-dev, design-reviewer)
 - `.claude/plugins/` — L5 배포 도구 (manifest, install)
 - `.agents/skills/` — Codex native skills 14종. 자연어 요청에 따라 작업 유형별 Skill을 자동 선택한다.
@@ -194,6 +194,8 @@ Claude와 Codex가 같은 발화에서 같은 유형을 고르도록 공통 문�
 - `warn-design-tokens.sh` — opt-in: hex 색/비-4의 배수 px 사용 경고 (기본 미등록, 활성화 방법은 `docs/design-guidelines.md` 참조)
 - `phase-approval.sh` — 3단계 승인 마커가 없는 Edit/Write와 메인 트리 직접 수정에 사용자 확인 요청. 사실 기록 파일(`STATE.md`, `docs/archive/`)은 묻지 않는다. 승인된 세션이 같은 저장소의 worktree 파일을 고치면 허용으로 답해, 세션 폴더 밖이라 뜨는 기본 확인 창도 건너뛴다. 권한 모드가 `auto`·`acceptEdits`·`bypassPermissions`이면 마커 없이도 worktree 수정을 허용한다. 같은 조건(승인 마커 또는 위 모드)이면 계획서·분석 메모처럼 아직 커밋하지 않은 `.md` 파일의 생성·수정은 메인 체크아웃이라도 허용한다 (`docs/approval-workflow.md` 참조). `scripts/check-phase-approval.mjs`가 판정을 고정한다
 - `agent-worktree-guard.sh` — 서브 에이전트 격리 worktree(`isolation: "worktree"`)와 `EnterWorktree`를 거부하고 형제 폴더 worktree를 쓰라고 안내한다. 둘 다 보호 경로인 `.claude/worktrees/`에 작업 폴더를 만들어 파일마다 확인 창이 뜨기 때문이다 (`docs/subagent-guide.md ### 작업 폴더`)
+- `memory-gate.sh` — 메모리 사용률이 80% 이상이면 무거운 명령(새 Claude·Codex 실행, 개발 서버, 브라우저 테스트, Docker 기동·빌드)을 바로 실행하지 않고 내려갈 때까지 기다렸다가 통과시킨다. 10분을 넘기면 사용자 확인으로 넘긴다. `run -- <명령>`·`status`로 사람도 쓴다. `scripts/check-agent-ops.mjs`가 판정을 고정한다
+- `agent-events.sh` — Claude·Codex 세션의 상태 변화를 `~/.local/state/agent-events/events.jsonl` 하나에 기록하고(본문 미기록, 비밀값 가림, async), `watch`·`status`로 여러 프로젝트 세션 현황을 보여 준다
 
 작업 알림 훅은 여러 창을 동시에 쓸 때 완료·응답 요청을 놓치지 않기 위한 것이다.
 

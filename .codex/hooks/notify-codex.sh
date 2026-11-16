@@ -19,10 +19,16 @@
 
 set -u
 
-[ "${CLAUDE_NOTIFY_DISABLE:-0}" = "1" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
-
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." 2>/dev/null && pwd) || exit 0
+
+# 턴 완료를 에이전트 이벤트 파일에도 남긴다(현황 보기용). 알림을 꺼도 기록은 남긴다.
+# 끄려면 AGENT_EVENTS_DISABLE=1. 규칙: docs/claude-codex-collaboration.md ## 이벤트 기록과 현황 보기
+if [ "$#" -gt 0 ] && [ -r "$root/.claude/hooks/agent-events.sh" ]; then
+  bash "$root/.claude/hooks/agent-events.sh" codex "${!#}" >/dev/null 2>&1 || true
+fi
+
+[ "${CLAUDE_NOTIFY_DISABLE:-0}" = "1" ] && exit 0
 pending="$root/.claude/hooks/notify-pending.sh"
 [ -r "$pending" ] || exit 0
 
@@ -54,13 +60,14 @@ last=$(jget '.["last-assistant-message"] // .last_assistant_message // .lastAssi
 [ -n "$cwd" ] || cwd="$PWD"
 
 # rollout 기록 파일. 파일명에 thread-id가 들어간다. 확인(ACK) 감지에 쓴다.
+# 최근 Codex(0.16x)는 압축본(.jsonl.zst)으로 남기므로 둘 다 찾는다. 갱신 시각만 보면 되므로 압축이어도 ACK 감지는 된다.
 transcript=""
 if [ -d "$sessions_dir" ] && [ "$thread" != "codex-unknown" ]; then
-  transcript=$(find "$sessions_dir" -type f -name "*${thread}*.jsonl" 2>/dev/null | head -1)
+  transcript=$(find "$sessions_dir" -type f \( -name "*${thread}*.jsonl" -o -name "*${thread}*.jsonl.zst" \) 2>/dev/null | head -1)
 fi
 
-# 턴 시작 시각을 남겨 두면 notify-pending.sh가 짧은 턴을 조용히 넘긴다.
-if [ -n "$transcript" ] && [ -r "$transcript" ]; then
+# 턴 시작 시각을 남겨 두면 notify-pending.sh가 짧은 턴을 조용히 넘긴다. 압축본은 읽지 않는다(시작 시각 없이 진행).
+if [ -n "$transcript" ] && [ -r "$transcript" ] && [ "${transcript%.zst}" = "$transcript" ]; then
   start_iso=$(tac "$transcript" 2>/dev/null \
     | jq -rs 'map(select(.type == "event_msg" and .payload.type == "task_started")) | .[0].timestamp // empty' 2>/dev/null)
   if [ -n "$start_iso" ]; then
