@@ -16,7 +16,7 @@ policy:
   non_4_spacing: false
 claude_design_system:
   url: https://claude.ai/artifact/J3nqoTDNN6zZoiNMyAEcYZ
-  version: "1794797190-9d9b"
+  version: "1794804619-a4fd"
   synced: "2026-11-16"
 ---
 
@@ -43,7 +43,7 @@ Voice는 영문 **sentence case** 표준 (`Create issue`, `Assign`, `Mark as don
 ### Brand (gradient seed pair)
 
 ```yaml
-brand-start: oklch(0.620 0.180 268)    # 보라
+brand-start: oklch(0.570 0.180 268)    # 보라
 brand-end:   oklch(0.700 0.170 200)    # 청록
 ```
 
@@ -52,7 +52,7 @@ brand-end:   oklch(0.700 0.170 200)    # 청록
 ### Brand gradient (accent + hero)
 
 ```yaml
-accent-gradient: linear-gradient(135deg, oklch(0.620 0.180 268) 0%, oklch(0.700 0.170 200) 100%)
+accent-gradient: linear-gradient(135deg, oklch(0.570 0.180 268) 0%, oklch(0.700 0.170 200) 100%)
 hero-gradient:   linear-gradient(135deg, oklch(0.500 0.180 268) 0%, oklch(0.620 0.180 245) 50%, oklch(0.700 0.170 200) 100%)
 ```
 
@@ -68,7 +68,7 @@ bg-subtle:         oklch(0.972 0.008 270)
 bg-muted:          oklch(0.952 0.012 270)
 bg-elevated:       oklch(1 0 0)
 bg-inverse:        oklch(0.160 0.020 270)
-bg-brand:          oklch(0.620 0.180 268)
+bg-brand:          oklch(0.570 0.180 268)
 bg-brand-subtle:   oklch(0.952 0.025 268)
 bg-danger-subtle:  oklch(0.952 0.022 22)
 bg-success-subtle: oklch(0.952 0.045 152)
@@ -90,7 +90,7 @@ fg-danger:    oklch(0.540 0.200 27)
 border-subtle:  oklch(0.520 0.020 270 / 0.10)
 border-default: oklch(0.520 0.020 270 / 0.22)
 border-strong:  oklch(0.520 0.020 270 / 0.34)
-border-brand:   oklch(0.620 0.180 268)
+border-brand:   oklch(0.570 0.180 268)
 ```
 
 ### Semantic alias — Dark (1차)
@@ -103,7 +103,7 @@ bg-subtle:        oklch(0.120 0.015 270)
 bg-muted:         oklch(0.205 0.022 270)
 bg-elevated:      oklch(0.240 0.025 270)
 bg-inverse:       oklch(1 0 0)
-bg-brand:         oklch(0.620 0.180 268)
+bg-brand:         oklch(0.570 0.180 268)
 bg-brand-subtle:  oklch(0.220 0.080 268)
 bg-danger-subtle: oklch(0.298 0.10 22 / 0.34)
 bg-success-subtle:oklch(0.298 0.10 144 / 0.30)
@@ -372,7 +372,7 @@ text: ⌘K, ⇧⌘P, Esc
   --bg-muted:         oklch(0.952 0.012 270);
   --bg-elevated:      oklch(1 0 0);
   --bg-inverse:       oklch(0.160 0.020 270);
-  --bg-brand:         oklch(0.620 0.180 268);
+  --bg-brand:         oklch(0.570 0.180 268);
   --bg-brand-subtle:  oklch(0.952 0.025 268);
   --bg-danger-subtle: oklch(0.952 0.022 22);
   --bg-success-subtle:oklch(0.952 0.045 152);
@@ -392,7 +392,7 @@ text: ⌘K, ⇧⌘P, Esc
   --border-subtle:  oklch(0.520 0.020 270 / 0.10);
   --border-default: oklch(0.520 0.020 270 / 0.22);
   --border-strong:  oklch(0.520 0.020 270 / 0.34);
-  --border-brand:   oklch(0.620 0.180 268);
+  --border-brand:   oklch(0.570 0.180 268);
 
   /* Spacing (theme-invariant) */
   --space-4: 4px;    --space-8: 8px;    --space-12: 12px;   --space-16: 16px;
@@ -436,7 +436,7 @@ text: ⌘K, ⇧⌘P, Esc
   --bg-muted:         oklch(0.205 0.022 270);
   --bg-elevated:      oklch(0.240 0.025 270);
   --bg-inverse:       oklch(1 0 0);
-  --bg-brand:         oklch(0.620 0.180 268);
+  --bg-brand:         oklch(0.570 0.180 268);
   --bg-brand-subtle:  oklch(0.220 0.080 268);
   --bg-danger-subtle: oklch(0.298 0.10 22 / 0.34);
   --bg-success-subtle:oklch(0.298 0.10 144 / 0.30);

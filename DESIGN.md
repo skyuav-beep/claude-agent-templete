@@ -18,7 +18,7 @@ policy:
   non_4_spacing: false           # 레이아웃 spacing은 4 ladder만. 컴포넌트 로컬 관찰값은 본문에 명시
 claude_design_system:
   url: https://claude.ai/artifact/NzFKeAmC85AYt1JB3mT9uW
-  version: "1794797137-5888"
+  version: "1794804622-9a56"
   synced: "2026-11-16"
 ---
 
@@ -72,7 +72,7 @@ green-signal:  "#10B981"  # 진행률·아이콘 시그널
 green-text:    "#059669"  # 배지·본문 성공 텍스트
 amber-signal:  "#F59E0B"
 amber-text:    "#D97706"
-red-signal:    "#EF4444"
+red-signal:    "#C81E1E"
 ```
 
 ### Semantic alias — Light
@@ -101,7 +101,7 @@ fg-on-brand:  "#FFFFFF"
 fg-brand:     "#4F46E5"
 fg-success:   "#059669"
 fg-warning:   "#D97706"
-fg-danger:    "#EF4444"
+fg-danger:    "#C81E1E"
 
 # Borders
 border-subtle:  "#E7E9EC"
@@ -162,7 +162,7 @@ status-hold:     { text: "#D97706", bg: "#FEF6E7" }   # 보류 / Hold
 status-done:     { text: "#059669", bg: "#E7F6EF" }   # 완료 / Done / 협업중
 status-neutral:  { text: "#6B7280", bg: "#F1F2F4" }   # 신규 / To-do / 잠재고객
 status-info:     { text: "#0891B2", bg: "#E6F6FA" }   # 기존고객
-priority-urgent: { text: "#EF4444" }
+priority-urgent: { text: "#C81E1E" }
 priority-high:   { text: "#F59E0B" }
 priority-medium: { text: "#3B82F6" }
 priority-low:    { text: "#9CA3AF" }
@@ -266,7 +266,7 @@ shadow-3:   "0 12px 32px rgba(17,24,39,0.13), 0 2px 8px rgba(17,24,39,0.06)" # �
 ### badge
 
 높이 21px pill(`{rounded.radius-full}`), `{typography.caption1}` 11.5px/600, 좌측 6px 상태 dot + 라벨. 상태 팔레트의 `(text, bg)` 쌍 사용.
-- **active** → `status-active` · **pending** → `status-hold` · **inactive** → `status-neutral` · **danger** → `(#EF4444, #FDECEC)`.
+- **active** → `status-active` · **pending** → `status-hold` · **inactive** → `status-neutral` · **danger** → `(#C81E1E, #FDECEC)`.
 
 ### chip
 
@@ -436,7 +436,7 @@ data-table 행의 모바일 카드 변형 — `{colors.bg-surface}` + `{colors.b
   --fg-brand:     #4F46E5;
   --fg-success:   #059669;
   --fg-warning:   #D97706;
-  --fg-danger:    #EF4444;
+  --fg-danger:    #C81E1E;
 
   /* Border */
   --border-subtle:  #E7E9EC;

@@ -101,6 +101,11 @@
 
 ## 최근 완료 작업
 
+- 시안 3종의 브랜드·위험 색을 대비 기준(4.5)에 맞게 보정했다. Claude Design System을 먼저 고치고 내려받았다(B 방식). (2026-11-16)
+  - toss-like 브랜드 파랑 `oklch(0.620 0.180 245)` → `oklch(0.555 0.180 245)`(흰 글자 3.54 → 4.56), linear-like 브랜드 보라 `oklch(0.620 0.180 268)` → `oklch(0.570 0.180 268)`(3.77 → 4.64), worknest 라이트 위험 빨강 `#EF4444` → `#C81E1E`(바탕 3.54 → 5.40, 옅은 위험 바탕 3.29 → 5.02). 색상(hue)·채도는 유지하고 밝기만 낮췄다.
+  - 절차: 로컬 수정 → `design-sync export` → Claude Design System 3종 게시(toss-like v1794804616-bb4a, linear-like v1794804619-a4fd, worknest v1794804622-9a56, 게시 전 기록 버전과 일치 확인) → `import` → `preview --fix`(3화면 27곳) → 활성 시안 worknest라 `DESIGN.md` 동기화.
+  - 결과: 모바일 프리뷰 '취소'·'별표'·'삭제' 26조합 모두 4.5 이상(이전 남은 4곳 해소), toss-like 작은 주 버튼 3.54 → 4.5 이상. 13종 적용·넘침 회귀 없음.
+  - 남은 것: 그림자 글로우·그라데이션 장식(toss-like `shadow-cta`, linear-like `hero-gradient` 일부, 프리뷰 gradient 예시)은 옛 밝기 그대로다. 글자 대비와 무관해 두었다. linear-like gradient 강조 버튼의 흰 글자는 그라데이션 위라 검사 도구로 잴 수 없다.
 - 모바일 프리뷰의 토스트 '취소'·스와이프 '별표'·'삭제' 버튼 글자 대비를 고쳤다. (2026-11-16)
   - 원인: 다크 토스트는 바탕이 `bg-surface`로 바뀌는데 '취소' 글자는 `bg-brand-subtle` 그대로였고, 스와이프 버튼 글자는 흰색 고정이었다.
   - 수정(`docs/user-fe-mobile-preview.html`): 다크 토스트 '취소' → `fg-brand`, '별표'(브랜드) → `fg-on-brand`, '삭제'(위험) → `bg-canvas`(위험 색은 바탕 위 글자용이라 뒤집으면 대비 확보). '삭제'는 요청 밖이지만 같은 줄의 같은 원인이라 함께 고쳤다.

@@ -16,7 +16,7 @@ policy:
   non_4_spacing: false
 claude_design_system:
   url: https://claude.ai/artifact/7YbM8t8vbUG3Ssa2iLfJcw
-  version: "1794797272-8226"
+  version: "1794804616-bb4a"
   synced: "2026-11-16"
 ---
 
@@ -39,14 +39,14 @@ Voice는 **친근한 존댓말**(`-요`/`-어요`/`-아요`) + 동사형 버튼(
 ### Brand
 
 ```yaml
-brand-primary: oklch(0.620 0.180 245)    # 파랑
+brand-primary: oklch(0.555 0.180 245)    # 파랑
 brand-hover:   oklch(0.540 0.180 245)    # 더 진한 파랑
 ```
 
 ### Brand gradient (마케팅 hero 전용)
 
 ```yaml
-hero-gradient: linear-gradient(135deg, oklch(0.620 0.180 245) 0%, oklch(0.680 0.160 268) 100%)
+hero-gradient: linear-gradient(135deg, oklch(0.555 0.180 245) 0%, oklch(0.680 0.160 268) 100%)
 ```
 
 마케팅 hero banner 1곳에만 사용. CTA·헤더·풀-블리드 본문에는 적용하지 않는다.
@@ -61,7 +61,7 @@ bg-subtle:         oklch(0.975 0.005 245)    # 페이지 배경
 bg-muted:          oklch(0.955 0.008 245)    # hover 채움
 bg-elevated:       oklch(1 0 0)
 bg-inverse:        oklch(0.180 0.020 245)
-bg-brand:          oklch(0.620 0.180 245)
+bg-brand:          oklch(0.555 0.180 245)
 bg-brand-subtle:   oklch(0.955 0.020 245)
 bg-danger-subtle:  oklch(0.962 0.020 22)
 bg-success-subtle: oklch(0.965 0.045 152)
@@ -83,7 +83,7 @@ fg-danger:    oklch(0.540 0.200 27)
 border-subtle:  oklch(0.520 0.020 245 / 0.10)
 border-default: oklch(0.520 0.020 245 / 0.22)
 border-strong:  oklch(0.520 0.020 245 / 0.34)
-border-brand:   oklch(0.620 0.180 245)
+border-brand:   oklch(0.555 0.180 245)
 ```
 
 ### Semantic alias — Dark
@@ -96,7 +96,7 @@ bg-subtle:        oklch(0.125 0.020 245)
 bg-muted:         oklch(0.215 0.025 245)
 bg-elevated:      oklch(0.250 0.025 245)
 bg-inverse:       oklch(1 0 0)
-bg-brand:         oklch(0.620 0.180 245)
+bg-brand:         oklch(0.555 0.180 245)
 bg-brand-subtle:  oklch(0.180 0.085 245)
 bg-danger-subtle: oklch(0.298 0.10 22 / 0.34)
 bg-success-subtle:oklch(0.298 0.10 144 / 0.30)
@@ -339,7 +339,7 @@ bg: bg-muted
   --bg-muted:         oklch(0.955 0.008 245);
   --bg-elevated:      oklch(1 0 0);
   --bg-inverse:       oklch(0.180 0.020 245);
-  --bg-brand:         oklch(0.620 0.180 245);
+  --bg-brand:         oklch(0.555 0.180 245);
   --bg-brand-subtle:  oklch(0.955 0.020 245);
   --bg-danger-subtle: oklch(0.962 0.020 22);
   --bg-success-subtle:oklch(0.965 0.045 152);
@@ -359,7 +359,7 @@ bg: bg-muted
   --border-subtle:  oklch(0.520 0.020 245 / 0.10);
   --border-default: oklch(0.520 0.020 245 / 0.22);
   --border-strong:  oklch(0.520 0.020 245 / 0.34);
-  --border-brand:   oklch(0.620 0.180 245);
+  --border-brand:   oklch(0.555 0.180 245);
 
   /* Spacing (theme-invariant) */
   --space-4: 4px;    --space-8: 8px;    --space-12: 12px;   --space-16: 16px;
@@ -400,7 +400,7 @@ bg: bg-muted
   --bg-muted:         oklch(0.215 0.025 245);
   --bg-elevated:      oklch(0.250 0.025 245);
   --bg-inverse:       oklch(1 0 0);
-  --bg-brand:         oklch(0.620 0.180 245);
+  --bg-brand:         oklch(0.555 0.180 245);
   --bg-brand-subtle:  oklch(0.180 0.085 245);
   --bg-danger-subtle: oklch(0.298 0.10 22 / 0.34);
   --bg-success-subtle:oklch(0.298 0.10 144 / 0.30);
