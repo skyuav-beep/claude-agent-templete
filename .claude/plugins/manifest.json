@@ -305,6 +305,18 @@
       {
         "path": "designs/worknest.md",
         "description": "WorkNest productivity — 헤어라인 보더 카드(그림자 제한), gradient 전면 금지, ko-friendly 카피, 반응형+모바일 컴포넌트 5종(현재 활성 시안)"
+      },
+      {
+        "path": "designs/moa.md",
+        "description": "Moa productivity — 종이 톤 뉴트럴 + 모스 그린 브랜드 + 앰버 AI 시그널, 헤어라인 우선, AI 작업대 5영역 셸(Claude Design System에서 adopt)"
+      },
+      {
+        "path": "designs/grove.md",
+        "description": "Grove productivity — 프로젝트 중심 3단 워크스페이스, 카드 보더+옅은 그림자, 보라 AI 시그널(Claude Design System에서 adopt)"
+      },
+      {
+        "path": "designs/aeg-soft.md",
+        "description": "AEG Soft consumer — Samsung Health 스타일 파스텔 바탕 + 큰 라운드 흰 카드 + 골드 브랜드, 모바일 숫자 우선(Claude Design System에서 adopt)"
       }
     ],
     "selector": ".claude/plugins/select-design.sh"

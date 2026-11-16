@@ -146,7 +146,9 @@ radius-2, radius-4, radius-8, radius-12, radius-16, radius-full
 | `--radius-6` | linear-like, wanted (button sm 로컬) | `--radius-8` | input/button md (한 단계 작은 라운드) |
 | `--radius-10` | wanted (button lg 로컬) | `--radius-8` | wanted button lg height 48 |
 | `--radius-20` | toss-like, wanted | `--radius-16` | xl 카드, modal |
-| `--radius-24` | wanted | `--radius-16` | wanted 일부 카드 |
+| `--radius-24` | wanted, aeg-soft | `--radius-16` | wanted 일부 카드, aeg-soft 상품·리스트 카드 |
+| `--radius-6` · `--radius-10` · `--radius-14` | moa, grove (원본 radius-sm/md/lg) | `--radius-8` · `--radius-8` · `--radius-12` | 칩·탭 / 버튼·카드·입력 / 패널·모달 |
+| `--radius-18` · `--radius-30` | aeg-soft (원본 radius-md/xl) | `--radius-16` | 스탯 타일·버튼 / 메인 카드·히어로 |
 | `--radius-28` | material-3 | `--radius-16` | M3 FAB, bottom sheet |
 | `--radius-32` | wanted | `--radius-16` | wanted 일부 hero |
 | `--shadow-3` | material-3, wanted, worknest | `--shadow-2` (worknest는 `--shadow-pop`) | M3 elevation level 3 (FAB, dialog), worknest 모달·드로어 |

@@ -101,6 +101,13 @@
 
 ## 최근 완료 작업
 
+- 기존 Claude Design System 3종(Moa·Grove·AEG Soft)을 시안 라이브러리에 연결했다(adopt). (2026-11-16)
+  - 사용자 결정: 프로젝트 전용 시스템이지만 공통 템플릿 시안 라이브러리에 넣는다, 대상 Moa·Grove·AEG Soft, 비-4 라운드는 원래 값을 시안 전용 토큰으로 유지. 나머지 5종(AITC·Orbit·Pulse·Brick·제목 없는 시스템)은 보류.
+  - 사전 조사(8종): 토큰 이름이 템플릿 계약과 거의 다르고(일치 0~3/25), 간격은 같은 이름이 다른 값(원본 `space-4`=16px). 그래서 원본은 바꾸지 않고 시안별 **대응표** `designs/_sync/<slug>.map.json`(별칭 25·글꼴 12·라운드·그림자·정책·필수 컴포넌트 대응·메모)으로 옮긴다.
+  - `scripts/design-sync.mjs`에 `adopt`(대응표로 `designs/<slug>.md` 생성 — 별칭마다 원본 토큰 주석, 원본에 없는 별칭은 가까운 원본 토큰 재사용+'합성' 표시, 원본 색·글꼴 표, 원본 컴포넌트 요약, 원본 문서 전문)와 `preview --register`(프리뷰 3화면에 CSS 블록·DESIGNS 등록) 추가. adopt 시안에 `import`를 쓰면 거부, `status`에 방식 표시.
+  - 결과: `designs/moa.md`(Wnqi1DQEq96xCsFyV1qT9L, 합성 별칭 6), `designs/grove.md`(F4ctMyYSghiZYp2KVHToX5, 합성 5), `designs/aeg-soft.md`(65R8okgmxrb2cHf92VHXBC, 합성 5). Moa의 white 테마는 템플릿이 light/dark만 받아 원본 문서에만 남음. 원본 Design System은 수정하지 않음.
+  - 문서: `docs/design-guidelines.md` "기존 Design System 연결 (adopt)"·세션 점검 adopt 분기, `designs/_alias-contract.md` 9b 시안 전용 라운드, `designs/README.md`, `.claude/plugins/manifest.json` 시안 3종.
+  - 검증: `design-sync check`·`check-html`·`build-nav --check`·`check-runtime-parity`·`check-codex-skills` 통과, adopt 재실행 결과 동일, 프리뷰 3화면 × 새 시안 3종 × light/dark 적용·오류·넘침 0(대비 미달은 비활성 버튼 예시와 aeg-soft 라이트 작은 위험 버튼 3.4).
 - 디자인 시안 6종의 원본을 Claude Design System으로 옮기고, `designs/*.md`를 그 스냅샷으로 바꿨다(B 방식). (2026-11-16)
   - 배경: 단독 Claude Design(claude.ai/design)이 2026-12-14에 닫히고 디자인 기능이 Claude 안의 Design System·Design 캔버스로 옮겨짐. 사용자 결정 — 원본은 Claude, 작업할 때 Claude Code가 내려받아 저장소에 스냅샷 커밋(Codex·연결 프로젝트는 스냅샷 사용).
   - 새 `scripts/design-sync.mjs`(Node 내장만): `export`(시안 → Design System 파일: README=본문 그대로, `frontmatter.txt`, yaml 블록에서 뽑은 `tokens.json`, 기본 표지) · `import`(내려받은 폴더 → 시안 파일, 페이지 토큰 편집기 색 변경은 README yaml 줄에 되돌림, 되돌릴 수 없는 차이면 종료 코드 2) · `preview [--fix]`(프리뷰 3화면 별칭 색 일치) · `status` · `check`.
