@@ -101,6 +101,11 @@
 
 ## 최근 완료 작업
 
+- 남은 Claude Design System 4종(AITC·Orbit Wallet·Pulse Wallet·Brick Wallet)도 같은 `adopt` 방식으로 연결했다. 시안은 13종. (2026-11-16)
+  - 결과: `designs/aitc.md`(FRUXaMrwcG3vhTK5Dgr4d1 v1794601408-7081, 합성 별칭 8), `orbit-wallet.md`(RnTCYCVwS81WFjeqkw1kSj v1794797836-a44b, 3), `pulse-wallet.md`(ScsxyrtVoxCFY4J4q265KY v1794797837-735c, 5), `brick-wallet.md`(GBDRB53TjJPVyeWEJjfBDT v1794797833-2694, 10). 원본은 수정하지 않음. 내용이 빈 제목 없는 Design System은 연결하지 않음.
+  - 판단: AITC는 색인 제목이 MOA라 기존 `moa`와 겹치지 않게 slug `aitc`. Pulse·Brick의 테마 이름(midnight/daylight, paper/night)은 light/dark로 대응. Brick의 상태 바탕은 원본이 진한 원색 블록이라 그대로 대응하면 상태색 글자 대비가 1.0까지 떨어져 중립 면(`surface-alt`)으로 대응했다(가이드 7번에 규칙화).
+  - 문서: `docs/design-guidelines.md` adopt 절 6·7, `designs/_alias-contract.md` 9b 라운드(10·14·22·0·6), `designs/README.md`, `.claude/plugins/manifest.json`.
+  - 검증: `design-sync check`·`check-html`·`build-nav --check`·`check-runtime-parity`·`check-codex-skills` 통과, 프리뷰 3화면 × 4종 × light/dark 적용·오류·넘침 0. ⚠️ 남은 대비 미달(원본 색 그대로): orbit-wallet·pulse-wallet 다크 작은 위험 버튼 2.7~2.8, brick-wallet 라이트 작은 위험 버튼 3.5, pulse-wallet 라이트 위험 배지 4.1.
 - 기존 Claude Design System 3종(Moa·Grove·AEG Soft)을 시안 라이브러리에 연결했다(adopt). (2026-11-16)
   - 사용자 결정: 프로젝트 전용 시스템이지만 공통 템플릿 시안 라이브러리에 넣는다, 대상 Moa·Grove·AEG Soft, 비-4 라운드는 원래 값을 시안 전용 토큰으로 유지. 나머지 5종(AITC·Orbit·Pulse·Brick·제목 없는 시스템)은 보류.
   - 사전 조사(8종): 토큰 이름이 템플릿 계약과 거의 다르고(일치 0~3/25), 간격은 같은 이름이 다른 값(원본 `space-4`=16px). 그래서 원본은 바꾸지 않고 시안별 **대응표** `designs/_sync/<slug>.map.json`(별칭 25·글꼴 12·라운드·그림자·정책·필수 컴포넌트 대응·메모)으로 옮긴다.

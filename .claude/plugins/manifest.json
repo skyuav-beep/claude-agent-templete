@@ -317,6 +317,22 @@
       {
         "path": "designs/aeg-soft.md",
         "description": "AEG Soft consumer — Samsung Health 스타일 파스텔 바탕 + 큰 라운드 흰 카드 + 골드 브랜드, 모바일 숫자 우선(Claude Design System에서 adopt)"
+      },
+      {
+        "path": "designs/aitc.md",
+        "description": "AITC finance — 출금 한도 모바일 PWA, 모스 그린 + 선 옐로 한 점, 한 화면 한 숫자, 카드 그림자 없음(Claude Design System MOA에서 adopt)"
+      },
+      {
+        "path": "designs/orbit-wallet.md",
+        "description": "Orbit Wallet finance — 다크 퍼스트 CEX 지갑, 깊은 보라 바탕 + 노란 포인트, 카드는 면 색 구분(Claude Design System에서 adopt)"
+      },
+      {
+        "path": "designs/pulse-wallet.md",
+        "description": "Pulse Wallet finance — 다크 대시보드형 CEX 지갑, 파란 알약 탭 + 파스텔 그라데이션 카드·글로우(Claude Design System에서 adopt)"
+      },
+      {
+        "path": "designs/brick-wallet.md",
+        "description": "Brick Wallet finance — 네오 브루탈리즘 CEX 지갑, 크림 종이 + 검은 굵은 선 + 딱딱한 그림자 + 원색 블록(Claude Design System에서 adopt)"
       }
     ],
     "selector": ".claude/plugins/select-design.sh"
