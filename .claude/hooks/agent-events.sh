@@ -89,7 +89,8 @@ record_claude() {
   branch=$(git -C "$cwd" rev-parse --abbrev-ref HEAD 2>/dev/null || true)
   loc=$(tmux_locate "$provider" "$cwd"); tmuxt=${loc%%$'\t'*}; panev=${loc#*$'\t'}
   line=$(printf '%s' "$payload" | jq -c --arg provider "$provider" --arg project "$project" --arg branch "$branch" --arg cwd "$cwd" \
-      --arg tmux "$tmuxt" --arg pane "$panev" "$JQ_MASK"'
+      --arg tmux "$tmuxt" --arg pane "$panev" \
+      --arg job "${AGENT_DECK_JOB:-}" --arg role "${AGENT_DECK_ROLE:-}" --arg task "${AGENT_DECK_TASK:-}" --arg parent "${AGENT_DECK_PARENT:-}" "$JQ_MASK"'
     . as $p
     | ($p.tool_input // {}) as $in
     | {
@@ -102,6 +103,10 @@ record_claude() {
         cwd: $cwd,
         tmux: $tmux,
         pane: $pane,
+        job: $job,
+        role: $role,
+        task: $task,
+        parent: $parent,
         tool: ($p.tool_name // null),
         target: (
           if $p.tool_name == "Bash" then ($in.command // "" | mask)
@@ -127,7 +132,8 @@ record_codex() {
   branch=$(git -C "$cwd" rev-parse --abbrev-ref HEAD 2>/dev/null || true)
   loc=$(tmux_locate codex "$cwd"); tmuxt=${loc%%$'\t'*}; panev=${loc#*$'\t'}
   line=$(printf '%s' "$payload" | jq -c --arg project "$project" --arg branch "$branch" --arg cwd "$cwd" \
-      --arg tmux "$tmuxt" --arg pane "$panev" '
+      --arg tmux "$tmuxt" --arg pane "$panev" \
+      --arg job "${AGENT_DECK_JOB:-}" --arg role "${AGENT_DECK_ROLE:-}" --arg task "${AGENT_DECK_TASK:-}" --arg parent "${AGENT_DECK_PARENT:-}" '
     {
       ts: now | floor,
       provider: "codex",
@@ -137,7 +143,11 @@ record_codex() {
       branch: $branch,
       cwd: $cwd,
       tmux: $tmux,
-      pane: $pane
+      pane: $pane,
+      job: $job,
+      role: $role,
+      task: $task,
+      parent: $parent
     } | with_entries(select(.value != null and .value != ""))' 2>/dev/null) || return 0
   [ -n "$line" ] && append "$line"
 }
@@ -160,14 +170,30 @@ summarize() {
         | ($ev | map(select(.event == "TaskCreated")) | length) as $tc
         | ($ev | map(select(.event == "TaskCompleted")) | length) as $td
         | ($now - $l.ts) as $age
+        # 끝난 뒤 대기 알림(idle)은 사람이 처리할 요청이 아니다. 바로 앞 기록으로 판단한다(agent-deck v0.4와 같은 규칙)
+        | ($l.event == "Notification" and (($l.kind // "") | test("idle"))) as $idle
+        # 서브 에이전트·작업 목록 기록은 늦게 끼어들 수 있어 건너뛰고 그 앞의 실제 기록을 본다
+        | (if $idle then ($ev | map(select((.event | IN("SubagentStart", "SubagentStop", "TaskCreated", "TaskCompleted") | not)
+              and ((.event == "Notification" and ((.kind // "") | test("idle"))) | not))) | last) else null end) as $prev
         | (if $l.event == "SessionEnd" then "종료"
            elif $l.event == "StopFailure" then "오류"
            elif $l.event == "PermissionRequest" then "응답 필요"
-           elif $l.event == "Notification" and (($l.kind // "") | test("permission|idle|needs_input|elicitation")) then "응답 필요"
+           elif $idle then
+             (if $prev == null or $prev.event == "SessionStart" then "대기"
+              elif $prev.event == "PermissionRequest" or $prev.event == "PreToolUse"
+                or ($prev.event == "Notification" and (($prev.kind // "") | test("permission|needs_input|elicitation"))) then "응답 필요"
+              elif $prev.event == "StopFailure" then "오류"
+              else "완료" end)
+           elif $l.event == "Notification" and (($l.kind // "") | test("permission|needs_input|elicitation")) then "응답 필요"
            elif $l.event == "Stop" then "완료"
            elif $l.event == "SessionStart" then "대기"
            elif $age > ($stale * 60) then "멈춤?"
-           else "실행 중" end) as $state
+           else "실행 중" end) as $state0
+        # 응답 요청을 만든 기록: 대기 알림 뒤면 그 앞 기록
+        | (if $idle and $state0 == "응답 필요" then $prev else $l end) as $src
+        | ($state0 == "응답 필요") as $awaiting
+        # 정체 기준의 4배(기본 2시간)를 넘긴 응답 요청은 버려졌을 가능성이 커 멈춤?으로 내린다
+        | (if $awaiting and ($now - $src.ts) > ($stale * 60 * 4) then "멈춤?" else $state0 end) as $state
         | ($ev | map(select(.event == "PreToolUse")) | last) as $act
         | ($ev | map(select((.tmux // "") != "")) | last | .tmux // "-") as $win
         | {
@@ -176,9 +202,10 @@ summarize() {
             project: ($l.project // "-"),
             session: $l.session,
             age: $age,
-            last: (if $state == "실행 중" or $state == "멈춤?" then
+            last: (if ($state == "실행 중" or $state == "멈춤?") and ($awaiting | not) then
                      (if $act then (($act.tool // "") + (if $act.agent then "(" + $act.agent + ")" else "" end) + " " + ($act.target // "")) else $l.event end)
-                   elif $state == "응답 필요" then ($l.note // $l.kind // "확인 요청")
+                   elif $awaiting then (($src.note // $src.kind // $src.tool // "확인 요청")
+                                       | if $state == "멈춤?" then "응답 없이 오래됨 · " + . else . end)
                    else ($l.branch // "") end) | (if . == "" then "-" else . end),
             subs: (if $subs > 0 then $subs else 0 end),
             tasks: (if $tc > 0 then "\($td)/\($tc)" else "-" end),
@@ -223,7 +250,7 @@ status() {
   if [ -n "$extra" ]; then
     while IFS=$'\t' read -r tag id age; do
       [ "$tag" = "UPDATE" ] || continue
-      rows=$(printf '%s\n' "$rows" | awk -F'\t' -v OFS='\t' -v id="$id" -v age="$age" '$2=="codex" && $4==id && age+0 < $5+0 {$1="실행 중"; $5=age; $6="새 턴 진행 중"} {print}')
+      rows=$(printf '%s\n' "$rows" | awk -F'\t' -v OFS='\t' -v id="$id" -v age="$age" '$2=="codex" && $4==id && $1!="응답 필요" && index($6,"응답 없이 오래됨")!=1 && age+0 < $5+0 {$1="실행 중"; $5=age; $6="새 턴 진행 중"} {print}')
     done <<< "$extra"
     rows=$(printf '%s\n%s\n' "$rows" "$(printf '%s\n' "$extra" | grep -v '^UPDATE')" | sed '/^$/d')
   fi

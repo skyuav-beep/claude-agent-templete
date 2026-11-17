@@ -163,6 +163,40 @@ expect("현황: 빈 최근 동작이 열을 밀지 않음(Codex 완료 행)", ro
 r = run(events, ["status", "--short"], { env: evEnv });
 expect("현황 한 줄", /실행 5 · 응답 2/.test(r.out), r.out);
 
+// 9-2. 대기 알림·오래된 응답 요청·작업 연결(agent-deck v0.4와 같은 판정)
+{
+  const f2 = path.join(tmp, "events2.jsonl");
+  const env2 = { AGENT_EVENTS_FILE: f2, CODEX_HOME: path.join(tmp, "codex-home") };
+  const now = Math.floor(Date.now() / 1000);
+  const ev = (ts, session, event, extra = {}) => JSON.stringify({ ts, provider: "claude", event, session, project: "p", branch: "main", ...extra });
+  const idle = (ts, session) => ev(ts, session, "Notification", { kind: "idle_prompt", note: "Claude is waiting for your input" });
+  fs.writeFileSync(f2, [
+    ev(now - 60, "i-done", "Stop"), idle(now - 50, "i-done"),
+    ev(now - 60, "i-start", "SessionStart"), idle(now - 50, "i-start"),
+    ev(now - 60, "i-ask", "PreToolUse", { tool: "AskUserQuestion" }), idle(now - 50, "i-ask"),
+    ev(now - 60, "i-perm", "Notification", { kind: "permission_prompt", note: "needs permission" }), idle(now - 50, "i-perm"),
+    ev(now - 3 * 3600, "old-perm", "PermissionRequest", { tool: "Bash" }),
+    ev(now - 60, "i-late", "PermissionRequest", { tool: "Bash" }), ev(now - 55, "i-late", "SubagentStart", { agent: "Explore" }), ev(now - 54, "i-late", "TaskCreated"), idle(now - 50, "i-late"),
+  ].join("\n") + "\n");
+  const out = run(events, ["status"], { env: env2 }).out;
+  const row = (id) => out.split("\n").find((l) => l.includes(id)) || "";
+  expect("대기 알림: 턴 완료 뒤면 완료", /^완료/.test(row("i-done")), out);
+  expect("대기 알림: 시작 직후면 대기", /^대기/.test(row("i-start")), out);
+  expect("대기 알림: 끝나지 않은 질문 도구 뒤면 응답 필요", /^응답 필요/.test(row("i-ask")) && /AskUserQuestion/.test(row("i-ask")), out);
+  expect("대기 알림: 권한 요청 뒤면 응답 필요(원래 요청 문구)", /^응답 필요/.test(row("i-perm")) && /needs permission/.test(row("i-perm")), out);
+  expect("대기 알림: 권한 요청 뒤 서브·작업 기록이 끼어도 응답 필요", /^응답 필요/.test(row("i-late")), out);
+  expect("오래된 응답 요청은 멈춤?", /^멈춤\?/.test(row("old-perm")) && /응답 없이 오래됨/.test(row("old-perm")), out);
+  // 작업 연결: agent-deck 리드·작업자가 물려받는 환경변수를 기록한다
+  run(events, [], { input: JSON.stringify({ cwd: root, session_id: "j-lead", hook_event_name: "SessionStart" }), env: { ...env2, AGENT_DECK_JOB: "J1-1", AGENT_DECK_ROLE: "lead" } });
+  run(events, ["codex-hook"], { input: JSON.stringify({ cwd: root, session_id: "j-cx", hook_event_name: "SessionStart" }), env: { ...env2, AGENT_DECK_JOB: "J1-1", AGENT_DECK_ROLE: "build", AGENT_DECK_TASK: "T1", AGENT_DECK_PARENT: "j-lead" } });
+  run(events, [], { input: JSON.stringify({ cwd: root, session_id: "j-none", hook_event_name: "SessionStart" }), env: env2 });
+  const ls2 = fs.readFileSync(f2, "utf8").trim().split("\n").map((l) => JSON.parse(l));
+  const g2 = (id) => ls2.find((l) => l.session === id) || {};
+  expect("작업 연결 기록(리드)", g2("j-lead").job === "J1-1" && g2("j-lead").role === "lead", JSON.stringify(g2("j-lead")));
+  expect("작업 연결 기록(작업자)", g2("j-cx").job === "J1-1" && g2("j-cx").role === "build" && g2("j-cx").task === "T1" && g2("j-cx").parent === "j-lead", JSON.stringify(g2("j-cx")));
+  expect("작업 밖 세션은 연결 항목 없음", !("job" in g2("j-none")) && !("role" in g2("j-none")), JSON.stringify(g2("j-none")));
+}
+
 // 9-1. watch: 터미널 없이 돌 때 바쁜 루프를 돌지 않음(간격을 지킴)
 {
   const t = spawnSync("bash", ["-c", `TIMEFORMAT='%U %S'; time (timeout 4 bash "${events}" watch --interval 1 >/dev/null 2>&1 </dev/null)`], {
