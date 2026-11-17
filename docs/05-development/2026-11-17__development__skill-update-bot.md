@@ -4,6 +4,9 @@ type: development
 status: draft
 created: 2026-11-17
 updated: 2026-11-17
+created_at: "2026-11-17T19:56:39+09:00"
+created_at_source: first-git-commit
+updated_at: "2026-11-17T21:11:33+09:00"
 source: user-input, planning
 related:
   - ../claude-codex-collaboration.md
@@ -12,6 +15,9 @@ related:
 ---
 
 # 스킬 강화를 위한 에이전트 업데이트 봇 개발계획
+
+> 작성 기록: 2026-11-17 19:56:39 KST · 최종 수정: 2026-11-17 21:11:33 KST
+> 작성 기록은 최초 Git 커밋 시각이며, 실제 초안 작성 시각과 다를 수 있습니다.
 
 ## 요청과 목표
 
