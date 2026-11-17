@@ -8,6 +8,7 @@
 - ID: (예: T-001)
 - 제목:
 - 상태: 대기 | 진행 | 리뷰 | 테스트 | 완료 | 보류
+- 역할: plan | design | build | audit | qa | scenario | docs
 - 담당(구현): Claude | Codex
 - 리뷰: (구현하지 않은 쪽 — Codex 리뷰는 작업이 끝날 때 한 번)
 - 의존 카드: (먼저 끝나야 하는 카드 ID, 없으면 없음)

@@ -19,6 +19,8 @@ Claude Code와 Codex를 함께 써서 여러 프로젝트를 병렬로 개발할
 | 리뷰 | 구현하지 않은 쪽 | 작업이 끝난 diff를 독립적으로 검토 | 리뷰 중 직접 수정 |
 | QA | Claude(브라우저 자동화) | 시나리오 테스트 실행, 스크린샷·로그 증거 저장 | 텍스트 판단만으로 통과 처리 |
 
+- 역할 봇 7종: agent-deck은 카드마다 `plan`(기획)·`design`(디자인 UI/UX)·`build`(개발)·`audit`(오딧·검증)·`qa`(기능 테스트)·`scenario`(시나리오 테스트)·`docs`(매뉴얼 작성) 중 하나를 맡긴다. 위 표의 구현은 `build`, 리뷰는 `audit`, QA는 `qa`·`scenario`에 해당한다.
+- 역할별 입력·산출물·완료 조건·하지 않는 것은 `agents/roles/<역할>.md`, 공통 규칙과 기본 파이프라인(`plan` → `design`·`build` → `audit` → `qa` → `scenario` → `docs`)은 `agents/roles/README.md`가 정한다. 프로젝트에 같은 파일이 있으면 그쪽이 우선이다.
 - 단계별 기본 담당: 요청 정리·기획·설계·UI 구조·작업 분해·테스트 설계·문서는 Claude가 주도한다. 서버·DB·API·통합 구현·자동 테스트 작성·오류 수정은 Codex에 맡길 수 있다. 화면 구현은 둘 중 누구나 맡되 교차 리뷰를 지킨다.
 - 이 배분은 출발점이다. 모델 성능은 버전·코드베이스·지시 방식에 따라 달라지므로, 프로젝트에서 결과가 더 좋은 쪽으로 `docs/project-guide.md`에 바꿔 적는다.
 - Claude가 Codex에 일을 맡길 때는 플러그인의 `codex-rescue` 서브 에이전트(또는 사용자가 입력하는 `/codex:rescue`)를 쓴다. 쓰기 작업은 그 작업 카드 전용 worktree에서만 하게 한다. 메인 체크아웃에서 Codex가 쓰지 않는다.
