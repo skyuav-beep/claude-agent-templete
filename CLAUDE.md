@@ -117,7 +117,7 @@
 - `STATE.md` — 현재 상태, 세션 인계 정보
 - `DESIGN.md` — 디자인 시스템 카탈로그(active). UI/스타일 작업의 1차 소스 (토큰, 컴포넌트, Do/Don't, 다크 alias). `designs/`에서 선택된 시안의 활성 사본
 - `designs/` — 디자인 시안 라이브러리. 시안 선택은 `bash .claude/plugins/select-design.sh <slug>`. 시안 원본은 Claude Design System이고 이 폴더는 스냅샷이다 — 동기화는 `node scripts/design-sync.mjs`(`docs/design-guidelines.md` "Claude Design System 동기화")
-- `agents/` — 역할별 에이전트 행동 규칙 (main, executor, researcher, reviewer)
+- `agents/` — 역할별 에이전트 행동 규칙 (main, executor, researcher, reviewer). `agents/roles/`는 agent-deck 역할 봇 7종 지침
 - `templates/` — 작업 요청 5종 + intake 양식 12종 + 지식 관리 4종(`knowledge-entry`, `whitepaper-note`, `development-plan`, `decision-record`) + 작업 카드(`task-card`) + `startup-checklist.md` + `data-table-density.md`
 - `docs/` — 프로젝트 가이드, 플레이북, 운영 문서 (디자인 운영 메타: `docs/design-guidelines.md`, admin FE: `docs/admin-fe-design-guide.md`, UI 결정 기록: `docs/ui-decisions.md`, 로컬/CI 실행 경계+Docker 재빌드: `docs/local-dev-ci-guide.md`, 금액·수량 처리: `docs/money-quantity-guidelines.md`, 작업 알림: `docs/notification-guide.md`, 지식 관리: `docs/knowledge-management-guide.md`, 세션 충돌 조정: `docs/session-coordination-guide.md`, Claude-Codex 협업: `docs/claude-codex-collaboration.md`)
 - `docs/00-inbox/` ~ `docs/99-archive/` — 지식 관리 영역. 사용자 입력·개념·백서·요구사항·설계·개발계획·결정 기록을 주제별로 보관한다. 분류·명명·생명주기는 `docs/knowledge-management-guide.md`

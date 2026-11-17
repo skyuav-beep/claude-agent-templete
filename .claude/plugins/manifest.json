@@ -507,7 +507,15 @@
       "agents/main-agent.md",
       "agents/executor-agent.md",
       "agents/researcher-agent.md",
-      "agents/reviewer-agent.md"
+      "agents/reviewer-agent.md",
+      "agents/roles/README.md",
+      "agents/roles/plan.md",
+      "agents/roles/design.md",
+      "agents/roles/build.md",
+      "agents/roles/audit.md",
+      "agents/roles/qa.md",
+      "agents/roles/scenario.md",
+      "agents/roles/docs.md"
     ],
     "templates": [
       "templates/startup-checklist.md",

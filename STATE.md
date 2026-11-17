@@ -107,6 +107,12 @@
 
 ## 최근 완료 작업
 
+- 역할 봇 지침 7종(`agents/roles/`)을 추가했다. agent-deck이 카드마다 띄우는 역할 세션이 먼저 읽는 문서다. (2026-11-17)
+  - 파일: `plan`·`design`·`build`·`audit`·`qa`·`scenario`·`docs` 각 1개 + `README.md`(7종 표, 기본 파이프라인 `plan → design·build → audit → qa → scenario → docs`, 공통 규칙·결과 보고 형식, 프로젝트 덮어쓰기, agent-deck `[bots.<역할>]` 설정과의 관계).
+  - 공통 규칙: 카드가 3단계 승인을 대신, 전용 worktree, 커밋까지(push·PR·머지 금지), `STATE.md`는 리드가 기록, 판단이 필요하면 `확인 필요`로 멈춤.
+  - 연결: 작업 카드 양식에 `역할` 줄, 협업 가이드 `## 역할 분담`에 안내, 헌법 Repo Map, 설치 manifest `supporting.agents` 등록.
+  - 기본 산출물 위치(프로젝트 가이드가 우선): 설계 `docs/04-design/`(명세 + HTML 와이어), 시나리오 보고·증거 `docs/90-reports/`·`docs/90-reports/evidence/<카드ID>/`, 사용자 매뉴얼 `docs/manual/`, 운영 매뉴얼 `docs/06-operations/`.
+
 - Conductor 0단계와 텔레그램 알림(agent-deck v0.5, PR #7·#8). 다음 작업 1순위를 Conductor 멀티봇 체계로 바꿨다. (2026-11-17)
   - 사용자 컨셉 캔버스를 검토하고 결정 4건을 받아 리포트 3부(현황표 → 빈 곳 → 착수 계획)로 정리했다. 상세는 `## 다음 작업` 1순위.
   - 검증: agent-deck 테스트 39건, 실제 리드로 역할 연결(리드 `lead`, Codex 작업자 `build`·카드 `T1`) 기록 확인. 세 PR 모두 Codex 교차 리뷰 지적(중대 각 1~2건) 반영 후 머지.
