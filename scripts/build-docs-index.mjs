@@ -7,14 +7,33 @@
  *
  *   node scripts/build-docs-index.mjs
  *   node scripts/build-docs-index.mjs --check   # 갱신 필요 여부만 검사(쓰기 없음)
+ *   node scripts/build-docs-index.mjs --root <dir>            # 다른 저장소를 색인해 <dir>/docs/docs-index.json에 쓴다
+ *   node scripts/build-docs-index.mjs --root <dir> --stdout   # 쓰지 않고 JSON만 표준 출력으로 낸다
+ *
+ * 공통 템플릿을 `rules/` symlink로 연결한 프로젝트는 rules/ 아래 문서를 별도 그룹
+ * ("공통 템플릿 (rules/)")으로 묶어 프로젝트 문서와 구분한다. symlink 디렉터리는
+ * 실제 경로 기준으로 한 번만 들어가므로 순환 링크가 있어도 멈추지 않는다.
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'node:fs';
-import { join, relative, sep, posix } from 'node:path';
+import { readFileSync, writeFileSync, readdirSync, statSync, lstatSync, existsSync, realpathSync, mkdirSync } from 'node:fs';
+import { join, relative, resolve, sep, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = join(fileURLToPath(new URL('.', import.meta.url)), '..');
+const argv = process.argv.slice(2);
+const rootArg = argv.indexOf('--root');
+if (rootArg !== -1 && !argv[rootArg + 1]) {
+  console.error('--root 뒤에 색인할 디렉터리를 지정하세요.');
+  process.exit(2);
+}
+const ROOT = rootArg !== -1
+  ? resolve(argv[rootArg + 1])
+  : join(fileURLToPath(new URL('.', import.meta.url)), '..');
+if (!existsSync(ROOT) || !statSync(ROOT).isDirectory()) {
+  console.error(`색인할 디렉터리가 없습니다: ${ROOT}`);
+  process.exit(2);
+}
 const OUT = join(ROOT, 'docs', 'docs-index.json');
+const STDOUT = argv.includes('--stdout');
 
 // 문서가 아니거나 인덱싱할 이유가 없는 경로
 const SKIP_DIRS = new Set(['.git', 'node_modules', '.cache', 'dist', 'build']);
@@ -73,6 +92,23 @@ const GROUPS = [
   },
 ];
 
+// 공통 템플릿을 rules/ symlink로 연결한 프로젝트에서만 쓰는 그룹.
+// 템플릿 자신에는 rules/가 없으므로 기본 실행 결과에는 영향이 없다.
+const RULES_GROUP = {
+  prefix: 'rules/', label: '공통 템플릿 (rules/)', icon: '⧉', color: '#64748b',
+  desc: '공통 템플릿 저장소를 rules/ symlink로 연결한 문서. 프로젝트 문서보다 우선순위가 낮은 공통 기본값이다.',
+};
+
+function isSymlink(path) {
+  try {
+    return lstatSync(path).isSymbolicLink();
+  } catch {
+    return false;
+  }
+}
+
+if (isSymlink(join(ROOT, 'rules'))) GROUPS.unshift(RULES_GROUP);
+
 const ROOT_GROUP = {
   label: '루트 문서', icon: '★', color: '#f59e0b',
   desc: '항상 먼저 읽는 최상위 문서. 규칙·운영 절차·현재 상태·디자인 정본이 여기 있다.',
@@ -80,13 +116,35 @@ const ROOT_GROUP = {
 
 const ROOT_ORDER = ['CLAUDE.md', 'AGENTS.md', 'STATE.md', 'DESIGN.md', 'README.md', 'todo.md'];
 
+// symlink 디렉터리는 실제 경로 기준으로 한 번만 들어간다(순환·중복 방지).
+const visited = new Set([realpathSync(ROOT)]);
+
 function walk(dir, acc = []) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const abs = join(dir, entry.name);
     if (entry.isDirectory()) {
       if (SKIP_DIRS.has(entry.name)) continue;
-      walk(join(dir, entry.name), acc);
+      visited.add(realpathSync(abs));
+      walk(abs, acc);
     } else if (entry.isFile() && entry.name.endsWith('.md')) {
-      acc.push(join(dir, entry.name));
+      acc.push(abs);
+    } else if (entry.isSymbolicLink()) {
+      if (SKIP_DIRS.has(entry.name)) continue;
+      let real;
+      let st;
+      try {
+        real = realpathSync(abs);
+        st = statSync(real);
+      } catch {
+        continue; // 끊어진 링크
+      }
+      if (st.isDirectory()) {
+        if (visited.has(real)) continue;
+        visited.add(real);
+        walk(abs, acc);
+      } else if (st.isFile() && entry.name.endsWith('.md')) {
+        acc.push(abs);
+      }
     }
   }
   return acc;
@@ -200,7 +258,10 @@ const index = {
 
 const json = JSON.stringify(index, null, 2) + '\n';
 
-if (process.argv.includes('--check')) {
+if (STDOUT) {
+  // 파이프로 넘길 때 잘리지 않도록 process.exit을 부르지 않고 자연 종료한다.
+  process.stdout.write(json);
+} else if (argv.includes('--check')) {
   const current = existsSync(OUT) ? readFileSync(OUT, 'utf8') : '';
   const stale = current !== json;
   // 생성 시각을 넣지 않으므로 내용이 같으면 항상 동일 문자열이 된다.
@@ -208,7 +269,8 @@ if (process.argv.includes('--check')) {
     ? `docs-index.json 갱신 필요 (문서 ${docs.length}개)`
     : `docs-index.json 최신 (문서 ${docs.length}개)`);
   process.exit(stale ? 1 : 0);
+} else {
+  mkdirSync(join(ROOT, 'docs'), { recursive: true });
+  writeFileSync(OUT, json, 'utf8');
+  console.log(`docs/docs-index.json 생성 — 문서 ${docs.length}개 · 그룹 ${index.groups.length}개 · ${(index.totalBytes / 1024).toFixed(0)} KB`);
 }
-
-writeFileSync(OUT, json, 'utf8');
-console.log(`docs/docs-index.json 생성 — 문서 ${docs.length}개 · 그룹 ${index.groups.length}개 · ${(index.totalBytes / 1024).toFixed(0)} KB`);

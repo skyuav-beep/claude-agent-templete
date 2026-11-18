@@ -1,5 +1,11 @@
 # STATE.md
 
+## 문서 색인 다른 저장소 지원·링크 안전화 (2026-11-18)
+
+- deck GUI 문서 통합 2단계(템플릿 쪽): `scripts/build-docs-index.mjs`에 `--root <dir>`(다른 저장소 색인)·`--stdout`(쓰지 않고 출력) 추가. symlink 폴더는 실제 경로 기준 한 번만(순환 안전), `rules`가 symlink면 "공통 템플릿 (rules/)" 그룹. 플래그 없는 실행은 이전과 바이트 동일(`cmp` 확인).
+- `docs/guide-browser.html`: 링크 주소가 http(s)·mailto·상대 경로가 아니면 `#`으로 바꾼다(`javascript:` 링크가 콘솔과 같은 출처에서 실행되는 것 방지).
+- 검증: HTML 7/6, 런타임 parity, makeupshop `--root` 색인 472개 생성 확인. 전체 CI는 배치 대기. agent-deck v1.6.0(`/docs/` 제공)이 이 옵션을 쓴다.
+
 ## 문서 화면 API 경로 상대화 (2026-11-18)
 
 - 사용자 요청(deck GUI와 문서 웹페이지 통합) 1단계: `docs/guide-browser.html`의 편집 API 호출 3곳(`/api/doc`, `/api/capabilities`)을 `../api/` 기준 상대 경로로 바꿨다. `serve-docs.mjs`에서는 그대로 `/api/`로, agent-deck GUI에 `/docs/<프로젝트>/`로 붙일 때는 그 아래 `api/`로 풀린다.

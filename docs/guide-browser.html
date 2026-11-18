@@ -601,6 +601,14 @@
   function fetchUrl(path) { return '../' + path; }
 
   /* ── Markdown 렌더러 (외부 의존성 없음) ───────────────────── */
+  // 문서 속 링크 주소는 http(s)·mailto·상대 경로만 둔다. javascript: 같은 스킴은 이 화면의 출처에서
+  // 스크립트를 돌릴 수 있어(웹 콘솔 안에 띄울 때 특히) 빈 앵커로 바꾼다.
+  function safeHref(href) {
+    var scheme = /^\s*([a-z][a-z0-9+.-]*):/i.exec(href);
+    if (scheme && !/^(https?|mailto)$/i.test(scheme[1])) return '#';
+    return href;
+  }
+
   function renderInline(text) {
     var codes = [];
     text = text.replace(/`([^`]+)`/g, function (_, c) {
@@ -612,10 +620,10 @@
 
     // 이미지 → 링크로만 표기(문서 뷰어이므로 원문 위치를 알려주는 편이 유용)
     text = text.replace(/!\[([^\]]*)\]\(([^)\s]+)[^)]*\)/g, function (_, alt, src) {
-      return '<a href="' + src + '" data-img="1">🖼 ' + (alt || src) + '</a>';
+      return '<a href="' + safeHref(src) + '" data-img="1">🖼 ' + (alt || src) + '</a>';
     });
     text = text.replace(/\[([^\]]+)\]\(([^)\s]+)[^)]*\)/g, function (_, label, href) {
-      return '<a href="' + href + '">' + label + '</a>';
+      return '<a href="' + safeHref(href) + '">' + label + '</a>';
     });
     text = text.replace(/\[\[([^\]]+)\]\]/g, '<a href="$1.md">$1</a>');
 
