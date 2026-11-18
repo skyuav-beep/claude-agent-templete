@@ -1,5 +1,11 @@
 # STATE.md
 
+## 문서 화면 API 경로 상대화 (2026-11-18)
+
+- 사용자 요청(deck GUI와 문서 웹페이지 통합) 1단계: `docs/guide-browser.html`의 편집 API 호출 3곳(`/api/doc`, `/api/capabilities`)을 `../api/` 기준 상대 경로로 바꿨다. `serve-docs.mjs`에서는 그대로 `/api/`로, agent-deck GUI에 `/docs/<프로젝트>/`로 붙일 때는 그 아래 `api/`로 풀린다.
+- 검증: HTML 구문 7/6, 이동 바 7화면 최신, `serve-docs.mjs --edit`에서 브라우저로 `capabilities`·`doc` 200 확인(콘솔의 404 1건은 favicon). 전체 CI는 배치 대기.
+- 같은 날 agent-deck 진행(그 저장소 STATE 참조): v1.3.0 콘솔(#22), v1.4.0 분해 검토(#23), v1.5.0 설정 편집(#24), v1.5.1 한글 단축키(#25). 다음은 agent-deck GUI의 `/docs/` 제공·쿠키 인증·프로젝트별 문서.
+
 ## 개발 세션 병렬 작업 (2026-11-17 야간)
 
 - `dev-start` 뒤 사용자 요청으로 4건을 병렬 진행했다. (1) agent-deck `--once` 한글 폭 정렬 v1.2.1(agent-deck #19 `bc36dd5`), (2) 메인 Brain MB-01~03 — 계약 [메인 Brain 대화 계약](docs/04-design/2026-11-17__design__main-brain-conversation-contract.md)(draft, 이 PR)과 agent-deck 통합 대화 저장소·기존 기록 어댑터·목업(agent-deck #20 `9aebb6a`), (3) 전체 로컬 CI 배치(아래 대기열), (4) 문서 서버 기동.
