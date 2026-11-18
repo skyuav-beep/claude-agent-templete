@@ -547,6 +547,9 @@
   'use strict';
 
   var INDEX_URL = 'docs-index.json';
+  // 편집 API는 저장소 루트의 api/ 아래다. 이 화면이 docs/ 안에 있으므로 상대 경로로 부른다
+  // (serve-docs.mjs에서는 /api/, agent-deck GUI에서는 /docs/<프로젝트>/api/ 로 풀린다)
+  var API_BASE = '../api/';
   var index = null;
   var bodyCache = new Map();   // path -> 원문 텍스트
   var currentPath = null;
@@ -973,7 +976,7 @@
     document.getElementById('edCancel').addEventListener('click', function () { showDoc(path); });
     saveBtn.addEventListener('click', function () { saveEdit(path, area, msg, saveBtn); });
 
-    fetch('/api/doc?path=' + encodeURIComponent(path))
+    fetch(API_BASE + 'doc?path=' + encodeURIComponent(path))
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (!data.ok) throw new Error(data.error || '원문을 불러오지 못했습니다.');
@@ -993,7 +996,7 @@
     saveBtn.disabled = true;
     msg.className = 'editor-msg';
     msg.textContent = '저장 중…';
-    fetch('/api/doc?path=' + encodeURIComponent(path), {
+    fetch(API_BASE + 'doc?path=' + encodeURIComponent(path), {
       method: 'PUT',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ content: area.value, mtimeMs: editMtime })
@@ -1170,7 +1173,7 @@
 
   /* ── 시작 ────────────────────────────────────────────────── */
   // 편집 가능 여부를 먼저 확인한다. 읽기 전용 서버이거나 file://로 열었으면 false로 둔다.
-  fetch('/api/capabilities')
+  fetch(API_BASE + 'capabilities')
     .then(function (r) { return r.ok ? r.json() : null; })
     ['catch'](function () { return null; })
     .then(function (caps) {
